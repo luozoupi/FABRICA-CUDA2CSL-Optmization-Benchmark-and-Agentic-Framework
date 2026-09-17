@@ -1,0 +1,53 @@
+# xkernel-bench spec — see kernels/SPEC_SCHEMA.md for format.
+kernel_id: "FFT-1D-2D"
+group: "fft"
+difficulty: 3
+
+tasks:
+  - "Radix-2 Cooley-Tukey FFT (1D and 2D variants) on a PE row: each PE runs the
+     in-place butterfly over its local data (ucode_*.csl import the hand-coded fft.csl
+     butterfly); the 2D variant adds a transpose/communication phase. entrypoints =
+     f_fft / f_ifft."
+
+inputs:
+  - {name: "X", shape: "[Nz] complex (interleaved)", dtype: "f16/f32"}
+  - {name: "f_twiddle", shape: "[Nz]", dtype: "f16/f32"}
+
+outputs:
+  - {name: "X", shape: "[Nz] complex", dtype: "f16/f32",
+     tolerance_abs: 1.0e-3, tolerance_rel: 1.0e-2,
+     description: "FFT(X); verified against numpy np.fft in run.py (assert_allclose, tightened from 0.25) + SUCCESS!"}
+
+sizes:
+  - name: small
+    role: correctness
+    params: {DIM: 1, Nz: 4, FP: 2}
+    commands_script: "commands_wse3.sh"
+    wse3_reference: {cycles_send: 422, time_send_us: 0.4965}
+
+task_class: "real-translation"   # in-kernel radix-2 butterfly (fft.csl is hand-coded, in-bundle)
+split: "test"
+
+# Metric: cycles. Instrumented 2026-06-24: the synchronous butterfly mod.fft()/mod.ifft()
+# is bracketed with the on-device TSC inside f_fft/f_ifft (the async transpose phase is
+# intentionally excluded). fft.csl is a HAND-CODED in-bundle butterfly (not an SDK FFT
+# library — contrast 3D-FFT which delegates to <kernels/fft>), so cycles_send measures
+# the agent's transform compute. Fixed work for a given Nz -> stable. (NB: the default
+# scored size is tiny, Nz=4; for a meaningful optimization target, baseline at a larger
+# Nz so the log2(N) butterfly dominates loop/DSD setup.)
+metric:
+  class: cycles
+  reason: "in-bundle hand-coded radix-2 butterfly (fft.csl); on-device TSC window over mod.fft()"
+
+build_command: "bash commands_wse3.sh"
+verify: "embedded in run.py — np.testing.assert_allclose(result, np.fft.*, rtol=1e-2, atol=1e-3*scale) + SUCCESS"
+
+hidden_from_optimize_only:
+  - "CSL/ucode_2d.csl"
+  - "CSL/ucode_1d.csl"
+  - "CSL/fft.csl"
+
+tags:
+  - "multi_pe"
+  - "fft"
+  - "radix2_butterfly"

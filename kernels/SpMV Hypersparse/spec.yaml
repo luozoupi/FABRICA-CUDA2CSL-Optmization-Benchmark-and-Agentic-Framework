@@ -1,0 +1,64 @@
+# xkernel-bench spec — see kernels/SPEC_SCHEMA.md for format.
+kernel_id: "SpMV-Hypersparse"
+group: "linalg"
+difficulty: 3
+
+tasks:
+  - "Compute y = A * x where A is a hypersparse matrix (many empty rows;
+     non-zeros highly clustered) provided as CSR/COO. Each PE owns a tile of A
+     and a stride of x; the algorithm uses allreduce-style fabric collectives to
+     move x values to the PEs that need them."
+  - "Performance-critical path: (a) PE-local SpMV given local nonzeros,
+     (b) row-allreduce of partial y values, (c) column-broadcast of x."
+  - "Distinguishing feature vs the dense 7-point stencil SpMV: input sparsity
+     pattern is arbitrary, may not fit a stencil shape; preprocessing partitions
+     non-zeros across PEs (see preprocess.py for the partitioner)."
+
+inputs:
+  - {name: "A_nnz",  shape: "[width, height, max_local_nnz, 3]", dtype: "f32",
+     description: "per-PE list of (row, col, value) for local non-zeros"}
+  - {name: "x",      shape: "[ncols * local_vec_sz]", dtype: "f32",
+     description: "dense input vector, partitioned by column across PE columns"}
+
+outputs:
+  - {name: "y", shape: "[nrows * local_out_vec_sz]", dtype: "f32",
+     tolerance_abs: 1e-5, tolerance_rel: 1e-5,
+     description: "y = A * x; verified against host reference"}
+
+# Upstream ships only a WSE-2 build script (commands_wse2.sh, --arch wse2).
+# No WSE-3 reference cycles available. For this kernel the agent's target is
+# workflow-2 cycle-reduction WITHOUT a reference comparison.
+wse3_reference:
+  cycles_send: null
+  time_send_us: null
+  upstream_source: "csl-examples/benchmarks/spmv-hypersparse"
+  _note: "Upstream is WSE-2 only; no WSE-3 reference available."
+
+implicit_baseline_from_first_pass: true
+
+build_command: "bash commands_wse3.sh"   # needs xkernel-supplied wse3 commands
+verify: "embedded in run.py — asserts numerical match against host reference"
+
+hidden_from_optimize_only:
+  - "CSL/src/kernel.csl"
+  - "CSL/src/hypersparse_spmv/*.csl"
+  - "CSL/src/allreduce2R1E/*.csl"
+
+# Per-kernel optimizer angle whitelist. Hypersparse SpMV is sparsity-driven
+# fabric communication. fabric_simd_packing matters because partial-sum
+# wavelets can pack (index, value) pairs. prefetch_fabric_async hides
+# allreduce latency. Less FMA-heavy than dense linalg → no fmac_bulk.
+optimization_angles:
+  - "fabric_simd_packing"
+  - "prefetch_fabric_async"
+  - "async_detach_overlap"
+  - "task_chaining_unblock_activate"
+  - "buffer_cleanup"
+  - "comptime_hoist"
+
+tags:
+  - "hypersparse"
+  - "allreduce"
+  - "global_reduce"
+  - "preprocessing_required"
+  - "no_wse3_reference"

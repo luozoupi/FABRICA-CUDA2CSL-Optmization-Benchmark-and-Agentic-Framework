@@ -1,0 +1,30 @@
+// Layout for single-PE 3D tensor transpose (021).
+
+param width: u16;
+param height: u16;
+param ax1: u16;
+param ax2: u16;
+param ax3: u16;
+
+const memcpy = @import_module("<memcpy/get_params>", .{
+  .width = width,
+  .height = height,
+});
+
+layout {
+  @set_rectangle(width, height);
+
+  for (@range(u16, width)) |px| {
+    const memcpy_params = memcpy.get_params(px);
+    for (@range(u16, height)) |py| {
+      @set_tile_code(px, py, "pe.csl", .{ .memcpy_params = memcpy_params,
+        .ax1 = ax1, .ax2 = ax2, .ax3 = ax3 });
+    }
+  }
+
+  // export symbol names
+  @export_name("A", [*]f32, true);
+  @export_name("B", [*]f32, true);
+  @export_name("maxmin_time", [*]f32, true);
+  @export_name("compute", fn()void);
+}

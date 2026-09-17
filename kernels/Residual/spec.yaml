@@ -1,0 +1,56 @@
+# xkernel-bench spec — see kernels/SPEC_SCHEMA.md for format.
+kernel_id: "Residual"
+group: "linalg"
+difficulty: 1
+
+tasks:
+  - "Compute the residual infinity-norm |b - A*x| on a 2x2 PE rectangle;
+     entrypoint = main."
+  - "Each PE holds a LOCAL_OUT_SZ x LOCAL_IN_SZ tile of A; a matvec + subtract +
+     max-reduction yields the scalar inf-norm gathered to PE (1,0)."
+
+inputs:
+  - {name: "A", shape: "[M, N]", dtype: "f32"}
+  - {name: "x", shape: "[N, 1]", dtype: "f32"}
+  - {name: "b", shape: "[M, 1]", dtype: "f32"}
+
+outputs:
+  - {name: "nrm", shape: "[1]", dtype: "f32",
+     tolerance_abs: 0.0, tolerance_rel: 1.0e-5,
+     description: "|b - A*x|_inf; reference verified inside run.py (np.allclose 1e-5 + SUCCESS)"}
+
+sizes:
+  - name: small
+    role: correctness
+    params: {width: 2, height: 2, LOCAL_OUT_SZ: 3, LOCAL_IN_SZ: 2}
+    commands_script: "commands_wse3.sh"
+    wse3_reference: {cycles_send: 674, time_send_us: 0.7929}
+
+task_class: "real-translation"
+split: "test"             # thin axpy/norm composition; held-out test
+
+# Input-level train/test split (2026-06-24). run.py draws A/x/b from a seeded RNG
+# (XKERNEL_EVAL_SEED) instead of the old deterministic np.arange pattern, and recomputes
+# nrm_r every run. The harness scores correctness on the HELD-OUT seeds, which never
+# appear in any agent prompt — so a kernel that hardcodes the train-seed answer fails
+# here. See docs/SPLIT_AND_LEAKAGE.md (§ input-level split).
+eval:
+  train_seed: 2                    # the seed baked into run.py (the agent may see this)
+  heldout_seeds: [101, 202, 303]   # harness-only; correctness must pass on ALL
+  seed_env: "XKERNEL_EVAL_SEED"
+
+wse3_reference:           # legacy top-level (== small)
+  cycles_send: 674
+  time_send_us: 0.7929
+  params: {width: 2, height: 2, LOCAL_OUT_SZ: 3, LOCAL_IN_SZ: 2}
+
+build_command: "bash commands_wse3.sh"
+verify: "embedded in run.py — np.allclose(nrm_r, nrm_r_cs, 1e-5) + SUCCESS"
+
+hidden_from_optimize_only:
+  - "CSL/residual.csl"
+
+tags:
+  - "multi_pe"
+  - "matvec"
+  - "reduction"

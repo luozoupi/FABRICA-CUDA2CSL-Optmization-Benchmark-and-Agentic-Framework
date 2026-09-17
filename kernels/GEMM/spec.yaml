@@ -1,0 +1,94 @@
+# xkernel-bench spec — see kernels/SPEC_SCHEMA.md for format.
+kernel_id: "GEMM"
+group: "gemm"
+difficulty: 2
+
+tasks:
+  - "Compute C = A * B for dense row-major matrices on a P x P PE mesh (SUMMA-style
+     collective GEMM); entrypoint = main."
+  - "Each PE holds Mt x Kt and Kt x Nt tiles; the full matrices are (P*Mt) x (P*Kt)
+     etc. Triple nested loop with bulk DSDs on the innermost axis."
+
+inputs:
+  - {name: "A", shape: "[M, K]", dtype: "f32"}
+  - {name: "B", shape: "[K, N]", dtype: "f32"}
+
+outputs:
+  - {name: "C", shape: "[M, N]", dtype: "f32",
+     tolerance_abs: 1.0e-6, tolerance_rel: 1.0e-5,
+     description: "C = A*B; reference verifies with np.testing.assert_allclose(rtol=1e-5, atol=1e-6)"}
+
+# Problem-size axis (Phase-2). small = the original 56x56 CI config; large =
+# 240x240, which OVERFLOWS per-PE SRAM on a 4x4 mesh ("ld.lld: ran out of PE
+# memory") and so REQUIRES decomposition onto a larger mesh — this is the size
+# at which the suite can reward better decomposition, not just polished idioms.
+# Crossover measured 2026-06-20 (see crossover_gemm_results): P=4 caps ~160x160;
+# 240x240 needs P>=6. large reference = P=8/T=30, measured 626165 cycles.
+sizes:
+  - name: small
+    role: correctness
+    params: {P: 4, Mt: 14, Kt: 14, Nt: 14}     # 56x56
+    commands_script: "commands_wse3.sh"
+    wse3_reference: {cycles_send: 51431, time_send_us: 60.5071}
+  - name: large
+    role: decomposition
+    params: {P: 8, Mt: 30, Kt: 30, Nt: 30}     # 240x240; infeasible at P=4
+    commands_script: "commands_wse3_large.sh"
+    wse3_reference: {cycles_send: 625894, time_send_us: 736.3459}
+  # PE-count axis at the small tile (2026-09-08): 28x28 on 2x2 and 112x112 on 8x8,
+  # same per-PE work as small. References measured with rebaseline_references.py.
+  - name: p2
+    role: scaling
+    params: {P: 2, Mt: 14, Kt: 14, Nt: 14}     # 28x28 on 4 PEs
+    commands_script: "commands_wse3_p2.sh"
+    wse3_reference: {cycles_send: 25712, time_send_us: 30.2494}
+  - name: p8_t14
+    role: scaling
+    params: {P: 8, Mt: 14, Kt: 14, Nt: 14}     # 112x112 on 64 PEs
+    commands_script: "commands_wse3_p8_t14.sh"
+    wse3_reference: {cycles_send: 102875, time_send_us: 121.0294}
+
+task_class: "real-translation"   # CUDA explicit triple-loop -> CSL explicit SUMMA
+split: "train"                    # see docs/SPLIT_AND_LEAKAGE.md (WaferLLM MeshGEMM overlap -> not test)
+
+# Input-level train/test split (2026-06-24). run.py reads XKERNEL_EVAL_SEED for the
+# A/B matrices; C=A@B is recomputed from the drawn inputs. Held-out seeds are
+# harness-only (never in a prompt). See docs/SPLIT_AND_LEAKAGE.md (input-level split).
+eval:
+  train_seed: 7
+  heldout_seeds: [101, 202, 303]
+  seed_env: "XKERNEL_EVAL_SEED"
+
+wse3_reference:                   # legacy top-level (== small); kept for back-compat
+  cycles_send: 51431
+  time_send_us: 60.5071
+  upstream_source: "csl-examples/tutorials gemm-style"
+  params: {P: 4, Mt: 14, Kt: 14, Nt: 14}
+  _note: "Instrumented 2026-06-02; multi-PE P x P SUMMA, not single-PE."
+
+build_command: "bash commands_wse3.sh"
+verify: "embedded in run.py — np.testing.assert_allclose(rtol=1e-5, atol=1e-6) + SUCCESS"
+
+hidden_from_optimize_only:
+  - "CSL/pe.csl"
+
+optimization_angles:
+  - "comptime_value_tuning"
+  - "dsd_offset_chaining"
+  - "fmac_bulk"
+  - "memory_simd_alignment"
+  - "stride_optimization"
+  - "data_layout_transpose"
+  - "comptime_hoist"
+  - "buffer_cleanup"
+
+tags:
+  - "dense_gemm"
+  - "fma_dominant"
+  - "triple_loop"
+
+# Timing protocol (2026-09-08): start/end stamps are taken on-device inside the
+# launched entry point and the completion task (f_tic_dev / f_toc_dev); the
+# runner no longer launches f_tic / f_toc separately, so hardware cycles are
+# comparable to simulator cycles. Both helpers and their call sites are frozen.
+timing_protocol: device_internal_v2

@@ -1,0 +1,29 @@
+// Histogram-1PE layout (hand-written-compute variant). A single PE bins its local
+// input array into a local histogram: hist[(input[i]/bucket_size) % n_buckets]++.
+// pe.csl (the compute) is what the agent translates.
+
+param n: u16;            // number of input elements
+param n_buckets: u16;    // number of histogram buckets
+param bucket_size: u16;  // values per bucket
+
+const memcpy = @import_module("<memcpy/get_params>", .{
+  .width = 1,
+  .height = 1,
+});
+
+layout {
+  @set_rectangle(1, 1);
+
+  const memcpy_params = memcpy.get_params(0);
+  @set_tile_code(0, 0, "pe.csl", .{
+    .memcpy_params = memcpy_params,
+    .n = n,
+    .n_buckets = n_buckets,
+    .bucket_size = bucket_size,
+  });
+
+  @export_name("input", [*]u32, true);   // [n] input values
+  @export_name("hist",  [*]u32, true);   // [n_buckets] output histogram
+  @export_name("maxmin_time", [*]f32, true);
+  @export_name("compute", fn()void);
+}

@@ -1,0 +1,71 @@
+// Cross-Entropy-Loss-1PE compute:
+//   loss = -(logits[label] - max - log(sum(exp(logits - max))))
+// Single-sample cross-entropy with log-sum-exp stability.
+
+param memcpy_params: comptime_struct;
+param n_classes: u16;
+
+const EXIT: local_task_id = @get_local_task_id(9);
+const sys_mod = @import_module("<memcpy/memcpy>", memcpy_params);
+const math = @import_module("<math>");
+const timestamp = @import_module("<time>");
+
+var tsc_start_buf = @zeros([timestamp.tsc_size_words]u16);
+var tsc_end_buf   = @zeros([timestamp.tsc_size_words]u16);
+var timer_buf = @zeros([3]f32);
+var ptr_timer_buf: [*]f32 = &timer_buf;
+
+var logits_array = @zeros([n_classes]f32);
+var label_buf = @zeros([1]u32);
+var result_array = @zeros([1]f32);
+var ptr_logits: [*]f32 = &logits_array;
+var ptr_label: [*]u32 = &label_buf;
+var ptr_result: [*]f32 = &result_array;
+
+fn cross_entropy() void {
+  // Find max for stability
+  var mx: f32 = logits_array[0];
+  var i: u16 = 1;
+  while (i < n_classes) : (i += 1) {
+    const v = logits_array[i];
+    if (v > mx) mx = v;
+  }
+  // log(sum(exp(logits - max)))
+  var sum_exp: f32 = 0.0;
+  i = 0;
+  while (i < n_classes) : (i += 1) {
+    sum_exp += math.exp_f32(logits_array[i] - mx);
+  }
+  const log_sum_exp = math.log_f32(sum_exp);
+  // loss = -(logits[label] - max - log_sum_exp)
+  const lbl = @as(u16, label_buf[0]);
+  result_array[0] = -(logits_array[lbl] - mx - log_sum_exp);
+}
+
+fn compute() void {
+  timestamp.enable_tsc();
+  timestamp.get_timestamp(&tsc_start_buf);
+  cross_entropy();
+  timestamp.get_timestamp(&tsc_end_buf);
+  timestamp.disable_tsc();
+
+  var lo_: u16 = 0; var hi_: u16 = 0;
+  lo_ = tsc_start_buf[0]; hi_ = tsc_start_buf[1];
+  timer_buf[0] = @bitcast(f32, (@as(u32, hi_) << @as(u16, 16)) | @as(u32, lo_));
+  lo_ = tsc_start_buf[2]; hi_ = tsc_end_buf[0];
+  timer_buf[1] = @bitcast(f32, (@as(u32, hi_) << @as(u16, 16)) | @as(u32, lo_));
+  lo_ = tsc_end_buf[1]; hi_ = tsc_end_buf[2];
+  timer_buf[2] = @bitcast(f32, (@as(u32, hi_) << @as(u16, 16)) | @as(u32, lo_));
+  @activate(EXIT);
+}
+
+task f_exit() void { sys_mod.unblock_cmd_stream(); }
+
+comptime {
+  @bind_local_task(f_exit, EXIT);
+  @export_symbol(ptr_logits, "logits");
+  @export_symbol(ptr_label, "label");
+  @export_symbol(ptr_result, "result");
+  @export_symbol(ptr_timer_buf, "maxmin_time");
+  @export_symbol(compute);
+}

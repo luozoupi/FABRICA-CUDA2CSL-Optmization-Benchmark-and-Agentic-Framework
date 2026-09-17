@@ -1,0 +1,48 @@
+// ParDot-Product layout: 4-PE distributed dot product.
+// Each PE holds chunks of x and y, computes local dot, then tree-reduces west.
+// Same 2-phase tree as ParReduce-Sum.
+
+param n_per_pe: u16;
+param width: i16 = 4;
+param height: i16 = 1;
+
+const C_PHASE1: color = @get_color(8);
+const C_PHASE2: color = @get_color(9);
+
+const memcpy = @import_module("<memcpy/get_params>", .{
+  .width = width,
+  .height = height,
+});
+
+layout {
+  @set_rectangle(width, height);
+
+  var px: i16 = 0;
+  while (px < width) : (px += 1) {
+    @set_tile_code(px, 0, "pe.csl", .{
+      .memcpy_params = memcpy.get_params(px),
+      .n_per_pe = n_per_pe,
+      .px = px,
+      .width = width,
+      .C_PHASE1 = C_PHASE1,
+      .C_PHASE2 = C_PHASE2,
+    });
+  }
+
+  // Phase 1: PE3->PE2, PE1->PE0 (odd sends west)
+  @set_color_config(3, 0, C_PHASE1, .{ .routes = .{ .rx = .{ RAMP }, .tx = .{ WEST }}});
+  @set_color_config(2, 0, C_PHASE1, .{ .routes = .{ .rx = .{ EAST }, .tx = .{ RAMP }}});
+  @set_color_config(1, 0, C_PHASE1, .{ .routes = .{ .rx = .{ RAMP }, .tx = .{ WEST }}});
+  @set_color_config(0, 0, C_PHASE1, .{ .routes = .{ .rx = .{ EAST }, .tx = .{ RAMP }}});
+
+  // Phase 2: PE2->PE0 (passes through PE1)
+  @set_color_config(2, 0, C_PHASE2, .{ .routes = .{ .rx = .{ RAMP }, .tx = .{ WEST }}});
+  @set_color_config(1, 0, C_PHASE2, .{ .routes = .{ .rx = .{ EAST }, .tx = .{ WEST }}});
+  @set_color_config(0, 0, C_PHASE2, .{ .routes = .{ .rx = .{ EAST }, .tx = .{ RAMP }}});
+
+  @export_name("x", [*]f32, true);
+  @export_name("y", [*]f32, true);
+  @export_name("result", [*]f32, true);
+  @export_name("maxmin_time", [*]f32, true);
+  @export_name("compute", fn()void);
+}

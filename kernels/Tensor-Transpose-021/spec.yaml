@@ -1,0 +1,45 @@
+# xkernel-bench spec — see kernels/SPEC_SCHEMA.md for format.
+kernel_id: "Tensor-Transpose-021"
+group: "tensor"
+difficulty: 1
+
+# Source: ported from the GPU-accelerated quantum-chemistry package
+# MatthewRHermes/mrh (gpu/src/pm/device_cuda.cpp, _transpose_021), a tensor
+# index-permutation kernel used to reshape density-fitting / AO2MO intermediates
+# between contraction steps. New operation family for the benchmark (first
+# transpose kernel). External source — NOT a WaferLLM/KB pattern source.
+tasks:
+  - "3D tensor transpose, permutation 021 (abc -> acb): B[i][k][j] = A[i][j][k].
+     Single-PE; entrypoint = compute. Pure index-permutation data movement, no
+     arithmetic."
+
+inputs:
+  - {name: "A", shape: "[ax1, ax2, ax3]", dtype: "f32",
+     description: "row-major 3D input tensor (flattened, replicated per PE)"}
+
+outputs:
+  - {name: "B", shape: "[ax1, ax3, ax2]", dtype: "f32",
+     tolerance_abs: 0.0, tolerance_rel: 0.0,
+     description: "last-two-axes-swapped tensor; verified bit-exact vs numpy A.transpose(0,2,1) in run.py (SUCCESS print)"}
+
+sizes:
+  - name: small
+    role: correctness
+    params: {width: 2, height: 2, ax1: 8, ax2: 8, ax3: 8}
+    commands_script: "commands_wse3.sh"
+    wse3_reference: {cycles_send: 6183}
+
+task_class: "real-translation"
+split: "test"             # novel tensor-permutation family; no WaferLLM/existing-pattern dependence -> held-out test
+
+# Input-level train/test split (2026-06-24). run.py reads XKERNEL_EVAL_SEED for the
+# input tensor; the expected (0,2,1) transpose is recomputed from it. Held-out seeds
+# are harness-only. See docs/SPLIT_AND_LEAKAGE.md (input-level split).
+eval:
+  train_seed: 7
+  heldout_seeds: [101, 202, 303]
+  seed_env: "XKERNEL_EVAL_SEED"
+
+wse3_reference:           # legacy top-level (== small)
+  cycles_send: 6183
+  params: {width: 2, height: 2, ax1: 8, ax2: 8, ax3: 8}

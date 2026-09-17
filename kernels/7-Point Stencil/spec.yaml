@@ -1,0 +1,101 @@
+# xkernel-bench spec — see kernels/SPEC_SCHEMA.md for format.
+kernel_id: "7pt-Stencil"
+group: "stencil"
+difficulty: 2
+
+tasks:
+  - "Compute y = A * x where A applies a 3D 7-point stencil to a 3D scalar field x.
+     Each PE owns one column of the 3D field (z-direction); the 7-point stencil
+     accesses center + 6 cardinal neighbors (north/south/east/west in the PE
+     plane, up/down in the z-loop). The matrix A is sparse with up to 7 nonzeros
+     per row; nonzeros are distributed across the PE rectangle row-wise."
+  - "Within each PE, iterate the z-direction loop emitting partial products."
+  - "Reduce partial products across PEs in the same row (east-bound fabric)."
+  - "Final y is the row-reduced result on the leftmost column."
+
+inputs:
+  - {name: "A_coeffs", shape: "[width, height, k, 7]", dtype: "f32",
+     description: "stencil coefficients per PE per z-slice (center + 6 neighbors)"}
+  - {name: "x",        shape: "[width, height, k]",     dtype: "f32",
+     description: "input 3D field, distributed across the PE rectangle"}
+
+outputs:
+  - {name: "y", shape: "[width, height, k]", dtype: "f32",
+     tolerance_abs: 0.0, tolerance_rel: 0.0,
+     description: "y = A*x; reference verification asserts |y_ref - y_wes| == 0"}
+
+# Problem-size axis (Phase-2). COMPUTE-DOMINANT: scaling the z-pencil length
+# (MAX_ZDIM/zDim) grows cycles on the same 5x5 mesh. large = zDim 60 (vs small 5).
+# NOTE: z is dual-sourced (compile --params=MAX_ZDIM AND run.py -k/--zDim must
+# match) — commands_wse3_large.sh sets both. Crossover measured 2026-06-20.
+sizes:
+  - name: small
+    role: correctness
+    params: {width: 5, height: 5, MAX_ZDIM: 5, BLOCK_SIZE: 2, m: 5, n: 5, k: 5}
+    commands_script: "commands_wse3.sh"
+    wse3_reference: {cycles_send: 2129, time_send_us: 2.5047}
+  - name: large
+    role: decomposition
+    params: {width: 5, height: 5, MAX_ZDIM: 60, BLOCK_SIZE: 2, m: 5, n: 5, k: 60}
+    commands_script: "commands_wse3_large.sh"
+    wse3_reference: {cycles_send: 17134, time_send_us: 20.16}
+
+task_class: "real-translation"
+split: "test"             # 7pt SpMV stencil; held-out test (no WaferLLM dependence)
+
+wse3_reference:           # legacy top-level (== small)
+  cycles_send: 2129
+  time_send_us: 2.5047
+  upstream_source: "csl-examples/benchmarks/7pt-stencil-spmv"
+  params: {width: 5, height: 5, MAX_ZDIM: 5, BLOCK_SIZE: 2, m: 5, n: 5, k: 5}
+  additional_metrics: {bandwidth_mbps: 1197.74}
+
+build_command: "bash commands_wse3.sh"
+verify: "embedded in run.py — asserts |y_ref - y_wes| == 0 (exact match)"
+
+hidden_from_optimize_only:
+  - "CSL/src/kernel.csl"
+
+# Per-kernel optimizer angle whitelist. The optimizer's per-round selector
+# picks ONE angle from this list per attempt based on current code +
+# per-fn cycle breakdown. Each angle name MUST appear in
+# prompt_cuda2csl.py:CSL_OPTIMIZATION_STEPS_CATALOG. Curated from the
+# cerebras-csl-skills + csl-examples scan for stencil-specific levers.
+#
+# Why these:
+#  - dsd_offset_chaining: 3D stencil z-loop walks columns; @increment_dsd_offset
+#    is the canonical pattern (cf. SKILL-DSDS.md:209-219).
+#  - fmac_bulk: stencil mul-add over 7 coefficients is exactly what @fmacs targets.
+#  - circbuf_save_address: 3D stencil's sliding z-window is the prototype
+#    use case (SKILL-DSRS.md:125-138).
+#  - comptime_hoist + comptime_cleanup: BLOCK_SIZE / MAX_ZDIM are comptime
+#    params; the known fast_2 win on this kernel was via comptime
+#    (.BLOCK_SIZE = MAX_ZDIM) → keep this lever in the rotation.
+#  - stride_optimization: 3D fields with odd dims can hit bad strides.
+#  - async_detach_overlap: stencil row-reduce can overlap with next z-slice.
+optimization_angles:
+  - "comptime_value_tuning"   # the actual 1076/1072 lever was .BLOCK_SIZE=MAX_ZDIM
+  - "buffer_cleanup"          # historically produced 1076 cycles (fast_2)
+  - "comptime_cleanup"        # historically produced 1072 cycles (fast_2)
+  - "comptime_hoist"
+  - "dsd_offset_chaining"
+  - "fmac_bulk"
+  - "circbuf_save_address"
+  - "stride_optimization"
+  - "async_detach_overlap"
+
+# `proven_angles` — angles that have produced an accepted cycle reduction
+# on this kernel in past runs. The selector sees this hint and is biased
+# toward picking from this set when no per-fn telemetry contradicts it.
+# Empirical, not theoretical: every entry here points at a real prior win.
+# When per-fn timing lands (task #23), this hint becomes less important
+# because the selector will have direct attribution.
+proven_angles:
+  - {angle: "comptime_cleanup", best_cycles: 1072, source: "run_20260602_195006 (smoke#2)"}
+  - {angle: "buffer_cleanup",   best_cycles: 1076, source: "run_20260602_200033"}
+
+tags:
+  - "iterative"
+  - "fabric_row_reduce"
+  - "z_dimension_loop"
+  - "sparse_matrix"

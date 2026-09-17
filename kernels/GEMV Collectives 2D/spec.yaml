@@ -1,0 +1,78 @@
+# xkernel-bench spec — see kernels/SPEC_SCHEMA.md for format.
+# Added 2026-09-08 so the kernel carries a PE-count axis (p2 / small / p8) for
+# the scaling study; the reference bundle itself is the SDK collectives_2d GEMV
+# example instrumented with the device-internal timing protocol.
+kernel_id: "GEMV-Collectives-2D"
+group: "gemv"
+difficulty: 2
+
+tasks:
+  - "Compute y = A*x + b for a dense row-major A distributed over a kernel_rows x
+     kernel_cols PE rectangle using the collectives_2d library (broadcast x along
+     columns, reduce partial products along rows); entrypoint = main."
+  - "Each PE holds a (matrix_rows/kernel_rows) x (matrix_cols/kernel_cols) tile of A;
+     the result is gathered on PE (kernel_cols-1, kernel_rows-1)."
+
+inputs:
+  - {name: "A", shape: "[matrix_rows, matrix_cols]", dtype: "f32"}
+  - {name: "x", shape: "[matrix_cols]", dtype: "f32"}
+  - {name: "b", shape: "[matrix_rows]", dtype: "f32"}
+
+outputs:
+  - {name: "y", shape: "[matrix_rows]", dtype: "f32",
+     tolerance_abs: 0.01, tolerance_rel: 0.0,
+     description: "y = A*x + b; run.py verifies with np.testing.assert_allclose(atol=0.01, rtol=0)"}
+
+# PE-count axis (2026-09-08): same per-PE tile (8x4) on 2x2, 4x4 and 8x8 PEs.
+# References measured with code_translation/rebaseline_references.py.
+sizes:
+  - name: small
+    role: correctness
+    params: {kernel_rows: 4, kernel_cols: 4, matrix_rows: 32, matrix_cols: 16}
+    commands_script: "commands_wse3.sh"
+    wse3_reference: {cycles_send: 3670, time_send_us: 4.3176}
+  - name: p2
+    role: scaling
+    params: {kernel_rows: 2, kernel_cols: 2, matrix_rows: 16, matrix_cols: 8}
+    commands_script: "commands_wse3_p2.sh"
+    wse3_reference: {cycles_send: 3212, time_send_us: 3.7788}
+  - name: p8
+    role: scaling
+    params: {kernel_rows: 8, kernel_cols: 8, matrix_rows: 64, matrix_cols: 32}
+    commands_script: "commands_wse3_p8.sh"
+    wse3_reference: {cycles_send: 3921, time_send_us: 4.6129}
+
+task_class: "real-translation"
+split: "train"                    # docs/SPLIT_AND_LEAKAGE.md: collectives idiom source, WaferLLM MeshGEMV overlap
+
+# No `eval:` block: run.py draws A/x/b with a fixed seed and does not read
+# XKERNEL_EVAL_SEED, so the input-level held-out gate does not apply here.
+
+wse3_reference:                   # legacy top-level (== small)
+  cycles_send: 3670
+  time_send_us: 4.3176
+  upstream_source: "csl-examples/benchmarks/gemv-collectives_2d"
+  params: {kernel_rows: 4, kernel_cols: 4, matrix_rows: 32, matrix_cols: 16}
+  _note: "Re-baselined 2026-09-08 under device_internal_v2 (was 3999 host-launched)."
+
+build_command: "bash commands_wse3.sh"
+verify: "embedded in run.py — np.testing.assert_allclose(atol=0.01, rtol=0) + SUCCESS"
+
+hidden_from_optimize_only:
+  - "CSL/pe.csl"
+
+optimization_angles:
+  - "dsd_offset_chaining"
+  - "fmac_bulk"
+  - "dsd_width_flatten_l0"
+  - "microthread_explicit_wse3"
+  - "async_detach_overlap"
+  - "comptime_hoist"
+  - "buffer_cleanup"
+
+tags:
+  - "gemv"
+  - "collectives_2d"
+  - "broadcast_reduce"
+
+timing_protocol: device_internal_v2

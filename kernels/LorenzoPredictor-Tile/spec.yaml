@@ -1,0 +1,77 @@
+# xkernel-bench spec — see kernels/SPEC_SCHEMA.md for format.
+kernel_id: "LorenzoPredictor-Tile"
+group: "app"
+difficulty: 2
+
+tasks:
+  - "2D Lorenzo predictor (the prediction stage of a CereSZ-style lossy
+     compressor): residual[i,j] = A[i,j] - (A[i-1,j] + A[i,j-1] - A[i-1,j-1]).
+     Multi-PE (2x2 mesh, 4x4 tile per PE). Entrypoint = step."
+  - "Needs three halos: the WEST neighbour's rightmost column (Mt), the NORTH
+     neighbour's bottom row (Nt), and the NORTHWEST neighbour's bottom-right
+     scalar. Both data flows run downstream (columns travel EAST, rows travel
+     SOUTH), unlike a symmetric halo exchange. The NW scalar needs no third
+     color: it is the last entry of the north neighbour's own west halo, so a
+     two-phase exchange (columns, then rows with the scalar prefixed) suffices."
+
+inputs:
+  - {name: "tile", shape: "[mesh_h, mesh_w, tile_h, tile_w]", dtype: "f32",
+     description: "input field, distributed across the PE grid"}
+
+outputs:
+  - {name: "residual", shape: "[mesh_h, mesh_w, tile_h, tile_w]", dtype: "f32",
+     tolerance_abs: 1.0e-4, tolerance_rel: 0.0,
+     description: "Lorenzo residual; cells outside the global grid read 0.
+                   run.py compares against numpy + SUCCESS"}
+
+sizes:
+  - name: small
+    role: correctness
+    params: {width: 2, height: 2, Mt: 4, Nt: 4}
+    commands_script: "commands_wse3.sh"
+    wse3_reference: {cycles_send: 1315, time_send_us: 1.5471}
+
+task_class: "real-translation"
+split: "test"
+
+# Input-level train/test split. run.py draws A from a seeded RNG
+# (XKERNEL_EVAL_SEED); held-out seeds are harness-only.
+# NOTE: the input MUST NOT be a ramp such as np.arange — Lorenzo's residual is
+# identically zero on the interior of a linear field, so an all-zeros kernel
+# would pass. A seeded random field makes the interior discriminating.
+eval:
+  train_seed: 0
+  heldout_seeds: [101, 202, 303]
+  seed_env: "XKERNEL_EVAL_SEED"
+
+wse3_reference:
+  cycles_send: 1315
+  time_send_us: 1.5471
+  upstream_source: "authored for xkernel-bench (CereSZ-style Lorenzo prediction)"
+  params: {M: 8, N: 8, mesh: "2x2", tile: "4x4"}
+  _note: "Instrumented + numerically verified 2026-08-06. Prior to that this was
+          a VERIFY=False skeleton with two defects: layout.csl routed its row
+          color south->north while Lorenzo needs north->south, and the NW scalar
+          was hard-wired to zero. Rewritten as a two-phase exchange, TSC added,
+          verified on seeds 0/101/202/303 (err <= 1e-6, cycles deterministic)."
+
+build_command: "bash commands_wse3.sh"
+verify: "embedded in run.py — residual compared against numpy + SUCCESS"
+
+hidden_from_optimize_only:
+  - "CSL/pe.csl"
+
+optimization_angles:
+  - "comptime_value_tuning"
+  - "dsd_offset_chaining"
+  - "fmac_bulk"
+  - "async_detach_overlap"
+  - "comptime_hoist"
+  - "stride_optimization"
+
+tags:
+  - "app"
+  - "compression"
+  - "halo_exchange"
+  - "multi_pe"
+  - "data_dependent_halo"

@@ -1,0 +1,12 @@
+# Build/simulation artifacts (large, reproducible)
+**/out/
+**/out_verbose/
+**/out2/
+**/out_comm/
+**/out_noop/
+**/simfab_traces/
+**/sim.log
+**/sim_stats.json
+**/simconfig.json
+**/wio_flows_tmpdir*/
+**/__pycache__/

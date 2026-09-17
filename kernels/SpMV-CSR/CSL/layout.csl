@@ -1,0 +1,35 @@
+// SpMV-CSR layout (hand-written-compute variant). Single PE holds the whole sparse
+// matrix in CSR + the dense vectors, and computes y = A*x. The compute file (pe.csl)
+// is what the agent translates; this layout is the launch/interface contract.
+
+param nrows: u16;        // number of matrix rows (= ncols; square)
+param ncols: u16;        // number of matrix columns
+param max_nnz: u16;      // capacity of the col_idx / val arrays
+param iters: u16;        // repeat count for the timed window
+
+const memcpy = @import_module("<memcpy/get_params>", .{
+  .width = 1,
+  .height = 1,
+});
+
+layout {
+  @set_rectangle(1, 1);
+
+  const memcpy_params = memcpy.get_params(0);
+  @set_tile_code(0, 0, "pe.csl", .{
+    .memcpy_params = memcpy_params,
+    .nrows = nrows,
+    .ncols = ncols,
+    .max_nnz = max_nnz,
+    .iters = iters,
+  });
+
+  // Host-visible symbols (CSR matrix + dense vectors + timer + entrypoint).
+  @export_name("row_ptr", [*]u32, true);   // [nrows+1] CSR row pointers
+  @export_name("col_idx", [*]u32, true);   // [max_nnz] column indices
+  @export_name("val",     [*]f32, true);   // [max_nnz] nonzero values
+  @export_name("x",       [*]f32, true);   // [ncols] dense input vector
+  @export_name("y",       [*]f32, true);   // [nrows] dense output vector
+  @export_name("maxmin_time", [*]f32, true);
+  @export_name("compute", fn()void);
+}

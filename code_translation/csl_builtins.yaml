@@ -1,0 +1,301 @@
+# CSL builtin reference — arities and key constraints.
+#
+# Provenance: hand-scraped 2026-06-04 from the cslc SDK headers and from
+# observed cslc compiler diagnostics across results/resweep_w1_opus_rag_20260603/.
+# Re-derive by: running cslc against a known-good kernel and grepping the
+# stderr for builtin error messages, OR by inspecting the SDK install at
+# $CSL_SDK/include/.
+#
+# Coverage: the ~30 builtins that appeared in W1 failure verdicts plus the
+# high-traffic builtins in the corpus (kernels/*/CSL/*.csl). This file is
+# NOT a complete reference — it captures the contract surface the implementer
+# keeps getting wrong, not every builtin.
+#
+# Field meaning:
+#   arity         — expected argument count (None if variadic/contextual)
+#   params        — short positional argument names for the prompt
+#   notes         — concise constraint the implementer is observed to violate
+#   rejects       — concrete arg shapes cslc rejects (per observed errors)
+#
+# IMPORTANT: a builtin's "legal range" for IDs (task IDs, queue IDs) varies
+# by architecture and by what layout.csl has already declared. Do NOT assert
+# a hard range here — that's the per-kernel facts extractor's job.
+
+# ---- task / activation -----------------------------------------------------
+
+'@get_local_task_id':
+  arity: 1
+  params: [task_id_literal]
+  notes: 'Resolves a local task ID. The per-kernel translation_facts block
+          lists IDs ALREADY declared in layout.csl — your pe.csl must not
+          reuse those, and must use the ones layout.csl exports.'
+
+'@get_data_task_id':
+  arity: 1
+  params: [color_or_input_queue]
+  notes: 'WSE-2 takes a color; WSE-3 takes an input queue. Branch on
+          @is_arch("wse3") if the kernel must build for both.'
+
+'@bind_local_task':
+  arity: 2
+  params: [task_fn, local_task_id]
+  notes: 'task_fn must be defined in this file; local_task_id must be a
+          local_task_id type (declared via @get_local_task_id or @param).'
+
+'@bind_data_task':
+  arity: 2
+  params: [task_fn, data_task_id]
+
+'@bind_task':
+  arity: 2
+  params: [task_fn, task_id]
+  notes: 'Use the typed @bind_local_task / @bind_data_task variants instead
+          when the type is known.'
+
+'@activate':
+  arity: 1
+  params: [local_task_id]
+
+# ---- DSDs and bulk ops -----------------------------------------------------
+
+'@get_dsd':
+  arity: 2
+  params: [dsd_kind, descriptor_struct]
+  notes: '`descriptor_struct` MUST be a comptime-known struct literal. The
+          .tensor_access field must reference a concrete buffer by name, not
+          a function pointer or a function arg.'
+  rejects:
+    - 'function pointer in .tensor_access (use comptime concrete buffer)'
+    - 'runtime-only expressions in dim fields'
+
+'@get_dsr':
+  arity: 2
+  params: [dsr_kind, dsr_id]
+  notes: 'dsr_id must avoid the queues memcpy reserves (0,1 on WSE-3 for
+          input queues). See per-kernel translation_facts for the reserved set.'
+
+'@load_to_dsr':
+  arity: 2
+  params: [dsr_register, dsd]
+
+'@set_dsd_base_addr':
+  arity: 2
+  params: [dsd, ptr]
+
+'@set_dsd_length':
+  arity: 2
+  params: [dsd, length]
+
+'@set_dsd_stride':
+  arity: 2
+  params: [dsd, stride]
+
+'@increment_dsd_offset':
+  arity: 3
+  params: [dsd, offset_count, dtype]
+  notes: 'offset_count is in ELEMENTS, dtype-sized.'
+
+# ---- arithmetic builtins (the FMA/scalar family) ---------------------------
+
+'@fmacs':
+  arity: 4
+  params: [dst_dsd, src0_dsd, src1_dsd, src2_dsd_or_scalar]
+  notes: 'f32 multiply-accumulate. Common error: passing 3 args — there is
+          no 3-arg form; you need dst, src0, src1, src2.'
+
+'@fmach':
+  arity: 4
+  params: [dst_dsd, src0_dsd, src1_dsd, src2_dsd_or_scalar]
+  notes: 'f16 variant of @fmacs. Same arity.'
+
+'@fadds':
+  arity: 3
+  params: [dst_dsd, src0_dsd, src1_dsd_or_scalar]
+
+'@faddh':
+  arity: 3
+  params: [dst_dsd, src0_dsd, src1_dsd_or_scalar]
+
+'@fsubs':
+  arity: 3
+  params: [dst_dsd, src0_dsd, src1_dsd_or_scalar]
+
+'@fsubh':
+  arity: 3
+  params: [dst_dsd, src0_dsd, src1_dsd_or_scalar]
+
+'@fmuls':
+  arity: 3
+  params: [dst_dsd, src0_dsd, src1_dsd_or_scalar]
+
+'@fmulh':
+  arity: 3
+  params: [dst_dsd, src0_dsd, src1_dsd_or_scalar]
+
+'@fmaxs':
+  arity: 3
+  params: [dst_dsd, src0_dsd, src1_dsd_or_scalar]
+
+'@fmovs':
+  arity: 2
+  params: [dst_dsd, src_dsd_or_scalar]
+  notes: 'Synchronous @fmovs on a fabric DSD BLOCKS the calling task.
+          Use the .async variant if the DSD is fab(in|out)_dsd and the
+          task must not block.'
+
+'@fmovh':
+  arity: 2
+  params: [dst_dsd, src_dsd_or_scalar]
+
+'@fnegs':
+  arity: 2
+  params: [dst_dsd, src_dsd]
+
+'@fnegh':
+  arity: 2
+  params: [dst_dsd, src_dsd]
+
+'@mov':
+  arity: 2
+  params: [dst_dsd, src_dsd_or_scalar]
+
+# ---- queue / color management ----------------------------------------------
+
+'@get_input_queue':
+  arity: 1
+  params: [queue_id]
+  notes: 'On WSE-3 queues 0 and 1 are reserved by the memcpy module if
+          imported. See per-kernel translation_facts for the reserved set.'
+
+'@get_output_queue':
+  arity: 1
+  params: [queue_id]
+
+'@initialize_queue':
+  arity: 1
+  params: [queue_descriptor]
+
+'@get_color':
+  arity: 1
+  params: [color_id]
+
+'@get_rectangle':
+  arity: 1
+  params: [color_id]
+
+'@set_color_config':
+  arity: 2
+  params: [color, config]
+
+'@set_local_color_config':
+  arity: 2
+  params: [color, config]
+
+'@set_rectangle':
+  arity: 1
+  params: [color_or_struct]
+
+'@set_tile_code':
+  arity: 3
+  params: [x, y, params_struct]
+
+# ---- module imports / exports / introspection ------------------------------
+
+'@import_module':
+  arity: null
+  params: [path_string, optional_params_struct]
+  notes: 'Library imports like "<memcpy/memcpy>", "<collectives_2d/pe>",
+          "<collectives_2d/params>" take a struct of comptime params. See
+          per-kernel translation_facts for what the imported library expects.'
+
+'@export_symbol':
+  arity: null
+  params: [symbol_ptr_or_fn, optional_export_name_string]
+  notes: 'MUST appear inside a top-level `comptime { ... }` block, not at
+          file top level. To export a buffer, declare backing storage,
+          then a pointer, then export the pointer.'
+
+'@export_name':
+  arity: 2
+  params: [name_string, type]
+
+'@concat_structs':
+  arity: 2
+  params: [struct1, struct2]
+  notes: 'Used to extend an imported module''s parameter struct with extra
+          user fields.'
+
+'@param':
+  arity: null
+  params: [name, type]
+  notes: 'Compile-time parameter declaration. Filled in by host at compile
+          time via the --params= cslc flag or by parent layout.csl.'
+
+'@constants':
+  arity: 1
+  params: [count]
+
+'@zeros':
+  arity: 1
+  params: [type_with_size]
+
+'@range':
+  arity: 1
+  params: [count_or_type]
+
+'@map':
+  arity: null
+  params: [fn, dsds...]
+  notes: 'Variadic — applies a function elementwise over DSDs.'
+
+# ---- introspection / arch detection ----------------------------------------
+
+'@is_arch':
+  arity: 1
+  params: [arch_string]
+  notes: 'arch_string in {"wse2", "wse3"}. Use for arch-conditional code.'
+
+'@get_int':
+  arity: 1
+  params: [comptime_or_runtime_int]
+
+'@as':
+  arity: 2
+  params: [target_type, value]
+  notes: 'Type cast. Putting an @as cast on a comptime value INSIDE a
+          runtime loop wastes cycles; hoist to outside the loop.'
+
+'@bitcast':
+  arity: 2
+  params: [target_type, value]
+
+'@ptrcast':
+  arity: 2
+  params: [target_ptr_type, value]
+
+# ---- diagnostics -----------------------------------------------------------
+
+'@assert':
+  arity: 1
+  params: [bool_expr]
+
+'@comptime_assert':
+  arity: 1
+  params: [bool_expr]
+  notes: 'Comptime-evaluated; cheaper than @assert when the condition is
+          known at compile time.'
+
+'@block':
+  arity: 1
+  params: [task_id_or_color]
+
+'@unblock':
+  arity: 1
+  params: [task_id_or_color]
+  notes: 'Manual unblock is rare. If you imported <memcpy/memcpy> as sys_mod,
+          use sys_mod.unblock_cmd_stream() instead of raw @unblock(0) — the
+          memcpy library expects its own discipline.'
+
+'@rpc':
+  arity: 1
+  params: [color]

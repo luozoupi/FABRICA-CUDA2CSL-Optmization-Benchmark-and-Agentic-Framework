@@ -1,0 +1,88 @@
+// Copyright 2025 Cerebras Systems.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+param memcpyParams: comptime_struct;
+
+// Task IDs
+const EXIT: local_task_id = @get_local_task_id(10);
+
+const sys_mod = @import_module( "<memcpy/memcpy>", memcpyParams);
+
+// Problem size
+param N: i16;
+const ELEM_SIZE: i16 = 2;
+param FP: i16;
+param tensor_type: type;
+
+// Import the code in the file `fft.csl` as the module `mod`, and
+// instantiate the module's `N` parameter.
+
+var X = @zeros([N*ELEM_SIZE]tensor_type);
+var f_twiddle = @zeros([N]tensor_type);
+
+var ptr_X: [*]tensor_type = &X;
+var ptr_f_twiddle: [*]tensor_type = &f_twiddle;
+
+// On-device timing (2026-06-24): bracket the synchronous butterfly mod.fft().
+const timestamp = @import_module("<time>");
+var tsc_start_buf = @zeros([timestamp.tsc_size_words]u16);
+var tsc_end_buf   = @zeros([timestamp.tsc_size_words]u16);
+var timer_buf = @zeros([3]f32);
+var ptr_timer_buf: [*]f32 = &timer_buf;
+
+fn pack_timestamps() void {
+  var lo_: u16 = 0;
+  var hi_: u16 = 0;
+  lo_ = tsc_start_buf[0]; hi_ = tsc_start_buf[1];
+  timer_buf[0] = @bitcast(f32, (@as(u32, hi_) << @as(u16, 16)) | @as(u32, lo_));
+  lo_ = tsc_start_buf[2]; hi_ = tsc_end_buf[0];
+  timer_buf[1] = @bitcast(f32, (@as(u32, hi_) << @as(u16, 16)) | @as(u32, lo_));
+  lo_ = tsc_end_buf[1]; hi_ = tsc_end_buf[2];
+  timer_buf[2] = @bitcast(f32, (@as(u32, hi_) << @as(u16, 16)) | @as(u32, lo_));
+}
+
+const mod = @import_module("fft.csl", .{ .N = N, .ARRAY_LEN = N*ELEM_SIZE, .X=&X, .FP=FP, .tensor_type=tensor_type});
+
+fn f_fft() void {
+  timestamp.enable_tsc();
+  timestamp.get_timestamp(&tsc_start_buf);
+  mod.fft(&f_twiddle);
+  timestamp.get_timestamp(&tsc_end_buf);
+  timestamp.disable_tsc();
+  pack_timestamps();
+  @activate(EXIT);
+}
+
+fn f_ifft() void {
+  timestamp.enable_tsc();
+  timestamp.get_timestamp(&tsc_start_buf);
+  mod.ifft(&f_twiddle);
+  timestamp.get_timestamp(&tsc_end_buf);
+  timestamp.disable_tsc();
+  pack_timestamps();
+  @activate(EXIT);
+}
+
+task f_exit() void {
+  // the user must unblock cmd color for every PE
+  sys_mod.unblock_cmd_stream();
+}
+comptime {
+  @bind_local_task(f_exit, EXIT);
+  @export_symbol(ptr_X, "X");
+  @export_symbol(ptr_f_twiddle, "f_twiddle");
+  @export_symbol(ptr_timer_buf, "maxmin_time");
+  @export_symbol(f_fft);
+  @export_symbol(f_ifft);
+}

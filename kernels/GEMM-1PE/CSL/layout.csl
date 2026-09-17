@@ -1,0 +1,30 @@
+// GEMM-1PE layout (simple hand-written dense matmul). A single PE holds A (MxK),
+// B (KxN), C (MxN) and computes C = A*B. pe.csl (the compute) is what the agent
+// translates. The TRAIN-tier counterpart to the collective SUMMA GEMM.
+
+param M: u16;   // rows of A / C
+param K: u16;   // cols of A / rows of B
+param N: u16;   // cols of B / C
+
+const memcpy = @import_module("<memcpy/get_params>", .{
+  .width = 1,
+  .height = 1,
+});
+
+layout {
+  @set_rectangle(1, 1);
+
+  const memcpy_params = memcpy.get_params(0);
+  @set_tile_code(0, 0, "pe.csl", .{
+    .memcpy_params = memcpy_params,
+    .M = M,
+    .K = K,
+    .N = N,
+  });
+
+  @export_name("A", [*]f32, true);   // [M*K] row-major
+  @export_name("B", [*]f32, true);   // [K*N] row-major
+  @export_name("C", [*]f32, true);   // [M*N] row-major
+  @export_name("maxmin_time", [*]f32, true);
+  @export_name("compute", fn()void);
+}

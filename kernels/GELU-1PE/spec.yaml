@@ -1,0 +1,50 @@
+kernel_id: "GELU-1PE"
+group: "activation"
+difficulty: 3
+
+tasks:
+  - "Apply GELU activation (tanh approximation) elementwise on a single PE:
+     out[i] = 0.5*x*(1 + tanh(sqrt(2/pi)*(x + 0.044715*x^3))).
+     Exercises polynomial evaluation + transcendental (exp for tanh).
+     entrypoint = compute."
+
+inputs:
+  - {name: "x", shape: "[n]", dtype: "f32"}
+
+outputs:
+  - {name: "out", shape: "[n]", dtype: "f32",
+     tolerance_abs: 1.0e-4, tolerance_rel: 1.0e-3,
+     description: "out == gelu_tanh(x); verified in run.py (assert_allclose) + SUCCESS"}
+
+sizes:
+  - name: small
+    role: correctness
+    params: {n: 512}
+    commands_script: "commands_wse3.sh"
+    wse3_reference: {cycles_send: 111134}
+
+task_class: "real-translation"
+split: "test"
+
+metric:
+  class: cycles
+  reason: "elementwise polynomial+exp+div over f32; compute-dense activation; on-device TSC window"
+
+eval:
+  train_seed: 7
+  heldout_seeds: [101, 202, 303]
+  seed_env: "XKERNEL_EVAL_SEED"
+
+build_command: "bash commands_wse3.sh"
+verify: "embedded in run.py — np.testing.assert_allclose + SUCCESS"
+
+hidden_from_optimize_only:
+  - "CSL/pe.csl"
+
+tags:
+  - "single_pe"
+  - "activation"
+  - "elementwise"
+  - "transcendental"
+  - "transformer"
+  - "kernelbench_enrichment"

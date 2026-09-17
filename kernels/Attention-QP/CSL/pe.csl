@@ -1,0 +1,136 @@
+// Reference: hand-written, SIMD-optimized dense scaled-dot-product attention for
+// the WSE-3 (query-parallel: each PE owns St_q query rows, K/V replicated, local
+// softmax; DSD + @fmacs/@fmaxs/@fmuls inner loops, scalar exp). This is an
+// EXPERT reference, not a validated-only baseline: on the same problem
+// (P=4, S=64, d=32) it is 6.7x faster than the scalar query-parallel version
+// (68,764 vs 458,419 cycles, SDK simulator). Imported into the benchmark on
+// 2026-09-08 from the authors' attention-wse project (never part of the
+// retrieval corpus).
+
+// Copyright 2026.  M5 SIMD-optimized dense attention — per-PE compute.
+//
+// Same math/result as M2 (query-parallel, K/V replicated, local softmax) but the
+// inner loops are vectorized with DSDs + @fmacs/@fmaxs/@fmuls.  Only the exp pass
+// stays scalar (there is no vector-exp builtin).  Purpose: measure the SIMD
+// speedup over M2's scalar baseline at the identical problem size.
+//
+// Vectorization (per query row i, valid key-prefix length n):
+//   scores : for k in 0..d:  P[i,0:n] += Q[i,k] * K[0:n, k]     (one length-n fmacs)
+//   rowmax : @fmaxs over P[i,0:n]                                 (one reduce)
+//   exp    : scalar over 0..n  (P[i,j] = exp(P[i,j]-m); sum)      (residual scalar)
+//   norm   : @fmuls(P[i,0:n], 1/denom)                            (one vector mul)
+//   out    : for j in 0..n:  O[i,0:d] += P[i,j] * V[j,0:d]        (one length-d fmacs)
+// Causal: keys are an ascending contiguous prefix, so n = q_row_global+1.
+
+param memcpy_params: comptime_struct;
+param St_q: i16;
+param S: i16;
+param d: i16;
+param causal: i16;
+param P: u16;
+param px: u16;
+param py: u16;
+
+const sys_mod = @import_module("<memcpy/memcpy>", memcpy_params);
+const math    = @import_module("<math>");
+const tsc     = @import_module("<time>");
+
+const block_id: i16 = @as(i16, py) * @as(i16, P) + @as(i16, px);
+const q_row_base: i16 = block_id * St_q;
+
+var Q = @zeros([St_q*d]f32);
+var K = @zeros([S*d]f32);
+var V = @zeros([S*d]f32);
+var O = @zeros([St_q*d]f32);
+var P_scores = @zeros([St_q*S]f32);
+
+var startBuffer  = @zeros([tsc.tsc_size_words]u16);
+var finishBuffer = @zeros([tsc.tsc_size_words]u16);
+
+var Q_ptr: [*]f32 = &Q;
+var K_ptr: [*]f32 = &K;
+var V_ptr: [*]f32 = &V;
+var O_ptr: [*]f32 = &O;
+var start_ts_ptr: [*]u16 = &startBuffer;
+var finish_ts_ptr: [*]u16 = &finishBuffer;
+
+// base DSD templates (comptime extent S / d; base+length retargeted at runtime)
+const Pscore_base = @get_dsd(mem1d_dsd, .{ .tensor_access = |j|{S} -> P_scores[j] });
+const Kcol_base   = @get_dsd(mem1d_dsd, .{ .tensor_access = |j|{S} -> K[j*d] });  // column, stride d
+const Orow_base   = @get_dsd(mem1d_dsd, .{ .tensor_access = |k|{d} -> O[k] });
+const Vrow_base   = @get_dsd(mem1d_dsd, .{ .tensor_access = |k|{d} -> V[k] });
+
+fn attention() void {
+  const inv_sqrt_d: f32 = math.invsqrt_f32(@as(f32, d));
+
+  var i: i16 = 0;
+  while (i < St_q) : (i += 1) {
+    const q_row_global: i16 = q_row_base + i;
+    // valid contiguous key prefix length
+    var n: i16 = S;
+    if (causal != 0) {
+      n = q_row_global + 1;
+      if (n > S) { n = S; }
+    }
+    const n_u: u16 = @bitcast(u16, n);
+
+    // P row DSD: row i (offset i*S), length n
+    var Pdsd = @increment_dsd_offset(Pscore_base, i*S, f32);
+    Pdsd = @set_dsd_length(Pdsd, n_u);
+
+    // 1) scores: P[i,0:n] = sum_k Q[i,k] * K[0:n,k] * inv_sqrt_d
+    @fmovs(Pdsd, 0.0);
+    var k: i16 = 0;
+    while (k < d) : (k += 1) {
+      // column k of K: base template strides by d; shift start by k, length n
+      var Kcol = @increment_dsd_offset(Kcol_base, k, f32);
+      Kcol = @set_dsd_length(Kcol, n_u);
+      @fmacs(Pdsd, Pdsd, Kcol, Q[i*d + k]);
+    }
+    @fmuls(Pdsd, Pdsd, inv_sqrt_d);
+
+    // 2) row max over the valid prefix
+    var m: f32 = math.NEGATIVE_INF_f32;
+    @fmaxs(&m, m, Pdsd);
+
+    // 3) exp(x - m) and denom (scalar; no vector exp)
+    var denom: f32 = 0.0;
+    var j: i16 = 0;
+    while (j < n) : (j += 1) {
+      const e = math.exp_f32(P_scores[i*S + j] - m);
+      P_scores[i*S + j] = e;
+      denom += e;
+    }
+
+    // 4) normalize the valid prefix
+    const inv_denom: f32 = 1.0 / denom;
+    @fmuls(Pdsd, Pdsd, inv_denom);
+
+    // 5) O[i,:] = sum_{j<n} P[i,j] * V[j,:]   (vectorized over d)
+    const Odsd = @increment_dsd_offset(Orow_base, i*d, f32);
+    @fmovs(Odsd, 0.0);
+    j = 0;
+    while (j < n) : (j += 1) {
+      const Vrow = @increment_dsd_offset(Vrow_base, j*d, f32);
+      @fmacs(Odsd, Odsd, Vrow, P_scores[i*S + j]);
+    }
+  }
+}
+
+fn compute() void {
+  tsc.enable_tsc();
+  tsc.get_timestamp(&startBuffer);
+  attention();
+  tsc.get_timestamp(&finishBuffer);
+  sys_mod.unblock_cmd_stream();
+}
+
+comptime {
+  @export_symbol(Q_ptr, "Q");
+  @export_symbol(K_ptr, "K");
+  @export_symbol(V_ptr, "V");
+  @export_symbol(O_ptr, "O");
+  @export_symbol(start_ts_ptr, "start_ts");
+  @export_symbol(finish_ts_ptr, "finish_ts");
+  @export_symbol(compute);
+}

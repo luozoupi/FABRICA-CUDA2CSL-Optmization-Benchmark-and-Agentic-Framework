@@ -1,0 +1,53 @@
+# xkernel-bench spec — see kernels/SPEC_SCHEMA.md for format.
+kernel_id: "Wide-Multiplication"
+group: "integer"
+difficulty: 2
+
+tasks:
+  - "Compute the 256-bit product of two 128-bit integers (schoolbook multi-word
+     multiply) on a single PE; streaming H2D in, result streamed out. entrypoint = main."
+
+inputs:
+  - {name: "left",  shape: "[128 bits]", dtype: "u32 words"}
+  - {name: "right", shape: "[128 bits]", dtype: "u32 words"}
+
+outputs:
+  - {name: "result", shape: "[256 bits]", dtype: "u32 words",
+     tolerance_abs: 0.0, tolerance_rel: 0.0,
+     description: "result = left*right; verified inside run.py with np.testing.assert_equal (EXACT) + SUCCESS"}
+
+sizes:
+  - name: small
+    role: correctness
+    params: {num_bits: 256, MEMCPYH2D_DATA_1_ID: 0, MEMCPYD2H_DATA_1_ID: 1}
+    commands_script: "commands_wse3.sh"
+    wse3_reference: {cycles_send: 81739, time_send_us: 96.16}
+
+task_class: "real-translation"
+split: "test"             # schoolbook integer multiply; no WaferLLM dependence -> held-out test
+
+# Input-level train/test split (2026-06-24). run.py reads XKERNEL_EVAL_SEED for the two
+# 128-bit operands; result=left*right is recomputed and checked EXACTLY. Held-out seeds
+# are harness-only (never in a prompt). See docs/SPLIT_AND_LEAKAGE.md (input-level split).
+# This is the dependable beats-expert win (7-9x), so it's the strongest no-false-NEGATIVE
+# control: a correct multiplier passes every held-out seed.
+eval:
+  train_seed: 7
+  heldout_seeds: [101, 202, 303]
+  seed_env: "XKERNEL_EVAL_SEED"
+
+wse3_reference:           # legacy top-level (== small)
+  cycles_send: 81739
+  time_send_us: 96.16
+  params: {num_bits: 256, MEMCPYH2D_DATA_1_ID: 0, MEMCPYD2H_DATA_1_ID: 1}
+
+build_command: "bash commands_wse3.sh"
+verify: "embedded in run.py — np.testing.assert_equal(result, left*right) + SUCCESS"
+
+hidden_from_optimize_only:
+  - "CSL/pe.csl"
+
+tags:
+  - "single_pe"
+  - "integer_multiply"
+  - "multi_word"

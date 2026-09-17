@@ -1,0 +1,69 @@
+# xkernel-bench spec — see kernels/SPEC_SCHEMA.md for format.
+kernel_id: "Laplacian2D-Reduce"
+group: "stencil"
+difficulty: 2
+
+tasks:
+  - "One step of a 2D 5-point Laplacian stencil PLUS a global max-norm
+     reduction: nrm = max over all cells of |new[i,j] - old[i,j]|.
+     Multi-PE (2x2 mesh, 4x4 tile per PE). Entrypoint = step (u16 iters)."
+  - "Halo exchange uses fabric N/S/E/W routing. After the local stencil each PE
+     holds a per-tile max; a column reduction on the NRM color moves the south
+     row's partial max north, and the py=0 row holds the per-column maxima."
+
+inputs:
+  - {name: "tile", shape: "[mesh_h, mesh_w, tile_h, tile_w]", dtype: "f32",
+     description: "initial 2D field, distributed across the PE grid"}
+
+outputs:
+  - {name: "nrm", shape: "[mesh_w]", dtype: "f32",
+     tolerance_abs: 1.0e-4, tolerance_rel: 1.0e-5,
+     description: "per-column max |new-old| on the py=0 row; host takes the max
+                   across columns and compares against numpy + SUCCESS"}
+
+sizes:
+  - name: small
+    role: correctness
+    params: {width: 2, height: 2, Mt: 4, Nt: 4}
+    commands_script: "commands_wse3.sh"
+    wse3_reference: {cycles_send: 1950, time_send_us: 2.2941}
+
+task_class: "real-translation"
+split: "test"
+
+# Input-level train/test split. run.py draws A from a seeded RNG
+# (XKERNEL_EVAL_SEED); held-out seeds are harness-only. See SPLIT_AND_LEAKAGE.md.
+eval:
+  train_seed: 0
+  heldout_seeds: [101, 202, 303]
+  seed_env: "XKERNEL_EVAL_SEED"
+
+wse3_reference:
+  cycles_send: 1950
+  time_send_us: 2.2941
+  upstream_source: "authored for xkernel-bench (halo Laplacian + max reduction)"
+  params: {M: 8, N: 8, mesh: "2x2", tile: "4x4", iters: 1}
+  _note: "Instrumented + numerically verified 2026-08-06. Prior to that this was
+          a VERIFY=False skeleton: pe.csl keyed the NRM send/recv off is_s_edge
+          while layout.csl assigns TX_NRM on !is_n_edge, so the reduction never
+          ran. Fixed, TSC added, verified exact on seeds 0/101/202/303
+          (cycle noise +/-2)."
+
+build_command: "bash commands_wse3.sh"
+verify: "embedded in run.py — max-norm compared against numpy + SUCCESS"
+
+hidden_from_optimize_only:
+  - "CSL/pe.csl"
+
+optimization_angles:
+  - "comptime_value_tuning"
+  - "dsd_offset_chaining"
+  - "fmac_bulk"
+  - "async_detach_overlap"
+  - "comptime_hoist"
+
+tags:
+  - "stencil"
+  - "halo_exchange"
+  - "multi_pe"
+  - "reduction"

@@ -1,0 +1,69 @@
+# xkernel-bench spec — see kernels/SPEC_SCHEMA.md for format.
+kernel_id: "DFT-1PE"
+group: "fft"
+difficulty: 2
+
+tasks:
+  - "Direct O(N^2) discrete Fourier transform of a real input on a single PE:
+     Xre[k] = sum_n x[n]*cosT[k*N+n], Xim[k] = sum_n x[n]*sinT[k*N+n], where cosT/sinT
+     are host-provided twiddle tables (cos / -sin of 2*pi*k*n/N). A complex
+     multiply-accumulate over all (k,n) pairs. entrypoint = compute."
+
+inputs:
+  - {name: "x", shape: "[N]", dtype: "f32"}
+  - {name: "cosT", shape: "[N*N]", dtype: "f32"}
+  - {name: "sinT", shape: "[N*N]", dtype: "f32"}
+
+outputs:
+  - {name: "Xre", shape: "[N]", dtype: "f32",
+     tolerance_abs: 1.0e-3, tolerance_rel: 1.0e-3,
+     description: "real part of DFT; verified against numpy np.fft.fft in run.py + SUCCESS"}
+  - {name: "Xim", shape: "[N]", dtype: "f32",
+     tolerance_abs: 1.0e-3, tolerance_rel: 1.0e-3,
+     description: "imag part of DFT; verified against numpy np.fft.fft in run.py + SUCCESS"}
+
+sizes:
+  - name: small
+    role: correctness
+    params: {N: 64}
+    commands_script: "commands_wse3.sh"
+    wse3_reference: {cycles_send: 145233, time_send_us: 170.8624}
+
+task_class: "real-translation"
+split: "test"             # hand-written DFT compute; no FFT-library dependence -> held-out test
+
+# Metric: cycles. HAND-WRITTEN-COMPUTE variant in the FFT family
+# (docs/HANDWRITTEN_KERNELS.md): unlike kernels/3D FFT and kernels/FFT 1D-2D which
+# delegate to FFT libraries (correctness_only / library-wrapper), here the CSL expresses
+# the explicit complex MAC of a direct DFT, so cycles_send measures the agent's
+# transform compute. Single-PE, fixed trip count (N*N) -> stable cycle number.
+# (Direct O(N^2) DFT, not a radix-2 FFT — chosen for a clean, verifiable hand-written
+#  reference; an FFT-structured translation would be a faster but harder follow-on.)
+metric:
+  class: cycles
+  reason: "agent-written complex multiply-accumulate (direct DFT); on-device TSC window; not FFT-library-delegated"
+
+# Input-level train/test split. run.py draws a seeded random input (XKERNEL_EVAL_SEED)
+# and recomputes the numpy fft reference; the harness re-scores on held-out seeds.
+# Validated train+held-out {7,101,202}: errors ~1e-6 (f32 O(N^2) accumulation).
+eval:
+  train_seed: 7
+  heldout_seeds: [101, 202, 303]
+  seed_env: "XKERNEL_EVAL_SEED"
+
+build_command: "bash commands_wse3.sh"
+verify: "embedded in run.py — np.testing.assert_allclose(X, np.fft.fft(x)) + SUCCESS"
+
+hidden_from_optimize_only:
+  - "CSL/pe.csl"
+
+optimization_angles:
+  - "fmac_bulk"
+  - "dsd_offset_chaining"
+  - "comptime_hoist"
+
+tags:
+  - "single_pe"
+  - "fft"
+  - "dft"
+  - "complex_mac"

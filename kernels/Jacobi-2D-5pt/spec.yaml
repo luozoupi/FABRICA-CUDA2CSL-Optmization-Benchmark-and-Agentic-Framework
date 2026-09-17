@@ -1,0 +1,57 @@
+# xkernel-bench spec — see kernels/SPEC_SCHEMA.md for format.
+kernel_id: "Jacobi-2D-5pt"
+group: "stencil"
+difficulty: 2
+
+tasks:
+  - "One iteration of the 2D Jacobi 5-point stencil with PRESERVED-boundary
+     semantics. Interior cells get the standard 5-pt average; cells on the
+     global edge mirror their input value.
+
+     B[i,j] = 0.25 * (A[i-1,j] + A[i+1,j] + A[i,j-1] + A[i,j+1])     for 1 <= i <= H-2, 1 <= j <= W-2
+     B[i,j] = A[i,j]                                                 on global boundary"
+  - "Decompose H x W grid onto a 2x2 PE mesh, each PE owning an Mt x Nt tile.
+     Halo-exchange via 4 fabric colors (N/S/E/W). Edge PEs skip the sends/recvs
+     for missing-neighbor directions and preserve their global-boundary rows."
+
+inputs:
+  - {name: "tile", shape: "[Mt*Nt]", dtype: "f32",
+     description: "per-PE row-major Mt x Nt tile of the global H x W grid; host cliff-distributes A across the 2x2 mesh"}
+
+outputs:
+  - {name: "new_tile", shape: "[Mt*Nt]", dtype: "f32",
+     tolerance_abs: 1.0e-5, tolerance_rel: 0.0,
+     description: "per-PE Mt x Nt tile of B after one Jacobi step; host undoes the cliff distribution and compares against numpy reference"}
+
+wse3_reference:
+  cycles_send: 1566
+  time_send_us: 1.8424
+  upstream_source: "manual hand-translation 2026-06-15 (see cerebras_validation/REPORT.md)"
+  params: {Mt: 4, Nt: 4, width: 2, height: 2}
+  _note: >-
+    Manual translation, not agent-generated. Adapted from Laplacian2D-Halo
+    structurally; differs only in f_compute boundary policy (preserve vs
+    zero-Dirichlet). Validated 2026-06-15: 1 iter max_abs_err=0; 5 iter
+    max_abs_err=0.
+
+build_command: "bash commands_wse3.sh"
+verify: "embedded in run.py — np.max(np.abs(out - ref)) < 1e-5 then prints SUCCESS"
+
+hidden_from_optimize_only:
+  - "CSL/pe.csl"
+
+# Same angle set as Laplacian2D-Halo (same algorithmic shape). The halo cluster
+# is hard; this gives the framework a clean reference to optimize against.
+optimization_angles:
+  - "comptime_value_tuning"
+  - "buffer_cleanup"
+  - "memory_simd_alignment"
+  - "iterative_phase_fusion"
+  - "dsd_offset_chaining"
+  - "fmac_bulk"
+
+tags:
+  - "multi_pe"
+  - "halo_exchange"
+  - "five_point_stencil"
+  - "preserved_boundary"

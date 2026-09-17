@@ -1,0 +1,32 @@
+// GEMV-RowPart layout: 1xPy column of PEs, each PE holds rows_per_pe rows
+// of A and the full vector x. No collectives — host distributes A rows and
+// reads y chunks directly per PE.
+
+param Py: u16;             // number of PEs (column height)
+param rows_per_pe: u16;    // rows of A per PE
+param N: u16;              // number of columns in A (= length of x)
+
+const memcpy = @import_module("<memcpy/get_params>", .{
+  .width = 1,
+  .height = Py,
+});
+
+layout {
+  @set_rectangle(1, Py);
+
+  var py: u16 = 0;
+  while (py < Py) : (py += 1) {
+    const memcpy_params = memcpy.get_params(0);
+    @set_tile_code(0, py, "pe.csl", .{
+      .memcpy_params = memcpy_params,
+      .rows_per_pe = rows_per_pe,
+      .N = N,
+    });
+  }
+
+  @export_name("A", [*]f32, true);
+  @export_name("x", [*]f32, true);
+  @export_name("y", [*]f32, true);
+  @export_name("maxmin_time", [*]f32, true);
+  @export_name("compute", fn()void);
+}

@@ -1,0 +1,78 @@
+# xkernel-bench spec — see kernels/SPEC_SCHEMA.md for format.
+kernel_id: "GEMV"
+group: "gemv"
+difficulty: 1
+
+tasks:
+  - "Compute y = A * x for a row-major matrix A and dense vector x.
+     Single-PE matvec entrypoint = main."
+  - "Iterate matrix columns via DSDs; use @fmacs for the inner product."
+
+inputs:
+  - {name: "A", shape: "[matrix_rows, matrix_cols]", dtype: "f32",
+     description: "row-major dense matrix"}
+  - {name: "x", shape: "[matrix_cols]", dtype: "f32",
+     description: "dense input vector"}
+  - {name: "b", shape: "[matrix_rows]", dtype: "f32",
+     description: "additive bias (y = A*x + b)"}
+
+outputs:
+  - {name: "y", shape: "[matrix_rows]", dtype: "f32",
+     tolerance_abs: 0.01, tolerance_rel: 0.0,
+     description: "y = A * x + b; reference verifies with np.testing.assert_allclose(atol=0.01)"}
+
+# Problem-size axis (Phase-2). small = 32x16 on a 4x4 mesh; large = 512x256,
+# which OVERFLOWS a 4x4 mesh and only runs by decomposing onto 8x8 — a
+# decomposition-forcing config. Crossover measured 2026-06-20 (crossover_report).
+sizes:
+  - name: small
+    role: correctness
+    params: {kernel_rows: 4, kernel_cols: 4, matrix_rows: 32, matrix_cols: 16}
+    commands_script: "commands_wse3.sh"
+    wse3_reference: {cycles_send: 4003, time_send_us: 4.7094}
+  - name: large
+    role: decomposition
+    params: {kernel_rows: 8, kernel_cols: 8, matrix_rows: 512, matrix_cols: 256}
+    commands_script: "commands_wse3_large.sh"
+    wse3_reference: {cycles_send: 10309, time_send_us: 12.1282}
+
+task_class: "real-translation"
+split: "train"            # WaferLLM MeshGEMV overlap -> train-only (see SPLIT_AND_LEAKAGE.md)
+
+# NOTE: GEMV is intentionally EXCLUDED from the input-level split. Its
+# commands_wse3.sh passes an explicit `--seed N` on the cs_python line, which would
+# OVERRIDE an env-driven held-out seed (silent false-assurance). GEMV is already
+# multi-input-protected (the build runs 3 visible seeds 7/8/9, so a hardcoded answer
+# fails 2 of them) and is train-split (doesn't count toward beats-expert). The harness
+# held-out gate also guards against the --seed-override footgun (see benchmark_csl).
+
+wse3_reference:           # legacy top-level (== small)
+  cycles_send: 4003
+  time_send_us: 4.7094
+  upstream_source: "csl-examples/tutorials gemv-* (multi-PE 4x4)"
+  params: {kernel_rows: 4, kernel_cols: 4, matrix_rows: 32, matrix_cols: 16}
+  _note: "Instrumented 2026-06-02; multi-PE 4x4 (not single-PE despite old tag)."
+
+build_command: "bash commands_wse3.sh"
+verify: "embedded in run.py — np.testing.assert_allclose(y, y_expected, atol=0.01) + SUCCESS"
+
+hidden_from_optimize_only:
+  - "CSL/pe.csl"
+
+# Curated from the 18-angle catalog. GEMV's hot path is a single FMA-heavy
+# inner loop walking row-major A; classic targets are DSD-construction
+# avoidance, bulk FMACs, and the comptime tunings inside collectives_2d
+# imports.
+optimization_angles:
+  - "comptime_value_tuning"
+  - "dsd_offset_chaining"
+  - "fmac_bulk"
+  - "memory_simd_alignment"
+  - "stride_optimization"
+  - "comptime_hoist"
+  - "buffer_cleanup"
+
+tags:
+  - "single_pe"
+  - "dense_matvec"
+  - "fma_dominant"

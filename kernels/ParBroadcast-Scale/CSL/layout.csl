@@ -1,0 +1,44 @@
+// ParBroadcast-Scale layout: PE0 broadcasts alpha east, all PEs scale local data.
+// 4x1 horizontal strip. Broadcast uses a single color flowing east.
+
+param n_per_pe: u16;
+param width: i16 = 4;
+param height: i16 = 1;
+
+const C_BCAST: color = @get_color(8);
+
+const memcpy = @import_module("<memcpy/get_params>", .{
+  .width = width,
+  .height = height,
+});
+
+layout {
+  @set_rectangle(width, height);
+
+  var px: i16 = 0;
+  while (px < width) : (px += 1) {
+    @set_tile_code(px, 0, "pe.csl", .{
+      .memcpy_params = memcpy.get_params(px),
+      .n_per_pe = n_per_pe,
+      .px = px,
+      .width = width,
+      .C_BCAST = C_BCAST,
+    });
+  }
+
+  // Broadcast routing: data flows EAST from PE0 through PE1, PE2, to PE3
+  // PE0: source, RAMP->EAST
+  @set_color_config(0, 0, C_BCAST, .{ .routes = .{ .rx = .{ RAMP }, .tx = .{ EAST }}});
+  // PE1: passthrough + receive, WEST->RAMP,EAST (fan out: receive locally AND forward)
+  @set_color_config(1, 0, C_BCAST, .{ .routes = .{ .rx = .{ WEST }, .tx = .{ RAMP, EAST }}});
+  // PE2: passthrough + receive
+  @set_color_config(2, 0, C_BCAST, .{ .routes = .{ .rx = .{ WEST }, .tx = .{ RAMP, EAST }}});
+  // PE3: terminal receiver
+  @set_color_config(3, 0, C_BCAST, .{ .routes = .{ .rx = .{ WEST }, .tx = .{ RAMP }}});
+
+  @export_name("x", [*]f32, true);
+  @export_name("out", [*]f32, true);
+  @export_name("alpha", [*]f32, true);
+  @export_name("maxmin_time", [*]f32, true);
+  @export_name("compute", fn()void);
+}

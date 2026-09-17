@@ -1,0 +1,28 @@
+// DFT-1PE layout (hand-written-compute variant). A single PE computes the direct
+// O(N^2) DFT of a real input: X[k] = sum_n x[n]*(cos - i*sin)(2*pi*k*n/N). The twiddle
+// tables (cos / -sin, N*N each) are supplied by the host; pe.csl does the complex MAC.
+
+param N: u16;   // transform length
+
+const memcpy = @import_module("<memcpy/get_params>", .{
+  .width = 1,
+  .height = 1,
+});
+
+layout {
+  @set_rectangle(1, 1);
+
+  const memcpy_params = memcpy.get_params(0);
+  @set_tile_code(0, 0, "pe.csl", .{
+    .memcpy_params = memcpy_params,
+    .N = N,
+  });
+
+  @export_name("x",    [*]f32, true);   // [N]   real input
+  @export_name("cosT", [*]f32, true);   // [N*N] cos(2*pi*k*n/N)
+  @export_name("sinT", [*]f32, true);   // [N*N] -sin(2*pi*k*n/N)
+  @export_name("Xre",  [*]f32, true);   // [N]   real part of transform
+  @export_name("Xim",  [*]f32, true);   // [N]   imag part of transform
+  @export_name("maxmin_time", [*]f32, true);
+  @export_name("compute", fn()void);
+}

@@ -1,0 +1,49 @@
+kernel_id: "GEMV-RowPart"
+group: "gemv"
+difficulty: 2
+
+tasks:
+  - "Row-partitioned GEMV: y = A*x. Each PE stores rows_per_pe rows of A
+     and the full vector x. Compute y_local = A_local @ x on each PE.
+     The host reads y chunks directly from each PE — no collectives or
+     distribution module needed."
+
+task_class: "real-translation"
+split: "test"
+
+inputs:
+  - {name: "A", shape: "[M, N]", dtype: "f32", description: "M x N matrix (row-partitioned across Py PEs)"}
+  - {name: "x", shape: "[N]", dtype: "f32", description: "input vector (broadcast to all PEs)"}
+
+outputs:
+  - {name: "y", shape: "[M]", dtype: "f32",
+     tolerance_abs: 1.0e-5, tolerance_rel: 1.0e-4,
+     description: "output vector y = A*x"}
+
+sizes:
+  - name: small
+    role: correctness
+    params: {Py: 4, rows_per_pe: 8, N: 8}
+    commands_script: "commands_wse3.sh"
+    wse3_reference: {cycles_send: null, time_send_us: null}
+
+metric:
+  class: cycles
+  reason: "agent-written inline matvec; on-device TSC window; no collectives library"
+
+build_command: "bash commands_wse3.sh"
+verify: "embedded in run.py — assert_allclose(y_device, A@x) + SUCCESS"
+
+eval:
+  train_seed: 42
+  heldout_seeds: [101, 202, 303]
+  seed_env: "XKERNEL_EVAL_SEED"
+
+hidden_from_optimize_only:
+  - "CSL/pe.csl"
+
+tags:
+  - "multi_pe"
+  - "gemv"
+  - "hand_written"
+  - "no_collectives"

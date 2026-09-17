@@ -1,0 +1,113 @@
+// Copyright 2025 Cerebras Systems.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+// The core kernel must start at P4.1 so the memcpy infrastructure has enough
+// resources to route the data between the host and the device.
+//
+// color/ task ID map
+//
+//  ID var        ID var           ID var                ID var
+//   0 row_color   9               18 cont_task_id       27 reserved (memcpy)
+//   1 col_color  10               19                    28 reserved (memcpy)
+//   2            11               20                    29 reserved
+//   3            12               21 reserved (memcpy)  30 reserved (memcpy)
+//   4            13               22 reserved (memcpy)  31 reserved
+//   5            14               23 reserved (memcpy)  32
+//   6            15               24                    33
+//   7            16               25                    34
+//   8            17 main_task_id  26                    35
+
+param P : i16;
+param Nt: i16;
+
+// Colors
+const row_color: color = @get_color(0);
+const col_color: color = @get_color(1);
+
+// Task IDs
+const main_task_id: local_task_id = @get_local_task_id(17);
+const cont_task_id: local_task_id = @get_local_task_id(18);
+
+const memcpy = @import_module( "<memcpy/get_params>", .{
+    .width = P,
+    .height = P
+    });
+
+
+layout {
+  @set_rectangle(P, P);
+
+  var x = 0;
+  while (x < P) : (x += 1) {
+    var y = 0;
+    while (y < P) : (y += 1) {
+      const memcpy_params = memcpy.get_params(x);
+      const params = .{ .px = x, .py = y, .Nt = Nt,
+                        .row_color = row_color, .col_color = col_color,
+                        .main_task_id = main_task_id, .cont_task_id = cont_task_id };
+
+      if (x <= y) {
+        @set_tile_code(x, y, "pe.csl", @concat_structs( .{
+             .memcpy_params = memcpy_params,
+        }, params));
+      } else {
+        const launch_params = .{ .Nt = Nt };
+        @set_tile_code(x, y, "launch.csl", @concat_structs( .{
+             .memcpy_params = memcpy_params,
+        }, launch_params));
+      }
+    }
+  }
+
+  // Setup column routes (straightforward)
+  x = 0;
+  while (x < (P - 1)) : (x += 1) {
+    @set_color_config(x, x, col_color, .{ .routes = .{ .rx = .{ RAMP }, .tx = .{ SOUTH } } });
+
+    var y = x + 1;
+    while (y < P) : (y += 1) {
+      const tx = if (y == P - 1) .{ RAMP } else .{ RAMP, SOUTH };
+      @set_color_config(x, y, col_color, .{ .routes = .{ .rx = .{ NORTH }, .tx = tx } });
+    }
+  }
+
+  // Setup row routes (requires switches)
+  var y = 1;
+  while (y < P) : (y += 1) {
+    @set_color_config(0, y, row_color, .{ .routes = .{ .rx = .{ RAMP }, .tx = .{ EAST } } });
+    x = 1;
+    while (x < y) : (x += 1) {
+      const routes = .{
+        .rx = .{ WEST },
+        .tx = .{ RAMP, EAST },
+      };
+      const switches = .{
+        .pos1 = .{ .tx = EAST },
+        .pos2 = .{ .rx = RAMP },
+        .pop_mode = .{ .pop_on_advance = true }
+      };
+      @set_color_config(x, y, row_color, .{ .routes = routes, .switches = switches });
+    }
+    @set_color_config(y, y, row_color, .{ .routes = .{ .rx = .{ WEST }, .tx = .{ RAMP } } });
+  }
+
+  // export symbol name
+  @export_name("tile", [*]f32, true);
+  @export_name("f_chol", fn()void);
+  @export_name("time_buf_u16", [*]u16, true);
+  @export_name("f_tic", fn()void);
+  @export_name("f_toc", fn()void);
+  @export_name("f_memcpy_timestamps", fn()void);
+  @export_name("f_enable_timer", fn()void);
+}

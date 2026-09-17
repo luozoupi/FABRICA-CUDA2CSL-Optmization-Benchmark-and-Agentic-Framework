@@ -1,0 +1,43 @@
+{
+  "generated_at": "2026-05-31T01:05:53.298926+00:00",
+  "source_root": "cerebras-csl-skills",
+  "chunk_count": 328,
+  "input_files": 24,
+  "inputs_sha256": "7c6718d8fe2efb672c75bdabaf8c10c959496cdde374c0c56ef1b761ff19ebc9",
+  "sections_present": [
+    "csl_skill_architect",
+    "csl_skill_implementer",
+    "csl_skill_reviewer"
+  ],
+  "audience_file_map": {
+    "architect": [
+      "SKILL-HOST-DEVICE",
+      "SKILL-MICROTHREADS",
+      "SKILL-ROUTES",
+      "SKILL-SDKLAYOUT"
+    ],
+    "implementer": [
+      "SKILL-BUILTINS",
+      "SKILL-COMPTIME",
+      "SKILL-DSDS",
+      "SKILL-DSRS",
+      "SKILL-GENERICS",
+      "SKILL-LIBRARIES",
+      "SKILL-MODULES",
+      "SKILL-SIMD",
+      "SKILL-STORAGE",
+      "SKILL-SYNTAX",
+      "SKILL-TASKS",
+      "SKILL-TOOLCHAIN",
+      "SKILL-TYPES"
+    ],
+    "reviewer": [
+      "SKILL-HOST-DEVICE",
+      "SKILL-SDK-UTILS",
+      "SKILL-SDKRUNTIME",
+      "SKILL-SDKRUNTIME-API",
+      "SKILL-SDKRUNTIME-DEBUG",
+      "SKILL-SDKRUNTIME-TYPES"
+    ]
+  }
+}

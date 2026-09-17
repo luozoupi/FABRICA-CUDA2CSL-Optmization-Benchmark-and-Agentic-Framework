@@ -1,0 +1,33 @@
+// Histogram-Inline layout: 1xPy column of PEs. Each PE bins its local input.
+// Host reads each PE's local histogram and sums them. No tally module,
+// no fabric reduction — the multi-PE coordination is fully visible.
+
+param Py: u16;
+param n_per_pe: u16;
+param n_buckets: u16;
+param bucket_size: u16;
+
+const memcpy = @import_module("<memcpy/get_params>", .{
+  .width = 1,
+  .height = Py,
+});
+
+layout {
+  @set_rectangle(1, Py);
+
+  var py: u16 = 0;
+  while (py < Py) : (py += 1) {
+    const memcpy_params = memcpy.get_params(0);
+    @set_tile_code(0, py, "pe.csl", .{
+      .memcpy_params = memcpy_params,
+      .n_per_pe = n_per_pe,
+      .n_buckets = n_buckets,
+      .bucket_size = bucket_size,
+    });
+  }
+
+  @export_name("input", [*]u32, true);
+  @export_name("hist",  [*]u32, true);
+  @export_name("maxmin_time", [*]f32, true);
+  @export_name("compute", fn()void);
+}

@@ -1,0 +1,85 @@
+// GEMM-1PE compute (hand-written): dense C = A*B on a single PE.
+//   for i in [0,M): for j in [0,N): C[i,j] = sum_k A[i,k]*B[k,j]
+// The real compute (not a collectives/SUMMA library call): an explicit triple loop
+// whose inner product is a multiply-accumulate. TSC-timed.
+
+param memcpy_params: comptime_struct;
+
+param M: u16;
+param K: u16;
+param N: u16;
+
+const EXIT: local_task_id = @get_local_task_id(9);
+
+const sys_mod = @import_module("<memcpy/memcpy>", memcpy_params);
+
+const timestamp = @import_module("<time>");
+var tsc_start_buf = @zeros([timestamp.tsc_size_words]u16);
+var tsc_end_buf   = @zeros([timestamp.tsc_size_words]u16);
+var timer_buf = @zeros([3]f32);
+var ptr_timer_buf: [*]f32 = &timer_buf;
+
+var A_array = @zeros([M * K]f32);
+var B_array = @zeros([K * N]f32);
+var C_array = @zeros([M * N]f32);
+var ptr_A: [*]f32 = &A_array;
+var ptr_B: [*]f32 = &B_array;
+var ptr_C: [*]f32 = &C_array;
+
+fn gemm() void {
+  var i: u16 = 0;
+  while (i < M) : (i += 1) {
+    const a_row: u16 = i * K;
+    const c_row: u16 = i * N;
+    var j: u16 = 0;
+    while (j < N) : (j += 1) {
+      var acc: f32 = 0.0;
+      var k: u16 = 0;
+      while (k < K) : (k += 1) {
+        acc += A_array[a_row + k] * B_array[k * N + j];   // inner product (fmac)
+      }
+      C_array[c_row + j] = acc;
+    }
+  }
+}
+
+fn compute() void {
+  timestamp.enable_tsc();
+  timestamp.get_timestamp(&tsc_start_buf);
+
+  gemm();
+
+  timestamp.get_timestamp(&tsc_end_buf);
+  timestamp.disable_tsc();
+
+  var lo_: u16 = 0;
+  var hi_: u16 = 0;
+
+  lo_ = tsc_start_buf[0];
+  hi_ = tsc_start_buf[1];
+  timer_buf[0] = @bitcast(f32, (@as(u32, hi_) << @as(u16, 16)) | @as(u32, lo_));
+
+  lo_ = tsc_start_buf[2];
+  hi_ = tsc_end_buf[0];
+  timer_buf[1] = @bitcast(f32, (@as(u32, hi_) << @as(u16, 16)) | @as(u32, lo_));
+
+  lo_ = tsc_end_buf[1];
+  hi_ = tsc_end_buf[2];
+  timer_buf[2] = @bitcast(f32, (@as(u32, hi_) << @as(u16, 16)) | @as(u32, lo_));
+
+  @activate(EXIT);
+}
+
+task f_exit() void {
+  sys_mod.unblock_cmd_stream();
+}
+
+comptime {
+  @bind_local_task(f_exit, EXIT);
+
+  @export_symbol(ptr_A, "A");
+  @export_symbol(ptr_B, "B");
+  @export_symbol(ptr_C, "C");
+  @export_symbol(ptr_timer_buf, "maxmin_time");
+  @export_symbol(compute);
+}

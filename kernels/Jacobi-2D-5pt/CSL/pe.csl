@@ -1,0 +1,252 @@
+// Jacobi 2D 5-point compute file with PRESERVED-BOUNDARY semantics.
+//
+// One iteration per step() call:
+//   interior cells: B[i,j] = 0.25 * (up + down + left + right)
+//   global boundary cells: B[i,j] = A[i,j]  (preserve verbatim)
+//
+// "Global boundary" means: a cell at the outer edge of the global H x W grid.
+// For a 2x2 mesh that translates to: a cell at i==0 of an n-edge PE's tile, OR
+// i==Mt-1 of an s-edge PE's tile, OR j==0 of a w-edge PE's tile, OR j==Nt-1 of
+// an e-edge PE's tile. Halo wavelets for those directions are never sent (no
+// neighbor), so the corresponding halo arrays stay at zero — but f_compute
+// doesn't read them on the boundary path anyway, because it just copies A to B.
+//
+// Per-PE flow per iteration: SEND -> RX_DONE counts -> COMPUTE -> EXIT (when
+// remaining_iters == 0). Same shape as Laplacian2D-Halo.
+
+param memcpy_params: comptime_struct;
+param Mt: i16;
+param Nt: i16;
+param width: i16;
+param height: i16;
+param px: i16;
+param py: i16;
+param is_w_edge: bool;
+param is_e_edge: bool;
+param is_n_edge: bool;
+param is_s_edge: bool;
+
+param TX_N: color = @get_color(15);
+param RX_N: color = @get_color(15);
+param TX_S: color = @get_color(15);
+param RX_S: color = @get_color(15);
+param TX_E: color = @get_color(15);
+param RX_E: color = @get_color(15);
+param TX_W: color = @get_color(15);
+param RX_W: color = @get_color(15);
+
+const tx_n_oq: output_queue = @get_output_queue(2);
+const tx_s_oq: output_queue = @get_output_queue(3);
+const tx_e_oq: output_queue = @get_output_queue(4);
+const tx_w_oq: output_queue = @get_output_queue(5);
+
+const rx_n_iq: input_queue = @get_input_queue(2);
+const rx_s_iq: input_queue = @get_input_queue(3);
+const rx_e_iq: input_queue = @get_input_queue(4);
+const rx_w_iq: input_queue = @get_input_queue(5);
+
+const SEND_TID:    local_task_id = @get_local_task_id(12);
+const RX_DONE_TID: local_task_id = @get_local_task_id(13);
+const COMPUTE_TID: local_task_id = @get_local_task_id(14);
+const EXIT_TID:    local_task_id = @get_local_task_id(15);
+
+const sys_mod = @import_module("<memcpy/memcpy>", memcpy_params);
+const timestamp = @import_module("<time>");
+
+// ---- Storage ----
+var tile:     [Mt * Nt]f32 = @zeros([Mt * Nt]f32);
+var new_tile: [Mt * Nt]f32 = @zeros([Mt * Nt]f32);
+
+var halo_n: [Nt]f32 = @zeros([Nt]f32);
+var halo_s: [Nt]f32 = @zeros([Nt]f32);
+var halo_e: [Mt]f32 = @zeros([Mt]f32);
+var halo_w: [Mt]f32 = @zeros([Mt]f32);
+
+var col_send_e: [Mt]f32 = @zeros([Mt]f32);
+var col_send_w: [Mt]f32 = @zeros([Mt]f32);
+
+var tile_ptr:     [*]f32 = &tile;
+var new_tile_ptr: [*]f32 = &new_tile;
+
+var tscStartBuffer = @zeros([timestamp.tsc_size_words]u16);
+var tscEndBuffer = @zeros([timestamp.tsc_size_words]u16);
+var time_buf_u16 = @zeros([timestamp.tsc_size_words*2]u16);
+var ptr_time_buf_u16: [*]u16 = &time_buf_u16;
+
+const num_halos_expected: i16 =
+    (if (is_w_edge) @as(i16, 0) else @as(i16, 1))
+  + (if (is_e_edge) @as(i16, 0) else @as(i16, 1))
+  + (if (is_n_edge) @as(i16, 0) else @as(i16, 1))
+  + (if (is_s_edge) @as(i16, 0) else @as(i16, 1));
+
+var num_halos_received: i16 = 0;
+var remaining_iters: u16 = 0;
+
+// ---- DSDs ----
+const top_row_dsd    = @get_dsd(mem1d_dsd, .{ .tensor_access = |j|{Nt} -> tile[j] });
+const bot_row_dsd    = @get_dsd(mem1d_dsd, .{ .tensor_access = |j|{Nt} -> tile[(Mt-1)*Nt + j] });
+const col_send_e_dsd = @get_dsd(mem1d_dsd, .{ .tensor_access = |i|{Mt} -> col_send_e[i] });
+const col_send_w_dsd = @get_dsd(mem1d_dsd, .{ .tensor_access = |i|{Mt} -> col_send_w[i] });
+
+const halo_n_dsd = @get_dsd(mem1d_dsd, .{ .tensor_access = |j|{Nt} -> halo_n[j] });
+const halo_s_dsd = @get_dsd(mem1d_dsd, .{ .tensor_access = |j|{Nt} -> halo_s[j] });
+const halo_e_dsd = @get_dsd(mem1d_dsd, .{ .tensor_access = |i|{Mt} -> halo_e[i] });
+const halo_w_dsd = @get_dsd(mem1d_dsd, .{ .tensor_access = |i|{Mt} -> halo_w[i] });
+
+const fab_tx_n = @get_dsd(fabout_dsd, .{ .extent = Nt, .fabric_color = TX_N, .output_queue = tx_n_oq });
+const fab_tx_s = @get_dsd(fabout_dsd, .{ .extent = Nt, .fabric_color = TX_S, .output_queue = tx_s_oq });
+const fab_tx_e = @get_dsd(fabout_dsd, .{ .extent = Mt, .fabric_color = TX_E, .output_queue = tx_e_oq });
+const fab_tx_w = @get_dsd(fabout_dsd, .{ .extent = Mt, .fabric_color = TX_W, .output_queue = tx_w_oq });
+
+const fab_rx_n = @get_dsd(fabin_dsd, .{ .extent = Nt, .fabric_color = RX_N, .input_queue = rx_n_iq });
+const fab_rx_s = @get_dsd(fabin_dsd, .{ .extent = Nt, .fabric_color = RX_S, .input_queue = rx_s_iq });
+const fab_rx_e = @get_dsd(fabin_dsd, .{ .extent = Mt, .fabric_color = RX_E, .input_queue = rx_e_iq });
+const fab_rx_w = @get_dsd(fabin_dsd, .{ .extent = Mt, .fabric_color = RX_W, .input_queue = rx_w_iq });
+
+// ---- Tasks ----
+task f_send() void {
+  num_halos_received = 0;
+
+  var i: i16 = 0;
+  while (i < Mt) : (i += 1) {
+    col_send_w[i] = tile[i * Nt + 0];
+    col_send_e[i] = tile[i * Nt + (Nt - 1)];
+  }
+
+  if (!is_n_edge) @fmovs(fab_tx_n, top_row_dsd,    .{ .async = true });
+  if (!is_s_edge) @fmovs(fab_tx_s, bot_row_dsd,    .{ .async = true });
+  if (!is_w_edge) @fmovs(fab_tx_w, col_send_w_dsd, .{ .async = true });
+  if (!is_e_edge) @fmovs(fab_tx_e, col_send_e_dsd, .{ .async = true });
+
+  if (!is_n_edge) @fmovs(halo_n_dsd, fab_rx_n, .{ .async = true, .activate = RX_DONE_TID });
+  if (!is_s_edge) @fmovs(halo_s_dsd, fab_rx_s, .{ .async = true, .activate = RX_DONE_TID });
+  if (!is_w_edge) @fmovs(halo_w_dsd, fab_rx_w, .{ .async = true, .activate = RX_DONE_TID });
+  if (!is_e_edge) @fmovs(halo_e_dsd, fab_rx_e, .{ .async = true, .activate = RX_DONE_TID });
+
+  // Corner case: a PE on all 4 global edges (e.g. a degenerate 1x1 mesh) has
+  // no halos to wait on. With num_halos_expected == 0, RX_DONE never fires.
+  // 2x2 always has ≥2 expected halos so this path isn't taken; guard anyway.
+  if (num_halos_expected == 0) {
+    @activate(COMPUTE_TID);
+  }
+}
+
+task f_rx_done() void {
+  num_halos_received += 1;
+  if (num_halos_received == num_halos_expected) {
+    @activate(COMPUTE_TID);
+  }
+}
+
+task f_compute() void {
+  // PRESERVED-BOUNDARY Jacobi step.
+  //
+  // A cell is a "global boundary" cell iff it sits on the outer rim of the
+  // global H x W grid. For a 2x2 mesh that means:
+  //   * top row of an n-edge PE  (i == 0    AND is_n_edge)
+  //   * bottom row of an s-edge PE (i == Mt-1 AND is_s_edge)
+  //   * left col of a w-edge PE  (j == 0    AND is_w_edge)
+  //   * right col of an e-edge PE (j == Nt-1 AND is_e_edge)
+  // Boundary cells just mirror A -> B. Interior cells (including cells on a
+  // tile edge that is NOT a global edge — those read from the halo array, which
+  // holds a real wavelet from the neighboring PE) do the 5-pt average.
+  var i: i16 = 0;
+  while (i < Mt) : (i += 1) {
+    var j: i16 = 0;
+    while (j < Nt) : (j += 1) {
+      const at_global_n = (i == 0)        and is_n_edge;
+      const at_global_s = (i == Mt - 1)   and is_s_edge;
+      const at_global_w = (j == 0)        and is_w_edge;
+      const at_global_e = (j == Nt - 1)   and is_e_edge;
+      const at_boundary = at_global_n or at_global_s or at_global_w or at_global_e;
+
+      if (at_boundary) {
+        new_tile[i*Nt + j] = tile[i*Nt + j];
+      } else {
+        const up    = if (i == 0)        halo_n[j]              else tile[(i-1)*Nt + j];
+        const down  = if (i == Mt - 1)   halo_s[j]              else tile[(i+1)*Nt + j];
+        const left  = if (j == 0)        halo_w[i]              else tile[i*Nt + (j-1)];
+        const right = if (j == Nt - 1)   halo_e[i]              else tile[i*Nt + (j+1)];
+        new_tile[i*Nt + j] = 0.25 * (up + down + left + right);
+      }
+    }
+  }
+
+  // Copy new_tile -> tile for next iteration.
+  i = 0;
+  while (i < Mt * Nt) : (i += 1) {
+    tile[i] = new_tile[i];
+  }
+
+  remaining_iters -= 1;
+  if (remaining_iters > 0) {
+    @activate(SEND_TID);
+  } else {
+    @activate(EXIT_TID);
+  }
+}
+
+task f_exit() void {
+  sys_mod.unblock_cmd_stream();
+}
+
+fn step(iters: u16) void {
+  remaining_iters = iters;
+  if (iters == 0) {
+    @activate(EXIT_TID);
+  } else {
+    @activate(SEND_TID);
+  }
+}
+
+fn f_tic() void {
+  timestamp.get_timestamp(&tscStartBuffer);
+  sys_mod.unblock_cmd_stream();
+}
+
+fn f_toc() void {
+  timestamp.get_timestamp(&tscEndBuffer);
+  sys_mod.unblock_cmd_stream();
+}
+
+fn f_memcpy_timestamps() void {
+  time_buf_u16[0] = tscStartBuffer[0];
+  time_buf_u16[1] = tscStartBuffer[1];
+  time_buf_u16[2] = tscStartBuffer[2];
+  time_buf_u16[3] = tscEndBuffer[0];
+  time_buf_u16[4] = tscEndBuffer[1];
+  time_buf_u16[5] = tscEndBuffer[2];
+  sys_mod.unblock_cmd_stream();
+}
+
+fn f_enable_timer() void {
+  timestamp.enable_tsc();
+  sys_mod.unblock_cmd_stream();
+}
+
+comptime {
+  @bind_local_task(f_send,    SEND_TID);
+  @bind_local_task(f_rx_done, RX_DONE_TID);
+  @bind_local_task(f_compute, COMPUTE_TID);
+  @bind_local_task(f_exit,    EXIT_TID);
+
+  if (@is_arch("wse3")) {
+    if (@get_int(TX_N) != 15) @initialize_queue(tx_n_oq, .{ .color = TX_N });
+    if (@get_int(TX_S) != 15) @initialize_queue(tx_s_oq, .{ .color = TX_S });
+    if (@get_int(TX_E) != 15) @initialize_queue(tx_e_oq, .{ .color = TX_E });
+    if (@get_int(TX_W) != 15) @initialize_queue(tx_w_oq, .{ .color = TX_W });
+    if (@get_int(RX_N) != 15) @initialize_queue(rx_n_iq, .{ .color = RX_N });
+    if (@get_int(RX_S) != 15) @initialize_queue(rx_s_iq, .{ .color = RX_S });
+    if (@get_int(RX_E) != 15) @initialize_queue(rx_e_iq, .{ .color = RX_E });
+    if (@get_int(RX_W) != 15) @initialize_queue(rx_w_iq, .{ .color = RX_W });
+  }
+
+  @export_symbol(tile_ptr,     "tile");
+  @export_symbol(new_tile_ptr, "new_tile");
+  @export_symbol(ptr_time_buf_u16, "time_buf_u16");
+  @export_symbol(step);
+  @export_symbol(f_tic);
+  @export_symbol(f_toc);
+  @export_symbol(f_memcpy_timestamps);
+  @export_symbol(f_enable_timer);
+}

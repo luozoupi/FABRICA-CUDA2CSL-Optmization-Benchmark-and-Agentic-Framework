@@ -1,0 +1,62 @@
+kernel_id: "Attention-1PE"
+group: "attention"
+difficulty: 3
+
+tasks:
+  - "Dense scaled-dot-product attention O = softmax(Q K^T / sqrt(d)) V for one
+     head over S query rows on a single PE (Q, K, V, O and the S x S score
+     matrix all resident in the PE's 48 KiB SRAM). entrypoint = compute
+     (frozen: enables the TSC, stamps start, calls attention(), stamps finish,
+     unblocks). The agent edits attention()."
+
+inputs:
+  - {name: "Q", shape: "[S * d]", dtype: "f32"}
+  - {name: "K", shape: "[S * d]", dtype: "f32"}
+  - {name: "V", shape: "[S * d]", dtype: "f32"}
+
+outputs:
+  - {name: "O", shape: "[S * d]", dtype: "f32",
+     tolerance_abs: 1.0e-4, tolerance_rel: 1.0e-4,
+     description: "O == softmax(Q K^T / sqrt(d)) V against a float64 NumPy oracle; verified in run.py + SUCCESS"}
+
+# Reference provenance: the same hand-written EXPERT kernel as Attention-QP
+# (attention-wse M5) compiled for P=1 (one PE owns all S rows). Reference
+# cycles are measured with rebaseline_references.py (median of 3).
+sizes:
+  - name: small
+    role: correctness
+    params: {P: 1, St_q: 64, S: 64, d: 16}
+    commands_script: "commands_wse3.sh"
+    wse3_reference: {cycles_send: 838551, time_send_us: 986.531}
+
+task_class: "real-translation"
+split: "test"
+
+metric:
+  class: cycles
+  reason: "single-PE expert attention with wide DSD arithmetic; tests whether the agent reaches expert vector width on one PE"
+
+eval:
+  train_seed: 7
+  heldout_seeds: [101, 202, 303]
+  seed_env: "XKERNEL_EVAL_SEED"
+
+precision:
+  io_dtype: f32
+  accumulate: f32
+  allow_f16_internal: false
+
+frozen_functions: ["compute"]
+
+optimization_angles:
+  - dsd_width_flatten_l0
+  - fmac_bulk
+  - dsd_offset_chaining
+  - comptime_hoist
+  - buffer_cleanup
+  - f16_precision
+
+build_command: "bash commands_wse3.sh"
+verify: "embedded in run.py — np.testing.assert_allclose(atol=1e-4, rtol=1e-4) + SUCCESS"
+hidden_from_optimize_only: ["CSL/pe.csl"]
+tags: ["single_pe", "attention", "softmax", "transformer", "expert_reference", "difficulty_3"]

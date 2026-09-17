@@ -1,0 +1,62 @@
+# xkernel-bench spec — see kernels/SPEC_SCHEMA.md for format.
+kernel_id: "PDFT-Pi-Pipeline"
+group: "qc-pdft"
+difficulty: 3
+
+# Source: ported/simplified from the PDFT pair-density kernels in the GPU-
+# accelerated quantum-chemistry package MatthewRHermes/mrh
+# (gpu/src/pm/device_cuda.cpp: _make_gridkern, _make_buf_pdft, _make_Pi_final).
+# Multiconfiguration pair-density functional theory needs the on-top pair
+# density Pi at each grid point: a quadratic form in the active-space MO values
+# weighted by the CAS two-body cumulant. External source — NOT a WaferLLM/KB
+# pattern source.
+#
+# PROGRAM-LEVEL task: the CUDA side is THREE data-dependent kernels launched in
+# sequence (stage N reads the buffer stage N-1 wrote). The agent must translate
+# the whole pipeline + its intermediate buffers (gridkern, buf), not one kernel.
+tasks:
+  - "On-top pair density Pi[g] = k_g^T W k_g, k_g = outer(mo_g, mo_g).
+     Single-PE 3-stage pipeline; entrypoint = compute."
+
+task_class: "program-level"   # multi-kernel data-dependent pipeline (see stages:)
+
+# The program's data-flow: each stage reads the previous stage's buffer.
+stages:
+  - {name: "make_gridkern", out: "gridkern[g][a]", reads: "mo_grid",
+     formula: "gridkern[g][j*ncas+k] = mo_grid[g][j] * mo_grid[g][k]  (outer product)"}
+  - {name: "make_buf", out: "buf[g][b]", reads: "gridkern, cascm2",
+     formula: "buf[g][b] = sum_a gridkern[g][a] * cascm2[a][b]  (contraction)"}
+  - {name: "make_Pi_final", out: "Pi[g]", reads: "gridkern, buf",
+     formula: "Pi[g] = sum_b gridkern[g][b] * buf[g][b]  (reduction)"}
+
+inputs:
+  - {name: "mo_grid", shape: "[ngrid, ncas]", dtype: "f32",
+     description: "active-space MO values at each grid point (replicated per PE)"}
+  - {name: "cascm2", shape: "[ncas*ncas, ncas*ncas]", dtype: "f32",
+     description: "2-RDM-like weight matrix (dense, replicated per PE)"}
+
+outputs:
+  - {name: "Pi", shape: "[ngrid]", dtype: "f32",
+     tolerance_abs: 1.0e-4, tolerance_rel: 1.0e-4,
+     description: "on-top pair density per grid point; verified vs numpy einsum quadratic form in run.py (SUCCESS print)"}
+
+sizes:
+  - name: small
+    role: correctness
+    params: {width: 2, height: 2, ngrid: 16, ncas: 4}
+    commands_script: "commands_wse3.sh"
+    wse3_reference: {cycles_send: 128308}
+
+split: "test"             # novel program-level QC task; held-out test
+
+# Input-level train/test split (2026-06-24). run.py reads XKERNEL_EVAL_SEED for mo/W;
+# Pi_ref (the 3-stage einsum pipeline) is recomputed from them. Held-out seeds are
+# harness-only. See docs/SPLIT_AND_LEAKAGE.md (input-level split).
+eval:
+  train_seed: 11
+  heldout_seeds: [101, 202, 303]
+  seed_env: "XKERNEL_EVAL_SEED"
+
+wse3_reference:           # legacy top-level (== small)
+  cycles_send: 128308
+  params: {width: 2, height: 2, ngrid: 16, ncas: 4}

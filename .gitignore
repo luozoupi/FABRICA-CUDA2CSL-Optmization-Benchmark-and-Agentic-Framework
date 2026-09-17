@@ -1,0 +1,51 @@
+# Local environments and credentials
+.venv/
+.env
+.env.*
+!.env.example
+*api-key*.txt
+*api_key*.txt
+*.pem
+*.key
+# Python/editor state
+__pycache__/
+*.py[cod]
+.pytest_cache/
+*.egg-info/
+.DS_Store
+.idea/
+.vscode/
+# Generated runs and simulator/compiler output
+results/
+sandbox/
+rl_data/
+artifacts/
+logs/
+cache/
+.cache/
+raw/
+knowledge/explored/experiences.jsonl
+knowledge/explored/optimization/experiences.jsonl
+out/
+out_*/
+*.elf
+*.o
+*.so
+*.dylib
+*.sif
+*.log
+*.trace
+*.ctf
+*.jsonl.gz
+simfab_traces/
+simconfig.json
+sim_stats.json
+sim.mem
+sim.err
+sim.out
+# Local datasets, archives, and reports
+*.zip
+*.tar.gz
+*.pdf
+*.png
+*.svg

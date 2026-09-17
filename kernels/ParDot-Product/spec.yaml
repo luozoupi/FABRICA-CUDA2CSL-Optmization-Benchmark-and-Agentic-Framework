@@ -1,0 +1,41 @@
+kernel_id: "ParDot-Product"
+group: "collective"
+difficulty: 3
+
+tasks:
+  - "Distributed dot product across a 4-PE strip. Each PE computes
+     sum(x[i]*y[i]) on its local chunks, then tree-reduces partial
+     sums west to PE0 via 2-phase wavelet reduction. entrypoint = compute."
+
+inputs:
+  - {name: "x", shape: "[n_per_pe * width]", dtype: "f32"}
+  - {name: "y", shape: "[n_per_pe * width]", dtype: "f32"}
+
+outputs:
+  - {name: "result", shape: "[1]", dtype: "f32",
+     tolerance_abs: 0.1, tolerance_rel: 0.01,
+     description: "result == np.dot(x_all, y_all); verified in run.py + SUCCESS"}
+
+sizes:
+  - name: small
+    role: correctness
+    params: {n_per_pe: 128, width: 4, height: 1}
+    commands_script: "commands_wse3.sh"
+    wse3_reference: {cycles_send: 2631}
+
+task_class: "real-translation"
+split: "test"
+
+metric:
+  class: cycles
+  reason: "local multiply-accumulate + tree reduction via fabric; exercises compute+communication overlap"
+
+eval:
+  train_seed: 7
+  heldout_seeds: [101, 202, 303]
+  seed_env: "XKERNEL_EVAL_SEED"
+
+build_command: "bash commands_wse3.sh"
+verify: "embedded in run.py — np.testing.assert_allclose + SUCCESS"
+hidden_from_optimize_only: ["CSL/pe.csl"]
+tags: ["multi_pe", "collective", "reduction", "blas", "dot_product", "difficulty_3"]

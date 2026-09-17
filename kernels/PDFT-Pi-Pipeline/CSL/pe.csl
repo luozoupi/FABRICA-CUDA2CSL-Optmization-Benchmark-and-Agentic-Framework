@@ -1,0 +1,118 @@
+// PDFT on-top pair-density pipeline — single-PE reference (program-level task).
+//
+// Ported/simplified from mrh/gpu PDFT kernels (_make_gridkern, _make_buf_pdft,
+// _make_Pi_final). Per grid point g, with feature vector
+//   gridkern[g][a] = mo[g][j]*mo[g][k]   (a = j*ncas+k, outer product)
+// the on-top pair density is the quadratic form
+//   Pi[g] = sum_{a,b} gridkern[g][a] * cascm2[a][b] * gridkern[g][b]
+//
+// PROGRAM-LEVEL: three data-dependent stages run in sequence, each reading the
+// buffer written by the previous one (gridkern -> buf -> Pi). The CSL "program"
+// is the orchestration of these three index-math stages plus their intermediate
+// buffers, all on one PE. Follows the Single-Tile-Matvec timing idiom.
+
+param memcpy_params: comptime_struct;
+
+param ngrid: u16;
+param ncas:  u16;
+
+const ncas2: u16 = ncas * ncas;
+
+const EXIT: local_task_id = @get_local_task_id(9);
+
+const sys_mod = @import_module("<memcpy/memcpy>", memcpy_params);
+
+const timestamp = @import_module("<time>");
+var tsc_start_buf = @zeros([timestamp.tsc_size_words]u16);
+var tsc_end_buf   = @zeros([timestamp.tsc_size_words]u16);
+var timer_buf = @zeros([3]f32);
+var ptr_timer_buf: [*]f32 = &timer_buf;
+
+// Host-visible inputs / output.
+var mo_grid = @zeros([ngrid * ncas]f32);   // [ngrid][ncas]
+var cascm2  = @zeros([ncas2 * ncas2]f32);  // [ncas2][ncas2]
+var Pi      = @zeros([ngrid]f32);          // [ngrid]
+var ptr_mo: [*]f32 = &mo_grid;
+var ptr_w:  [*]f32 = &cascm2;
+var ptr_Pi: [*]f32 = &Pi;
+
+// Intermediate buffers (the program's internal data-flow, not host-visible).
+var gridkern = @zeros([ngrid * ncas2]f32);  // [ngrid][ncas2]
+var buf      = @zeros([ngrid * ncas2]f32);  // [ngrid][ncas2]
+
+// Stage 1: gridkern[g][j*ncas+k] = mo[g][j] * mo[g][k]
+fn stage_gridkern() void {
+  for (@range(u16, ngrid)) |g| {
+    for (@range(u16, ncas)) |j| {
+      for (@range(u16, ncas)) |k| {
+        gridkern[g * ncas2 + j * ncas + k] = mo_grid[g * ncas + j] * mo_grid[g * ncas + k];
+      }
+    }
+  }
+}
+
+// Stage 2: buf[g][b] = sum_a gridkern[g][a] * cascm2[a][b]
+fn stage_buf() void {
+  for (@range(u16, ngrid)) |g| {
+    for (@range(u16, ncas2)) |b| {
+      var s: f32 = 0.0;
+      for (@range(u16, ncas2)) |a| {
+        s += gridkern[g * ncas2 + a] * cascm2[a * ncas2 + b];
+      }
+      buf[g * ncas2 + b] = s;
+    }
+  }
+}
+
+// Stage 3: Pi[g] = sum_b gridkern[g][b] * buf[g][b]
+fn stage_pi() void {
+  for (@range(u16, ngrid)) |g| {
+    var s: f32 = 0.0;
+    for (@range(u16, ncas2)) |b| {
+      s += gridkern[g * ncas2 + b] * buf[g * ncas2 + b];
+    }
+    Pi[g] = s;
+  }
+}
+
+fn compute() void {
+  timestamp.enable_tsc();
+  timestamp.get_timestamp(&tsc_start_buf);
+
+  // The program: three data-dependent stages in order.
+  stage_gridkern();
+  stage_buf();
+  stage_pi();
+
+  timestamp.get_timestamp(&tsc_end_buf);
+  timestamp.disable_tsc();
+
+  var lo_: u16 = 0;
+  var hi_: u16 = 0;
+  lo_ = tsc_start_buf[0];
+  hi_ = tsc_start_buf[1];
+  timer_buf[0] = @bitcast(f32, (@as(u32, hi_) << @as(u16, 16)) | @as(u32, lo_));
+  lo_ = tsc_start_buf[2];
+  hi_ = tsc_end_buf[0];
+  timer_buf[1] = @bitcast(f32, (@as(u32, hi_) << @as(u16, 16)) | @as(u32, lo_));
+  lo_ = tsc_end_buf[1];
+  hi_ = tsc_end_buf[2];
+  timer_buf[2] = @bitcast(f32, (@as(u32, hi_) << @as(u16, 16)) | @as(u32, lo_));
+
+  @activate(EXIT);
+}
+
+task f_exit() void {
+  // the user must unblock cmd color for every PE
+  sys_mod.unblock_cmd_stream();
+}
+
+comptime {
+  @bind_local_task(f_exit, EXIT);
+
+  @export_symbol(ptr_mo, "mo_grid");
+  @export_symbol(ptr_w, "cascm2");
+  @export_symbol(ptr_Pi, "Pi");
+  @export_symbol(ptr_timer_buf, "maxmin_time");
+  @export_symbol(compute);
+}

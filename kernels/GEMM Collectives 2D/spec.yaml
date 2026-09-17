@@ -1,0 +1,66 @@
+# xkernel-bench spec — see kernels/SPEC_SCHEMA.md for format.
+# Added 2026-09-08. The reference is the SDK collectives_2d SUMMA GEMM example
+# instrumented with the device-internal timing protocol. Simulator-only for
+# hardware claims: the bundle does not compile under SDK 2.10 (see
+# docs/EXCLUDED_TASKS_AUDIT_20260806.md) until the porter triage lands.
+kernel_id: "GEMM-Collectives-2D"
+group: "gemm"
+difficulty: 2
+
+tasks:
+  - "Compute C = A*B for dense row-major matrices on a P x P PE mesh with the
+     collectives_2d library (SUMMA: broadcast A tiles along rows and B tiles along
+     columns, accumulate locally); entrypoint = main."
+  - "Each PE holds Mt x Kt and Kt x Nt tiles; the full matrices are (P*Mt) x (P*Kt)
+     and (P*Kt) x (P*Nt)."
+
+inputs:
+  - {name: "A", shape: "[M, K]", dtype: "f32"}
+  - {name: "B", shape: "[K, N]", dtype: "f32"}
+
+outputs:
+  - {name: "C", shape: "[M, N]", dtype: "f32",
+     tolerance_abs: 1.0e-6, tolerance_rel: 1.0e-5,
+     description: "C = A*B; run.py verifies with np.testing.assert_allclose(rtol=1e-5, atol=1e-6)"}
+
+sizes:
+  - name: small
+    role: correctness
+    params: {P: 4, Mt: 14, Kt: 14, Nt: 14}     # 56x56 on 16 PEs
+    commands_script: "commands_wse3.sh"
+    wse3_reference: {cycles_send: 51425, time_send_us: 60.5}
+
+task_class: "real-translation"
+split: "train"                    # docs/SPLIT_AND_LEAKAGE.md: SUMMA via collectives_2d, MeshGEMM overlap
+
+# No `eval:` block: run.py draws A/B with a fixed seed and does not read
+# XKERNEL_EVAL_SEED, so the input-level held-out gate does not apply here.
+
+wse3_reference:                   # legacy top-level (== small)
+  cycles_send: 51425
+  time_send_us: 60.5
+  upstream_source: "csl-examples/benchmarks/gemm-collectives_2d"
+  params: {P: 4, Mt: 14, Kt: 14, Nt: 14}
+  _note: "Re-baselined 2026-09-08 under device_internal_v2 (was 51738 host-launched)."
+
+build_command: "bash commands_wse3.sh"
+verify: "embedded in run.py — np.testing.assert_allclose(rtol=1e-5, atol=1e-6) + SUCCESS"
+
+hidden_from_optimize_only:
+  - "CSL/pe.csl"
+
+optimization_angles:
+  - "dsd_offset_chaining"
+  - "fmac_bulk"
+  - "dsd_width_flatten_l0"
+  - "microthread_explicit_wse3"
+  - "async_detach_overlap"
+  - "comptime_hoist"
+  - "buffer_cleanup"
+
+tags:
+  - "dense_gemm"
+  - "collectives_2d"
+  - "summa"
+
+timing_protocol: device_internal_v2

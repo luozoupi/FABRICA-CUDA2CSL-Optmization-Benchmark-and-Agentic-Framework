@@ -1,0 +1,114 @@
+// Copyright 2026 Cerebras Systems.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+// Laplacian2D-Reduce = Laplacian2D-Halo + a global max-norm reduction at the
+// end: nrm = max over all cells of |new[i,j] - old[i,j]|.
+//
+// Layout inherits Laplacian2D-Halo's 4 cardinal halo colors and adds an NRM
+// color modeled on Residual's column reduction.
+
+param Mt: i16;
+param Nt: i16;
+param width: i16;
+param height: i16;
+
+const C_N: color = @get_color(8);
+const C_S: color = @get_color(9);
+const C_E: color = @get_color(10);
+const C_W: color = @get_color(11);
+const NRM: color = @get_color(12);
+
+const memcpy = @import_module("<memcpy/get_params>", .{
+  .width = width,
+  .height = height,
+});
+
+layout {
+  @comptime_assert(width == 2);
+  @comptime_assert(height == 2);
+
+  @set_rectangle(width, height);
+
+  const tile_params = .{ .Mt = Mt, .Nt = Nt, .width = width, .height = height };
+
+  var px: i16 = 0;
+  while (px < width) : (px += 1) {
+    var py: i16 = 0;
+    while (py < height) : (py += 1) {
+      const is_w: bool = (px == 0);
+      const is_e: bool = (px == width - 1);
+      const is_n: bool = (py == 0);
+      const is_s: bool = (py == height - 1);
+
+      const tx_north_c: color = if (!is_n) C_N else @get_color(15);
+      const rx_north_c: color = if (!is_n) C_S else @get_color(15);
+      const tx_south_c: color = if (!is_s) C_S else @get_color(15);
+      const rx_south_c: color = if (!is_s) C_N else @get_color(15);
+      const tx_east_c:  color = if (!is_e) C_E else @get_color(15);
+      const rx_east_c:  color = if (!is_e) C_W else @get_color(15);
+      const tx_west_c:  color = if (!is_w) C_W else @get_color(15);
+      const rx_west_c:  color = if (!is_w) C_E else @get_color(15);
+
+      // NRM column reduction: south PE sends its partial max north; north PE receives.
+      const tx_nrm_c: color = if (is_n) @get_color(15) else NRM;
+      const rx_nrm_c: color = if (is_s) @get_color(15) else NRM;
+
+      const pe_params = .{
+        .memcpy_params = memcpy.get_params(px),
+        .px = px, .py = py,
+        .is_w_edge = is_w, .is_e_edge = is_e,
+        .is_n_edge = is_n, .is_s_edge = is_s,
+        .TX_N = tx_north_c, .RX_N = rx_north_c,
+        .TX_S = tx_south_c, .RX_S = rx_south_c,
+        .TX_E = tx_east_c,  .RX_E = rx_east_c,
+        .TX_W = tx_west_c,  .RX_W = rx_west_c,
+        .TX_NRM = tx_nrm_c, .RX_NRM = rx_nrm_c,
+      };
+      @set_tile_code(px, py, "pe.csl", @concat_structs(tile_params, pe_params));
+    }
+  }
+
+  // Halo routing (identical to Laplacian2D-Halo).
+  px = 0;
+  while (px < width) : (px += 1) {
+    @set_color_config(px, 1, C_N, .{ .routes = .{ .rx = .{ RAMP },  .tx = .{ NORTH }}});
+    @set_color_config(px, 0, C_N, .{ .routes = .{ .rx = .{ SOUTH }, .tx = .{ RAMP  }}});
+    @set_color_config(px, 0, C_S, .{ .routes = .{ .rx = .{ RAMP },  .tx = .{ SOUTH }}});
+    @set_color_config(px, 1, C_S, .{ .routes = .{ .rx = .{ NORTH }, .tx = .{ RAMP  }}});
+  }
+  var py: i16 = 0;
+  while (py < height) : (py += 1) {
+    @set_color_config(0, py, C_E, .{ .routes = .{ .rx = .{ RAMP }, .tx = .{ EAST }}});
+    @set_color_config(1, py, C_E, .{ .routes = .{ .rx = .{ WEST }, .tx = .{ RAMP }}});
+    @set_color_config(1, py, C_W, .{ .routes = .{ .rx = .{ RAMP }, .tx = .{ WEST }}});
+    @set_color_config(0, py, C_W, .{ .routes = .{ .rx = .{ EAST }, .tx = .{ RAMP }}});
+  }
+
+  // NRM: south PE sends partial max north.
+  px = 0;
+  while (px < width) : (px += 1) {
+    @set_color_config(px, 1, NRM, .{ .routes = .{ .rx = .{ RAMP },  .tx = .{ NORTH }}});
+    @set_color_config(px, 0, NRM, .{ .routes = .{ .rx = .{ SOUTH }, .tx = .{ RAMP  }}});
+  }
+
+  @export_name("tile",     [*]f32, true);
+  @export_name("new_tile", [*]f32, true);
+  @export_name("nrm",      [*]f32, true);
+  @export_name("time_buf_u16", [*]u16, true);
+  @export_name("step", fn(u16)void);
+  @export_name("f_tic", fn()void);
+  @export_name("f_toc", fn()void);
+  @export_name("f_memcpy_timestamps", fn()void);
+  @export_name("f_enable_timer", fn()void);
+}

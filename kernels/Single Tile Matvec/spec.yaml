@@ -1,0 +1,53 @@
+# xkernel-bench spec — see kernels/SPEC_SCHEMA.md for format.
+kernel_id: "Single-Tile-Matvec"
+group: "gemv"
+difficulty: 1
+
+tasks:
+  - "Compute y = A*x for a single nb x nb tile replicated on every PE; entrypoint = main.
+     run.py is invoked with --verify (compares y against A@x on each PE)."
+
+inputs:
+  - {name: "A", shape: "[nb, nb]", dtype: "f32"}
+  - {name: "x", shape: "[nb]", dtype: "f32"}
+
+outputs:
+  - {name: "y", shape: "[nb]", dtype: "f32",
+     tolerance_abs: 1.0e-4, tolerance_rel: 0.0,
+     description: "y = A*x; reference verified inside run.py (assert_allclose atol=1e-4 + SUCCESS)"}
+
+sizes:
+  - name: small
+    role: correctness
+    params: {width: 2, height: 2, tile_size: 25, iters: 1}
+    commands_script: "commands_wse3.sh"
+    wse3_reference: {cycles_send: 780, time_send_us: 0.9176}
+
+task_class: "real-translation"
+split: "test"             # single-PE matvec; robust genuine pass; held-out test
+
+# Input-level train/test split (2026-06-24). run.py draws A_mat/x_vec from a seeded RNG
+# (XKERNEL_EVAL_SEED, previously unseeded np.random.rand) and recomputes the reference
+# A@x every run. The harness scores correctness on the HELD-OUT seeds, which never
+# appear in any agent prompt. This robust kernel is the no-false-NEGATIVE control: a
+# correct matvec passes every held-out seed. See docs/SPLIT_AND_LEAKAGE.md.
+eval:
+  train_seed: 7                    # default RNG seed in run.py (the agent may see this)
+  heldout_seeds: [101, 202, 303]   # harness-only; correctness must pass on ALL
+  seed_env: "XKERNEL_EVAL_SEED"
+
+wse3_reference:           # legacy top-level (== small)
+  cycles_send: 780
+  time_send_us: 0.9176
+  params: {width: 2, height: 2, tile_size: 25, iters: 1}
+
+build_command: "bash commands_wse3.sh"
+verify: "embedded in run.py (--verify) — np.testing.assert_allclose(atol=1e-4) + SUCCESS"
+
+hidden_from_optimize_only:
+  - "CSL/pe_matvec.csl"
+
+tags:
+  - "single_pe"
+  - "matvec"
+  - "replicated"

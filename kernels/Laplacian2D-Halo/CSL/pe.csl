@@ -1,0 +1,288 @@
+// Copyright 2026 Cerebras Systems.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+// 5-point 2D Laplacian compute file. One iteration:
+//   new[i,j] = 0.25 * (up + down + left + right)
+// with zero-boundary halo for cells touching the global edge.
+//
+// Per-PE flow per iteration:
+//   1. step() activates SEND
+//   2. SEND stages columns into col_send_{e,w}, then issues 4 async fabric
+//      sends (one per non-edge direction) and 4 async fabric receives (one
+//      per non-edge direction) targeting the halo buffers.
+//   3. Each completed receive activates RX_DONE; a counter tracks how many
+//      of the expected halos have arrived. When the count equals
+//      num_halos_expected, RX_DONE activates COMPUTE.
+//   4. COMPUTE evaluates the 5-point stencil into new_tile, copies new_tile
+//      back into tile (for the next iteration), decrements the iteration
+//      counter, and either activates SEND again or activates EXIT.
+//   5. EXIT calls sys_mod.unblock_cmd_stream() so the host launch returns.
+
+param memcpy_params: comptime_struct;
+param Mt: i16;
+param Nt: i16;
+param width: i16;
+param height: i16;
+param px: i16;
+param py: i16;
+param is_w_edge: bool;
+param is_e_edge: bool;
+param is_n_edge: bool;
+param is_s_edge: bool;
+
+param TX_N: color = @get_color(15);
+param RX_N: color = @get_color(15);
+param TX_S: color = @get_color(15);
+param RX_S: color = @get_color(15);
+param TX_E: color = @get_color(15);
+param RX_E: color = @get_color(15);
+param TX_W: color = @get_color(15);
+param RX_W: color = @get_color(15);
+
+// Output queues. IDs 0-1 reserved for memcpy; use 2..5 for the 4 cardinal sends.
+const tx_n_oq: output_queue = @get_output_queue(2);
+const tx_s_oq: output_queue = @get_output_queue(3);
+const tx_e_oq: output_queue = @get_output_queue(4);
+const tx_w_oq: output_queue = @get_output_queue(5);
+
+// Input queues. Max input queue ID on WSE-3 is 7. memcpy reserves 0-1.
+// Use 2..5 for the 4 cardinal receives (same convention as Game-of-Life).
+const rx_n_iq: input_queue = @get_input_queue(2);
+const rx_s_iq: input_queue = @get_input_queue(3);
+const rx_e_iq: input_queue = @get_input_queue(4);
+const rx_w_iq: input_queue = @get_input_queue(5);
+
+// Local task IDs. 0..11 reserved for memcpy; 12+ for compute.
+const SEND_TID:    local_task_id = @get_local_task_id(12);
+const RX_DONE_TID: local_task_id = @get_local_task_id(13);
+const COMPUTE_TID: local_task_id = @get_local_task_id(14);
+const EXIT_TID:    local_task_id = @get_local_task_id(15);
+
+const sys_mod = @import_module("<memcpy/memcpy>", memcpy_params);
+
+const timestamp = @import_module("<time>");
+
+// ---- Storage ------------------------------------------------------------
+
+// Row-major tile: tile[i*Nt + j]
+var tile:     [Mt * Nt]f32 = @zeros([Mt * Nt]f32);
+var new_tile: [Mt * Nt]f32 = @zeros([Mt * Nt]f32);
+
+// Halo arrays. Edge PEs leave them at zero so the stencil reads 0 for the
+// missing neighbor cells.
+var halo_n: [Nt]f32 = @zeros([Nt]f32);
+var halo_s: [Nt]f32 = @zeros([Nt]f32);
+var halo_e: [Mt]f32 = @zeros([Mt]f32);
+var halo_w: [Mt]f32 = @zeros([Mt]f32);
+
+// Contiguous staging for column sends (strided reads from `tile` would
+// complicate the fabric DSD; copy into a flat buffer first).
+var col_send_e: [Mt]f32 = @zeros([Mt]f32);
+var col_send_w: [Mt]f32 = @zeros([Mt]f32);
+
+var tile_ptr:     [*]f32 = &tile;
+var new_tile_ptr: [*]f32 = &new_tile;
+
+// Timestamp buffers for cycles_send instrumentation.
+var tscStartBuffer = @zeros([timestamp.tsc_size_words]u16);
+var tscEndBuffer = @zeros([timestamp.tsc_size_words]u16);
+var time_buf_u16 = @zeros([timestamp.tsc_size_words*2]u16);
+var ptr_time_buf_u16: [*]u16 = &time_buf_u16;
+
+// Comptime counter of how many halos this PE expects each iteration.
+// 2x2 mesh: each PE is on 2 edges and has 2 interior neighbors, so each
+// PE expects 2 halos. (Just two, not 4!)
+const num_halos_expected: i16 =
+    (if (is_w_edge) @as(i16, 0) else @as(i16, 1))
+  + (if (is_e_edge) @as(i16, 0) else @as(i16, 1))
+  + (if (is_n_edge) @as(i16, 0) else @as(i16, 1))
+  + (if (is_s_edge) @as(i16, 0) else @as(i16, 1));
+
+var num_halos_received: i16 = 0;
+var remaining_iters: u16 = 0;
+
+// ---- DSDs ---------------------------------------------------------------
+
+// Memory DSDs for the rows/cols we send.
+const top_row_dsd    = @get_dsd(mem1d_dsd, .{ .tensor_access = |j|{Nt} -> tile[j] });
+const bot_row_dsd    = @get_dsd(mem1d_dsd, .{ .tensor_access = |j|{Nt} -> tile[(Mt-1)*Nt + j] });
+const col_send_e_dsd = @get_dsd(mem1d_dsd, .{ .tensor_access = |i|{Mt} -> col_send_e[i] });
+const col_send_w_dsd = @get_dsd(mem1d_dsd, .{ .tensor_access = |i|{Mt} -> col_send_w[i] });
+
+// Memory DSDs for the halos we receive into.
+const halo_n_dsd = @get_dsd(mem1d_dsd, .{ .tensor_access = |j|{Nt} -> halo_n[j] });
+const halo_s_dsd = @get_dsd(mem1d_dsd, .{ .tensor_access = |j|{Nt} -> halo_s[j] });
+const halo_e_dsd = @get_dsd(mem1d_dsd, .{ .tensor_access = |i|{Mt} -> halo_e[i] });
+const halo_w_dsd = @get_dsd(mem1d_dsd, .{ .tensor_access = |i|{Mt} -> halo_w[i] });
+
+// Fabric DSDs.
+const fab_tx_n = @get_dsd(fabout_dsd, .{ .extent = Nt, .fabric_color = TX_N, .output_queue = tx_n_oq });
+const fab_tx_s = @get_dsd(fabout_dsd, .{ .extent = Nt, .fabric_color = TX_S, .output_queue = tx_s_oq });
+const fab_tx_e = @get_dsd(fabout_dsd, .{ .extent = Mt, .fabric_color = TX_E, .output_queue = tx_e_oq });
+const fab_tx_w = @get_dsd(fabout_dsd, .{ .extent = Mt, .fabric_color = TX_W, .output_queue = tx_w_oq });
+
+const fab_rx_n = @get_dsd(fabin_dsd, .{ .extent = Nt, .fabric_color = RX_N, .input_queue = rx_n_iq });
+const fab_rx_s = @get_dsd(fabin_dsd, .{ .extent = Nt, .fabric_color = RX_S, .input_queue = rx_s_iq });
+const fab_rx_e = @get_dsd(fabin_dsd, .{ .extent = Mt, .fabric_color = RX_E, .input_queue = rx_e_iq });
+const fab_rx_w = @get_dsd(fabin_dsd, .{ .extent = Mt, .fabric_color = RX_W, .input_queue = rx_w_iq });
+
+// ---- Tasks --------------------------------------------------------------
+
+task f_send() void {
+  // Reset receive counter for this iteration.
+  num_halos_received = 0;
+
+  // Stage column buffers (contiguous send).
+  var i: i16 = 0;
+  while (i < Mt) : (i += 1) {
+    col_send_w[i] = tile[i * Nt + 0];
+    col_send_e[i] = tile[i * Nt + (Nt - 1)];
+  }
+
+  // Issue async sends (skip directions with no neighbor).
+  if (!is_n_edge) @fmovs(fab_tx_n, top_row_dsd,    .{ .async = true });
+  if (!is_s_edge) @fmovs(fab_tx_s, bot_row_dsd,    .{ .async = true });
+  if (!is_w_edge) @fmovs(fab_tx_w, col_send_w_dsd, .{ .async = true });
+  if (!is_e_edge) @fmovs(fab_tx_e, col_send_e_dsd, .{ .async = true });
+
+  // Issue async receives. Each fires RX_DONE_TID once when its `extent`
+  // wavelets have all landed in the halo buffer.
+  if (!is_n_edge) @fmovs(halo_n_dsd, fab_rx_n, .{ .async = true, .activate = RX_DONE_TID });
+  if (!is_s_edge) @fmovs(halo_s_dsd, fab_rx_s, .{ .async = true, .activate = RX_DONE_TID });
+  if (!is_w_edge) @fmovs(halo_w_dsd, fab_rx_w, .{ .async = true, .activate = RX_DONE_TID });
+  if (!is_e_edge) @fmovs(halo_e_dsd, fab_rx_e, .{ .async = true, .activate = RX_DONE_TID });
+}
+
+task f_rx_done() void {
+  num_halos_received += 1;
+  if (num_halos_received == num_halos_expected) {
+    @activate(COMPUTE_TID);
+  }
+}
+
+task f_compute() void {
+  // 5-point stencil with zero-boundary halos.
+  var i: i16 = 0;
+  while (i < Mt) : (i += 1) {
+    var j: i16 = 0;
+    while (j < Nt) : (j += 1) {
+      const up    = if (i == 0)        halo_n[j]              else tile[(i-1)*Nt + j];
+      const down  = if (i == Mt - 1)   halo_s[j]              else tile[(i+1)*Nt + j];
+      const left  = if (j == 0)        halo_w[i]              else tile[i*Nt + (j-1)];
+      const right = if (j == Nt - 1)   halo_e[i]              else tile[i*Nt + (j+1)];
+      new_tile[i*Nt + j] = 0.25 * (up + down + left + right);
+    }
+  }
+
+  // Copy new_tile back into tile so the next iteration sends the right rows.
+  i = 0;
+  while (i < Mt * Nt) : (i += 1) {
+    tile[i] = new_tile[i];
+  }
+
+  // Iteration control.
+  remaining_iters -= 1;
+  if (remaining_iters > 0) {
+    @activate(SEND_TID);
+  } else {
+    @activate(EXIT_TID);
+  }
+}
+
+task f_exit() void {
+  f_toc_dev();
+  sys_mod.unblock_cmd_stream();
+}
+
+fn step(iters: u16) void {
+  f_tic_dev();
+  remaining_iters = iters;
+  if (iters == 0) {
+    // Trivial path; just return.
+    @activate(EXIT_TID);
+  } else {
+    @activate(SEND_TID);
+  }
+}
+
+// Device-internal timing window (protocol device_internal_v2). The start stamp
+// is taken inside the launched entry point and the end stamp in the completion
+// task, so the host RPC between separately launched f_tic/f_toc (~488 us per
+// launch on WSE-3 hardware) is no longer inside the measured window. f_tic and
+// f_toc stay exported for backward compatibility; the runner no longer launches
+// them. Both helpers are FROZEN (body and call sites) by the contract check.
+var tsc_window_open: bool = false;
+fn f_tic_dev() void {
+  if (!tsc_window_open) {
+    tsc_window_open = true;
+    timestamp.get_timestamp(&tscStartBuffer);
+  }
+}
+fn f_toc_dev() void {
+  timestamp.get_timestamp(&tscEndBuffer);
+}
+
+fn f_tic() void {
+  timestamp.get_timestamp(&tscStartBuffer);
+  sys_mod.unblock_cmd_stream();
+}
+
+fn f_toc() void {
+  timestamp.get_timestamp(&tscEndBuffer);
+  sys_mod.unblock_cmd_stream();
+}
+
+fn f_memcpy_timestamps() void {
+  time_buf_u16[0] = tscStartBuffer[0];
+  time_buf_u16[1] = tscStartBuffer[1];
+  time_buf_u16[2] = tscStartBuffer[2];
+  time_buf_u16[3] = tscEndBuffer[0];
+  time_buf_u16[4] = tscEndBuffer[1];
+  time_buf_u16[5] = tscEndBuffer[2];
+  sys_mod.unblock_cmd_stream();
+}
+
+fn f_enable_timer() void {
+  timestamp.enable_tsc();
+  sys_mod.unblock_cmd_stream();
+}
+
+comptime {
+  @bind_local_task(f_send,    SEND_TID);
+  @bind_local_task(f_rx_done, RX_DONE_TID);
+  @bind_local_task(f_compute, COMPUTE_TID);
+  @bind_local_task(f_exit,    EXIT_TID);
+
+  // WSE-3 requires explicit queue initialization when a non-default color is
+  // bound to a queue. Skip for the sentinel color 15 (edge directions).
+  if (@is_arch("wse3")) {
+    if (@get_int(TX_N) != 15) @initialize_queue(tx_n_oq, .{ .color = TX_N });
+    if (@get_int(TX_S) != 15) @initialize_queue(tx_s_oq, .{ .color = TX_S });
+    if (@get_int(TX_E) != 15) @initialize_queue(tx_e_oq, .{ .color = TX_E });
+    if (@get_int(TX_W) != 15) @initialize_queue(tx_w_oq, .{ .color = TX_W });
+    if (@get_int(RX_N) != 15) @initialize_queue(rx_n_iq, .{ .color = RX_N });
+    if (@get_int(RX_S) != 15) @initialize_queue(rx_s_iq, .{ .color = RX_S });
+    if (@get_int(RX_E) != 15) @initialize_queue(rx_e_iq, .{ .color = RX_E });
+    if (@get_int(RX_W) != 15) @initialize_queue(rx_w_iq, .{ .color = RX_W });
+  }
+
+  @export_symbol(tile_ptr,     "tile");
+  @export_symbol(new_tile_ptr, "new_tile");
+  @export_symbol(ptr_time_buf_u16, "time_buf_u16");
+  @export_symbol(step);
+  @export_symbol(f_tic);
+  @export_symbol(f_toc);
+  @export_symbol(f_memcpy_timestamps);
+  @export_symbol(f_enable_timer);
+}

@@ -1,0 +1,51 @@
+kernel_id: "ParReduce-Sum"
+group: "collective"
+difficulty: 3
+
+tasks:
+  - "Parallel sum reduction across a 4-PE horizontal strip using tree
+     reduction via wavelets. Each PE computes a local partial sum of its
+     n_per_pe elements, then participates in a 2-phase tree reduce:
+     Phase 1: PE3->PE2 and PE1->PE0 (halve), Phase 2: PE2->PE0 (final).
+     Result on PE(0,0). entrypoint = compute."
+
+inputs:
+  - {name: "x", shape: "[n_per_pe * width]", dtype: "f32"}
+
+outputs:
+  - {name: "result", shape: "[1]", dtype: "f32",
+     tolerance_abs: 0.1, tolerance_rel: 0.01,
+     description: "result == np.sum(x_all); verified in run.py + SUCCESS"}
+
+sizes:
+  - name: small
+    role: correctness
+    params: {n_per_pe: 128, width: 4, height: 1}
+    commands_script: "commands_wse3.sh"
+    wse3_reference: {cycles_send: 1990}
+
+task_class: "real-translation"
+split: "test"
+
+metric:
+  class: cycles
+  reason: "multi-PE tree reduction via wavelet routing; exercises fabric communication"
+
+eval:
+  train_seed: 7
+  heldout_seeds: [101, 202, 303]
+  seed_env: "XKERNEL_EVAL_SEED"
+
+build_command: "bash commands_wse3.sh"
+verify: "embedded in run.py — np.testing.assert_allclose + SUCCESS"
+
+hidden_from_optimize_only:
+  - "CSL/pe.csl"
+
+tags:
+  - "multi_pe"
+  - "collective"
+  - "reduction"
+  - "tree_reduce"
+  - "wavelet_routing"
+  - "difficulty_3"

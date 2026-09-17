@@ -1,0 +1,87 @@
+# xkernel-bench spec — see kernels/SPEC_SCHEMA.md for format.
+kernel_id: "Laplacian2D-Halo"
+group: "stencil"
+difficulty: 2
+
+tasks:
+  - "Iterate a 2D 5-point Laplacian stencil for `iters` time-steps.
+     Multi-PE (2x2 mesh, 4x4 tile per PE) with halo-1 exchange.
+     Entrypoint = step (takes iters as u16 arg)."
+  - "Halo exchange uses fabric N/S/E/W routing; inner loop computes
+     new_tile[i,j] = 0.25 * (tile[i-1,j] + tile[i+1,j] + tile[i,j-1] + tile[i,j+1])."
+
+inputs:
+  - {name: "tile", shape: "[mesh_h, mesh_w, tile_h, tile_w]", dtype: "f32",
+     description: "initial 2D field, distributed across PE grid with halo padding"}
+
+outputs:
+  - {name: "new_tile", shape: "[mesh_h, mesh_w, tile_h, tile_w]", dtype: "f32",
+     tolerance_abs: 0.0, tolerance_rel: 0.0,
+     description: "post-iteration field; reference verifies max abs diff = 0 + SUCCESS"}
+
+# Problem-size axis (Phase-2). large = Mt=Nt=16 (vs small 4) on the 2x2 mesh —
+# the largest tile that runs clean (Mt>=32 fails at runtime on 2x2, which is the
+# decomposition signal: scaling beyond needs a larger mesh). 15x cycle growth.
+# Crossover measured 2026-06-20 (crossover_report).
+sizes:
+  - name: small
+    role: correctness
+    params: {width: 2, height: 2, Mt: 4, Nt: 4}
+    commands_script: "commands_wse3.sh"
+    wse3_reference: {cycles_send: 1274, time_send_us: 2.0106}
+  - name: large
+    role: decomposition
+    params: {width: 2, height: 2, Mt: 16, Nt: 16}
+    commands_script: "commands_wse3_large.sh"
+    wse3_reference: {cycles_send: 25195, time_send_us: 30.15}
+
+task_class: "real-translation"
+split: "test"             # halo-exchange Laplacian; held-out test
+
+# Input-level train/test split (2026-06-24). run.py draws A from a seeded RNG
+# (XKERNEL_EVAL_SEED, was a deterministic np.arange) and recomputes the laplacian_step
+# reference from it. Held-out seeds are harness-only. See SPLIT_AND_LEAKAGE.md.
+eval:
+  train_seed: 0
+  heldout_seeds: [101, 202, 303]
+  seed_env: "XKERNEL_EVAL_SEED"
+
+wse3_reference:           # legacy top-level (== small)
+  cycles_send: 1274
+  time_send_us: 2.0106
+  upstream_source: "csl-examples/tutorials (halo-exchange Laplacian)"
+  params: {M: 8, N: 8, mesh: "2x2", tile: "4x4", iters: 1}
+  _note: "Instrumented 2026-06-02; 2x2 halo exchange."
+
+build_command: "bash commands_wse3.sh"
+verify: "embedded in run.py — assert max abs diff == 0 + SUCCESS"
+
+hidden_from_optimize_only:
+  - "CSL/pe.csl"
+
+# Stencil kernel: same architectural pattern that gave 7pt-Stencil a 49.5%
+# WIN via comptime_value_tuning (BLOCK_SIZE = MAX_ZDIM). Likely candidates:
+# comptime tuning (inner-tile size), circbuf for sliding window, halo
+# overlap with async fabric ops.
+optimization_angles:
+  - "comptime_value_tuning"
+  - "circbuf_save_address"
+  - "comptime_cleanup"
+  - "comptime_hoist"
+  - "dsd_offset_chaining"
+  - "fmac_bulk"
+  - "stride_optimization"
+  - "async_detach_overlap"
+  - "fifo_smoothing"
+
+tags:
+  - "stencil"
+  - "halo_exchange"
+  - "multi_pe"
+  - "iterative_stencil"
+
+# Timing protocol (2026-09-08): start/end stamps are taken on-device inside the
+# launched entry point and the completion task (f_tic_dev / f_toc_dev); the
+# runner no longer launches f_tic / f_toc separately, so hardware cycles are
+# comparable to simulator cycles. Both helpers and their call sites are frozen.
+timing_protocol: device_internal_v2

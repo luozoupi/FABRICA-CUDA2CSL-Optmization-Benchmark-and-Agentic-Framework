@@ -1,0 +1,26 @@
+{
+  "generated_at": "2026-05-20T21:53:47Z",
+  "source_url": "https://sdk.cerebras.net/sdk-release-notes/sdk-rel-notes-cumulative",
+  "source_rst_url": "https://sdk.cerebras.net/_sources/sdk-release-notes/sdk-rel-notes-cumulative.rst.txt",
+  "raw_path": "knowledge/raw/sdk-rel-notes-cumulative.rst.txt",
+  "output_path": "knowledge/data/cerebras_sdk_docs.jsonl",
+  "sha256": "dc201cf21bb93ad555bece673c836948ef546d0faf80f237db8f589c56e6c310",
+  "chunk_count": 77,
+  "versions": [
+    "2.10.0",
+    "1.4.0",
+    "1.3.0",
+    "1.2.0",
+    "1.1.0",
+    "1.0.0",
+    "0.9.0",
+    "0.8.0",
+    "0.7.0",
+    "0.6.0",
+    "0.5.1",
+    "0.4.0",
+    "0.3.1",
+    "0.2.1",
+    "0.2.0"
+  ]
+}

@@ -1,0 +1,72 @@
+// MSE-Loss-1PE compute: result = mean((pred - target)^2).
+
+param memcpy_params: comptime_struct;
+param n: u16;
+
+const EXIT: local_task_id = @get_local_task_id(9);
+
+const sys_mod = @import_module("<memcpy/memcpy>", memcpy_params);
+
+const timestamp = @import_module("<time>");
+var tsc_start_buf = @zeros([timestamp.tsc_size_words]u16);
+var tsc_end_buf   = @zeros([timestamp.tsc_size_words]u16);
+var timer_buf = @zeros([3]f32);
+var ptr_timer_buf: [*]f32 = &timer_buf;
+
+var pred_array = @zeros([n]f32);
+var target_array = @zeros([n]f32);
+var result_array = @zeros([1]f32);
+var ptr_pred: [*]f32 = &pred_array;
+var ptr_target: [*]f32 = &target_array;
+var ptr_result: [*]f32 = &result_array;
+
+fn mse_loss() void {
+  var sum: f32 = 0.0;
+  var i: u16 = 0;
+  while (i < n) : (i += 1) {
+    const d = pred_array[i] - target_array[i];
+    sum += d * d;
+  }
+  result_array[0] = sum / @as(f32, @as(u32, n));
+}
+
+fn compute() void {
+  timestamp.enable_tsc();
+  timestamp.get_timestamp(&tsc_start_buf);
+
+  mse_loss();
+
+  timestamp.get_timestamp(&tsc_end_buf);
+  timestamp.disable_tsc();
+
+  var lo_: u16 = 0;
+  var hi_: u16 = 0;
+
+  lo_ = tsc_start_buf[0];
+  hi_ = tsc_start_buf[1];
+  timer_buf[0] = @bitcast(f32, (@as(u32, hi_) << @as(u16, 16)) | @as(u32, lo_));
+
+  lo_ = tsc_start_buf[2];
+  hi_ = tsc_end_buf[0];
+  timer_buf[1] = @bitcast(f32, (@as(u32, hi_) << @as(u16, 16)) | @as(u32, lo_));
+
+  lo_ = tsc_end_buf[1];
+  hi_ = tsc_end_buf[2];
+  timer_buf[2] = @bitcast(f32, (@as(u32, hi_) << @as(u16, 16)) | @as(u32, lo_));
+
+  @activate(EXIT);
+}
+
+task f_exit() void {
+  sys_mod.unblock_cmd_stream();
+}
+
+comptime {
+  @bind_local_task(f_exit, EXIT);
+
+  @export_symbol(ptr_pred, "pred");
+  @export_symbol(ptr_target, "target");
+  @export_symbol(ptr_result, "result");
+  @export_symbol(ptr_timer_buf, "maxmin_time");
+  @export_symbol(compute);
+}

@@ -1,0 +1,29 @@
+// Stencil7pt-1PE layout (hand-written-compute variant). A single PE holds the whole
+// Nx*Ny*Nz grid and computes the 3D 7-point stencil y = A*x. pe.csl (the compute) is
+// what the agent translates.
+
+param Nx: u16;
+param Ny: u16;
+param Nz: u16;
+
+const memcpy = @import_module("<memcpy/get_params>", .{
+  .width = 1,
+  .height = 1,
+});
+
+layout {
+  @set_rectangle(1, 1);
+
+  const memcpy_params = memcpy.get_params(0);
+  @set_tile_code(0, 0, "pe.csl", .{
+    .memcpy_params = memcpy_params,
+    .Nx = Nx,
+    .Ny = Ny,
+    .Nz = Nz,
+  });
+
+  @export_name("x", [*]f32, true);   // [Nx*Ny*Nz] input field
+  @export_name("y", [*]f32, true);   // [Nx*Ny*Nz] output field
+  @export_name("maxmin_time", [*]f32, true);
+  @export_name("compute", fn()void);
+}

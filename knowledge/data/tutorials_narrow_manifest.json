@@ -1,0 +1,12 @@
+{
+  "generated_at": "2026-05-30T21:55:45.313455+00:00",
+  "source_root": "https://github.com/Cerebras/csl-examples/tree/master/tutorials",
+  "chunk_count": 29,
+  "input_files": 107,
+  "inputs_sha256": "7a23bebc560c15cc80a5cdbc7dba1f3a58b2d88cb855648cebc1fb9abf757282",
+  "sections_present": [
+    "tutorial_csl_implementer",
+    "tutorial_readme_architect",
+    "tutorial_readme_reviewer"
+  ]
+}

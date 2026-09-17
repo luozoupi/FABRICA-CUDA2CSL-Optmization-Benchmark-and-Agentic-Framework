@@ -1,0 +1,75 @@
+# xkernel-bench spec — see kernels/SPEC_SCHEMA.md for format.
+kernel_id: "BiCGSTAB"
+group: "linalg"
+difficulty: 2
+
+tasks:
+  - "Biconjugate gradient stabilized method (BiCGSTAB) for solving A * x = b
+     where A is a general (not necessarily symmetric) sparse matrix in 7-point
+     stencil pattern, distributed row-wise across the PE rectangle."
+  - "Each BiCGSTAB iteration: 2 SpMVs (A * p, A * s), 4 inner products, 6 axpy
+     updates. Globally reduces 4 scalars per iteration; one of the heaviest
+     Krylov solvers in terms of fabric communication."
+
+inputs:
+  - {name: "A_coeffs", shape: "[width, height, k, 7]", dtype: "f32",
+     description: "matrix coefficients in 7-point stencil pattern"}
+  - {name: "b",        shape: "[width, height, k]",     dtype: "f32",
+     description: "right-hand side"}
+  - {name: "x0",       shape: "[width, height, k]",     dtype: "f32",
+     description: "initial guess"}
+
+outputs:
+  - {name: "x", shape: "[width, height, k]", dtype: "f32",
+     tolerance_abs: 0.0, tolerance_rel: 0.0,
+     description: "solution to A*x=b; reference verifies element-by-element"}
+
+# Re-baselined 2026-06-18 (Workstream A). Bench now builds the on-device
+# variant (layout_bicgstab.csl -> kernel_bicgstab.csl); run.py is the on-device
+# runner (single f_bicgstab(zDim,tol,max_ite) launch in the timed window).
+# cycles_send now reflects on-device compute so W2 edits to kernel_bicgstab.csl
+# can move it. Old 25970 was host-loop instrumentation, not comparable.
+# Measured at max_ite=20: 59385.
+wse3_reference:
+  cycles_send: 59385
+  time_send_us: 69.8647
+  upstream_source: "csl-examples/benchmarks/bicgstab (on-device device_run.py variant)"
+  params: {width: 5, height: 5, MAX_ZDIM: 5, BLOCK_SIZE: 2, m: 5, n: 5, k: 5, max_ite: 20}
+  prev_baseline: {cycles_send: 25970, note: "host-loop instrumentation, not comparable"}
+
+build_command: "bash commands_wse3.sh"
+verify: "embedded in run.py — asserts numerical match against host reference"
+
+hidden_from_optimize_only:
+  - "CSL/src/kernel.csl"
+  - "CSL/src/kernel_bicgstab.csl"
+  - "CSL/src/blas.csl"
+
+# Per-kernel optimizer angle whitelist. BiCGSTAB is the heaviest Krylov
+# (2 SpMVs + 4 dots + 6 axpys per iter) so it's most sensitive to
+# fabric-overlap and async-decouple angles. Also the largest baseline
+# cycle count (25970), giving the most room for improvement.
+optimization_angles:
+  - "iterative_phase_fusion"  # 17 host launches/iter — biggest target
+  - "comptime_value_tuning"
+  - "fmac_bulk"
+  - "dsd_offset_chaining"
+  - "async_detach_overlap"
+  - "task_chaining_unblock_activate"
+  - "prefetch_fabric_async"
+  - "comptime_hoist"
+  - "buffer_cleanup"
+
+# Sweep run_20260602_221426 (Sonnet 4.6, 4 attempts): no cycle reduction.
+attempted_no_op_angles:
+  - {angle: "comptime_value_tuning", runs_tried: 1, last_attempted: "run_20260602_221426 (Sonnet returned identical code)"}
+  - {angle: "fmac_bulk", runs_tried: 1, last_attempted: "run_20260602_221426 (no reduction; reference already uses bulk DSDs)"}
+  - {angle: "comptime_hoist", runs_tried: 1, last_attempted: "run_20260602_221426 (no reduction)"}
+  - {angle: "dsd_offset_chaining", runs_tried: 1, last_attempted: "run_20260602_221426 (no reduction)"}
+
+tags:
+  - "iterative"
+  - "global_reduce"
+  - "fabric_row_reduce"
+  - "krylov_solver"
+  - "non_symmetric"

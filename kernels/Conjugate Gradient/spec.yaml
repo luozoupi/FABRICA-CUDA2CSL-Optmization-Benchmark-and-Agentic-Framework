@@ -1,0 +1,74 @@
+# xkernel-bench spec — see kernels/SPEC_SCHEMA.md for format.
+kernel_id: "Conjugate-Gradient"
+group: "linalg"
+difficulty: 2
+
+tasks:
+  - "Conjugate gradient method for solving A * x = b, where A is a symmetric
+     positive-definite sparse matrix in 7-point stencil pattern, distributed
+     row-wise across the PE rectangle."
+  - "Each CG iteration: SpMV (A * p), inner products (r' * r, p' * A * p),
+     axpy updates (x += alpha * p, r -= alpha * A * p)."
+  - "All inner products are global reductions across all PEs."
+
+inputs:
+  - {name: "A_coeffs", shape: "[width, height, k, 7]", dtype: "f32",
+     description: "SPD matrix coefficients in 7-point stencil pattern"}
+  - {name: "b",        shape: "[width, height, k]",     dtype: "f32",
+     description: "right-hand side"}
+  - {name: "x0",       shape: "[width, height, k]",     dtype: "f32",
+     description: "initial guess (typically zeros)"}
+
+outputs:
+  - {name: "x", shape: "[width, height, k]", dtype: "f32",
+     tolerance_abs: 0.0, tolerance_rel: 0.0,
+     description: "solution to A*x=b; reference verifies element-by-element"}
+
+# Re-baselined 2026-06-18 (Workstream A). Bench now builds the on-device
+# variant (layout_cg.csl -> kernel_cg.csl); run.py is the on-device runner
+# (single f_cg(zDim,tol,max_ite) launch in the timed window). cycles_send now
+# reflects on-device compute so W2 edits to kernel_cg.csl can move it. The old
+# 14958 was host-loop instrumentation and is not comparable. Measured: 11635.
+wse3_reference:
+  cycles_send: 11635
+  time_send_us: 13.6882
+  upstream_source: "csl-examples/benchmarks/conjugate-gradient (on-device device_run.py variant)"
+  params: {width: 5, height: 5, MAX_ZDIM: 5, BLOCK_SIZE: 2, m: 5, n: 5, k: 5, max_ite: 2}
+  prev_baseline: {cycles_send: 14958, note: "host-loop instrumentation, not comparable"}
+
+build_command: "bash commands_wse3.sh"
+verify: "embedded in run.py — asserts numerical match against host reference"
+
+hidden_from_optimize_only:
+  - "CSL/src/kernel.csl"
+  - "CSL/src/kernel_cg.csl"
+  - "CSL/src/blas.csl"
+
+# Per-kernel optimizer angle whitelist. CG is a Krylov solver with the
+# canonical SpMV + dot + axpy pattern repeated per iteration.
+# Same shape as Power-Method; add fmac angles for the dense axpy steps.
+optimization_angles:
+  - "iterative_phase_fusion"  # 13 host launches/iter
+  - "comptime_value_tuning"
+  - "fmac_bulk"
+  - "dsd_offset_chaining"
+  - "async_detach_overlap"
+  - "task_chaining_unblock_activate"
+  - "comptime_hoist"
+  - "prefetch_fabric_async"
+  - "buffer_cleanup"
+
+# Sweep run_20260602_220105 (Sonnet 4.6, 5 attempts): no cycle reduction.
+attempted_no_op_angles:
+  - {angle: "comptime_value_tuning", runs_tried: 1, last_attempted: "run_20260602_220105 (Sonnet returned identical code)"}
+  - {angle: "fmac_bulk", runs_tried: 1, last_attempted: "run_20260602_220105 (no reduction; reference already uses bulk DSDs in blas.csl)"}
+  - {angle: "comptime_hoist", runs_tried: 1, last_attempted: "run_20260602_220105 (no reduction)"}
+  - {angle: "dsd_offset_chaining", runs_tried: 1, last_attempted: "run_20260602_220105 (no reduction)"}
+  - {angle: "buffer_cleanup", runs_tried: 1, last_attempted: "run_20260602_220105 (no reduction)"}
+
+tags:
+  - "iterative"
+  - "global_reduce"
+  - "fabric_row_reduce"
+  - "krylov_solver"
+  - "spd_matrix"

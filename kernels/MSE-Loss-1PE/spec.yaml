@@ -1,0 +1,49 @@
+kernel_id: "MSE-Loss-1PE"
+group: "loss"
+difficulty: 2
+
+tasks:
+  - "Compute mean squared error loss on a single PE:
+     result = mean((pred[i] - target[i])^2). Two-input subtract, square,
+     then mean-reduce to scalar. entrypoint = compute."
+
+inputs:
+  - {name: "pred", shape: "[n]", dtype: "f32"}
+  - {name: "target", shape: "[n]", dtype: "f32"}
+
+outputs:
+  - {name: "result", shape: "[1]", dtype: "f32",
+     tolerance_abs: 1.0e-4, tolerance_rel: 1.0e-3,
+     description: "result == np.mean((pred-target)^2); verified in run.py (assert_allclose) + SUCCESS"}
+
+sizes:
+  - name: small
+    role: correctness
+    params: {n: 512}
+    commands_script: "commands_wse3.sh"
+    wse3_reference: {cycles_send: 11282}
+
+task_class: "real-translation"
+split: "test"
+
+metric:
+  class: cycles
+  reason: "two-input subtract+square+accumulate reduction; on-device TSC window"
+
+eval:
+  train_seed: 7
+  heldout_seeds: [101, 202, 303]
+  seed_env: "XKERNEL_EVAL_SEED"
+
+build_command: "bash commands_wse3.sh"
+verify: "embedded in run.py — np.testing.assert_allclose + SUCCESS"
+
+hidden_from_optimize_only:
+  - "CSL/pe.csl"
+
+tags:
+  - "single_pe"
+  - "loss"
+  - "reduction"
+  - "two_input"
+  - "kernelbench_enrichment"

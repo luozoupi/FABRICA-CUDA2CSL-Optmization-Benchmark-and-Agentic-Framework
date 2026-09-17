@@ -1,0 +1,24 @@
+param FP: i16;   // Precision: 0 == float16, 1 == float32
+
+param N: u16;   // FFT size in each dimension
+param NUM_PENCILS_PER_DIM: u16; // Pencils in each dimension per PE
+
+// Number of PEs for FFT in both X and Y dimension
+param WIDTH: i16 = N / NUM_PENCILS_PER_DIM;
+
+const tensor_type: type = if (FP == 0) f16 else f32;
+
+const memcpy = @import_module("<memcpy/get_params>", .{
+  .width = WIDTH,
+  .height = WIDTH,
+});
+
+const fft_helper = @import_module("<kernels/fft/fft3d_layout>", .{
+  .width = WIDTH,
+  .memcpy = memcpy,
+});
+
+layout {
+  @set_rectangle(WIDTH, WIDTH);
+  fft_helper.FFT_kernel(WIDTH, N, tensor_type);
+}

@@ -1,0 +1,51 @@
+# xkernel-bench spec — see kernels/SPEC_SCHEMA.md for format.
+kernel_id: "Mandelbrot"
+group: "iterative"
+difficulty: 3
+
+tasks:
+  - "Mandelbrot set escape-iteration count per pixel, streamed across a PE row: each PE
+     computes its pixels (escape loop bounded by max_iters) and forwards results east;
+     the last column streams out. entrypoint = f_mandelbrot."
+
+inputs:
+  - {name: "(none — pixel coordinates derived on-device from x_lo/x_hi/y_lo/y_hi)", shape: "[]", dtype: "n/a"}
+
+outputs:
+  - {name: "iters", shape: "[rows, cols]", dtype: "f32",
+     tolerance_abs: 0.0, tolerance_rel: 0.0,
+     description: "per-pixel escape count; verified exactly against numpy reference in run.py (assert_equal) + SUCCESS"}
+
+sizes:
+  - name: small
+    role: correctness
+    params: {}
+    commands_script: "commands_wse3.sh"
+    wse3_reference: {cycles_send: 41023, time_send_us: 48.26}
+
+task_class: "algorithm-level"   # data-dependent escape loop; not a line-by-line port
+split: "test"
+
+# Metric: cycles (pinned-config). Instrumented 2026-06-24 with an on-device timer:
+# Mandelbrot is a streaming pixel pipeline with no synchronous compute window, so the
+# per-PE work is bracketed directly (tic on the first pixel, toc on the last). The escape
+# loop is DATA-DEPENDENT, but max_iters is pinned at compile time (32), so cycles_send is
+# a stable PINNED-CONFIG metric for a fixed image. (Not data-randomized: the image is a
+# fixed mathematical function of pixel coordinates — no eval: input-split block, the
+# benchmark's correctness is the exact escape-count match.)
+metric:
+  class: cycles
+  reason: "agent compute (escape loop), on-device TSC window; data-dependent escape count pinned by max_iters -> stable for the fixed image"
+
+build_command: "bash commands_wse3.sh"
+verify: "embedded in run.py — np.testing.assert_equal(iters, numpy mandelbrot reference) + SUCCESS"
+
+hidden_from_optimize_only:
+  - "CSL/middle.csl"
+  - "CSL/left.csl"
+
+tags:
+  - "multi_pe"
+  - "streaming_pipeline"
+  - "escape_iteration"
+  - "data_dependent"

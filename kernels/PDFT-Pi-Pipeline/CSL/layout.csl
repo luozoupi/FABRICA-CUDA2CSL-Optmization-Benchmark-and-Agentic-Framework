@@ -1,0 +1,30 @@
+// Layout for the single-PE PDFT Pi pipeline (program-level task).
+
+param width: u16;
+param height: u16;
+param ngrid: u16;
+param ncas: u16;
+
+const memcpy = @import_module("<memcpy/get_params>", .{
+  .width = width,
+  .height = height,
+});
+
+layout {
+  @set_rectangle(width, height);
+
+  for (@range(u16, width)) |px| {
+    const memcpy_params = memcpy.get_params(px);
+    for (@range(u16, height)) |py| {
+      @set_tile_code(px, py, "pe.csl", .{ .memcpy_params = memcpy_params,
+        .ngrid = ngrid, .ncas = ncas });
+    }
+  }
+
+  // export symbol names
+  @export_name("mo_grid", [*]f32, true);
+  @export_name("cascm2", [*]f32, true);
+  @export_name("Pi", [*]f32, true);
+  @export_name("maxmin_time", [*]f32, true);
+  @export_name("compute", fn()void);
+}

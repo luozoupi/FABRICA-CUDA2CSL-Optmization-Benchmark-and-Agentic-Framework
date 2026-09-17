@@ -1,0 +1,113 @@
+// ParDot-Product PE: local dot product + 2-phase tree reduction.
+// Each PE computes sum(x[i]*y[i]) locally, then tree-reduces to PE0.
+
+param memcpy_params: comptime_struct;
+param n_per_pe: u16;
+param px: i16;
+param width: i16;
+param C_PHASE1: color;
+param C_PHASE2: color;
+
+const EXIT: local_task_id = @get_local_task_id(9);
+const PHASE1_DONE: local_task_id = @get_local_task_id(10);
+const PHASE2_DONE: local_task_id = @get_local_task_id(11);
+
+const sys_mod = @import_module("<memcpy/memcpy>", memcpy_params);
+const timestamp = @import_module("<time>");
+
+var tsc_start_buf = @zeros([timestamp.tsc_size_words]u16);
+var tsc_end_buf   = @zeros([timestamp.tsc_size_words]u16);
+var timer_buf = @zeros([3]f32);
+var ptr_timer_buf: [*]f32 = &timer_buf;
+
+var x_array = @zeros([n_per_pe]f32);
+var y_array = @zeros([n_per_pe]f32);
+var result_buf = @zeros([1]f32);
+var ptr_x: [*]f32 = &x_array;
+var ptr_y: [*]f32 = &y_array;
+var ptr_result: [*]f32 = &result_buf;
+
+var local_dot_arr = @zeros([1]f32);
+var recv_arr = @zeros([1]f32);
+
+const local_dot_dsd = @get_dsd(mem1d_dsd, .{ .tensor_access = |i|{1} -> local_dot_arr[i] });
+const recv_dsd      = @get_dsd(mem1d_dsd, .{ .tensor_access = |i|{1} -> recv_arr[i] });
+
+const phase1_out = @get_dsd(fabout_dsd, .{ .extent = 1, .fabric_color = C_PHASE1, .output_queue = @get_output_queue(2) });
+const phase1_in  = @get_dsd(fabin_dsd,  .{ .extent = 1, .fabric_color = C_PHASE1, .input_queue  = @get_input_queue(2) });
+const phase2_out = @get_dsd(fabout_dsd, .{ .extent = 1, .fabric_color = C_PHASE2, .output_queue = @get_output_queue(3) });
+const phase2_in  = @get_dsd(fabin_dsd,  .{ .extent = 1, .fabric_color = C_PHASE2, .input_queue  = @get_input_queue(3) });
+
+fn pack_timestamps() void {
+  var lo_: u16 = 0; var hi_: u16 = 0;
+  lo_ = tsc_start_buf[0]; hi_ = tsc_start_buf[1];
+  timer_buf[0] = @bitcast(f32, (@as(u32, hi_) << @as(u16, 16)) | @as(u32, lo_));
+  lo_ = tsc_start_buf[2]; hi_ = tsc_end_buf[0];
+  timer_buf[1] = @bitcast(f32, (@as(u32, hi_) << @as(u16, 16)) | @as(u32, lo_));
+  lo_ = tsc_end_buf[1]; hi_ = tsc_end_buf[2];
+  timer_buf[2] = @bitcast(f32, (@as(u32, hi_) << @as(u16, 16)) | @as(u32, lo_));
+}
+
+fn finish() void {
+  timestamp.get_timestamp(&tsc_end_buf);
+  timestamp.disable_tsc();
+  pack_timestamps();
+  @activate(EXIT);
+}
+
+fn compute() void {
+  timestamp.enable_tsc();
+  timestamp.get_timestamp(&tsc_start_buf);
+
+  // Local dot product
+  var acc: f32 = 0.0;
+  var i: u16 = 0;
+  while (i < n_per_pe) : (i += 1) {
+    acc += x_array[i] * y_array[i];
+  }
+  local_dot_arr[0] = acc;
+
+  if (px == 3 or px == 1) {
+    @fmovs(phase1_out, local_dot_dsd, .{ .async = true });
+    finish();
+  } else {
+    @fmovs(recv_dsd, phase1_in, .{ .async = true, .activate = PHASE1_DONE });
+  }
+}
+
+task phase1_done() void {
+  local_dot_arr[0] += recv_arr[0];
+  if (px == 2) {
+    @fmovs(phase2_out, local_dot_dsd, .{ .async = true });
+    finish();
+  } else {
+    @fmovs(recv_dsd, phase2_in, .{ .async = true, .activate = PHASE2_DONE });
+  }
+}
+
+task phase2_done() void {
+  local_dot_arr[0] += recv_arr[0];
+  result_buf[0] = local_dot_arr[0];
+  finish();
+}
+
+task f_exit() void { sys_mod.unblock_cmd_stream(); }
+
+comptime {
+  @bind_local_task(f_exit, EXIT);
+  @bind_local_task(phase1_done, PHASE1_DONE);
+  @bind_local_task(phase2_done, PHASE2_DONE);
+
+  if (@is_arch("wse3")) {
+    @initialize_queue(@get_output_queue(2), .{ .color = C_PHASE1 });
+    @initialize_queue(@get_input_queue(2),  .{ .color = C_PHASE1 });
+    @initialize_queue(@get_output_queue(3), .{ .color = C_PHASE2 });
+    @initialize_queue(@get_input_queue(3),  .{ .color = C_PHASE2 });
+  }
+
+  @export_symbol(ptr_x, "x");
+  @export_symbol(ptr_y, "y");
+  @export_symbol(ptr_result, "result");
+  @export_symbol(ptr_timer_buf, "maxmin_time");
+  @export_symbol(compute);
+}

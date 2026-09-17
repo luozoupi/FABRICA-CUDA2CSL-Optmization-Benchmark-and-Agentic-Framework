@@ -1,0 +1,75 @@
+# xkernel-bench spec — see kernels/SPEC_SCHEMA.md for format.
+kernel_id: "Preconditioned-CG"
+group: "linalg"
+difficulty: 2
+
+tasks:
+  - "Preconditioned conjugate gradient (PCG) for solving M^-1 * A * x = M^-1 * b
+     where A is SPD sparse (7-point stencil) and M is a diagonal (Jacobi)
+     preconditioner. Reduces condition number by scaling the residual."
+  - "Each PCG iteration: SpMV (A * p), preconditioner apply (z = M^-1 * r),
+     inner products, axpy updates. Similar shape to CG plus the extra preconditioner
+     application per iteration."
+
+inputs:
+  - {name: "A_coeffs", shape: "[width, height, k, 7]", dtype: "f32",
+     description: "SPD matrix coefficients in 7-point stencil pattern"}
+  - {name: "M_diag",   shape: "[width, height, k]",     dtype: "f32",
+     description: "diagonal preconditioner (Jacobi: 1 / diag(A))"}
+  - {name: "b",        shape: "[width, height, k]",     dtype: "f32",
+     description: "right-hand side"}
+  - {name: "x0",       shape: "[width, height, k]",     dtype: "f32",
+     description: "initial guess"}
+
+outputs:
+  - {name: "x", shape: "[width, height, k]", dtype: "f32",
+     tolerance_abs: 0.0, tolerance_rel: 0.0,
+     description: "solution to A*x=b; reference verifies element-by-element"}
+
+# Re-baselined 2026-06-18 (Workstream A). Bench now builds the on-device
+# variant (layout_pcg.csl -> kernel_pcg.csl); run.py is the on-device runner
+# (single f_pcg(zDim,tol,max_ite) launch in the timed window). cycles_send now
+# reflects on-device compute so W2 edits to kernel_pcg.csl can move it. The old
+# 17197 was host-loop instrumentation and is not comparable. Measured: 13826.
+wse3_reference:
+  cycles_send: 13826
+  time_send_us: 16.2659
+  upstream_source: "csl-examples/benchmarks/preconditioned-conjugate-gradient (on-device device_run.py variant)"
+  params: {width: 5, height: 5, MAX_ZDIM: 5, BLOCK_SIZE: 2, m: 5, n: 5, k: 5, max_ite: 2}
+  prev_baseline: {cycles_send: 17197, note: "host-loop instrumentation, not comparable"}
+
+build_command: "bash commands_wse3.sh"
+verify: "embedded in run.py — asserts numerical match against host reference"
+
+hidden_from_optimize_only:
+  - "CSL/src/kernel.csl"
+  - "CSL/src/kernel_pcg.csl"
+  - "CSL/src/blas.csl"
+
+# Per-kernel optimizer angle whitelist. PCG = CG + preconditioner apply
+# per iteration. Same shape as CG; preconditioner is an element-wise
+# scale, prime target for fmac_bulk and dsd_offset_chaining.
+optimization_angles:
+  - "iterative_phase_fusion"  # 14 host launches/iter
+  - "comptime_value_tuning"
+  - "fmac_bulk"
+  - "dsd_offset_chaining"
+  - "async_detach_overlap"
+  - "task_chaining_unblock_activate"
+  - "comptime_hoist"
+  - "prefetch_fabric_async"
+  - "buffer_cleanup"
+
+# Sweep run_20260602_221408 (Sonnet 4.6, 4 attempts): no cycle reduction.
+attempted_no_op_angles:
+  - {angle: "comptime_value_tuning", runs_tried: 1, last_attempted: "run_20260602_221408 (Sonnet returned identical code)"}
+  - {angle: "fmac_bulk", runs_tried: 1, last_attempted: "run_20260602_221408 (no reduction; reference already uses bulk DSDs)"}
+  - {angle: "dsd_offset_chaining", runs_tried: 1, last_attempted: "run_20260602_221408 (no reduction)"}
+  - {angle: "comptime_hoist", runs_tried: 1, last_attempted: "run_20260602_221408 (no reduction)"}
+
+tags:
+  - "iterative"
+  - "global_reduce"
+  - "fabric_row_reduce"
+  - "krylov_solver"
+  - "preconditioned"

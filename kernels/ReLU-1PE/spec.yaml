@@ -1,0 +1,46 @@
+kernel_id: "ReLU-1PE"
+group: "activation"
+difficulty: 1
+
+tasks:
+  - "Apply ReLU activation elementwise on a single PE: out[i] = max(0, x[i])
+     for a float32 vector. entrypoint = compute."
+
+inputs:
+  - {name: "x", shape: "[n]", dtype: "f32"}
+
+outputs:
+  - {name: "out", shape: "[n]", dtype: "f32",
+     tolerance_abs: 1.0e-7, tolerance_rel: 1.0e-5,
+     description: "out == np.maximum(x, 0); verified in run.py (assert_allclose) + SUCCESS"}
+
+sizes:
+  - name: small
+    role: correctness
+    params: {n: 512}
+    commands_script: "commands_wse3.sh"
+    wse3_reference: {cycles_send: 11787}
+
+task_class: "real-translation"
+split: "test"
+
+metric:
+  class: cycles
+  reason: "elementwise comparison+select over f32 array; on-device TSC window"
+
+eval:
+  train_seed: 7
+  heldout_seeds: [101, 202, 303]
+  seed_env: "XKERNEL_EVAL_SEED"
+
+build_command: "bash commands_wse3.sh"
+verify: "embedded in run.py — np.testing.assert_allclose + SUCCESS"
+
+hidden_from_optimize_only:
+  - "CSL/pe.csl"
+
+tags:
+  - "single_pe"
+  - "activation"
+  - "elementwise"
+  - "kernelbench_enrichment"

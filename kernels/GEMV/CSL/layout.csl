@@ -1,0 +1,91 @@
+// Copyright 2025 Cerebras Systems.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+// This does y = Ax + b on a kernel_cols x kernel_rows rectangle of PEs.
+
+// color/ task ID map
+//
+//  ID var             ID var              ID var               ID var
+//   0 c2d_x_color_0    9 EXIT             18                   27 reserved (memcpy)
+//   1 c2d_x_color_1   10 scatter_x        19                   28 reserved (memcpy)
+//   2                 11 broadcast_x_down 20                   29 reserved
+//   3                 12 compute          21 reserved (memcpy) 30 reserved (memcpy)
+//   4 c2d_y_color_0   13 gather_result    22 reserved (memcpy) 31 reserved
+//   5 c2d_y_color_1   14 c2d_x_entrypt_0  23 reserved (memcpy) 32
+//   6                 15 c2d_x_entrypt_1  24                   33
+//   7                 16 c2d_y_entrypt_0  25                   34
+//   8                 17 c2d_y_entrypt_1  26                   35
+
+// Kernel rectangle of PEs
+param kernel_rows : u16; // Height of kernel
+param kernel_cols : u16; // Width of kernel
+
+// Global matrix dimensions
+param matrix_rows : u16; // Height of matrix
+param matrix_cols : u16; // Width of matrix
+
+comptime {
+  // Number of matrix rows must be multiple of kernel rectangle height
+  @comptime_assert(matrix_rows % kernel_rows == 0);
+
+  // Number of matrix cols must be multiple of kernel rectangle width
+  @comptime_assert(matrix_cols % kernel_cols == 0);
+}
+
+// Local matrix dimensions
+const Mt: u16 = matrix_rows / kernel_rows; // Number of rows per PE
+const Nt: u16 = matrix_cols / kernel_cols; // Number of columns per PE
+
+const memcpy = @import_module( "<memcpy/get_params>", .{
+    .width = kernel_cols,
+    .height = kernel_rows
+});
+
+const c2d = @import_module("<collectives_2d/params>");
+
+layout {
+  @set_rectangle(kernel_cols, kernel_rows);
+
+  var Px: u16 = 0;
+  while (Px < kernel_cols) : (Px += 1) {
+    var Py: u16 = 0;
+    const memcpy_params = memcpy.get_params(Px);
+    while (Py < kernel_rows) : (Py += 1) {
+      const c2d_params = c2d.get_params(Px, Py, .{
+        .x_colors      = .{ @get_color(0),         @get_color(1) },
+        .x_entrypoints = .{ @get_local_task_id(14), @get_local_task_id(15) },
+        .y_colors      = .{ @get_color(4),         @get_color(5) },
+        .y_entrypoints = .{ @get_local_task_id(16), @get_local_task_id(17) },
+      });
+      @set_tile_code(Px, Py, "pe.csl", .{
+        .memcpy_params = memcpy_params,
+        .c2d_params = c2d_params,
+        .Mt = Mt,
+        .Nt = Nt
+      });
+    }
+  }
+
+  // export symbol names
+  @export_name("A", [*]f32, true);
+  @export_name("x", [*]f32, true);
+  @export_name("b", [*]f32, true);
+  @export_name("y", [*]f32, true);
+  @export_name("main", fn()void);
+  @export_name("time_buf_u16", [*]u16, true);
+  @export_name("f_tic", fn()void);
+  @export_name("f_toc", fn()void);
+  @export_name("f_memcpy_timestamps", fn()void);
+  @export_name("f_enable_timer", fn()void);
+}

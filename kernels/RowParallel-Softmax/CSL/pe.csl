@@ -1,0 +1,178 @@
+// RowParallel-Softmax PE: 2-PE distributed softmax.
+// Phase 1: local max + reduce (PE1->PE0)
+// Phase 2: PE0 broadcasts global max (PE0->PE1), all PEs do exp(x-max) + local sum
+// Phase 3: local sum + reduce (PE1->PE0)
+// Phase 4: PE0 broadcasts global sum (PE0->PE1), all PEs normalize
+
+param memcpy_params: comptime_struct;
+param n_per_pe: u16;
+param px: i16;
+param width: i16;
+param C_MAX_REDUCE: color;
+param C_MAX_BCAST: color;
+param C_SUM_REDUCE: color;
+param C_SUM_BCAST: color;
+
+const EXIT: local_task_id = @get_local_task_id(9);
+const MAX_REDUCED: local_task_id = @get_local_task_id(10);
+const MAX_BCASTED: local_task_id = @get_local_task_id(11);
+const SUM_REDUCED: local_task_id = @get_local_task_id(12);
+const SUM_BCASTED: local_task_id = @get_local_task_id(13);
+
+const sys_mod = @import_module("<memcpy/memcpy>", memcpy_params);
+const math = @import_module("<math>");
+const timestamp = @import_module("<time>");
+
+var tsc_start_buf = @zeros([timestamp.tsc_size_words]u16);
+var tsc_end_buf   = @zeros([timestamp.tsc_size_words]u16);
+var timer_buf = @zeros([3]f32);
+var ptr_timer_buf: [*]f32 = &timer_buf;
+
+var x_array = @zeros([n_per_pe]f32);
+var out_array = @zeros([n_per_pe]f32);
+var ptr_x: [*]f32 = &x_array;
+var ptr_out: [*]f32 = &out_array;
+
+var val_buf = @zeros([1]f32);
+var recv_buf = @zeros([1]f32);
+
+const val_dsd  = @get_dsd(mem1d_dsd, .{ .tensor_access = |i|{1} -> val_buf[i] });
+const recv_dsd = @get_dsd(mem1d_dsd, .{ .tensor_access = |i|{1} -> recv_buf[i] });
+
+const max_red_out   = @get_dsd(fabout_dsd, .{ .extent = 1, .fabric_color = C_MAX_REDUCE,  .output_queue = @get_output_queue(2) });
+const max_red_in    = @get_dsd(fabin_dsd,  .{ .extent = 1, .fabric_color = C_MAX_REDUCE,  .input_queue  = @get_input_queue(2) });
+const max_bcast_out = @get_dsd(fabout_dsd, .{ .extent = 1, .fabric_color = C_MAX_BCAST,   .output_queue = @get_output_queue(3) });
+const max_bcast_in  = @get_dsd(fabin_dsd,  .{ .extent = 1, .fabric_color = C_MAX_BCAST,   .input_queue  = @get_input_queue(3) });
+const sum_red_out   = @get_dsd(fabout_dsd, .{ .extent = 1, .fabric_color = C_SUM_REDUCE,  .output_queue = @get_output_queue(4) });
+const sum_red_in    = @get_dsd(fabin_dsd,  .{ .extent = 1, .fabric_color = C_SUM_REDUCE,  .input_queue  = @get_input_queue(4) });
+const sum_bcast_out = @get_dsd(fabout_dsd, .{ .extent = 1, .fabric_color = C_SUM_BCAST,   .output_queue = @get_output_queue(5) });
+const sum_bcast_in  = @get_dsd(fabin_dsd,  .{ .extent = 1, .fabric_color = C_SUM_BCAST,   .input_queue  = @get_input_queue(5) });
+
+var global_max: f32 = 0.0;
+
+fn pack_timestamps() void {
+  var lo_: u16 = 0; var hi_: u16 = 0;
+  lo_ = tsc_start_buf[0]; hi_ = tsc_start_buf[1];
+  timer_buf[0] = @bitcast(f32, (@as(u32, hi_) << @as(u16, 16)) | @as(u32, lo_));
+  lo_ = tsc_start_buf[2]; hi_ = tsc_end_buf[0];
+  timer_buf[1] = @bitcast(f32, (@as(u32, hi_) << @as(u16, 16)) | @as(u32, lo_));
+  lo_ = tsc_end_buf[1]; hi_ = tsc_end_buf[2];
+  timer_buf[2] = @bitcast(f32, (@as(u32, hi_) << @as(u16, 16)) | @as(u32, lo_));
+}
+
+fn finish() void {
+  timestamp.get_timestamp(&tsc_end_buf);
+  timestamp.disable_tsc();
+  pack_timestamps();
+  @activate(EXIT);
+}
+
+// Phase 1: local max, then reduce
+fn compute() void {
+  timestamp.enable_tsc();
+  timestamp.get_timestamp(&tsc_start_buf);
+
+  var mx: f32 = x_array[0];
+  var i: u16 = 1;
+  while (i < n_per_pe) : (i += 1) {
+    if (x_array[i] > mx) mx = x_array[i];
+  }
+  val_buf[0] = mx;
+
+  if (px == 1) {
+    // Send local max west
+    @fmovs(max_red_out, val_dsd, .{ .async = true });
+    // Wait for global max broadcast back
+    @fmovs(recv_dsd, max_bcast_in, .{ .async = true, .activate = MAX_BCASTED });
+  } else {
+    // PE0: receive PE1's max
+    @fmovs(recv_dsd, max_red_in, .{ .async = true, .activate = MAX_REDUCED });
+  }
+}
+
+// Phase 1 complete on PE0: merge max, broadcast
+task max_reduced() void {
+  if (recv_buf[0] > val_buf[0]) val_buf[0] = recv_buf[0];
+  global_max = val_buf[0];
+  // Broadcast global max east
+  @fmovs(max_bcast_out, val_dsd, .{ .async = true });
+  // PE0 proceeds to exp+sum immediately
+  do_exp_and_sum();
+}
+
+// Phase 2: PE1 receives global max
+task max_bcasted() void {
+  global_max = recv_buf[0];
+  do_exp_and_sum();
+}
+
+// Phase 2+3: local exp(x-max) + sum, then reduce sum
+fn do_exp_and_sum() void {
+  var local_sum: f32 = 0.0;
+  var i: u16 = 0;
+  while (i < n_per_pe) : (i += 1) {
+    const e = math.exp_f32(x_array[i] - global_max);
+    out_array[i] = e;
+    local_sum += e;
+  }
+  val_buf[0] = local_sum;
+
+  if (px == 1) {
+    // Send local sum west
+    @fmovs(sum_red_out, val_dsd, .{ .async = true });
+    // Wait for global sum broadcast back
+    @fmovs(recv_dsd, sum_bcast_in, .{ .async = true, .activate = SUM_BCASTED });
+  } else {
+    // PE0: receive PE1's sum
+    @fmovs(recv_dsd, sum_red_in, .{ .async = true, .activate = SUM_REDUCED });
+  }
+}
+
+// Phase 3 complete on PE0: merge sum, broadcast
+task sum_reduced() void {
+  val_buf[0] += recv_buf[0];
+  // Broadcast global sum east
+  @fmovs(sum_bcast_out, val_dsd, .{ .async = true });
+  // PE0 normalizes
+  do_normalize(val_buf[0]);
+}
+
+// Phase 4: PE1 receives global sum
+task sum_bcasted() void {
+  do_normalize(recv_buf[0]);
+}
+
+fn do_normalize(total: f32) void {
+  const inv = 1.0 / total;
+  var i: u16 = 0;
+  while (i < n_per_pe) : (i += 1) {
+    out_array[i] *= inv;
+  }
+  finish();
+}
+
+task f_exit() void { sys_mod.unblock_cmd_stream(); }
+
+comptime {
+  @bind_local_task(f_exit, EXIT);
+  @bind_local_task(max_reduced, MAX_REDUCED);
+  @bind_local_task(max_bcasted, MAX_BCASTED);
+  @bind_local_task(sum_reduced, SUM_REDUCED);
+  @bind_local_task(sum_bcasted, SUM_BCASTED);
+
+  if (@is_arch("wse3")) {
+    @initialize_queue(@get_output_queue(2), .{ .color = C_MAX_REDUCE });
+    @initialize_queue(@get_input_queue(2),  .{ .color = C_MAX_REDUCE });
+    @initialize_queue(@get_output_queue(3), .{ .color = C_MAX_BCAST });
+    @initialize_queue(@get_input_queue(3),  .{ .color = C_MAX_BCAST });
+    @initialize_queue(@get_output_queue(4), .{ .color = C_SUM_REDUCE });
+    @initialize_queue(@get_input_queue(4),  .{ .color = C_SUM_REDUCE });
+    @initialize_queue(@get_output_queue(5), .{ .color = C_SUM_BCAST });
+    @initialize_queue(@get_input_queue(5),  .{ .color = C_SUM_BCAST });
+  }
+
+  @export_symbol(ptr_x, "x");
+  @export_symbol(ptr_out, "out");
+  @export_symbol(ptr_timer_buf, "maxmin_time");
+  @export_symbol(compute);
+}

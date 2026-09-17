@@ -1,0 +1,56 @@
+# xkernel-bench spec — see kernels/SPEC_SCHEMA.md for format.
+kernel_id: "Histogram-1PE"
+group: "reduction"
+difficulty: 1
+
+tasks:
+  - "Bin a local input array into a histogram on a single PE: for each element,
+     bucket = (input[i] / bucket_size) % n_buckets, then hist[bucket] += 1.
+     entrypoint = compute."
+
+inputs:
+  - {name: "input", shape: "[n]", dtype: "u32"}
+
+outputs:
+  - {name: "hist", shape: "[n_buckets]", dtype: "u32",
+     tolerance_abs: 0.0, tolerance_rel: 0.0,
+     description: "hist == numpy bincount of (input//bucket_size)%n_buckets; verified in run.py (assert_array_equal) + SUCCESS"}
+
+sizes:
+  - name: small
+    role: correctness
+    params: {n: 256, n_buckets: 16, bucket_size: 64}
+    commands_script: "commands_wse3.sh"
+    wse3_reference: {cycles_send: 6191, time_send_us: 7.2835}
+
+task_class: "real-translation"
+split: "test"             # hand-written binning compute; no library dependence -> held-out test
+
+# Metric: cycles. HAND-WRITTEN-COMPUTE variant of Histogram (docs/HANDWRITTEN_KERNELS.md):
+# unlike kernels/Histogram which routes the tally through the SDK <kernels/tally> library
+# (correctness_only), here the CSL expresses the explicit per-element bucket index +
+# indexed increment, so cycles_send measures the agent's binning. Single-PE, fixed trip
+# count (n elements) -> stable cycle number.
+metric:
+  class: cycles
+  reason: "agent-written per-element binning (divide/modulo + indexed increment); on-device TSC window; not library-delegated"
+
+# Input-level train/test split. run.py draws a seeded random input (XKERNEL_EVAL_SEED)
+# and recomputes the reference bincount; the harness re-scores on held-out seeds. The
+# bin COUNTS differ per seed, so a hardcoded histogram fails held-out (cycles are
+# data-independent — fixed n — which is correct). Validated train+held-out {101,202,303}.
+eval:
+  train_seed: 7
+  heldout_seeds: [101, 202, 303]
+  seed_env: "XKERNEL_EVAL_SEED"
+
+build_command: "bash commands_wse3.sh"
+verify: "embedded in run.py — np.testing.assert_array_equal(hist, numpy bincount) + SUCCESS"
+
+hidden_from_optimize_only:
+  - "CSL/pe.csl"
+
+tags:
+  - "single_pe"
+  - "histogram"
+  - "binning"

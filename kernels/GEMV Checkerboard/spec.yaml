@@ -1,0 +1,52 @@
+# xkernel-bench spec — see kernels/SPEC_SCHEMA.md for format.
+kernel_id: "GEMV-Checkerboard"
+group: "gemv"
+difficulty: 2
+
+tasks:
+  - "y = A*x + b on a checkerboard-routed PE mesh: each PE computes a local A*x via
+     fmac as x wavelets stream in, then a chain reduction adds the west partial and
+     b, with the last column streaming y out. entrypoint = data-task driven (no host
+     launch — H2D of x kicks the compute)."
+
+inputs:
+  - {name: "A", shape: "[rows, cols]", dtype: "f16"}
+  - {name: "x", shape: "[cols]", dtype: "f16"}
+  - {name: "b", shape: "[rows]", dtype: "f16"}
+
+outputs:
+  - {name: "y", shape: "[rows]", dtype: "f16",
+     tolerance_abs: 0.01, tolerance_rel: 0.0,
+     description: "y = A*x + b; verified in run.py against numpy (assert_allclose atol=0.01) + SUCCESS"}
+
+sizes:
+  - name: small
+    role: correctness
+    params: {}
+    commands_script: "commands_wse3.sh"
+    wse3_reference: {cycles_send: 197, time_send_us: 0.2318}
+
+task_class: "real-translation"
+split: "test"             # checkerboard fabric-routed GEMV; held-out test
+
+# Metric: cycles. Instrumented 2026-06-24 with an ON-DEVICE timer: this is a streaming
+# data-task kernel (H2D of x triggers fmac_task; no host launch to bracket), so the
+# per-PE matvec is timed directly — tic on the first received wavelet, toc when the
+# local y=A*x completes (X_local_dim_x wavelets, fixed trip count). Read back from the
+# last column. cycles_send measures the agent's fmac/faddh compute.
+metric:
+  class: cycles
+  reason: "agent-written fmac matvec + chain reduction; on-device TSC window (data-task streaming, no host launch)"
+
+build_command: "bash commands_wse3.sh"
+verify: "embedded in run.py — np.testing.assert_allclose(y, A@x+b, atol=0.01) + SUCCESS"
+
+hidden_from_optimize_only:
+  - "CSL/pe.csl"
+
+tags:
+  - "multi_pe"
+  - "gemv"
+  - "checkerboard"
+  - "fabric_routed"
+  - "data_task_streaming"

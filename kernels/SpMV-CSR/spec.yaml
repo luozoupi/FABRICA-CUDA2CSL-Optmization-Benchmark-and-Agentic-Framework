@@ -1,0 +1,70 @@
+# xkernel-bench spec — see kernels/SPEC_SCHEMA.md for format.
+kernel_id: "SpMV-CSR"
+group: "sparse"
+difficulty: 2
+
+tasks:
+  - "Sparse matrix-vector product y = A*x with A in CSR format on a single PE. For each
+     row r, reduce over its nonzeros: y[r] = sum_{j in [row_ptr[r],row_ptr[r+1])}
+     val[j]*x[col_idx[j]] — a per-row reduction with a gathered (indexed) load of x.
+     entrypoint = compute."
+
+inputs:
+  - {name: "row_ptr", shape: "[nrows+1]", dtype: "u32"}
+  - {name: "col_idx", shape: "[max_nnz]", dtype: "u32"}
+  - {name: "val", shape: "[max_nnz]", dtype: "f32"}
+  - {name: "x", shape: "[ncols]", dtype: "f32"}
+
+outputs:
+  - {name: "y", shape: "[nrows]", dtype: "f32",
+     tolerance_abs: 1.0e-5, tolerance_rel: 1.0e-5,
+     description: "y = A*x; verified in run.py against numpy y=A@x (np.testing.assert_allclose) + SUCCESS"}
+
+sizes:
+  - name: small
+    role: correctness
+    params: {nrows: 32, ncols: 32, max_nnz: 256, iters: 1}
+    commands_script: "commands_wse3.sh"
+    wse3_reference: {cycles_send: 6927, time_send_us: 8.1494}
+
+task_class: "real-translation"
+split: "test"             # hand-written sparse compute; no WaferLLM/library dependence -> held-out test
+
+# Metric: cycles. This is the HAND-WRITTEN-COMPUTE variant of SpMV (see
+# docs/HANDWRITTEN_KERNELS.md): unlike kernels/SpMV-Hypersparse which delegates to a
+# vendored dataflow library (correctness_only), here the CSL must express the real CSR
+# matvec arithmetic, so cycles_send over the f_tic/f_toc window measures the agent's
+# translated compute. Single-PE, fixed trip count per matrix -> stable cycle number.
+metric:
+  class: cycles
+  reason: "agent-written CSR reduction (gather + fmac); on-device TSC window; not library-delegated"
+
+# Input-level train/test split (anti-hardcoding). run.py builds a seeded random sparse
+# matrix (XKERNEL_EVAL_SEED) and recomputes y=A@x; the harness re-scores on held-out
+# seeds the agent never saw. Validated: refs pass train+held-out {101,202,303}; matrix
+# nnz + cycles vary per seed (235/256/239/256), so a hardcoded answer fails held-out.
+eval:
+  train_seed: 7
+  heldout_seeds: [101, 202, 303]
+  seed_env: "XKERNEL_EVAL_SEED"
+
+build_command: "bash commands_wse3.sh"
+verify: "embedded in run.py — np.testing.assert_allclose(y, A@x, rtol=1e-5, atol=1e-5) + SUCCESS"
+
+hidden_from_optimize_only:
+  - "CSL/pe.csl"
+
+# Hand-written-compute provenance: authored 2026-06-24 as the real-translation
+# counterpart to the library-delegated SpMV-Hypersparse. CUDA source is the textbook
+# scalar CSR loop (kernels/SpMV-CSR/CUDA/kernel.cu).
+optimization_angles:
+  - "dsd_offset_chaining"
+  - "fmac_bulk"
+  - "stride_optimization"
+  - "comptime_hoist"
+
+tags:
+  - "single_pe"
+  - "sparse"
+  - "csr"
+  - "gather"

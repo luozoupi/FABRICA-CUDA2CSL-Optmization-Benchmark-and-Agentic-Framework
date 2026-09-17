@@ -1,0 +1,91 @@
+// DFT-1PE compute (hand-written): direct O(N^2) DFT of a real input.
+//   Xre[k] = sum_n x[n]*cosT[k*N+n]
+//   Xim[k] = sum_n x[n]*sinT[k*N+n]    (sinT already holds -sin)
+// The real compute (not an FFT-library call): a complex multiply-accumulate over all
+// (k,n) pairs. Twiddle tables come from the host (no on-device trig). TSC-timed.
+
+param memcpy_params: comptime_struct;
+
+param N: u16;
+
+const EXIT: local_task_id = @get_local_task_id(9);
+
+const sys_mod = @import_module("<memcpy/memcpy>", memcpy_params);
+
+const timestamp = @import_module("<time>");
+var tsc_start_buf = @zeros([timestamp.tsc_size_words]u16);
+var tsc_end_buf   = @zeros([timestamp.tsc_size_words]u16);
+var timer_buf = @zeros([3]f32);
+var ptr_timer_buf: [*]f32 = &timer_buf;
+
+const NN: u16 = N * N;
+var x_array    = @zeros([N]f32);
+var cosT_array = @zeros([NN]f32);
+var sinT_array = @zeros([NN]f32);
+var Xre_array  = @zeros([N]f32);
+var Xim_array  = @zeros([N]f32);
+var ptr_x:    [*]f32 = &x_array;
+var ptr_cosT: [*]f32 = &cosT_array;
+var ptr_sinT: [*]f32 = &sinT_array;
+var ptr_Xre:  [*]f32 = &Xre_array;
+var ptr_Xim:  [*]f32 = &Xim_array;
+
+fn dft() void {
+  var k: u16 = 0;
+  while (k < N) : (k += 1) {
+    const base: u16 = k * N;
+    var re: f32 = 0.0;
+    var im: f32 = 0.0;
+    var n: u16 = 0;
+    while (n < N) : (n += 1) {
+      const xv: f32 = x_array[n];
+      re += xv * cosT_array[base + n];
+      im += xv * sinT_array[base + n];
+    }
+    Xre_array[k] = re;
+    Xim_array[k] = im;
+  }
+}
+
+fn compute() void {
+  timestamp.enable_tsc();
+  timestamp.get_timestamp(&tsc_start_buf);
+
+  dft();
+
+  timestamp.get_timestamp(&tsc_end_buf);
+  timestamp.disable_tsc();
+
+  var lo_: u16 = 0;
+  var hi_: u16 = 0;
+
+  lo_ = tsc_start_buf[0];
+  hi_ = tsc_start_buf[1];
+  timer_buf[0] = @bitcast(f32, (@as(u32, hi_) << @as(u16, 16)) | @as(u32, lo_));
+
+  lo_ = tsc_start_buf[2];
+  hi_ = tsc_end_buf[0];
+  timer_buf[1] = @bitcast(f32, (@as(u32, hi_) << @as(u16, 16)) | @as(u32, lo_));
+
+  lo_ = tsc_end_buf[1];
+  hi_ = tsc_end_buf[2];
+  timer_buf[2] = @bitcast(f32, (@as(u32, hi_) << @as(u16, 16)) | @as(u32, lo_));
+
+  @activate(EXIT);
+}
+
+task f_exit() void {
+  sys_mod.unblock_cmd_stream();
+}
+
+comptime {
+  @bind_local_task(f_exit, EXIT);
+
+  @export_symbol(ptr_x,    "x");
+  @export_symbol(ptr_cosT, "cosT");
+  @export_symbol(ptr_sinT, "sinT");
+  @export_symbol(ptr_Xre,  "Xre");
+  @export_symbol(ptr_Xim,  "Xim");
+  @export_symbol(ptr_timer_buf, "maxmin_time");
+  @export_symbol(compute);
+}

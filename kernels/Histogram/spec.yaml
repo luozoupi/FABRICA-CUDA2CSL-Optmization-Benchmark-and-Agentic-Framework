@@ -1,0 +1,52 @@
+# xkernel-bench spec — see kernels/SPEC_SCHEMA.md for format.
+kernel_id: "Histogram"
+group: "reduction"
+difficulty: 2
+
+tasks:
+  - "Per-PE bucketed histogram with a fabric tally reduction: each PE bins its local
+     inputs into NUM_BUCKETS, then the values are routed N/S and E/W and tallied to a
+     single total gathered at P(width-1, 0). entrypoint = main."
+
+inputs:
+  - {name: "inputs", shape: "[HIST_W, HIST_H, INPUT_SIZE]", dtype: "u32"}
+
+outputs:
+  - {name: "result", shape: "[1]", dtype: "u32",
+     description: "total tally = HIST_W*HIST_H*INPUT_SIZE; verified in run.py (np.testing.assert_equal) + SUCCESS"}
+
+sizes:
+  - name: small
+    role: correctness
+    params: {INPUT_SIZE: 16, HIST_WIDTH: 8, HIST_HEIGHT: 8, NUM_BUCKETS: 4, BUCKET_SIZE: 2}
+    commands_script: "commands_wse3.sh"
+
+task_class: "real-translation"
+split: "test"             # fabric tally-reduction; held-out test
+
+# Metric: correctness_only. Histogram's run.py emits no cycles_send (no TSC window),
+# and the per-PE bin work is data-dependent (input distribution), so a single raw
+# cycle number would be unstable AND partly measure the SDK <kernels/tally> library
+# rather than the agent's binning. Score pass/fail until a normalized-cycles window
+# (cycles per INPUT_SIZE) is added. See docs/METRICS.md.
+metric:
+  class: correctness_only
+  reason: "no TSC window + data-dependent per-PE binning + tally via SDK <kernels/tally> lib"
+
+# WSE-3 PORT NOTE (2026-06-24): this kernel was WSE-2-only. The WSE-3 branch
+# (commands_wse3.sh) required: (1) data_task_id derived from an input_queue not a color
+# (@is_arch idiom, mirrors SDK tally lib); (2) @initialize_queue for the recv input
+# queues + the send output queues + the D2H result queue (uninitialized queues silently
+# don't transmit / never wake on WSE-3); (3) output-queue renumber (0/1 are memcpy/
+# f_tally_exit reserved -> use 2,3,6,7). Validated: result_tensor=[1024] (=8*8*16) SUCCESS.
+
+build_command: "bash commands_wse3.sh"
+verify: "embedded in run.py — np.testing.assert_equal(result_tensor, HIST_W*HIST_H*INPUT_SIZE) + SUCCESS"
+
+hidden_from_optimize_only:
+  - "CSL/histogram.csl"
+
+tags:
+  - "multi_pe"
+  - "histogram"
+  - "fabric_reduction"

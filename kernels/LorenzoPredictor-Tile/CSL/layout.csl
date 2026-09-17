@@ -1,0 +1,108 @@
+// Copyright 2026 Cerebras Systems.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+// LorenzoPredictor-Tile: simplest piece of the CereSZ-style lossy-compression
+// pipeline. Per-tile Lorenzo prediction:
+//
+//   residual[i,j] = A[i,j] - (A[i-1,j] + A[i,j-1] - A[i-1,j-1])
+//
+// Each PE owns an Mt x Nt tile and needs three halos: the rightmost column of
+// its WEST neighbour (Mt values), the bottom row of its NORTH neighbour (Nt
+// values), and the bottom-right scalar of its NORTHWEST neighbour (1 value).
+// Cells outside the global grid read 0.
+//
+// Dataflow (note both directions run "downstream", opposite to a symmetric
+// halo exchange): column data travels EAST, row data travels SOUTH.
+//
+//   C_E: PE(px,py) -> PE(px+1,py), carries the sender's rightmost column.
+//   C_S: PE(px,py) -> PE(px,py+1), carries the sender's bottom row PREFIXED
+//        by one extra scalar.
+//
+// The NW scalar needs no third color. The value PE(px,py) wants at its (0,0)
+// cell is the bottom-right element of PE(px-1,py-1) -- which is exactly the
+// last entry of the NORTH neighbour's own west halo. So the exchange is
+// two-phase: every PE first completes the column exchange, then prepends
+// halo_w[Mt-1] to the row it sends south. See pe.csl.
+
+param Mt: i16;
+param Nt: i16;
+param width: i16;
+param height: i16;
+
+const C_S: color = @get_color(8);   // row data, travels south
+const C_E: color = @get_color(10);  // column data, travels east
+
+const memcpy = @import_module("<memcpy/get_params>", .{
+  .width = width,
+  .height = height,
+});
+
+layout {
+  @comptime_assert(width == 2);
+  @comptime_assert(height == 2);
+
+  @set_rectangle(width, height);
+
+  const tile_params = .{ .Mt = Mt, .Nt = Nt, .width = width, .height = height };
+
+  var px: i16 = 0;
+  while (px < width) : (px += 1) {
+    var py: i16 = 0;
+    while (py < height) : (py += 1) {
+      const is_w: bool = (px == 0);
+      const is_e: bool = (px == width - 1);
+      const is_n: bool = (py == 0);
+      const is_s: bool = (py == height - 1);
+
+      // Send south only if a south neighbour exists; receive from the north
+      // only if a north neighbour exists. Same shape for the east/west pair.
+      const tx_s_c: color = if (is_s) @get_color(15) else C_S;
+      const rx_s_c: color = if (is_n) @get_color(15) else C_S;
+      const tx_e_c: color = if (is_e) @get_color(15) else C_E;
+      const rx_e_c: color = if (is_w) @get_color(15) else C_E;
+
+      const pe_params = .{
+        .memcpy_params = memcpy.get_params(px),
+        .px = px, .py = py,
+        .is_w_edge = is_w, .is_e_edge = is_e,
+        .is_n_edge = is_n, .is_s_edge = is_s,
+        .TX_S = tx_s_c, .RX_S = rx_s_c,
+        .TX_E = tx_e_c, .RX_E = rx_e_c,
+      };
+      @set_tile_code(px, py, "pe.csl", @concat_structs(tile_params, pe_params));
+    }
+  }
+
+  // C_S: the north row drives the ramp onto the SOUTH wire; the south row
+  // pulls it off. C_E: the west column drives EAST; the east column pulls.
+  px = 0;
+  while (px < width) : (px += 1) {
+    @set_color_config(px, 0, C_S, .{ .routes = .{ .rx = .{ RAMP },  .tx = .{ SOUTH }}});
+    @set_color_config(px, 1, C_S, .{ .routes = .{ .rx = .{ NORTH }, .tx = .{ RAMP  }}});
+  }
+  var py: i16 = 0;
+  while (py < height) : (py += 1) {
+    @set_color_config(0, py, C_E, .{ .routes = .{ .rx = .{ RAMP }, .tx = .{ EAST }}});
+    @set_color_config(1, py, C_E, .{ .routes = .{ .rx = .{ WEST }, .tx = .{ RAMP }}});
+  }
+
+  @export_name("tile",         [*]f32, true);
+  @export_name("residual",     [*]f32, true);
+  @export_name("time_buf_u16", [*]u16, true);
+  @export_name("step", fn()void);
+  @export_name("f_tic", fn()void);
+  @export_name("f_toc", fn()void);
+  @export_name("f_memcpy_timestamps", fn()void);
+  @export_name("f_enable_timer", fn()void);
+}

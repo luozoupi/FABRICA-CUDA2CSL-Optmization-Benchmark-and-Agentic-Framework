@@ -1,0 +1,69 @@
+# xkernel-bench spec — see kernels/SPEC_SCHEMA.md for format.
+kernel_id: "GEMM-1PE"
+group: "gemm"
+difficulty: 1
+
+tasks:
+  - "Dense matrix multiply C = A*B on a single PE holding the whole M x K, K x N, M x N
+     tiles: triple loop with an inner-product (fmac) accumulation. entrypoint = compute.
+     The SIMPLE counterpart to the collective SUMMA GEMM (no library, no decomposition)."
+
+inputs:
+  - {name: "A", shape: "[M, K]", dtype: "f32"}
+  - {name: "B", shape: "[K, N]", dtype: "f32"}
+
+outputs:
+  - {name: "C", shape: "[M, N]", dtype: "f32",
+     tolerance_abs: 1.0e-4, tolerance_rel: 1.0e-4,
+     description: "C = A*B; verified in run.py against numpy A@B (assert_allclose) + SUCCESS"}
+
+sizes:
+  - name: small
+    role: correctness
+    params: {M: 16, K: 16, N: 16}
+    commands_script: "commands_wse3.sh"
+    wse3_reference: {cycles_send: 119197, time_send_us: 140.23}
+
+task_class: "real-translation"
+# TEST split (by design, 2026-06-24): GEMM-1PE is HAND-WRITTEN dense matmul with NO
+# library and NO WaferLLM/MeshGEMM-pattern overlap, so it is genuinely leak-free and
+# eligible for the held-out beats-expert claim — same basis as SpMV-CSR / DFT-1PE /
+# Histogram-1PE this session. Its COMPLEX family-sibling, the collective SUMMA
+# GEMM-Collectives-2D, stays TRAIN: its decomposition overlaps WaferLLM's MeshGEMM
+# patterns cited in the KB (leak-rule #3) and seeds collective idioms for retrieval.
+# So the GEMM family is split simple-test / complex-train. See docs/SPLIT_AND_LEAKAGE.md.
+split: "test"
+
+# Metric: cycles. HAND-WRITTEN dense matmul — the agent writes the explicit triple-loop
+# inner product (fmac), single PE, TSC-timed -> cycles_send measures the agent's compute
+# (contrast GEMM-Collectives-2D, whose compute is the collectives_2d broadcast/reduce
+# decomposition). Fixed trip count (M*N*K) -> stable cycle number.
+metric:
+  class: cycles
+  reason: "agent-written dense triple-loop fmac; on-device TSC window; not library/SUMMA-delegated"
+
+# Input-level train/test split (anti-hardcoding). run.py draws seeded random A,B
+# (XKERNEL_EVAL_SEED) and recomputes C=A@B; harness re-scores on held-out seeds.
+# Validated train+held-out {7,101,202}: errors ~1e-7 (f32).
+eval:
+  train_seed: 7
+  heldout_seeds: [101, 202, 303]
+  seed_env: "XKERNEL_EVAL_SEED"
+
+build_command: "bash commands_wse3.sh"
+verify: "embedded in run.py — np.testing.assert_allclose(C, A@B, rtol=1e-4) + SUCCESS"
+
+hidden_from_optimize_only:
+  - "CSL/pe.csl"
+
+optimization_angles:
+  - "dsd_offset_chaining"
+  - "fmac_bulk"
+  - "stride_optimization"
+  - "comptime_hoist"
+  - "data_layout_transpose"
+
+tags:
+  - "single_pe"
+  - "gemm"
+  - "dense_matmul"

@@ -1,0 +1,212 @@
+// Copyright 2026 Cerebras Systems.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+// LorenzoPredictor-Tile per-PE compute:
+//   residual[i,j] = A[i,j] - (A[i-1,j] + A[i,j-1] - A[i-1,j-1])
+//
+// Two-phase halo exchange (see layout.csl for the routing):
+//
+//   Phase 1 (C_E, travels east)  -- send my rightmost column to the east
+//                                   neighbour; receive my west neighbour's
+//                                   into halo_w[Mt].
+//   Phase 2 (C_S, travels south) -- send [nw_scalar, my bottom row] to the
+//                                   south neighbour; receive my north
+//                                   neighbour's into row_recv[Nt+1].
+//
+// The prefix scalar carries the NW corner: the value PE(px,py) needs at cell
+// (0,0) is PE(px-1,py-1)'s bottom-right element, which is exactly the last
+// entry of the NORTH neighbour's west halo. That is why phase 2 must follow
+// phase 1 -- the north neighbour cannot build its send buffer until its own
+// column halo has landed.
+
+param memcpy_params: comptime_struct;
+param Mt: i16;
+param Nt: i16;
+param width: i16;
+param height: i16;
+param px: i16;
+param py: i16;
+param is_w_edge: bool;
+param is_e_edge: bool;
+param is_n_edge: bool;
+param is_s_edge: bool;
+
+param TX_S: color = @get_color(15);
+param RX_S: color = @get_color(15);
+param TX_E: color = @get_color(15);
+param RX_E: color = @get_color(15);
+
+const tx_s_oq: output_queue = @get_output_queue(2);
+const tx_e_oq: output_queue = @get_output_queue(3);
+const rx_s_iq: input_queue  = @get_input_queue(2);
+const rx_e_iq: input_queue  = @get_input_queue(3);
+
+const PHASE2_TID:  local_task_id = @get_local_task_id(12);
+const ROW_DONE_TID:local_task_id = @get_local_task_id(13);
+const COMPUTE_TID: local_task_id = @get_local_task_id(14);
+const EXIT_TID:    local_task_id = @get_local_task_id(15);
+
+const sys_mod = @import_module("<memcpy/memcpy>", memcpy_params);
+
+const timestamp = @import_module("<time>");
+var tscStartBuffer = @zeros([timestamp.tsc_size_words]u16);
+var tscEndBuffer   = @zeros([timestamp.tsc_size_words]u16);
+var time_buf_u16   = @zeros([timestamp.tsc_size_words*2]u16);
+var ptr_time_buf_u16: [*]u16 = &time_buf_u16;
+
+var tile:     [Mt * Nt]f32 = @zeros([Mt * Nt]f32);
+var residual: [Mt * Nt]f32 = @zeros([Mt * Nt]f32);
+var halo_n:   [Nt]f32 = @zeros([Nt]f32);
+var halo_w:   [Mt]f32 = @zeros([Mt]f32);
+var halo_nw:  f32 = 0.0;
+
+var col_send: [Mt]f32     = @zeros([Mt]f32);
+var row_send: [Nt + 1]f32 = @zeros([Nt + 1]f32);
+var row_recv: [Nt + 1]f32 = @zeros([Nt + 1]f32);
+
+var tile_ptr:     [*]f32 = &tile;
+var residual_ptr: [*]f32 = &residual;
+
+const col_send_dsd = @get_dsd(mem1d_dsd, .{ .tensor_access = |i|{Mt}     -> col_send[i] });
+const halo_w_dsd   = @get_dsd(mem1d_dsd, .{ .tensor_access = |i|{Mt}     -> halo_w[i] });
+const row_send_dsd = @get_dsd(mem1d_dsd, .{ .tensor_access = |i|{Nt + 1} -> row_send[i] });
+const row_recv_dsd = @get_dsd(mem1d_dsd, .{ .tensor_access = |i|{Nt + 1} -> row_recv[i] });
+
+const fab_tx_e = @get_dsd(fabout_dsd, .{ .extent = Mt,     .fabric_color = TX_E, .output_queue = tx_e_oq });
+const fab_rx_e = @get_dsd(fabin_dsd,  .{ .extent = Mt,     .fabric_color = RX_E, .input_queue  = rx_e_iq });
+const fab_tx_s = @get_dsd(fabout_dsd, .{ .extent = Nt + 1, .fabric_color = TX_S, .output_queue = tx_s_oq });
+const fab_rx_s = @get_dsd(fabin_dsd,  .{ .extent = Nt + 1, .fabric_color = RX_S, .input_queue  = rx_s_iq });
+
+// Phase 1: column exchange, west -> east.
+fn start_columns() void {
+  var i: i16 = 0;
+  while (i < Mt) : (i += 1) {
+    col_send[i] = tile[i * Nt + (Nt - 1)];
+  }
+  if (!is_w_edge) {
+    // A west neighbour exists, so a receive is coming; it drives phase 2.
+    if (!is_e_edge) @fmovs(fab_tx_e, col_send_dsd, .{ .async = true });
+    @fmovs(halo_w_dsd, fab_rx_e, .{ .async = true, .activate = PHASE2_TID });
+  } else {
+    // No west neighbour: halo_w stays zero. Drive phase 2 off the send so we
+    // never race ahead of our own outstanding wavelets.
+    if (!is_e_edge) {
+      @fmovs(fab_tx_e, col_send_dsd, .{ .async = true, .activate = PHASE2_TID });
+    } else {
+      @activate(PHASE2_TID);
+    }
+  }
+}
+
+// Phase 2: row exchange, north -> south, with the NW scalar prefixed.
+task f_phase2() void {
+  row_send[0] = if (is_w_edge) @as(f32, 0.0) else halo_w[Mt - 1];
+  var j: i16 = 0;
+  while (j < Nt) : (j += 1) {
+    row_send[1 + j] = tile[(Mt - 1) * Nt + j];
+  }
+  if (!is_n_edge) {
+    if (!is_s_edge) @fmovs(fab_tx_s, row_send_dsd, .{ .async = true });
+    @fmovs(row_recv_dsd, fab_rx_s, .{ .async = true, .activate = ROW_DONE_TID });
+  } else {
+    if (!is_s_edge) {
+      @fmovs(fab_tx_s, row_send_dsd, .{ .async = true, .activate = COMPUTE_TID });
+    } else {
+      @activate(COMPUTE_TID);
+    }
+  }
+}
+
+task f_row_done() void {
+  halo_nw = row_recv[0];
+  var j: i16 = 0;
+  while (j < Nt) : (j += 1) {
+    halo_n[j] = row_recv[1 + j];
+  }
+  @activate(COMPUTE_TID);
+}
+
+task f_compute() void {
+  var i: i16 = 0;
+  while (i < Mt) : (i += 1) {
+    var j: i16 = 0;
+    while (j < Nt) : (j += 1) {
+      const a    = tile[i*Nt + j];
+      const up   = if (i == 0) halo_n[j] else tile[(i-1)*Nt + j];
+      const left = if (j == 0) halo_w[i] else tile[i*Nt + (j-1)];
+      const nw = if (i == 0 and j == 0) halo_nw
+                 else if (i == 0)        halo_n[j-1]
+                 else if (j == 0)        halo_w[i-1]
+                 else                    tile[(i-1)*Nt + (j-1)];
+      residual[i*Nt + j] = a - (up + left - nw);
+    }
+  }
+  @activate(EXIT_TID);
+}
+
+task f_exit() void {
+  sys_mod.unblock_cmd_stream();
+}
+
+fn step() void {
+  start_columns();
+}
+
+fn f_tic() void {
+  timestamp.get_timestamp(&tscStartBuffer);
+  sys_mod.unblock_cmd_stream();
+}
+
+fn f_toc() void {
+  timestamp.get_timestamp(&tscEndBuffer);
+  sys_mod.unblock_cmd_stream();
+}
+
+fn f_memcpy_timestamps() void {
+  time_buf_u16[0] = tscStartBuffer[0];
+  time_buf_u16[1] = tscStartBuffer[1];
+  time_buf_u16[2] = tscStartBuffer[2];
+  time_buf_u16[3] = tscEndBuffer[0];
+  time_buf_u16[4] = tscEndBuffer[1];
+  time_buf_u16[5] = tscEndBuffer[2];
+  sys_mod.unblock_cmd_stream();
+}
+
+fn f_enable_timer() void {
+  timestamp.enable_tsc();
+  sys_mod.unblock_cmd_stream();
+}
+
+comptime {
+  @bind_local_task(f_phase2,   PHASE2_TID);
+  @bind_local_task(f_row_done, ROW_DONE_TID);
+  @bind_local_task(f_compute,  COMPUTE_TID);
+  @bind_local_task(f_exit,     EXIT_TID);
+
+  if (@is_arch("wse3")) {
+    if (@get_int(TX_S) != 15) @initialize_queue(tx_s_oq, .{ .color = TX_S });
+    if (@get_int(TX_E) != 15) @initialize_queue(tx_e_oq, .{ .color = TX_E });
+    if (@get_int(RX_S) != 15) @initialize_queue(rx_s_iq, .{ .color = RX_S });
+    if (@get_int(RX_E) != 15) @initialize_queue(rx_e_iq, .{ .color = RX_E });
+  }
+
+  @export_symbol(tile_ptr,     "tile");
+  @export_symbol(residual_ptr, "residual");
+  @export_symbol(ptr_time_buf_u16, "time_buf_u16");
+  @export_symbol(step);
+  @export_symbol(f_tic);
+  @export_symbol(f_toc);
+  @export_symbol(f_memcpy_timestamps);
+  @export_symbol(f_enable_timer);
+}

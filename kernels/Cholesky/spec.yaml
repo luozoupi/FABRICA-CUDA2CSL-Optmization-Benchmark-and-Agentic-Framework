@@ -1,0 +1,82 @@
+# xkernel-bench spec — see kernels/SPEC_SCHEMA.md for format.
+kernel_id: "Cholesky"
+group: "linalg"
+difficulty: 2
+
+tasks:
+  - "Blocked Cholesky factorization: A = L * L^T where A is SPD.
+     Single-PE blocked variant; entrypoint = f_chol."
+  - "Per-tile triangular solve + Schur complement update; uses bulk DSDs on rows."
+
+inputs:
+  - {name: "A", shape: "[N, N]", dtype: "f32",
+     description: "symmetric positive-definite input (lower triangle valid)"}
+
+outputs:
+  - {name: "L", shape: "[N, N]", dtype: "f32",
+     tolerance_abs: 0.0, tolerance_rel: 0.0,
+     description: "lower-triangular factor; reference verified inside run.py (SUCCESS print)"}
+
+# Problem-size axis (Phase-2). Cholesky has NO valid large size: the reference
+# factorization loses f32 precision as the per-PE block Nt grows — both Nt=16 and
+# Nt=32 FAIL the host correctness check (assert_almost_equal decimal=2) even
+# though they compile + emit cycles (228217 / 1321823). Clean-verified 2026-06-20;
+# this is why every large config must be CORRECTNESS-checked, not just
+# cycle-checked (the crude sweep parser conflated the two). Cholesky is therefore
+# SMALL-ONLY until the reference is made numerically robust at scale (out of scope
+# for the size-axis work). See crossover_report_20260620.
+sizes:
+  - name: small
+    role: correctness
+    params: {P: 10, Nt: 4}
+    commands_script: "commands_wse3.sh"
+    wse3_reference: {cycles_send: 12479, time_send_us: 14.6812}
+  # NO large: numerically invalid at Nt>=16 (decimal=2 host check fails).
+
+task_class: "real-translation"
+split: "test"             # blocked Cholesky; no WaferLLM-pattern dependence -> held-out test
+size_note: "small-only — reference loses precision at large Nt (Nt16/Nt32 fail decimal=2)"
+
+# Input-level train/test split (2026-06-24). run.py reads XKERNEL_EVAL_SEED to build a
+# random SPD input; the reference factor is recomputed from that input every run, and
+# the gate is the LL^T=A reconstruction invariant (see run.py, hardened 2026-06-24).
+# The harness scores correctness on the HELD-OUT seeds, which NEVER appear in any agent
+# prompt, so a kernel that hardcodes the train-seed answer fails here. See
+# docs/SPLIT_AND_LEAKAGE.md (§ input-level split). train_seed is the in-file default.
+eval:
+  train_seed: 20260624             # the seed baked into run.py (the agent may see this)
+  heldout_seeds: [101, 202, 303]   # harness-only; correctness must pass on ALL
+  seed_env: "XKERNEL_EVAL_SEED"
+
+wse3_reference:           # legacy top-level (== small)
+  cycles_send: 12479
+  time_send_us: 14.6812
+  upstream_source: "csl-examples/tutorials (blocked Cholesky)"
+  params: {P: 10, Nt: 4}
+  _note: "Instrumented 2026-06-02; multi-PE 10x10 blocked Cholesky."
+
+build_command: "bash commands_wse3.sh"
+verify: "embedded in run.py — host comparison + SUCCESS print"
+
+hidden_from_optimize_only:
+  - "CSL/pe.csl"
+  - "CSL/launch.csl"
+
+# Cholesky has a per-tile triangular-solve pattern: dsd offset chaining
+# inside the panel loop, fmac for the rank-update, comptime tile size
+# tuning. Stride matters because the triangle access pattern can hit
+# bad strides depending on tile dims.
+optimization_angles:
+  - "comptime_value_tuning"
+  - "dsd_offset_chaining"
+  - "fmac_bulk"
+  - "memory_simd_alignment"
+  - "stride_optimization"
+  - "comptime_hoist"
+  - "data_layout_transpose"
+  - "buffer_cleanup"
+
+tags:
+  - "single_pe"
+  - "factorization"
+  - "blocked_triangular"

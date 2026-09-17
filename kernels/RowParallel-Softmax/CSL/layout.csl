@@ -1,0 +1,59 @@
+// RowParallel-Softmax layout: 2-PE distributed softmax.
+// Uses 4 colors for allreduce(max) + allreduce(sum):
+//   C_MAX_REDUCE (8): PE1 sends local max west to PE0
+//   C_MAX_BCAST  (9): PE0 sends global max east to PE1
+//   C_SUM_REDUCE (10): PE1 sends local exp-sum west to PE0
+//   C_SUM_BCAST  (11): PE0 sends global sum east to PE1
+
+param n_per_pe: u16;
+param width: i16 = 2;
+param height: i16 = 1;
+
+const C_MAX_REDUCE: color = @get_color(8);
+const C_MAX_BCAST:  color = @get_color(9);
+const C_SUM_REDUCE: color = @get_color(10);
+const C_SUM_BCAST:  color = @get_color(11);
+
+const memcpy = @import_module("<memcpy/get_params>", .{
+  .width = width,
+  .height = height,
+});
+
+layout {
+  @set_rectangle(width, height);
+
+  var px: i16 = 0;
+  while (px < width) : (px += 1) {
+    @set_tile_code(px, 0, "pe.csl", .{
+      .memcpy_params = memcpy.get_params(px),
+      .n_per_pe = n_per_pe,
+      .px = px,
+      .width = width,
+      .C_MAX_REDUCE = C_MAX_REDUCE,
+      .C_MAX_BCAST = C_MAX_BCAST,
+      .C_SUM_REDUCE = C_SUM_REDUCE,
+      .C_SUM_BCAST = C_SUM_BCAST,
+    });
+  }
+
+  // MAX_REDUCE: PE1 sends west, PE0 receives from east
+  @set_color_config(1, 0, C_MAX_REDUCE, .{ .routes = .{ .rx = .{ RAMP }, .tx = .{ WEST }}});
+  @set_color_config(0, 0, C_MAX_REDUCE, .{ .routes = .{ .rx = .{ EAST }, .tx = .{ RAMP }}});
+
+  // MAX_BCAST: PE0 sends east, PE1 receives from west
+  @set_color_config(0, 0, C_MAX_BCAST, .{ .routes = .{ .rx = .{ RAMP }, .tx = .{ EAST }}});
+  @set_color_config(1, 0, C_MAX_BCAST, .{ .routes = .{ .rx = .{ WEST }, .tx = .{ RAMP }}});
+
+  // SUM_REDUCE: PE1 sends west, PE0 receives from east
+  @set_color_config(1, 0, C_SUM_REDUCE, .{ .routes = .{ .rx = .{ RAMP }, .tx = .{ WEST }}});
+  @set_color_config(0, 0, C_SUM_REDUCE, .{ .routes = .{ .rx = .{ EAST }, .tx = .{ RAMP }}});
+
+  // SUM_BCAST: PE0 sends east, PE1 receives from west
+  @set_color_config(0, 0, C_SUM_BCAST, .{ .routes = .{ .rx = .{ RAMP }, .tx = .{ EAST }}});
+  @set_color_config(1, 0, C_SUM_BCAST, .{ .routes = .{ .rx = .{ WEST }, .tx = .{ RAMP }}});
+
+  @export_name("x", [*]f32, true);
+  @export_name("out", [*]f32, true);
+  @export_name("maxmin_time", [*]f32, true);
+  @export_name("compute", fn()void);
+}

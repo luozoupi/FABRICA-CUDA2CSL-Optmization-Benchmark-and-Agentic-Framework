@@ -1,0 +1,99 @@
+// Stencil7pt-1PE compute (hand-written): 3D 7-point stencil y = A*x on one PE.
+//   y[i,j,k] = cc*x + cw*x[west] + ce*x[east] + cs*x[south] + cn*x[north]
+//                   + cb*x[bottom] + ct*x[top]   (Dirichlet: OOB neighbors = 0)
+// The real compute (not a stencil-library call): explicit 7-term weighted sum with
+// boundary guards over the grid. TSC-timed.
+
+param memcpy_params: comptime_struct;
+
+param Nx: u16;
+param Ny: u16;
+param Nz: u16;
+
+// Stencil coefficients (Laplacian-style; must match run.py's reference).
+const cc: f32 =  6.0;   // center
+const cw: f32 = -1.0;   // west  (ix-1)
+const ce: f32 = -1.0;   // east  (ix+1)
+const cs: f32 = -1.0;   // south (iy-1)
+const cn: f32 = -1.0;   // north (iy+1)
+const cb: f32 = -1.0;   // bottom(iz-1)
+const ct: f32 = -1.0;   // top   (iz+1)
+
+const EXIT: local_task_id = @get_local_task_id(9);
+
+const sys_mod = @import_module("<memcpy/memcpy>", memcpy_params);
+
+const timestamp = @import_module("<time>");
+var tsc_start_buf = @zeros([timestamp.tsc_size_words]u16);
+var tsc_end_buf   = @zeros([timestamp.tsc_size_words]u16);
+var timer_buf = @zeros([3]f32);
+var ptr_timer_buf: [*]f32 = &timer_buf;
+
+const N: u16 = Nx * Ny * Nz;
+var x_array = @zeros([N]f32);
+var y_array = @zeros([N]f32);
+var ptr_x: [*]f32 = &x_array;
+var ptr_y: [*]f32 = &y_array;
+
+const NxNy: u16 = Nx * Ny;
+
+fn stencil() void {
+  var iz: u16 = 0;
+  while (iz < Nz) : (iz += 1) {
+    var iy: u16 = 0;
+    while (iy < Ny) : (iy += 1) {
+      var ix: u16 = 0;
+      while (ix < Nx) : (ix += 1) {
+        const idx: u16 = iz * NxNy + iy * Nx + ix;
+        var v: f32 = cc * x_array[idx];
+        if (ix > 0)        { v += cw * x_array[idx - 1]; }
+        if (ix < Nx - 1)   { v += ce * x_array[idx + 1]; }
+        if (iy > 0)        { v += cs * x_array[idx - Nx]; }
+        if (iy < Ny - 1)   { v += cn * x_array[idx + Nx]; }
+        if (iz > 0)        { v += cb * x_array[idx - NxNy]; }
+        if (iz < Nz - 1)   { v += ct * x_array[idx + NxNy]; }
+        y_array[idx] = v;
+      }
+    }
+  }
+}
+
+fn compute() void {
+  timestamp.enable_tsc();
+  timestamp.get_timestamp(&tsc_start_buf);
+
+  stencil();
+
+  timestamp.get_timestamp(&tsc_end_buf);
+  timestamp.disable_tsc();
+
+  var lo_: u16 = 0;
+  var hi_: u16 = 0;
+
+  lo_ = tsc_start_buf[0];
+  hi_ = tsc_start_buf[1];
+  timer_buf[0] = @bitcast(f32, (@as(u32, hi_) << @as(u16, 16)) | @as(u32, lo_));
+
+  lo_ = tsc_start_buf[2];
+  hi_ = tsc_end_buf[0];
+  timer_buf[1] = @bitcast(f32, (@as(u32, hi_) << @as(u16, 16)) | @as(u32, lo_));
+
+  lo_ = tsc_end_buf[1];
+  hi_ = tsc_end_buf[2];
+  timer_buf[2] = @bitcast(f32, (@as(u32, hi_) << @as(u16, 16)) | @as(u32, lo_));
+
+  @activate(EXIT);
+}
+
+task f_exit() void {
+  sys_mod.unblock_cmd_stream();
+}
+
+comptime {
+  @bind_local_task(f_exit, EXIT);
+
+  @export_symbol(ptr_x, "x");
+  @export_symbol(ptr_y, "y");
+  @export_symbol(ptr_timer_buf, "maxmin_time");
+  @export_symbol(compute);
+}

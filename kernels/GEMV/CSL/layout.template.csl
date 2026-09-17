@@ -1,0 +1,80 @@
+// GEMV layout TEMPLATE (WS2 — holes, not whole-cloth).
+//
+// The CONTRACT parts are pre-filled and MUST stay verbatim: the host-visible
+// param decls, the memcpy + collectives_2d/params imports, and the @export_name
+// block (the symbols + entrypoints run.py/the logical contract depend on).
+// The DECOMPOSITION parts are labeled holes <<HOLE: ...>> — the agent fills
+// these to express ITS chosen decomposition (grid shape, fabric colors/routing,
+// per-PE tile binding). Generating a full layout from zero is where deadlocks +
+// SRAM overflow live; holes keep pass-rate survivable while still removing the
+// decomposition leak (the agent never sees the reference layout.csl).
+//
+// Rules for filling holes:
+//  - Do NOT change the param names or the @export_name block.
+//  - @set_rectangle(W,H) must match the (kernel_cols, kernel_rows) your
+//    distribution.py grid() returns.
+//  - Every PE in the rectangle must get @set_tile_code with the params your
+//    pe.csl declares.
+//  - Reserved task/color ids: 21-30 are memcpy-reserved; keep user ids < 21.
+
+// ---- CONTRACT: host-visible params (do not rename) ----
+param kernel_rows : u16;
+param kernel_cols : u16;
+param matrix_rows : u16;
+param matrix_cols : u16;
+
+comptime {
+  @comptime_assert(matrix_rows % kernel_rows == 0);
+  @comptime_assert(matrix_cols % kernel_cols == 0);
+}
+
+const Mt: u16 = matrix_rows / kernel_rows; // rows per PE
+const Nt: u16 = matrix_cols / kernel_cols; // cols per PE
+
+// ---- CONTRACT: required imports ----
+const memcpy = @import_module( "<memcpy/get_params>", .{
+    .width = kernel_cols,
+    .height = kernel_rows
+});
+const c2d = @import_module("<collectives_2d/params>");
+
+layout {
+  // <<HOLE: grid>> — set the PE rectangle for your decomposition.
+  // Must equal (kernel_cols, kernel_rows) used by distribution.py grid().
+  @set_rectangle(kernel_cols, kernel_rows);
+
+  var Px: u16 = 0;
+  while (Px < kernel_cols) : (Px += 1) {
+    var Py: u16 = 0;
+    const memcpy_params = memcpy.get_params(Px);
+    while (Py < kernel_rows) : (Py += 1) {
+      // <<HOLE: collectives_wiring>> — choose the x/y collective colors +
+      // entrypoint task ids (user ids < 21). Construct c2d_params for this PE.
+      const c2d_params = c2d.get_params(Px, Py, .{
+        .x_colors      = .{ @get_color(0),          @get_color(1) },
+        .x_entrypoints = .{ @get_local_task_id(14), @get_local_task_id(15) },
+        .y_colors      = .{ @get_color(4),          @get_color(5) },
+        .y_entrypoints = .{ @get_local_task_id(16), @get_local_task_id(17) },
+      });
+      // <<HOLE: tile_code>> — bind your pe.csl with the params it declares.
+      @set_tile_code(Px, Py, "pe.csl", .{
+        .memcpy_params = memcpy_params,
+        .c2d_params = c2d_params,
+        .Mt = Mt,
+        .Nt = Nt
+      });
+    }
+  }
+
+  // ---- CONTRACT: exported symbols + entrypoints (do NOT change) ----
+  @export_name("A", [*]f32, true);
+  @export_name("x", [*]f32, true);
+  @export_name("b", [*]f32, true);
+  @export_name("y", [*]f32, true);
+  @export_name("main", fn()void);
+  @export_name("time_buf_u16", [*]u16, true);
+  @export_name("f_tic", fn()void);
+  @export_name("f_toc", fn()void);
+  @export_name("f_memcpy_timestamps", fn()void);
+  @export_name("f_enable_timer", fn()void);
+}

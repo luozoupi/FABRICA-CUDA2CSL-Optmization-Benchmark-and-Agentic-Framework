@@ -1,0 +1,50 @@
+// Reference: hand-written, SIMD-optimized dense scaled-dot-product attention for
+// the WSE-3 (query-parallel: each PE owns St_q query rows, K/V replicated, local
+// softmax; DSD + @fmacs/@fmaxs/@fmuls inner loops, scalar exp). This is an
+// EXPERT reference, not a validated-only baseline: on the same problem
+// (P=4, S=64, d=32) it is 6.7x faster than the scalar query-parallel version
+// (68,764 vs 458,419 cycles, SDK simulator). Imported into the benchmark on
+// 2026-09-08 from the authors' attention-wse project (never part of the
+// retrieval corpus).
+
+// Copyright 2026.  M5 SIMD-optimized dense attention — layout.
+//
+// Same query-parallel structure as M2 (PE owns St_q query rows, K/V replicated)
+// but the inner loops use DSD + @fmacs/@fmaxs/@fmuls SIMD instead of scalar
+// loops.  Built to measure the speedup over M2's scalar baseline at the SAME
+// problem size (P=4, S=64, d=32).
+//
+// Color/task-ID map: only memcpy infra (21,22,23,27,28,30 reserved).
+
+param P: u16;
+param St_q: i16;
+param S: i16;
+param d: i16;
+param causal: i16;
+
+const memcpy = @import_module("<memcpy/get_params>", .{ .width = P, .height = P });
+
+layout {
+  @set_rectangle(P, P);
+
+  var px: u16 = 0;
+  while (px < P) : (px += 1) {
+    var py: u16 = 0;
+    const memcpy_params = memcpy.get_params(px);
+    while (py < P) : (py += 1) {
+      @set_tile_code(px, py, "pe.csl", .{
+        .memcpy_params = memcpy_params,
+        .St_q = St_q, .S = S, .d = d, .causal = causal,
+        .P = P, .px = px, .py = py,
+      });
+    }
+  }
+
+  @export_name("Q", [*]f32, true);
+  @export_name("K", [*]f32, true);
+  @export_name("V", [*]f32, true);
+  @export_name("O", [*]f32, true);
+  @export_name("start_ts", [*]u16, true);
+  @export_name("finish_ts",[*]u16, true);
+  @export_name("compute", fn()void);
+}

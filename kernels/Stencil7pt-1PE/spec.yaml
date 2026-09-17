@@ -1,0 +1,62 @@
+# xkernel-bench spec — see kernels/SPEC_SCHEMA.md for format.
+kernel_id: "Stencil7pt-1PE"
+group: "stencil"
+difficulty: 2
+
+tasks:
+  - "3D 7-point stencil y = A*x on a single PE holding the whole Nx*Ny*Nz grid:
+     y[i,j,k] = cc*x[i,j,k] + cw*x[i-1,j,k] + ce*x[i+1,j,k] + cs*x[i,j-1,k]
+     + cn*x[i,j+1,k] + cb*x[i,j,k-1] + ct*x[i,j,k+1], Dirichlet boundary.
+     entrypoint = compute. Coefficients are fixed consts (cc=6, neighbors=-1)."
+
+inputs:
+  - {name: "x", shape: "[Nx*Ny*Nz]", dtype: "f32"}
+
+outputs:
+  - {name: "y", shape: "[Nx*Ny*Nz]", dtype: "f32",
+     tolerance_abs: 1.0e-5, tolerance_rel: 1.0e-5,
+     description: "y = 7-point stencil of x; verified in run.py against numpy reference (assert_allclose) + SUCCESS"}
+
+sizes:
+  - name: small
+    role: correctness
+    params: {Nx: 8, Ny: 8, Nz: 8}
+    commands_script: "commands_wse3.sh"
+    wse3_reference: {cycles_send: 40497, time_send_us: 47.6435}
+
+task_class: "real-translation"
+split: "test"             # hand-written stencil compute; no library dependence -> held-out test
+
+# Metric: cycles. HAND-WRITTEN-COMPUTE variant of 7pt-Stencil (docs/HANDWRITTEN_KERNELS.md):
+# unlike kernels/7-Point Stencil which delegates to the stencil_3d_7pts + allreduce
+# libraries (parity/library-delegating), here the CSL expresses the explicit 7-term
+# weighted sum with boundary guards, so cycles_send measures the agent's stencil compute.
+# Single-PE, fixed trip count (Nx*Ny*Nz) -> stable cycle number.
+metric:
+  class: cycles
+  reason: "agent-written 7-term stencil sum with boundary guards; on-device TSC window; not library-delegated"
+
+# Input-level train/test split. run.py draws a seeded random field (XKERNEL_EVAL_SEED)
+# and recomputes the numpy stencil reference; the harness re-scores on held-out seeds.
+# Validated train+held-out {7,101,202}: exact match (max abs err 0.0).
+eval:
+  train_seed: 7
+  heldout_seeds: [101, 202, 303]
+  seed_env: "XKERNEL_EVAL_SEED"
+
+build_command: "bash commands_wse3.sh"
+verify: "embedded in run.py — np.testing.assert_allclose(y, numpy 7pt stencil, rtol=1e-5) + SUCCESS"
+
+hidden_from_optimize_only:
+  - "CSL/pe.csl"
+
+optimization_angles:
+  - "dsd_offset_chaining"
+  - "fmac_bulk"
+  - "stride_optimization"
+  - "comptime_hoist"
+
+tags:
+  - "single_pe"
+  - "stencil"
+  - "stencil_3d_7pt"

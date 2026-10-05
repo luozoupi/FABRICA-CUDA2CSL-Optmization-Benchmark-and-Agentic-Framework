@@ -9,6 +9,7 @@ opportunity observed in actual translation/optimization runs.
 from __future__ import annotations
 
 import os
+import re
 import sys
 from pathlib import Path
 from typing import List, Tuple
@@ -85,6 +86,31 @@ Collectives take `[*]u32` pointers. Cast with:
   mpi_x.scatter(0, @ptrcast([*]u32, &x_src), @ptrcast([*]u32, &x_tile), Nt, next_task_id);
   mpi_x.reduce_fadds(Pw-1, @ptrcast([*]f32, &local), @ptrcast([*]f32, &sum), Mt, next_task_id);
 """
+
+def _sdk2() -> bool:
+    try:
+        from sdk_compat import is_sdk2
+        return is_sdk2()
+    except ImportError:
+        return False
+
+
+def type_rules() -> str:
+    """TYPE_RULES, plus the SDK 2.x syntax note when the agent's target SDK is 2.x."""
+    if _sdk2():
+        from sdk_compat import SDK210_SYNTAX_NOTE
+        return TYPE_RULES.rstrip() + "\n" + SDK210_SYNTAX_NOTE
+    return TYPE_RULES
+
+
+def _sdk_adjust(text):
+    """Rewrite 1.4-only constructs in a knowledge block to their 2.x forms when the target
+    SDK is 2.x; identity otherwise (so the 1.4 prompts stay byte-identical)."""
+    if isinstance(text, str) and text and _sdk2():
+        from sdk_compat import fixup_csl_for_sdk
+        return fixup_csl_for_sdk(text)[0]
+    return text
+
 
 # ---------------------------------------------------------------------------
 # 2. DSD PATTERNS
@@ -310,6 +336,97 @@ If L >> R: compute-bound → optimize inner loops (fmac_bulk, DSD chaining)
 If R >> L: fabric-bound → overlap communication with compute (async)
 If M is bottleneck: memory-bound → reduce PE SRAM usage, tile smaller
 """
+
+
+# ---------------------------------------------------------------------------
+# 5c. CUDA -> CSL FOR SPARSE KERNELS (v2 sparse study; gate XKERNEL_SPARSE_MAPPING=1)
+# ---------------------------------------------------------------------------
+# Long form with paired snippets: docs/CUDA_TO_CSL_SPARSE_PATTERNS.md. Snippets come from
+# the characterization study's microbenchmarks and SDK idioms, never from a task's reference
+# program (test_sparse_mapping_leak.py). This block is the treatment of translation arm T1.
+
+_SPARSE_HINT_RE = re.compile(r"spmv|spmm|spgemm|\bcsr\b|\bcsc\b|sparse|row_ptr|col_idx|colptr|\bnnz\b|graphblas|hypersparse", re.I)
+
+
+def _sparse_hint(query: str) -> bool:
+    return bool(query) and bool(_SPARSE_HINT_RE.search(str(query)))
+
+
+def sparse_mapping_block(query: str = "", kernel_group: str = "") -> str:
+    """The T1 treatment (XKERNEL_SPARSE_MAPPING=1) for a sparse task, or "" when the gate is off
+    or the task is not sparse. Used by for_implementer AND by the template-completion prompt of
+    the production stack (XKERNEL_TEMPLATE_GEN=1), which does not go through for_implementer:
+    the 16 Sep pilot showed a task that passed inside the template route never saw the block."""
+    if os.getenv("XKERNEL_SPARSE_MAPPING", "0") == "1" and (str(kernel_group).lower() == "sparse" or _sparse_hint(query)):
+        return SPARSE_CUDA_TO_CSL_MAPPING.strip()
+    return ""
+
+
+SPARSE_CUDA_TO_CSL_MAPPING = """
+## CUDA -> CSL for SPARSE kernels (measured on WSE-3; the numbers are from silicon and the SDK 2.10 toolchain)
+
+The PE is one in-order 16-bit core with 44,976 B of SRAM, no cache, no atomics, and no
+indirect DSD (a descriptor addresses affine runs only; `x[col_idx[j]]` is a scalar gather).
+A DSD op costs 15-17 cycles of setup, a loop back-edge 9-10 cycles, a fabric hop 2 cycles
+and a route turn about 20. On a 16x16 banded matrix with 60 nonzeros the scalar CSR gather
+took 36.2 cycles per nonzero (almost all index arithmetic), one runtime-length descriptor
+per row 31.8 (1.14x), and the diagonal form vectorised ACROSS rows 7.3 (4.96x).
+
+| CUDA idiom | CSL / WSE-3 realisation | why |
+|---|---|---|
+| thread-per-row `row = blockIdx.x*blockDim.x + threadIdx.x` | PE-per-row-block: host splits rows into P blocks; each PE loops its local rows (global column indices) | a PE is one instruction stream |
+| grid-stride over NONZEROS with a per-entry row lookup (GraphBLAS `ek_slice`: a binary search over the row pointers for every p) | walk the rows instead: the row is the outer loop variable and `row_ptr[i]..row_ptr[i+1]` bounds the inner loop or one DSD op per row; nothing is searched | the search exists to give threads independent work; on one in-order PE it is about log2(nrows) dependent branches per nonzero (measured 9x slower than the row walk) |
+| warp-per-row + `__shfl_down_sync` reduce | in-PE reduction: memory-destination DSD op (`@fadds(yd, yd, td)`) or a scalar sum; NEVER `@fadds(&acc, acc, dsd)` in f32: it can lower with dest != src0 and return the LAST element (faster, silently wrong) | no warps; backend hazard |
+| `atomicAdd(&y[i], v)` scatter | owner-computes: accumulate the PE's own rows in SRAM, then one wavelet stream of partials per PE | no atomics; ~20 cycles per fabric turn |
+| dynamic output nnz, `cudaMalloc`, cumsum passes | static capacity params (`max_nnz`), `@comptime_assert`; masked products: the mask IS the output pattern | no allocator; SRAM is the whole memory |
+| phase-1 bucket dispatch by row lengths | choose the vectorised AXIS from the structure readout: DIA/ELL across rows (few diagonals, contiguous or uniform rows), one runtime-length DSD per row (long rows), scalar (hypersparse) | cost = which axis is a stream |
+| merge-path / binary search | two-pointer merge in a plain scalar loop with the cursor updates as EXPLICIT control-flow paths ending in `continue` (equal: consume both, continue; less: advance the first, continue; else advance the second): 1.18x on the suite's masked SpGEMM (2026-09-26), because cslc then emits conditional register increments instead of an indirectly selected stack cursor. Do NOT make the advance branchless with `p += @as(u16, ra <= rb)`: measured 0.45x (2026-09-21). Re-point runs with `@set_dsd_length` / `@increment_dsd_offset` | no divergence tax; 9-10 cycles per branch, but the indirect cursor update costs more than the branches |
+| hash accumulator (SpGEMM) | dense f32 accumulator row when n*4 B fits (n <= 4,096 is safe), cleared by one `@fmovs`; sorted merge otherwise | capacity, not bandwidth |
+| `__syncthreads()` / grid sync | `@activate(task)` chains; a task runs when its data arrived | no barriers |
+| `__shared__` staging / L1 tiling | everything SRAM-resident; tile only when capacity forces P > 1 | no cache hierarchy |
+| coalesced loads | contiguous `mem1d_dsd` runs; keep dest and source in different f32 bank classes (period 4; 1.94x same-class penalty, invisible in the simulator) | 8 banks x 2 B |
+| mask tests `M(i,j)` | the mask pattern is the work list; the owner PE holds its mask tile | output structure known ahead |
+| one block per row, hardware balances | static nnz-balanced row partition; the slowest PE sets the time | no work stealing |
+| `int` / `int64_t` indices | u16 / i16 indices when n < 65,536: each u32 index costs a scale-and-narrow shift pair, 3.5 per nonzero in the scalar CSR loop | 16-bit machine |
+| `cudaMemcpy` of any width | memcpy moves 32-bit elements; u16 data as `MEMCPY_16BIT` copies or packed pairs; exports `@export_name(name, [*]T, true)` with `var ptr: [*]T = &arr;` | memcpy contract |
+
+Two forms to keep in mind (from the study's own SpMV microbenchmark, one PE):
+
+```csl
+// per-row descriptors: one @fmuls per row, still a horizontal reduction per row (1.14x)
+var vd = @set_dsd_length(val_dsd, n);  vd = @increment_dsd_offset(vd, @as(i16, s), f32);
+var xd = @set_dsd_length(x_dsd, n);    xd = @increment_dsd_offset(xd, @as(i16, c0), f32);
+var td = @set_dsd_length(tmp_dsd, n);
+@fmuls(td, vd, xd);
+var acc: f32 = 0.0;  var q: u16 = 0;
+while (q < n) : (q += 1) { acc += tmp[q]; }
+
+// diagonals as streams: no gather, no horizontal reduction, two DSD ops per diagonal (4.96x)
+var yd = @set_dsd_length(ydi_dsd, n);  yd = @increment_dsd_offset(yd, @as(i16, dia_row0[d]), f32);
+@fmuls(td, vd, xd);
+@fadds(yd, yd, td);          // memory destination: no register-accumulator hazard
+```
+"""
+
+SPARSE_ARCHITECT_CONTEXT = """
+## Sparse decompositions on the WSE-3 (choose one and say why)
+
+- **row-block (1 x P strip)**: rows split into P consecutive blocks, one per PE, global
+  column indices, the dense operand (x) broadcast once along the strip on one color, each PE
+  owns its slice of the result. Default for SpMV-like operators.
+- **nnz-balanced rows**: as row-block, but the block boundaries are chosen by nonzero count
+  (the structure readout reports per-PE nnz and the imbalance); the slowest PE sets the time.
+- **2-D block sparse (P x P mesh)**: A row-tiled along mesh rows, the dense operand
+  column-sliced down mesh columns, each PE owns an output tile; communication-free when both
+  operands are host-distributed. Default for SpMM-like operators.
+- **owner computes**: never scatter into another PE's rows; accumulate locally and reduce
+  once along a mesh axis with wavelet streams or the collectives library.
+- **capacity first**: 44,976 B per PE for data; CSR costs 8 B per nonzero in f32 with u32
+  indices (6 B with u16). Size the caps from the class maxima, not from one matrix.
+- **static structure**: output patterns and capacities are compile-time parameters; masked
+  products inherit the mask's pattern, so nothing is allocated on the device.
+"""
+
 
 
 # ---------------------------------------------------------------------------
@@ -1743,7 +1860,8 @@ def tutorial_context(query: str = "",
 
 
 _EXPLORED_TUTORIALS_KB_PATH = (
-    (REPO_ROOT / "knowledge/explored/ingest/explored_tutorials.jsonl")
+    Path(os.path.expanduser("~/xkernel/knowledge/explored/ingest/"
+                            "explored_tutorials.jsonl"))
 )
 
 
@@ -1891,7 +2009,7 @@ def mesh_patterns_context(query: str = "", *, max_chars: int = 5000) -> str:
     return retrieve(query, top_k=3, max_chars=max_chars)
 
 
-def for_architect(query: str = "") -> str:
+def _for_architect_raw(query: str = "") -> str:
     """Context for the ARCHITECT role: chooses wafer-scale decomposition.
 
     No CSL code snippets — the architect should reason about layout, memory,
@@ -1908,6 +2026,9 @@ def for_architect(query: str = "") -> str:
     sections = [
         ARCHITECT_CONTEXT.strip(),
     ]
+    # v2 sparse study, arm T1: sparse decompositions for the architect of a sparse task.
+    if os.getenv("XKERNEL_SPARSE_MAPPING", "0") == "1" and _sparse_hint(query):
+        sections.append(SPARSE_ARCHITECT_CONTEXT.strip())
     if tier == "soft":
         return "\n\n".join(sections)
     # TIER-A: curated/retrieved decomposition vocabulary + docs.
@@ -2112,7 +2233,7 @@ def why_faster_rules_block() -> str:
     return _WHY_FASTER_RULES_BLOCK
 
 
-def for_implementer(query: str = "", kernel_group: str = "",
+def _for_implementer_raw(query: str = "", kernel_group: str = "",
                     target_name: str = "", target_cuda: str = "",
                     forbidden_lines: "Optional[Sequence[str]]" = None) -> str:
     """Context for the IMPLEMENTER role: writes CSL from a fixed design.
@@ -2144,13 +2265,17 @@ def for_implementer(query: str = "", kernel_group: str = "",
         return ""
     # TIER-B: the CSL language primer — what the language IS. Kept in "soft".
     sections = [
-        TYPE_RULES.strip(),
+        type_rules().strip(),
         DSD_PATTERNS.strip(),
         TASK_SYSTEM.strip(),
         WSE3_RULES.strip(),
     ]
     if os.getenv("XKERNEL_ARCH_MAPPING", "1") != "0":
         sections.append(CUDA_TO_WSE_MAPPING.strip())
+    # v2 sparse study, arm T1: the sparse cross-semantic mapping for sparse tasks.
+    _sparse_block = sparse_mapping_block(query, kernel_group)
+    if _sparse_block:
+        sections.append(_sparse_block)
     if tier == "soft":
         return "\n\n".join(sections)
     # TIER-A: curated gotchas + retrieved tutorials/skills/mesh. Everything
@@ -2215,7 +2340,7 @@ def for_implementer(query: str = "", kernel_group: str = "",
     return "\n\n".join(sections)
 
 
-def for_reviewer(query: str = "") -> str:
+def _for_reviewer_raw(query: str = "") -> str:
     """Context for the REVIEWER role: triages a failing benchmark.
 
     The reviewer's deliverable is a verdict ("architectural failure: ..." or
@@ -2255,12 +2380,12 @@ def for_reviewer(query: str = "") -> str:
 # Backward compatibility — existing callers use for_translation(). It is now
 # a thin alias for for_implementer(). New code should call for_implementer
 # (or for_architect / for_reviewer) directly.
-def for_translation(query: str = "") -> str:
+def _for_translation_raw(query: str = "") -> str:
     """Alias for for_implementer(). Kept for backward compatibility."""
     return for_implementer(query)
 
 
-def for_optimization(query: str = "",
+def _for_optimization_raw(query: str = "",
                      *,
                      kernel_group: str = "",
                      picked_angle: str = "",
@@ -2288,7 +2413,7 @@ def for_optimization(query: str = "",
     # valid. KNOWN_GOTCHAS, retrieval, experience memory, and the curated
     # per-angle "lever" are all TIER-A (the knowledge stack under test).
     sections = [
-        TYPE_RULES.strip(),
+        type_rules().strip(),
         DSD_PATTERNS.strip(),
     ]
     if tier == "soft":
@@ -2359,11 +2484,11 @@ def for_optimization(query: str = "",
     return "\n\n".join(sections)
 
 
-def for_profiling_instrumentation() -> str:
+def _for_profiling_instrumentation_raw() -> str:
     """Rules injected when asking the agent to add TSC profiling."""
     return "\n".join([
         PROFILING.strip(),
-        TYPE_RULES.strip(),
+        type_rules().strip(),
         KNOWN_GOTCHAS.strip(),
     ])
 
@@ -2372,7 +2497,9 @@ def for_profiling_instrumentation() -> str:
 # Explorer role — for the autonomous exploration workflow (explore_csl.py)
 # ---------------------------------------------------------------------------
 
-_EXPLORED_EXPERIENCES_KB_PATH = (REPO_ROOT / "knowledge/explored/ingest/explored_experiences.jsonl")
+_EXPLORED_EXPERIENCES_KB_PATH = Path(os.path.expanduser(
+    "~/xkernel/knowledge/explored/ingest/explored_experiences.jsonl"
+))
 
 
 def _explored_experiences_context(query: str = "",
@@ -2381,7 +2508,7 @@ def _explored_experiences_context(query: str = "",
     """Return distilled lessons + design choices from prior exploration
     attempts (both successes and failures).
 
-    Backed by ``knowledge/explored/ingest/explored_experiences.jsonl``,
+    Backed by ``~/xkernel/knowledge/explored/ingest/explored_experiences.jsonl``,
     written by :class:`code_translation.knowledge_persistence.ExplorationStore`.
     This corpus contains full design decisions and outcome details — it MUST
     NOT be surfaced via for_architect/for_implementer/for_reviewer (those are
@@ -2426,8 +2553,12 @@ def _explored_experiences_context(query: str = "",
     ])
 
 
-_OPTIMIZATION_KB_PATH = (REPO_ROOT / "knowledge/explored/optimization/ingest/optimization_experiences.jsonl")
-_OPTIMIZATION_RECORDS_PATH = (REPO_ROOT / "knowledge/explored/optimization/experiences.jsonl")
+_OPTIMIZATION_KB_PATH = Path(os.path.expanduser(
+    "~/xkernel/knowledge/explored/optimization/ingest/optimization_experiences.jsonl"
+))
+_OPTIMIZATION_RECORDS_PATH = Path(os.path.expanduser(
+    "~/xkernel/knowledge/explored/optimization/experiences.jsonl"
+))
 
 
 def _optimizer_explored_summary_block(kernel_group: str = "",
@@ -2521,7 +2652,7 @@ def _optimizer_explored_summary_block(kernel_group: str = "",
     return "\n".join(lines)
 
 
-def for_optimizer_explored(query: str = "",
+def _for_optimizer_explored_raw(query: str = "",
                             *,
                             kernel_group: str = "",
                             current_kernel: str = "",
@@ -2615,7 +2746,7 @@ def for_optimizer_explored(query: str = "",
     return "\n\n".join(parts)
 
 
-def for_explorer(query: str = "") -> str:
+def _for_explorer_raw(query: str = "") -> str:
     """Context for the EXPLORER role: produces net-new CSL kernels in
     autonomous exploration mode.
 
@@ -2633,3 +2764,30 @@ def for_explorer(query: str = "") -> str:
     if not extra:
         return base
     return base + "\n\n" + extra
+
+
+# --- SDK-aware wrappers: the for_* blocks are rewritten to 2.x syntax under a 2.x target ---
+def for_architect(*args, **kwargs):
+    return _sdk_adjust(_for_architect_raw(*args, **kwargs))
+
+def for_implementer(*args, **kwargs):
+    return _sdk_adjust(_for_implementer_raw(*args, **kwargs))
+
+def for_reviewer(*args, **kwargs):
+    return _sdk_adjust(_for_reviewer_raw(*args, **kwargs))
+
+def for_translation(*args, **kwargs):
+    return _sdk_adjust(_for_translation_raw(*args, **kwargs))
+
+def for_optimization(*args, **kwargs):
+    return _sdk_adjust(_for_optimization_raw(*args, **kwargs))
+
+def for_profiling_instrumentation(*args, **kwargs):
+    return _sdk_adjust(_for_profiling_instrumentation_raw(*args, **kwargs))
+
+def for_optimizer_explored(*args, **kwargs):
+    return _sdk_adjust(_for_optimizer_explored_raw(*args, **kwargs))
+
+def for_explorer(*args, **kwargs):
+    return _sdk_adjust(_for_explorer_raw(*args, **kwargs))
+

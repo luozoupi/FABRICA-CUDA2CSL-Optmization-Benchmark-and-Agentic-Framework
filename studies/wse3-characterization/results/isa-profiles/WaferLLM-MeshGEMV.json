@@ -1,0 +1,452 @@
+{
+  "schema": "isa_probe/1",
+  "evidence": "simulator",
+  "source": "results/wse3-full/kernels/WaferLLM-MeshGEMV/events.jsonl.gz",
+  "counts": {
+    "dispatch": 112685,
+    "pipe": 540327,
+    "wavelet": 72960
+  },
+  "cycle_span": [
+    4,
+    14126
+  ],
+  "distinct_instructions": 42,
+  "instruction_mix": [
+    {
+      "name": "ST16",
+      "count": 16308,
+      "pct": 14.472,
+      "inst_bin": 1778943331
+    },
+    {
+      "name": "NOP",
+      "count": 13384,
+      "pct": 11.877,
+      "inst_bin": 1770653746
+    },
+    {
+      "name": "IMOV32.NF",
+      "count": 13308,
+      "pct": 11.81,
+      "inst_bin": 2036466704
+    },
+    {
+      "name": "LD16",
+      "count": 12741,
+      "pct": 11.307,
+      "inst_bin": 1812478885
+    },
+    {
+      "name": "MOVRI",
+      "count": 11881,
+      "pct": 10.544,
+      "inst_bin": 1834023925
+    },
+    {
+      "name": "JMP",
+      "count": 7574,
+      "pct": 6.721,
+      "inst_bin": 226494976
+    },
+    {
+      "name": "IMOV16.NF",
+      "count": 6389,
+      "pct": 5.67,
+      "inst_bin": 157416392
+    },
+    {
+      "name": "ADD16.NF",
+      "count": 5032,
+      "pct": 4.466,
+      "inst_bin": 1698716613
+    },
+    {
+      "name": "EQ16",
+      "count": 4103,
+      "pct": 3.641,
+      "inst_bin": 1715492960
+    },
+    {
+      "name": "FMOV16.NF",
+      "count": 3956,
+      "pct": 3.511,
+      "inst_bin": 1768423427
+    },
+    {
+      "name": "FMACH",
+      "count": 2816,
+      "pct": 2.499,
+      "inst_bin": 1614353489
+    },
+    {
+      "name": "LT16",
+      "count": 1980,
+      "pct": 1.757,
+      "inst_bin": 1716015648
+    },
+    {
+      "name": "LDDWDS",
+      "count": 1882,
+      "pct": 1.67,
+      "inst_bin": 1823475712
+    },
+    {
+      "name": "AND16",
+      "count": 1852,
+      "pct": 1.644,
+      "inst_bin": 1694521413
+    },
+    {
+      "name": "SLR16.NF",
+      "count": 1584,
+      "pct": 1.406,
+      "inst_bin": 1705019462
+    },
+    {
+      "name": "SLL16.NF",
+      "count": 1548,
+      "pct": 1.374,
+      "inst_bin": 1706055752
+    },
+    {
+      "name": "LTE16",
+      "count": 732,
+      "pct": 0.65,
+      "inst_bin": 1716552032
+    },
+    {
+      "name": "ST32",
+      "count": 636,
+      "pct": 0.564,
+      "inst_bin": 1787331748
+    },
+    {
+      "name": "BLK",
+      "count": 540,
+      "pct": 0.479,
+      "inst_bin": 1770003314
+    },
+    {
+      "name": "LDS1WDS",
+      "count": 494,
+      "pct": 0.438,
+      "inst_bin": 1827670048
+    },
+    {
+      "name": "ADDSP",
+      "count": 484,
+      "pct": 0.43,
+      "inst_bin": 1830812608
+    },
+    {
+      "name": "EQ32",
+      "count": 416,
+      "pct": 0.369,
+      "inst_bin": 1715742752
+    },
+    {
+      "name": "LTEU16",
+      "count": 384,
+      "pct": 0.341,
+      "inst_bin": 1718124896
+    },
+    {
+      "name": "ACTVT",
+      "count": 374,
+      "pct": 0.332,
+      "inst_bin": 2038963122
+    },
+    {
+      "name": "AND32",
+      "count": 320,
+      "pct": 0.284,
+      "inst_bin": 1694761090
+    },
+    {
+      "name": "OR16",
+      "count": 308,
+      "pct": 0.273,
+      "inst_bin": 1695045701
+    },
+    {
+      "name": "FADDH",
+      "count": 252,
+      "pct": 0.224,
+      "inst_bin": 1681990802
+    },
+    {
+      "name": "LTU16",
+      "count": 207,
+      "pct": 0.184,
+      "inst_bin": 1717600608
+    },
+    {
+      "name": "SETJT",
+      "count": 176,
+      "pct": 0.156,
+      "inst_bin": 1828722849
+    },
+    {
+      "name": "LD16RP",
+      "count": 160,
+      "pct": 0.142,
+      "inst_bin": 1820335106
+    },
+    {
+      "name": "UBLK",
+      "count": 132,
+      "pct": 0.117,
+      "inst_bin": 2038569842
+    },
+    {
+      "name": "LDS0WDS",
+      "count": 132,
+      "pct": 0.117,
+      "inst_bin": 1825573122
+    },
+    {
+      "name": "SUB16.NF",
+      "count": 128,
+      "pct": 0.114,
+      "inst_bin": 1699762693
+    },
+    {
+      "name": "SUB16",
+      "count": 120,
+      "pct": 0.106,
+      "inst_bin": 1700286981
+    },
+    {
+      "name": "OR32",
+      "count": 88,
+      "pct": 0.078,
+      "inst_bin": 1695293442
+    },
+    {
+      "name": "SLL16",
+      "count": 80,
+      "pct": 0.071,
+      "inst_bin": 1706565890
+    },
+    {
+      "name": "OQFLUSH",
+      "count": 80,
+      "pct": 0.071,
+      "inst_bin": 1772357682
+    },
+    {
+      "name": "FMOV32.NF",
+      "count": 48,
+      "pct": 0.043,
+      "inst_bin": 1768555138
+    },
+    {
+      "name": "XP162FH",
+      "count": 16,
+      "pct": 0.014,
+      "inst_bin": 1761608591
+    },
+    {
+      "name": "FMULH",
+      "count": 16,
+      "pct": 0.014,
+      "inst_bin": 1680931279
+    },
+    {
+      "name": "FH2XP16",
+      "count": 16,
+      "pct": 0.014,
+      "inst_bin": 1762169417
+    },
+    {
+      "name": "SAR16.NF",
+      "count": 8,
+      "pct": 0.007,
+      "inst_bin": 1702924297
+    }
+  ],
+  "elements_per_dispatch": {
+    "total_elements": 1457089,
+    "dispatches_with_real_num_data": 107794,
+    "mean_elements_per_dispatch": 13.5173,
+    "num_data_sentinels_excluded": [
+      65535,
+      4294967295
+    ],
+    "instructions_covering_multiple_elements": {
+      "IMOV32.NF": {
+        "min": 2,
+        "max": 4096,
+        "distinct": 259,
+        "dispatches": 6536,
+        "elements": 790355
+      },
+      "IMOV16.NF": {
+        "min": 2,
+        "max": 256,
+        "distinct": 247,
+        "dispatches": 4129,
+        "elements": 493401
+      },
+      "FMOV16.NF": {
+        "min": 2,
+        "max": 16,
+        "distinct": 15,
+        "dispatches": 3256,
+        "elements": 33616
+      },
+      "FMACH": {
+        "min": 16,
+        "max": 16,
+        "distinct": 1,
+        "dispatches": 2816,
+        "elements": 45056
+      },
+      "FADDH": {
+        "min": 16,
+        "max": 16,
+        "distinct": 1,
+        "dispatches": 252,
+        "elements": 4032
+      }
+    }
+  },
+  "microthreads": {
+    "histogram": {
+      "0": 13523,
+      "1": 2780,
+      "2": 381,
+      "255": 95360,
+      "3": 299,
+      "4": 134,
+      "5": 208
+    },
+    "main_thread_id": 255,
+    "distinct_microthread_ids": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "instructions_issued_on_microthreads": {
+      "IMOV32.NF": {
+        "0": 9139,
+        "1": 2780,
+        "2": 351,
+        "3": 299,
+        "4": 131,
+        "5": 208
+      },
+      "IMOV16.NF": {
+        "0": 4384,
+        "2": 30,
+        "4": 3
+      }
+    }
+  },
+  "task_colors": {
+    "0": 6,
+    "1": 43956,
+    "2": 7956,
+    "21": 9572,
+    "24": 5455,
+    "25": 1189,
+    "26": 4798,
+    "27": 6784,
+    "28": 5466,
+    "29": 20280,
+    "30": 7223
+  },
+  "simdi_field": {
+    "histogram": {
+      "0": 122273,
+      "1": 9489,
+      "2": 6526,
+      "255": 370180,
+      "3": 6515,
+      "4": 6336,
+      "5": 6336,
+      "6": 6336,
+      "7": 6336
+    },
+    "usable_as_width": false,
+    "note": "only {0,255} observed; 255 is a sentinel. Not a lane index, so no SIMD width is derived from it."
+  },
+  "hot_instruction_pointers": [
+    {
+      "inst_ptr": 380,
+      "dispatches": 4360
+    },
+    {
+      "inst_ptr": 336,
+      "dispatches": 4176
+    },
+    {
+      "inst_ptr": 2240,
+      "dispatches": 4112
+    },
+    {
+      "inst_ptr": 142,
+      "dispatches": 3021
+    },
+    {
+      "inst_ptr": 144,
+      "dispatches": 2849
+    },
+    {
+      "inst_ptr": 290,
+      "dispatches": 2133
+    },
+    {
+      "inst_ptr": 3064,
+      "dispatches": 1056
+    },
+    {
+      "inst_ptr": 1114,
+      "dispatches": 1056
+    },
+    {
+      "inst_ptr": 1116,
+      "dispatches": 1056
+    },
+    {
+      "inst_ptr": 1118,
+      "dispatches": 1056
+    },
+    {
+      "inst_ptr": 1120,
+      "dispatches": 1056
+    },
+    {
+      "inst_ptr": 1126,
+      "dispatches": 1056
+    },
+    {
+      "inst_ptr": 1128,
+      "dispatches": 1056
+    },
+    {
+      "inst_ptr": 1130,
+      "dispatches": 1056
+    },
+    {
+      "inst_ptr": 1132,
+      "dispatches": 1056
+    }
+  ],
+  "tiles": {
+    "48": 5027,
+    "50": 5017,
+    "51": 5017,
+    "49": 5015,
+    "26": 4968,
+    "28": 4958,
+    "29": 4958,
+    "27": 4956,
+    "37": 4786,
+    "15": 4780
+  }
+}

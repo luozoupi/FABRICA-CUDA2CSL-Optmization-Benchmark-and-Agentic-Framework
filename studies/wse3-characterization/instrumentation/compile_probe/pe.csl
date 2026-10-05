@@ -1,0 +1,22 @@
+// Exercise every public operation in the full-telemetry storage module.  This
+// program is compile-only and is never submitted as a hardware measurement.
+
+const profile = @import_module("../profile_timestamp.csl", .{ .phase_count = 7 });
+
+fn run_probe() void {
+  var reference = @zeros([3]u16);
+  profile.enable();
+  profile.mark_sync_reference(&reference);
+  profile.mark(1);
+  profile.sample_raw_perf_counters();
+  const timestamps = profile.timestamp_ptr();
+  const valid = profile.phase_valid_ptr();
+  const counters = profile.perf_counter_ptr();
+  @assert(timestamps[0] == reference[0]);
+  @assert(valid[0] == 1);
+  @assert(counters[0] == counters[0]);
+}
+
+comptime {
+  @export_symbol(run_probe);
+}

@@ -1,0 +1,43 @@
+{
+  "results": [
+    {
+      "case": "baseline",
+      "stage": "LLVM IR supplied to cslc-backend",
+      "kernel_lines": 340,
+      "alloca_instructions": 9,
+      "branch_instructions": 59,
+      "select_instructions": [
+        "%175 = select i1 %174, i16 0, i16 %110, !dbg !32",
+        "%186 = select i1 %185, i16 0, i16 %58, !dbg !26"
+      ],
+      "measured_elf_sha256": "7657f3919ed286e58f61799405f3a1852782931878458fe9656f916cf4368e1b",
+      "shadow_elf_sha256": "7657f3919ed286e58f61799405f3a1852782931878458fe9656f916cf4368e1b",
+      "ir_file": "/home/USER/spgemm-followup-20260924/ir/baseline/out_0_0/program.ll",
+      "ir_sha256": "18b4b0b3fe2f1ee7c6060264b2681304a94c4f080ce4c1be58c30a9b0cf81284",
+      "pointer_phi_instructions": [
+        "%160 = phi i16* [ %197, %196 ], [ %5, %155 ]",
+        "%161 = phi i16* [ %198, %196 ], [ %5, %155 ]",
+        "%197 = phi i16* [ %4, %155 ]",
+        "%198 = phi i16* [ %4, %155 ]"
+      ]
+    },
+    {
+      "case": "separate_updates",
+      "stage": "LLVM IR supplied to cslc-backend",
+      "kernel_lines": 403,
+      "alloca_instructions": 9,
+      "branch_instructions": 73,
+      "select_instructions": [
+        "%185 = select i1 %184, i16 0, i16 %182, !dbg !60",
+        "%210 = select i1 %209, i16 0, i16 %111, !dbg !32",
+        "%221 = select i1 %220, i16 0, i16 %58, !dbg !26"
+      ],
+      "measured_elf_sha256": "32e8bd9218187b36d32a40f36bed52bef9a04631338d4bcb34c2edb2b04e0e7b",
+      "shadow_elf_sha256": "32e8bd9218187b36d32a40f36bed52bef9a04631338d4bcb34c2edb2b04e0e7b",
+      "ir_file": "/home/USER/spgemm-followup-20260924/ir/separate_updates/.ir-shadow_out_0_0/program.ll",
+      "ir_sha256": "f61bf8f4d9ef83f021e858500b10e17d3899072957b8c25c7bad312d488d012f",
+      "pointer_phi_instructions": []
+    }
+  ],
+  "interpretation": "The baseline backend-input IR merges the two cursor addresses using pointer-valued phi nodes before a shared load/increment/store. The selected IR contains no pointer phi, and its measured machine code uses conditional register increments. The selected IR has more branches, yet fewer measured dispatches and cycles. These observations do not identify a specific private compiler pass."
+}

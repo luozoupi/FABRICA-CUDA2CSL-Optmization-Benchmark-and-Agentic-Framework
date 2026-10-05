@@ -1,0 +1,57 @@
+{
+  "presentation": "Layered PE/time view",
+  "date": "2026-09-15",
+  "evidence": "Existing simulator arithmetic observations and compiled checkpoint bindings; no new captures",
+  "scenes": [
+    "v0",
+    "v1",
+    "v2",
+    "g0",
+    "g1",
+    "g2"
+  ],
+  "default_story": {
+    "scene": "v1",
+    "output": "Y[0]",
+    "cycles": [
+      8525,
+      10730,
+      11315,
+      11359,
+      11831,
+      12487
+    ],
+    "local_partials": [
+      11,
+      30
+    ],
+    "reduction_result": 41
+  },
+  "checks": {
+    "typescript_and_four_page_build": "passed",
+    "complete_browser_suite": "8 passed",
+    "final_layer_suite_after_mobile_css_change": "3 passed",
+    "tracked_diff_whitespace": "passed",
+    "offline_http_requests": 0
+  },
+  "limits": [
+    "Checkpoint bounds are not per-packet send/receive times.",
+    "Guided/event layer spacing is for readability, not proportional elapsed time.",
+    "Unknown future values remain unknown.",
+    "No supported GEMM cross-PE numeric transfer binding is asserted."
+  ],
+  "artifacts": {
+    "viewer/public/time-bundle.json": {
+      "bytes": 489970,
+      "sha256": "95917e5c2c4484de3cc5f1ae4c35bbc484b006575d3440f8a9274193f57528ef"
+    },
+    "results/gemv-walkthrough/space-time.html": {
+      "bytes": 546221,
+      "sha256": "3906292fe03cd58bc5a941fd0f9f9d71d706ed447ad9d2eaaae022cd8d34f9dc"
+    },
+    "results/gemv-walkthrough/space-time-overview.svg": {
+      "bytes": 297841,
+      "sha256": "bcebc801aeb6934922f78b7289535a14ec8a4459d3817b66daaae5f33e03db60"
+    }
+  }
+}

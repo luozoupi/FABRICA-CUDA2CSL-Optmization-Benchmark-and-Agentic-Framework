@@ -1,0 +1,70 @@
+[
+  {
+    "label": "reference_small",
+    "script": "commands_wse3.sh",
+    "status": "pass",
+    "cycles": 260903,
+    "runs": [
+      260903,
+      260903,
+      260903
+    ],
+    "heldout_passed": true,
+    "failure": null,
+    "branches": null,
+    "fp_muls": null,
+    "first_error": "",
+    "elapsed_s": 200.9
+  },
+  {
+    "label": "cursor_paths_small",
+    "script": "commands_wse3.sh",
+    "status": "pass",
+    "cycles": 221649,
+    "runs": [
+      221649,
+      221649,
+      221649
+    ],
+    "heldout_passed": true,
+    "failure": null,
+    "branches": null,
+    "fp_muls": null,
+    "first_error": "",
+    "elapsed_s": 201.3
+  },
+  {
+    "label": "reference_n144",
+    "script": "commands_wse3_n144.sh",
+    "status": "pass",
+    "cycles": 845529,
+    "runs": [
+      845529,
+      845529,
+      845529
+    ],
+    "heldout_passed": true,
+    "failure": null,
+    "branches": null,
+    "fp_muls": null,
+    "first_error": "",
+    "elapsed_s": 305.8
+  },
+  {
+    "label": "cursor_paths_n144",
+    "script": "commands_wse3_n144.sh",
+    "status": "pass",
+    "cycles": 733097,
+    "runs": [
+      733097,
+      733097,
+      733097
+    ],
+    "heldout_passed": true,
+    "failure": null,
+    "branches": null,
+    "fp_muls": null,
+    "first_error": "",
+    "elapsed_s": 292.2
+  }
+]

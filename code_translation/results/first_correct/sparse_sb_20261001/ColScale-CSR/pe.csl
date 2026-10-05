@@ -1,0 +1,82 @@
+param memcpy_params;
+// === SLOT: EXTRA_PARAMS ===
+param max_nnz: u16;
+param nrows: u16;
+
+const EXIT: local_task_id = @get_local_task_id(9);
+const sys_mod = @import_module("<memcpy/memcpy>", memcpy_params);
+
+// === SLOT: EXTRA_IMPORTS ===
+
+const timestamp = @import_module("<time>");
+var tsc_start_buf = @zeros([timestamp.tsc_size_words]u16);
+var tsc_end_buf   = @zeros([timestamp.tsc_size_words]u16);
+var timer_buf = @zeros([3]f32);
+var ptr_timer_buf: [*]f32 = &timer_buf;
+
+// === SLOT: DATA_BUFFERS ===
+var row_ptr = @zeros([nrows + 1]u32);
+var col_idx = @zeros([max_nnz]u32);
+var val     = @zeros([max_nnz]f32);
+var d       = @zeros([nrows]f32);
+var c_val   = @zeros([max_nnz]f32);
+
+var ptr_row_ptr: [*]u32 = &row_ptr;
+var ptr_col_idx: [*]u32 = &col_idx;
+var ptr_val:     [*]f32 = &val;
+var ptr_d:       [*]f32 = &d;
+var ptr_c_val:   [*]f32 = &c_val;
+
+// === SLOT: KERNEL_FUNCTION ===
+fn colscale() void {
+    // nnz is the number of stored nonzeros = row_ptr[nrows]
+    const nnz: u32 = row_ptr[nrows];
+    var p: u32 = 0;
+    // Scalar gather loop: c_val[p] = val[p] * d[col_idx[p]]
+    // The gather d[col_idx[p]] is irregular, so a DSD bulk op cannot
+    // express the indexed load; a per-element loop is required.
+    while (p < nnz) : (p += 1) {
+        const idx: u16 = @as(u16, col_idx[p]);
+        c_val[p] = val[p] * d[idx];
+    }
+}
+
+fn compute() void {
+    timestamp.enable_tsc();
+    timestamp.get_timestamp(&tsc_start_buf);
+
+    // === SLOT: KERNEL_CALL ===
+    colscale();
+
+    timestamp.get_timestamp(&tsc_end_buf);
+    timestamp.disable_tsc();
+
+    var lo_: u16 = 0;
+    var hi_: u16 = 0;
+    lo_ = tsc_start_buf[0]; hi_ = tsc_start_buf[1];
+    timer_buf[0] = @bitcast(f32, (@as(u32, hi_) << @as(u16, 16)) | @as(u32, lo_));
+    lo_ = tsc_start_buf[2]; hi_ = tsc_end_buf[0];
+    timer_buf[1] = @bitcast(f32, (@as(u32, hi_) << @as(u16, 16)) | @as(u32, lo_));
+    lo_ = tsc_end_buf[1]; hi_ = tsc_end_buf[2];
+    timer_buf[2] = @bitcast(f32, (@as(u32, hi_) << @as(u16, 16)) | @as(u32, lo_));
+
+    @activate(EXIT);
+}
+
+task f_exit() void {
+    sys_mod.unblock_cmd_stream();
+}
+
+comptime {
+    @bind_local_task(f_exit, EXIT);
+
+    // === SLOT: EXPORT_SYMBOLS ===
+    @export_symbol(ptr_row_ptr, "row_ptr");
+    @export_symbol(ptr_col_idx, "col_idx");
+    @export_symbol(ptr_val, "val");
+    @export_symbol(ptr_d, "d");
+    @export_symbol(ptr_c_val, "c_val");
+
+    @export_symbol(ptr_timer_buf, "maxmin_time");
+    @export_symbol(compute);
+}

@@ -1,0 +1,8 @@
+// D3: is there an i8 datapath, or even an i8 array type?
+var a = @zeros([64]i8);
+var acc: i8 = 0;
+fn f() void {
+  var i: u16 = 0;
+  while (i < 64) : (i += 1) { acc = acc + a[i]; }
+}
+

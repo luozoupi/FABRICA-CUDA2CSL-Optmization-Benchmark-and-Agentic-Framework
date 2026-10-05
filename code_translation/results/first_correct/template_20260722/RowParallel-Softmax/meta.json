@@ -1,0 +1,55 @@
+{
+  "kernel": "RowParallel-Softmax",
+  "run_dir": "code_translation/results/full_template_sweep_20260722_192305/RowParallel-Softmax/run_20260723_074428",
+  "status": "extracted",
+  "n_attempts": 21,
+  "model": "claude-opus-4-8",
+  "target_relpath": "pe.csl",
+  "reference_dir": "/home/USER/xkernel/kernels/RowParallel-Softmax/CSL",
+  "fc_attempt_index": 9,
+  "fc_cycles_send": 17892,
+  "fc_cycles_send_runs": [
+    17892
+  ],
+  "fc_code_lines": 284,
+  "fc_heldout_eval": {
+    "passed": true,
+    "failing_seed": null,
+    "per_seed": [
+      {
+        "seed": 101,
+        "steps": [
+          {
+            "command": "cs_python run.py --name out",
+            "ok": true,
+            "returncode": 0
+          }
+        ]
+      },
+      {
+        "seed": 202,
+        "steps": [
+          {
+            "command": "cs_python run.py --name out",
+            "ok": true,
+            "returncode": 0
+          }
+        ]
+      },
+      {
+        "seed": 303,
+        "steps": [
+          {
+            "command": "cs_python run.py --name out",
+            "ok": true,
+            "returncode": 0
+          }
+        ]
+      }
+    ],
+    "reason": "passed all 3 held-out seeds"
+  },
+  "translated_path": "/home/USER/xkernel/code_translation/sandbox/cuda2csl/rowparallel-softmax_4xmmr4lo/pe.csl",
+  "source": "sandbox",
+  "dest": "code_translation/results/first_correct/template_20260722/RowParallel-Softmax/pe.csl"
+}

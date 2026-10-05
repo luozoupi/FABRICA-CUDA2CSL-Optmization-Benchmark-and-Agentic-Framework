@@ -1,0 +1,125 @@
+// SpGEMM-Masked-Dot compute (hand-written reference): C<M> = A'A at the mask positions.
+//
+// For every stored position p of A (column j owns p, row i = row_idx[p]) the entry
+// C(i,j) = A(:,i) . A(:,j) is a two-pointer merge of two sorted row-index lists.
+// Textbook scalar translation of the GraphBLAS-derived CUDA kernel (CUDA/kernel.cu);
+// the structure-aware and hardware-aware rewrites are the optimizer's job. Timed with
+// the hardware TSC inside the frozen `compute()` wrapper. SDK 2.10-native syntax.
+
+param memcpy_params;
+
+param n: u16;
+param max_nnz: u16;
+param iters: u16;
+
+const EXIT: local_task_id = @get_local_task_id(9);  // leave RPC after compute
+
+const sys_mod = @import_module("<memcpy/memcpy>", memcpy_params);
+
+const timestamp = @import_module("<time>");
+var tsc_start_buf = @zeros([timestamp.tsc_size_words]u16);
+var tsc_end_buf   = @zeros([timestamp.tsc_size_words]u16);
+
+// timer_buf packs the 6 u16 tsc words into 3 f32 for the host (STM convention).
+var timer_buf = @zeros([3]f32);
+var ptr_timer_buf: [*]f32 = &timer_buf;
+
+// A by column (also the mask) + outputs (host fills / reads via memcpy; zero-padded to the caps).
+var col_ptr_array  = @zeros([n + 1]u32);
+var row_idx_array  = @zeros([max_nnz]u32);
+var val_array      = @zeros([max_nnz]f32);
+var c_val_array    = @zeros([max_nnz]f32);
+var c_row_array    = @zeros([max_nnz]u32);
+var nzombies_array = @zeros([1]u32);
+
+var ptr_col_ptr:  [*]u32 = &col_ptr_array;
+var ptr_row_idx:  [*]u32 = &row_idx_array;
+var ptr_val:      [*]f32 = &val_array;
+var ptr_c_val:    [*]f32 = &c_val_array;
+var ptr_c_row:    [*]u32 = &c_row_array;
+var ptr_nzombies: [*]u32 = &nzombies_array;
+
+// One pass over the mask positions: column j, then every stored row i of that column.
+fn spgemm_masked_dot() void {
+  var zombies: u32 = 0;
+  var j: u16 = 0;
+  while (j < n) : (j += 1) {
+    const pj_start: u32 = col_ptr_array[j];
+    const pj_end:   u32 = col_ptr_array[j + 1];
+    var p: u32 = pj_start;
+    while (p < pj_end) : (p += 1) {
+      const i: u32 = row_idx_array[p];
+      var pa: u32 = col_ptr_array[i];            // A(:,i)
+      const pa_end: u32 = col_ptr_array[i + 1];
+      var pb: u32 = pj_start;                    // A(:,j)
+      var cij: f32 = 0.0;
+      var exists: bool = false;
+      while (pa < pa_end and pb < pj_end) {      // merge of two sorted row-index lists
+        const ia: u32 = row_idx_array[pa];
+        const ib: u32 = row_idx_array[pb];
+        if (ia == ib) {
+          cij += val_array[pa] * val_array[pb];
+          exists = true;
+        }
+        if (ia <= ib) { pa += 1; }
+        if (ib <= ia) { pb += 1; }
+      }
+      c_val_array[p] = cij;
+      if (exists) {
+        c_row_array[p] = i;
+      } else {
+        c_row_array[p] = ~i;                     // zombie code, as GraphBLAS' GB_ZOMBIE(i)
+        zombies += 1;
+      }
+    }
+  }
+  nzombies_array[0] = zombies;
+}
+
+// FROZEN wrapper (contract): timed window around the kernel function, packs the timestamps.
+fn compute() void {
+  timestamp.enable_tsc();
+  timestamp.get_timestamp(&tsc_start_buf);
+
+  for (@range(u16, iters)) |_| {
+    spgemm_masked_dot();
+  }
+
+  timestamp.get_timestamp(&tsc_end_buf);
+  timestamp.disable_tsc();
+
+  // Pack the two 3-word u16 timestamps into 3 f32 (lo|hi per word pair) -- STM layout.
+  var lo_: u16 = 0;
+  var hi_: u16 = 0;
+
+  lo_ = tsc_start_buf[0];
+  hi_ = tsc_start_buf[1];
+  timer_buf[0] = @bitcast(f32, (@as(u32, hi_) << @as(u16, 16)) | @as(u32, lo_));
+
+  lo_ = tsc_start_buf[2];
+  hi_ = tsc_end_buf[0];
+  timer_buf[1] = @bitcast(f32, (@as(u32, hi_) << @as(u16, 16)) | @as(u32, lo_));
+
+  lo_ = tsc_end_buf[1];
+  hi_ = tsc_end_buf[2];
+  timer_buf[2] = @bitcast(f32, (@as(u32, hi_) << @as(u16, 16)) | @as(u32, lo_));
+
+  @activate(EXIT);
+}
+
+task f_exit() void {
+  sys_mod.unblock_cmd_stream();
+}
+
+comptime {
+  @bind_local_task(f_exit, EXIT);
+
+  @export_symbol(ptr_col_ptr,  "col_ptr");
+  @export_symbol(ptr_row_idx,  "row_idx");
+  @export_symbol(ptr_val,      "val");
+  @export_symbol(ptr_c_val,    "c_val");
+  @export_symbol(ptr_c_row,    "c_row");
+  @export_symbol(ptr_nzombies, "nzombies");
+  @export_symbol(ptr_timer_buf, "maxmin_time");
+  @export_symbol(compute);
+}

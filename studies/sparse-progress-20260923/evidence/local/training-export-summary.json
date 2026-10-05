@@ -1,0 +1,32 @@
+{
+  "manifest": {
+    "schema": "xkernel.training_export/1",
+    "counts": {
+      "calls": 44,
+      "truncated": 2,
+      "unmatched": 37,
+      "correct": 5
+    },
+    "files": {
+      "grpo_prompts.jsonl": "50423defe856b9ffbdfc40dae87ba4b8460a75e0b56cf5e5e5c23e3d78b079b7",
+      "sft.jsonl": "2a3650a801dff8d99bd5dec65fce9caa4889439f2bb59ca246788f291717a697",
+      "outcomes.jsonl": "993e0b6328506e70af1c287a58cbc10a6ae0c666e81b7232a38b4f5df39e087d"
+    },
+    "notes": [
+      "GRPO requires online rollouts and the executable verifier; outcomes are offline evidence.",
+      "Split future training/evaluation by task and matrix family, not individual attempts.",
+      "No hidden reasoning, credentials, or final-test feedback is exported."
+    ]
+  },
+  "hash_checks": {
+    "grpo_prompts.jsonl": true,
+    "sft.jsonl": true,
+    "outcomes.jsonl": true
+  },
+  "record_counts": {
+    "grpo_prompts.jsonl": 5,
+    "sft.jsonl": 5,
+    "outcomes.jsonl": 5
+  },
+  "replay_status": "Export hashes checked; examples have not been readmitted under the latest upstream optimizer contract."
+}

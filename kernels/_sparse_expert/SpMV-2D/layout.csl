@@ -1,0 +1,112 @@
+// SpMV on a Pr x Pc mesh with a 2D partition (expert headroom variant, harness-invisible).
+//
+// PE (i, j) (px = j, py = i) holds the nonzeros of block row i and block column j. The host gives all
+// of x to PE (0,0), as the task gives x to one PE. x leaves (0,0) through two links: the left half
+// (segments 0..H-1, H = Pc/2) east along row 0 on color A, the right half (segments H..Pc-1) south to
+// row 1 and then east along row 1 on color R. The owner of segment j, (0,j) for j < H and (1,j) for
+// j >= H, keeps its segment and broadcasts it along column j on color B (south from row 0; north and
+// south from row 1). Each PE multiplies its block into a partial y of its block row; the partials are
+// summed along each row toward column 0 on two alternating colors (a PE sends west on C[j%2] and
+// receives from the east on C[(j+1)%2]); column 0 holds y.
+
+param Pc: i16;            // mesh width (block columns)
+param Pr: i16;            // mesh height (block rows)
+param nr: u16;            // rows per block row (capacity)
+param ncols: u16;         // capacity of x on PE (0,0)
+param max_nnz_pe: u16;    // nonzero capacity per PE
+param structure_id: u16;  // host only: which data/manifest[_<id>].json to load
+param perm: u16;          // host only: 0 = natural order, 1 = random symmetric permutation
+
+const C_A: color = @get_color(8);
+const C_R: color = @get_color(9);
+const C_B: color = @get_color(10);
+const C_0: color = @get_color(11);
+const C_1: color = @get_color(12);
+
+const memcpy = @import_module("<memcpy/get_params>", .{ .width = Pc, .height = Pr });
+
+layout {
+  @comptime_assert(Pc >= 2 and Pr >= 3 and Pc % 2 == 0);
+  const H: i16 = Pc / 2;
+  @set_rectangle(Pc, Pr);
+
+  var j: i16 = 0;
+  while (j < Pc) : (j += 1) {
+    var i: i16 = 0;
+    while (i < Pr) : (i += 1) {
+      @set_tile_code(j, i, "pe.csl", .{
+        .memcpy_params = memcpy.get_params(j),
+        .Pc = Pc, .Pr = Pr, .px = j, .py = i,
+        .nr = nr, .ncols = ncols, .max_nnz_pe = max_nnz_pe,
+        .C_A = C_A, .C_R = C_R, .C_B = C_B, .C_0 = C_0, .C_1 = C_1,
+      });
+
+      // A: left half along row 0, columns 0..H-1
+      if (i == 0 and j < H and H >= 2) {
+        if (j == 0) {
+          @set_color_config(j, i, C_A, .{ .routes = .{ .rx = .{ RAMP }, .tx = .{ EAST } } });
+        } else if (j < H - 1) {
+          @set_color_config(j, i, C_A, .{ .routes = .{ .rx = .{ WEST }, .tx = .{ RAMP, EAST } } });
+        } else {
+          @set_color_config(j, i, C_A, .{ .routes = .{ .rx = .{ WEST }, .tx = .{ RAMP } } });
+        }
+      }
+      // R: right half, (0,0) -> south -> row 1 -> east; received from column H on
+      if (i == 0 and j == 0) {
+        @set_color_config(j, i, C_R, .{ .routes = .{ .rx = .{ RAMP }, .tx = .{ SOUTH } } });
+      }
+      if (i == 1) {
+        if (j == 0) {
+          @set_color_config(j, i, C_R, .{ .routes = .{ .rx = .{ NORTH }, .tx = .{ EAST } } });
+        } else if (j < H) {
+          @set_color_config(j, i, C_R, .{ .routes = .{ .rx = .{ WEST }, .tx = .{ EAST } } });
+        } else if (j < Pc - 1) {
+          @set_color_config(j, i, C_R, .{ .routes = .{ .rx = .{ WEST }, .tx = .{ RAMP, EAST } } });
+        } else {
+          @set_color_config(j, i, C_R, .{ .routes = .{ .rx = .{ WEST }, .tx = .{ RAMP } } });
+        }
+      }
+      // B: segment broadcast along column j from its owner
+      if (j < H) {                       // owner (0, j): south
+        if (i == 0) {
+          @set_color_config(j, i, C_B, .{ .routes = .{ .rx = .{ RAMP }, .tx = .{ SOUTH } } });
+        } else if (i < Pr - 1) {
+          @set_color_config(j, i, C_B, .{ .routes = .{ .rx = .{ NORTH }, .tx = .{ RAMP, SOUTH } } });
+        } else {
+          @set_color_config(j, i, C_B, .{ .routes = .{ .rx = .{ NORTH }, .tx = .{ RAMP } } });
+        }
+      } else {                           // owner (1, j): north and south
+        if (i == 1) {
+          @set_color_config(j, i, C_B, .{ .routes = .{ .rx = .{ RAMP }, .tx = .{ NORTH, SOUTH } } });
+        } else if (i == 0) {
+          @set_color_config(j, i, C_B, .{ .routes = .{ .rx = .{ SOUTH }, .tx = .{ RAMP } } });
+        } else if (i < Pr - 1) {
+          @set_color_config(j, i, C_B, .{ .routes = .{ .rx = .{ NORTH }, .tx = .{ RAMP, SOUTH } } });
+        } else {
+          @set_color_config(j, i, C_B, .{ .routes = .{ .rx = .{ NORTH }, .tx = .{ RAMP } } });
+        }
+      }
+      // C0/C1: row reduction toward column 0
+      const send_c: color = if (j % 2 == 0) C_0 else C_1;
+      const recv_c: color = if (j % 2 == 0) C_1 else C_0;
+      if (j >= 1) {
+        @set_color_config(j, i, send_c, .{ .routes = .{ .rx = .{ RAMP }, .tx = .{ WEST } } });
+      }
+      if (j <= Pc - 2) {
+        @set_color_config(j, i, recv_c, .{ .routes = .{ .rx = .{ EAST }, .tx = .{ RAMP } } });
+      }
+    }
+  }
+
+  @export_name("rr",   [*]u32, true);   // [max_nnz_pe] per PE: local row of each nonzero
+  @export_name("cc",   [*]u32, true);   // [max_nnz_pe] per PE: column within the PE's segment
+  @export_name("vv",   [*]f32, true);   // [max_nnz_pe] per PE: value
+  @export_name("info", [*]u32, true);   // [4] per PE: nnz, x offset of the segment, segment length, unused
+  @export_name("x",    [*]f32, true);   // [ncols]; the host writes PE (0,0) only
+  @export_name("y",    [*]f32, true);   // [nr] per PE; column 0 holds y
+  @export_name("time_buf_u16", [*]u16, true);
+  @export_name("dbg", [*]u16, true);      // debug milestones: start, segment available, product done, end
+  @export_name("main", fn()void);
+  @export_name("f_enable_timer", fn()void);
+  @export_name("f_memcpy_timestamps", fn()void);
+}

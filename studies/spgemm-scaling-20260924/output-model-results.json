@@ -1,0 +1,22 @@
+{
+  "registration": {
+    "created_utc": "2026-09-25T00:14:42.042239+00:00",
+    "case": "strong-m256-k256-n256-p1-d3-full",
+    "hypothesis": "With dimensions and row degrees fixed, uniform minus banded root cycles equals 25 times the difference in structural output entries for the full-row, one-PE implementation.",
+    "calibration": "New registered 64x64 case: 576 products in both inputs; output counts 320 and 549; cycle difference 5725. The earlier 16x16 follow-up also suggested 25, but used a different data layout and ELF.",
+    "input_points": {
+      "banded": {
+        "products": 2304,
+        "output_nnz": 1280
+      },
+      "uniform": {
+        "products": 2304,
+        "output_nnz": 2268
+      }
+    },
+    "predicted_cycle_difference": 24700,
+    "acceptance": "Use first unchanged broadcast-mode sessions and retain all residuals or missing-case status. This predicts a within-build contrast, not an absolute latency or universal store cost.",
+    "evidence_status": "No N=256 registered case has produced a timing checkpoint at registration."
+  },
+  "status": "missing"
+}

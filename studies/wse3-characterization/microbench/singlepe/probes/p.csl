@@ -1,0 +1,16 @@
+param memcpy_params;
+const EXIT: local_task_id = @get_local_task_id(9);
+const sys_mod = @import_module("<memcpy/memcpy>", memcpy_params);
+// A1 pure read: can a builtin take a scalar VAR destination with a DSD source?
+var A = @zeros([64]f16);
+var s: f16 = 0.0;
+const A_dsd = @get_dsd(mem1d_dsd, .{ .tensor_access = |i|{64} -> A[i] });
+fn f() void { @fmovh(&s, A_dsd); }
+
+
+fn compute() void { f(); @activate(EXIT); }
+task f_exit() void { sys_mod.unblock_cmd_stream(); }
+comptime {
+  @bind_local_task(f_exit, EXIT);
+  @export_symbol(compute);
+}

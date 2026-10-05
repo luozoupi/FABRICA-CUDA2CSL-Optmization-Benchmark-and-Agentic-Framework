@@ -1,0 +1,24 @@
+[
+  {
+    "case": "merge",
+    "status": "pass",
+    "returncode": 0,
+    "queue_wait_s": 1.9528997654560953e-05,
+    "execution_s": 137.77604410200001,
+    "diagnostic_errors": [],
+    "checked_launches": 36,
+    "traces_bytes": 1206880689,
+    "trace_host_sha256": "c33625ffcc4169f620a7c887411294a62f38eab15b29a55223816556f02a472f"
+  },
+  {
+    "case": "nested",
+    "status": "pass",
+    "returncode": 0,
+    "queue_wait_s": 6.06999674346298e-06,
+    "execution_s": 136.58817868399638,
+    "diagnostic_errors": [],
+    "checked_launches": 36,
+    "traces_bytes": 1212959224,
+    "trace_host_sha256": "c33625ffcc4169f620a7c887411294a62f38eab15b29a55223816556f02a472f"
+  }
+]

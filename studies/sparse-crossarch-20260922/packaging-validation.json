@@ -1,0 +1,27 @@
+{
+  "date": "2026-09-22",
+  "scope": "Repository packaging checks; the original numerical/device experiments were not rerun for this integration.",
+  "snapshot_integrity": "pass",
+  "shared_replay": {
+    "status": "pass",
+    "input_cases": 24,
+    "exact_csl_builds": 12
+  },
+  "full_input_reconstruction": {
+    "status": "pass",
+    "input_cases": 124,
+    "exact_csl_builds": 12,
+    "comparison": "Every row-pointer, column-index, FP32 value, dense operand and FP64 oracle file matched its frozen SHA-256."
+  },
+  "cuda_rebuild": {
+    "status": "pass",
+    "nvcc": "13.0.88",
+    "target": "sm_120",
+    "binary_sha256": "732084c2e80cc8813da9f5c7433a86ac1c17b5d9223fa0ff98a53b79a0bad0d9",
+    "note": "Fresh build from the packaged sources; its hash is distinct provenance from the measured binary."
+  },
+  "source_syntax": "pass",
+  "local_markdown_links": "pass",
+  "secret_scan": "pass (repository scripts/check_no_secrets.sh)",
+  "staged_inventory": "All files listed by packaging-manifest.json were staged; no bulk outputs or SDK distribution included."
+}

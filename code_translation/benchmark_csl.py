@@ -38,7 +38,7 @@ DEFAULT_OUTPUT = str(Path(__file__).resolve().parent / "results" / "benchmark_cs
 # ---------------------------------------------------------------------------
 #
 # All CSL kernels in this repo invoke cslc + cs_python via ~/bin/singularity
-# (the SSH shim to cer-usn-01). The shim itself is mostly stateless, but
+# (the SSH shim to user-node-1). The shim itself is mostly stateless, but
 # stress-testing it with N concurrent workers reliably wedges either the
 # remote node or the local container runtime. We can't fix the shim from
 # here; the cheap mitigation is a file-lock that serialises the actual
@@ -55,7 +55,11 @@ DEFAULT_OUTPUT = str(Path(__file__).resolve().parent / "results" / "benchmark_cs
 
 import contextlib  # noqa: E402  (intentional after constants)
 
-_SINGULARITY_LOCK_PATH = "/tmp/xkernel_singularity.lock"
+# Per user: /tmp is shared by every account on a login node, and a lock file another user
+# created cannot be opened for writing (the gate would raise, not wait). Serialisation is
+# per account, which is right on a login node only when each account relays to its own SDK
+# node (XKERNEL_RELAY_HOST); see docs/EXPERIMENT_RUNBOOK.md section 10.
+_SINGULARITY_LOCK_PATH = f"/tmp/xkernel_singularity_{os.getuid() if hasattr(os, 'getuid') else 'user'}.lock"
 
 
 @contextlib.contextmanager
@@ -90,9 +94,23 @@ def _singularity_gate(enabled: Optional[bool] = None,
         yield
         return
     lock = FileLock(_SINGULARITY_LOCK_PATH, timeout=timeout)
+    import time as _gate_time
+    requested = _gate_time.monotonic()
     try:
         with lock:
-            yield
+            acquired = _gate_time.monotonic()
+            try:
+                yield
+            finally:
+                journal = os.getenv("XKERNEL_RESOURCE_JSONL")
+                if journal:
+                    record = {"schema": "xkernel.sdk_resource/1", "pid": os.getpid(),
+                              "cell_id": os.getenv("XKERNEL_CELL_ID"),
+                              "queue_wait_s": acquired - requested,
+                              "sdk_lock_held_s": _gate_time.monotonic() - acquired}
+                    os.makedirs(os.path.dirname(os.path.abspath(journal)), exist_ok=True)
+                    with open(journal, "a") as fh:
+                        fh.write(json.dumps(record) + "\n")
     except Timeout:
         # Surface as a regular failure instead of hanging forever; the
         # explore orchestrator records the candidate as failed_with_blocked.
@@ -185,9 +203,17 @@ def stage_reference_bundle(reference_dir: str,
     staged_target = os.path.join(staged_bundle, target_relpath)
     ensure_directory(os.path.dirname(staged_target))
     shutil.copyfile(translated_path, staged_target)
+    fixup_files = 0
+    try:
+        import sdk_compat
+        if sdk_compat.fixup_enabled():          # XKERNEL_SDK210_FIXUP=1: 1.4 syntax -> 2.x before cslc
+            fixup_files = sdk_compat.fixup_bundle(staged_bundle)
+    except ImportError:
+        pass
     return {
         "staged_bundle": staged_bundle,
         "staged_target": staged_target,
+        "fixup_files": fixup_files,
     }
 
 
@@ -249,11 +275,7 @@ def write_instrumented_runner(staged_bundle: str,
         ])
     lines.extend([
         "now_ms() {",
-        '  local value=$(date +%s%3N)',
-        '  case "$value" in',
-        "    *[!0-9]*|'') python3 -c 'import time; print(time.time_ns() // 1000000)' ;;",
-        '    *) printf "%s\\n" "$value" ;;',
-        "  esac",
+        "  date +%s%3N",
         "}",
         "run_step() {",
         '  local idx=\"$1\"',
@@ -556,12 +578,17 @@ def run_staged_bundle(staged_bundle: str,
     }
 
 
+EVAL_ENV_FILE = ".xkernel_eval_env.json"          # mirrors sparse_inputs.EVAL_ENV_FILE
+_EVAL_SEED_ECHO_RE = re.compile(r"eval_seed\s*=\s*(\d+)")
+
+
 def _run_step_command(staged_bundle: str,
                       command: str,
                       sdk_root: str,
                       extra_env: Optional[Dict[str, str]] = None,
                       shell_setup: Optional[str] = None,
-                      timeout: int = TIMEOUT_LIMIT) -> Dict[str, object]:
+                      timeout: int = TIMEOUT_LIMIT,
+                      enable_trace: bool = False) -> Dict[str, object]:
     """Run a SINGLE already-parsed command line in the staged bundle, returning a
     small status dict {ok, returncode, stdout, stderr, success_marker}.
 
@@ -577,14 +604,35 @@ def _run_step_command(staged_bundle: str,
         env["CSL_IMPORT_PATH"] = f"{work_dir}:{existing}" if existing else work_dir
     if extra_env:
         env.update({str(k): str(v) for k, v in extra_env.items()})
-    with _singularity_gate():
-        res = run_subprocess(
-            command,
-            cwd=staged_bundle,
-            env=env,
-            shell_setup=shell_setup,
-            timeout=timeout,
-        )
+    if enable_trace:
+        for key in ("CSL_SUPPRESS_SIMFAB_TRACE", "APPTAINERENV_CSL_SUPPRESS_SIMFAB_TRACE",
+                    "SINGULARITYENV_CSL_SUPPRESS_SIMFAB_TRACE"):
+            env.pop(key, None)
+    # An ssh relay in front of `singularity` (the login nodes) forwards no environment, so
+    # the container never sees SINGULARITYENV_*/APPTAINERENV_* either (verified 2026-09-16:
+    # every held-out run through the relay silently re-used the train seed). The bundle
+    # directory IS bound into the container, so the injected variables are also written
+    # there; a runner reads them through sparse_inputs.resolve_eval_seed when the variable
+    # is missing, and echoes `eval_seed = N` so evaluate_heldout can prove the seed arrived.
+    env_file = None
+    if extra_env:
+        env_file = os.path.join(staged_bundle, EVAL_ENV_FILE)
+        plain = {str(k): str(v) for k, v in extra_env.items()
+                 if not str(k).startswith(("SINGULARITYENV_", "APPTAINERENV_"))}
+        with open(env_file, "w", encoding="utf-8") as fh:
+            json.dump(plain, fh)
+    try:
+        with _singularity_gate():
+            res = run_subprocess(
+                command,
+                cwd=staged_bundle,
+                env=env,
+                shell_setup=shell_setup,
+                timeout=timeout,
+            )
+    finally:
+        if env_file and os.path.exists(env_file):
+            os.remove(env_file)
     combined = "\n".join([res.stdout or "", res.stderr or ""]).upper()
     return {
         "ok": res.returncode == 0 and "SUCCESS" in combined,
@@ -636,7 +684,8 @@ def evaluate_heldout(staged_bundle: str,
                      sdk_root: str,
                      seed_env: str = "XKERNEL_EVAL_SEED",
                      shell_setup: Optional[str] = None,
-                     timeout: int = TIMEOUT_LIMIT) -> Dict[str, object]:
+                     timeout: int = TIMEOUT_LIMIT,
+                     enable_trace: bool = False) -> Dict[str, object]:
     """Input-level train/test split gate (anti-hardcoding).
 
     After a kernel has PASSED on the train seed, re-run ONLY its `cs_python run.py`
@@ -699,9 +748,30 @@ def evaluate_heldout(staged_bundle: str,
             step = _run_step_command(
                 staged_bundle, cmd, sdk_root,
                 extra_env=seed_env_map,
-                shell_setup=shell_setup, timeout=timeout)
+                shell_setup=shell_setup, timeout=timeout, enable_trace=enable_trace)
             step_info["steps"].append(
                 {"command": cmd, "ok": step["ok"], "returncode": step["returncode"]})
+            # Proof that the seed reached the runner: a run.py that echoes `eval_seed = N`
+            # must echo the requested seed. A mismatch is an INFRASTRUCTURE failure (the
+            # environment did not cross into the container), never a kernel property, and
+            # it must not be reported as a pass. Legacy runners echo nothing (recorded).
+            echo = _EVAL_SEED_ECHO_RE.search(step.get("stdout") or "")
+            step_info["seed_echo"] = int(echo.group(1)) if echo else None
+            if os.getenv("XKERNEL_STRICT_VALIDATION", "0") == "1" and (
+                    not echo or not step.get("success_marker")):
+                result.update(passed=False, failing_seed=seed,
+                              reason="validation_missing_evidence: seed echo and numerical SUCCESS marker required")
+                result["per_seed"].append(step_info)
+                return result
+            if echo and int(echo.group(1)) != int(seed):
+                result["passed"] = False
+                result["failing_seed"] = seed
+                result["per_seed"].append(step_info)
+                result["reason"] = (
+                    f"heldout_env_not_propagated: run.py reports eval_seed={echo.group(1)} for the "
+                    f"requested held-out seed {seed} -- the seed did not reach the container "
+                    f"(ssh relay / env stripping); infrastructure failure, not a kernel property")
+                return result
             if not step["ok"]:
                 seed_ok = False
                 # keep stderr tail for diagnosis (bounded)
@@ -813,7 +883,8 @@ def benchmark_translated_compute_file(translated_path: str,
                                       num_runs: int = 1,
                                       extra_overlays: Optional[Dict[str, str]] = None,
                                       heldout_eval: Optional[bool] = None,
-                                      compile_only: bool = False) -> Dict[str, object]:
+                                      compile_only: bool = False,
+                                      ir_capture_mode: Optional[str] = None) -> Dict[str, object]:
     translated_path = expand_path(translated_path)
     reference_dir = expand_path(reference_dir)
     target_relpath = target_relpath
@@ -879,6 +950,7 @@ def benchmark_translated_compute_file(translated_path: str,
         "script_elapsed_ms": staged_result["script_elapsed_ms"],
         "shell_setup_applied": staged_result["shell_setup_applied"],
         "staged_bundle": stage_info["staged_bundle"],
+        "fixup_files": stage_info.get("fixup_files", 0),
     }
 
     # Input-level train/test split gate (anti-hardcoding). If the kernel PASSED on
@@ -900,7 +972,7 @@ def benchmark_translated_compute_file(translated_path: str,
         _do_heldout = heldout_eval
     else:
         _do_heldout = True  # default-on integrity gate
-    if _do_heldout and result["status"] == "pass":
+    if _do_heldout and not compile_only and result["status"] == "pass":
         heldout = _heldout_eval_for_reference(reference_dir)
         if heldout and heldout.get("heldout_seeds"):
             ho = evaluate_heldout(
@@ -917,6 +989,38 @@ def benchmark_translated_compute_file(translated_path: str,
                 result["status"] = "fail"
                 result["failure_reason"] = str(ho.get("reason") or "heldout_seed_mismatch")
 
+            # Held-out runs overwrite sim.log and the trace stream. Restore the
+            # training input before exposing execution profiles to the optimizer.
+            # Otherwise training cycle counts would be paired with a hidden matrix's
+            # trace, leaking held-out structure and mislabelling the profile.
+            if (result["status"] == "pass" and not compile_only and
+                    os.getenv("XKERNEL_PROFILE_TRAIN_REPLAY", "0") == "1"):
+                train_seed = int(heldout.get("train_seed", 7))
+                replay = evaluate_heldout(
+                    stage_info["staged_bundle"], script_name, [train_seed], sdk_root,
+                    seed_env=str(heldout.get("seed_env") or "XKERNEL_EVAL_SEED"),
+                    shell_setup=shell_setup, timeout=timeout, enable_trace=True)
+                result["profile_train_replay"] = replay
+                result["profile_input_seed"] = train_seed
+                if not replay.get("passed"):
+                    result["status"] = "fail"
+                    result["failure_reason"] = "profile_train_replay_failed"
+
+    # Compiled-code artifacts for the IR/disassembly feedback channel (v2 sparse study):
+    # disassembly of the measured ELF and, in best/all mode, a shadow compile that keeps the
+    # LLVM IR (ir_capture.py). Only after a pass, inside the container gate; never fails the run.
+    if ir_capture_mode and ir_capture_mode != "0" and result["status"] == "pass":
+        try:
+            import ir_capture as _irc
+            with _singularity_gate():
+                result["ir_artifacts"] = _irc.capture_ir_artifacts(
+                    stage_info["staged_bundle"], staged_result.get("transcript") or [], sdk_root,
+                    ir_capture_mode, env=build_sdk_env(sdk_root))
+        except Exception as exc:                                   # the benchmark result stands
+            result["ir_artifacts"] = {"status": "failed", "reason": f"{type(exc).__name__}: {exc}"}
+    if os.getenv("XKERNEL_CALL_ARCHIVE"):
+        from model_artifacts import archive_candidate
+        result["candidate_artifact"] = archive_candidate(translated_code, result, compile_only)
     if not keep_staged_bundle and os.path.exists(stage_info["staged_bundle"]):
         shutil.rmtree(stage_info["staged_bundle"], ignore_errors=True)
 

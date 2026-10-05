@@ -1,0 +1,8 @@
+kernel,status,cycles,timing_runs,validation_passed,evidence
+ColScale-CSR,pass,53329,"[53329, 53329, 53329]",True,/home/USER/ipdps-results/deepseek-smoke-20260921-db482cd/reference/ColScale-CSR/benchmark.json
+RowReduce-CSR,pass,41067,"[41067, 41067, 41067]",True,/home/USER/ipdps-results/deepseek-smoke-20260921-db482cd/reference/RowReduce-CSR/benchmark.json
+RowScale-CSR,pass,45868,"[45868, 45868, 45868]",True,/home/USER/ipdps-results/deepseek-smoke-20260921-db482cd/reference/RowScale-CSR/benchmark.json
+SpGEMM-Masked-Dot,pass,260903,"[260903, 260903, 260903]",True,/home/USER/ipdps-results/deepseek-smoke-20260921-db482cd/reference/SpGEMM-Masked-Dot/benchmark.json
+SpMM-CSR-Dense,pass,106606,"[106606, 106606, 106606]",True,/home/USER/ipdps-results/deepseek-smoke-20260921-db482cd/reference/SpMM-CSR-Dense/benchmark.json
+SpMV-CSR,pass,7429,"[7429, 7429, 7429]",True,/home/USER/ipdps-results/deepseek-smoke-20260921-db482cd/reference/SpMV-CSR/benchmark.json
+SpMV-RowBlock,pass,37330,"[37330, 37330, 37330]",True,/home/USER/ipdps-results/deepseek-smoke-20260921-db482cd/reference/SpMV-RowBlock/benchmark.json

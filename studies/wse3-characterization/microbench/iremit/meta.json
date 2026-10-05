@@ -1,0 +1,37 @@
+{
+ "NROWS": 16,
+ "NCOLS": 16,
+ "MAXNNZ": 64,
+ "RPLEN": 18,
+ "NDIA": 4,
+ "MARK": {
+  "scalar": [
+   0,
+   1
+  ],
+  "ir": [
+   2,
+   3
+  ],
+  "blk": [
+   4,
+   5
+  ],
+  "dia": [
+   6,
+   7
+  ],
+  "probe": [
+   8,
+   9
+  ],
+  "probe_const": [
+   10,
+   11
+  ],
+  "blk_dsdred": [
+   12,
+   13
+  ]
+ }
+}

@@ -1,0 +1,157 @@
+// SpMV-CSR compute (hand-written): y = A*x, A in CSR on a single PE.
+//
+// This is the REAL compute (not a library call): a per-row reduction over the
+// nonzeros of that row, each term a gathered load x[col_idx[j]] times val[j].
+// Timed with the hardware TSC over `iters` repeats so cycles_send measures exactly
+// this arithmetic.
+
+param memcpy_params;   // SDK 2.10-native form (compiles on 1.4 too; verified 2026-09-16: 6,927 / 7,429 cycles unchanged)
+
+param nrows: u16;
+param ncols: u16;
+param max_nnz: u16;
+param iters: u16;
+
+const EXIT: local_task_id = @get_local_task_id(9);  // leave RPC after compute
+
+const sys_mod = @import_module("<memcpy/memcpy>", memcpy_params);
+
+const timestamp = @import_module("<time>");
+var tsc_start_buf = @zeros([timestamp.tsc_size_words]u16);
+var tsc_end_buf   = @zeros([timestamp.tsc_size_words]u16);
+
+// timer_buf packs the 6 u16 tsc words into 3 f32 for the host (STM convention).
+var timer_buf = @zeros([3]f32);
+var ptr_timer_buf: [*]f32 = &timer_buf;
+
+// CSR storage + dense vectors (host fills these via memcpy_h2d).
+var row_ptr_array = @zeros([nrows + 1]u32);
+var col_idx_array = @zeros([max_nnz]u32);
+var val_array     = @zeros([max_nnz]f32);
+var x_array       = @zeros([ncols]f32);
+var y_array       = @zeros([nrows]f32);
+
+var ptr_row_ptr: [*]u32 = &row_ptr_array;
+var ptr_col_idx: [*]u32 = &col_idx_array;
+var ptr_val:     [*]f32 = &val_array;
+var ptr_x:       [*]f32 = &x_array;
+var ptr_y:       [*]f32 = &y_array;
+
+// One CSR matvec pass: y[r] = sum_{j in [row_ptr[r], row_ptr[r+1])} val[j]*x[col_idx[j]]
+// EXPERT VARIANT (2026-10-05): 4x4 block CSR, the form of an expert GPU BSR kernel. Built from the CSR input on the
+// first product inside the timed window; each block column adds 4 values x x[c] into the block's 4 rows of y with
+// one @fmacs. The block store holds NB blocks; a matrix with more blocks falls back to the scalar CSR loop.
+const BR: u16 = nrows / 4;
+const NB: u16 = 256;
+var bptr = @zeros([BR + 1]u16);
+var bcol = @zeros([NB]u16);
+var bval = @zeros([NB * 16]f32);
+var bmap = @zeros([ncols / 4]u16);
+var have_bsr: bool = false;
+var overflow: bool = false;
+const bval_all = @get_dsd(mem1d_dsd, .{ .tensor_access = |i|{NB * 16} -> bval[i] });
+const b4 = @get_dsd(mem1d_dsd, .{ .tensor_access = |i|{4} -> bval[i] });
+const y4 = @get_dsd(mem1d_dsd, .{ .tensor_access = |i|{4} -> y_array[i] });
+const y_all = @get_dsd(mem1d_dsd, .{ .tensor_access = |i|{nrows} -> y_array[i] });
+fn build_bsr() void {
+  @fmovs(bval_all, 0.0);
+  var nb: u16 = 0;
+  var br: u16 = 0;
+  while (br < BR) : (br += 1) {
+    bptr[br] = nb;
+    var r: u16 = br * 4;
+    while (r < br * 4 + 4) : (r += 1) {
+      var j: u16 = @as(u16, row_ptr_array[r]);
+      const e: u16 = @as(u16, row_ptr_array[r + 1]);
+      while (j < e) : (j += 1) {
+        const col: u16 = @as(u16, col_idx_array[j]);
+        const bc: u16 = col / 4;
+        var s: u16 = bmap[bc];
+        if (s == 0) {
+          if (nb == NB) { overflow = true; }
+          else { bcol[nb] = bc; nb += 1; s = nb; bmap[bc] = s; }
+        }
+        if (s != 0) { bval[(s - 1) * 16 + (col % 4) * 4 + (r % 4)] = val_array[j]; }
+      }
+    }
+    var k: u16 = bptr[br];
+    while (k < nb) : (k += 1) { bmap[bcol[k]] = 0; }
+  }
+  bptr[BR] = nb;
+  have_bsr = true;
+}
+fn spmv_csr() void {
+  if (!have_bsr) { build_bsr(); }
+  if (overflow) {
+    var r: u16 = 0;
+    while (r < nrows) : (r += 1) {
+      var acc: f32 = 0.0;
+      var j: u16 = @as(u16, row_ptr_array[r]);
+      const e: u16 = @as(u16, row_ptr_array[r + 1]);
+      while (j < e) : (j += 1) { acc += val_array[j] * x_array[@as(u16, col_idx_array[j])]; }
+      y_array[r] = acc;
+    }
+    return;
+  }
+  @fmovs(y_all, 0.0);
+  var br: u16 = 0;
+  while (br < BR) : (br += 1) {
+    const yb = @increment_dsd_offset(y4, @as(i16, br * 4), f32);
+    var k: u16 = bptr[br];
+    const e: u16 = bptr[br + 1];
+    while (k < e) : (k += 1) {
+      const x0: u16 = bcol[k] * 4;
+      var cc: u16 = 0;
+      while (cc < 4) : (cc += 1) {
+        const blk = @increment_dsd_offset(b4, @as(i16, k * 16 + cc * 4), f32);
+        @fmacs(yb, yb, blk, x_array[x0 + cc]);
+      }
+    }
+  }
+}
+
+fn compute() void {
+  timestamp.enable_tsc();
+  timestamp.get_timestamp(&tsc_start_buf);
+
+  for (@range(u16, iters)) |_| {
+    spmv_csr();
+  }
+
+  timestamp.get_timestamp(&tsc_end_buf);
+  timestamp.disable_tsc();
+
+  // Pack the two 3-word u16 timestamps into 3 f32 (lo|hi per word pair) — STM layout.
+  var lo_: u16 = 0;
+  var hi_: u16 = 0;
+
+  lo_ = tsc_start_buf[0];
+  hi_ = tsc_start_buf[1];
+  timer_buf[0] = @bitcast(f32, (@as(u32, hi_) << @as(u16, 16)) | @as(u32, lo_));
+
+  lo_ = tsc_start_buf[2];
+  hi_ = tsc_end_buf[0];
+  timer_buf[1] = @bitcast(f32, (@as(u32, hi_) << @as(u16, 16)) | @as(u32, lo_));
+
+  lo_ = tsc_end_buf[1];
+  hi_ = tsc_end_buf[2];
+  timer_buf[2] = @bitcast(f32, (@as(u32, hi_) << @as(u16, 16)) | @as(u32, lo_));
+
+  @activate(EXIT);
+}
+
+task f_exit() void {
+  sys_mod.unblock_cmd_stream();
+}
+
+comptime {
+  @bind_local_task(f_exit, EXIT);
+
+  @export_symbol(ptr_row_ptr, "row_ptr");
+  @export_symbol(ptr_col_idx, "col_idx");
+  @export_symbol(ptr_val,     "val");
+  @export_symbol(ptr_x,       "x");
+  @export_symbol(ptr_y,       "y");
+  @export_symbol(ptr_timer_buf, "maxmin_time");
+  @export_symbol(compute);
+}

@@ -1,0 +1,236 @@
+{
+ "_note": "sparse_blocks_v3/verify_blocks.py on SDK 2.10 (simulator); rows: cycles for 1 and 10 products of each method, checked against numpy",
+ "configs": {
+  "banded": {
+   "status": "pass",
+   "blocks_ok": true,
+   "matrix": {
+    "kind": "banded",
+    "N": 128,
+    "nnz": 571,
+    "density": 0.0349,
+    "bsr_blocks": 111
+   },
+   "rows": [
+    {
+     "method": "csr",
+     "products": 1,
+     "cycles": 19899,
+     "nnz": 571,
+     "correct": true,
+     "max_abs_err": 1.1920928955078125e-07
+    },
+    {
+     "method": "csr",
+     "products": 10,
+     "cycles": 198747,
+     "nnz": 571,
+     "correct": true,
+     "max_abs_err": 1.1920928955078125e-07
+    },
+    {
+     "method": "csc",
+     "products": 1,
+     "cycles": 67856,
+     "nnz": 571,
+     "correct": true,
+     "max_abs_err": 1.1920928955078125e-07
+    },
+    {
+     "method": "csc",
+     "products": 10,
+     "cycles": 253922,
+     "nnz": 571,
+     "correct": true,
+     "max_abs_err": 1.1920928955078125e-07
+    },
+    {
+     "method": "bsr4",
+     "products": 1,
+     "cycles": 48998,
+     "nnz": 571,
+     "correct": true,
+     "max_abs_err": 1.1920928955078125e-07
+    },
+    {
+     "method": "bsr4",
+     "products": 10,
+     "cycles": 194285,
+     "nnz": 571,
+     "correct": true,
+     "max_abs_err": 1.1920928955078125e-07
+    },
+    {
+     "method": "dia_compact",
+     "products": 1,
+     "cycles": 38036,
+     "nnz": 571,
+     "correct": true,
+     "max_abs_err": 1.1920928955078125e-07
+    },
+    {
+     "method": "dia_compact",
+     "products": 10,
+     "cycles": 98741,
+     "nnz": 571,
+     "correct": true,
+     "max_abs_err": 1.1920928955078125e-07
+    }
+   ]
+  },
+  "random": {
+   "status": "pass",
+   "blocks_ok": true,
+   "matrix": {
+    "kind": "random",
+    "N": 64,
+    "nnz": 986,
+    "density": 0.2407,
+    "bsr_blocks": 252
+   },
+   "rows": [
+    {
+     "method": "csr",
+     "products": 1,
+     "cycles": 30523,
+     "nnz": 986,
+     "correct": true,
+     "max_abs_err": 2.384185791015625e-07
+    },
+    {
+     "method": "csr",
+     "products": 10,
+     "cycles": 304969,
+     "nnz": 986,
+     "correct": true,
+     "max_abs_err": 2.384185791015625e-07
+    },
+    {
+     "method": "csc",
+     "products": 1,
+     "cycles": 106187,
+     "nnz": 986,
+     "correct": true,
+     "max_abs_err": 2.384185791015625e-07
+    },
+    {
+     "method": "csc",
+     "products": 10,
+     "cycles": 387491,
+     "nnz": 986,
+     "correct": true,
+     "max_abs_err": 2.384185791015625e-07
+    },
+    {
+     "method": "dense",
+     "products": 1,
+     "cycles": 40859,
+     "nnz": 986,
+     "correct": true,
+     "max_abs_err": 4.76837158203125e-07
+    },
+    {
+     "method": "dense",
+     "products": 10,
+     "cycles": 130733,
+     "nnz": 986,
+     "correct": true,
+     "max_abs_err": 4.76837158203125e-07
+    },
+    {
+     "method": "dia_compact",
+     "products": 1,
+     "cycles": 80689,
+     "nnz": 986,
+     "correct": true,
+     "max_abs_err": 2.384185791015625e-07
+    },
+    {
+     "method": "dia_compact",
+     "products": 10,
+     "cycles": 335083,
+     "nnz": 986,
+     "correct": true,
+     "max_abs_err": 2.384185791015625e-07
+    }
+   ]
+  },
+  "block": {
+   "status": "pass",
+   "blocks_ok": true,
+   "matrix": {
+    "kind": "block",
+    "N": 128,
+    "nnz": 1335,
+    "density": 0.0815,
+    "bsr_blocks": 94
+   },
+   "rows": [
+    {
+     "method": "csr",
+     "products": 1,
+     "cycles": 41287,
+     "nnz": 1335,
+     "correct": true,
+     "max_abs_err": 2.384185791015625e-07
+    },
+    {
+     "method": "csr",
+     "products": 10,
+     "cycles": 412627,
+     "nnz": 1335,
+     "correct": true,
+     "max_abs_err": 2.384185791015625e-07
+    },
+    {
+     "method": "csc",
+     "products": 1,
+     "cycles": 143486,
+     "nnz": 1335,
+     "correct": true,
+     "max_abs_err": 2.384185791015625e-07
+    },
+    {
+     "method": "csc",
+     "products": 10,
+     "cycles": 535832,
+     "nnz": 1335,
+     "correct": true,
+     "max_abs_err": 2.384185791015625e-07
+    },
+    {
+     "method": "bsr4",
+     "products": 1,
+     "cycles": 79273,
+     "nnz": 1335,
+     "correct": true,
+     "max_abs_err": 2.384185791015625e-07
+    },
+    {
+     "method": "bsr4",
+     "products": 10,
+     "cycles": 203752,
+     "nnz": 1335,
+     "correct": true,
+     "max_abs_err": 2.384185791015625e-07
+    },
+    {
+     "method": "dia_compact",
+     "products": 1,
+     "cycles": 93169,
+     "nnz": 1335,
+     "correct": true,
+     "max_abs_err": 1.1920928955078125e-07
+    },
+    {
+     "method": "dia_compact",
+     "products": 10,
+     "cycles": 302221,
+     "nnz": 1335,
+     "correct": true,
+     "max_abs_err": 1.1920928955078125e-07
+    }
+   ]
+  }
+ }
+}

@@ -1,0 +1,27 @@
+{
+  "id": "general-full_row",
+  "variant": "full_row",
+  "application_pes": 1,
+  "M": 16,
+  "K": 16,
+  "N": 16,
+  "tile_width": 16,
+  "accumulator_bytes": 96,
+  "output_capacity": 256,
+  "guard_elements": 4,
+  "patterns": [
+    "empty",
+    "diagonal",
+    "banded",
+    "uniform",
+    "skewed",
+    "dense"
+  ],
+  "repetitions": 3,
+  "source_hashes": {
+    "pe.csl": "df75cd1920cada5bcc52b91387f41b7da6d08d86ffb5a24d7a6af2c9db693bfb",
+    "layout.csl": "e704accecebe9e2cf86b7e5895e300a96ac401c78f060552fc487284643c39c2",
+    "host.py": "e40b13b4b7fdc78d533e278964a145a40b5dfb370a9738eb13943d0e92557692",
+    "inputs.py": "38ca49cab7d4cae285ab234420d6f0ac5c3a2477f599a2643892af0de541f6fc"
+  }
+}

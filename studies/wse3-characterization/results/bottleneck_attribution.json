@@ -1,0 +1,302 @@
+[
+ {
+  "kernel": "GELU-1PE",
+  "cycles": 145990,
+  "hot_pe_dispatches": 88278,
+  "ipc": 0.605,
+  "float_pct": 24.6,
+  "wavelets_per_dispatch": 0.08,
+  "application_pes": 1,
+  "bottleneck": "arithmetic_bound",
+  "recommended_fix": "Real math in the instruction stream. Vectorise via DSD builtins and move operands to f16: silicon gives 2.92/cyc vs 0.5/cyc, a 5.84x ceiling. Keep vector length well above the 16-cycle DSD setup.",
+  "evidence": {
+   "traces": "simulator",
+   "cost_model": "silicon"
+  }
+ },
+ {
+  "kernel": "Sigmoid-1PE",
+  "cycles": 142401,
+  "hot_pe_dispatches": 84174,
+  "ipc": 0.591,
+  "float_pct": 21.1,
+  "wavelets_per_dispatch": 0.09,
+  "application_pes": 1,
+  "bottleneck": "arithmetic_bound",
+  "recommended_fix": "Real math in the instruction stream. Vectorise via DSD builtins and move operands to f16: silicon gives 2.92/cyc vs 0.5/cyc, a 5.84x ceiling. Keep vector length well above the 16-cycle DSD setup.",
+  "evidence": {
+   "traces": "simulator",
+   "cost_model": "silicon"
+  }
+ },
+ {
+  "kernel": "SiLU-1PE",
+  "cycles": 139330,
+  "hot_pe_dispatches": 83152,
+  "ipc": 0.597,
+  "float_pct": 21.3,
+  "wavelets_per_dispatch": 0.09,
+  "application_pes": 1,
+  "bottleneck": "arithmetic_bound",
+  "recommended_fix": "Real math in the instruction stream. Vectorise via DSD builtins and move operands to f16: silicon gives 2.92/cyc vs 0.5/cyc, a 5.84x ceiling. Keep vector length well above the 16-cycle DSD setup.",
+  "evidence": {
+   "traces": "simulator",
+   "cost_model": "silicon"
+  }
+ },
+ {
+  "kernel": "Softmax-1PE",
+  "cycles": 54665,
+  "hot_pe_dispatches": 27694,
+  "ipc": 0.507,
+  "float_pct": 16.0,
+  "wavelets_per_dispatch": 0.12,
+  "application_pes": 1,
+  "bottleneck": "arithmetic_bound",
+  "recommended_fix": "Real math in the instruction stream. Vectorise via DSD builtins and move operands to f16: silicon gives 2.92/cyc vs 0.5/cyc, a 5.84x ceiling. Keep vector length well above the 16-cycle DSD setup.",
+  "evidence": {
+   "traces": "simulator",
+   "cost_model": "silicon"
+  }
+ },
+ {
+  "kernel": "Cross-Entropy-Loss-1PE",
+  "cycles": 34081,
+  "hot_pe_dispatches": 16619,
+  "ipc": 0.488,
+  "float_pct": 31.4,
+  "wavelets_per_dispatch": 0.15,
+  "application_pes": 1,
+  "bottleneck": "arithmetic_bound",
+  "recommended_fix": "Real math in the instruction stream. Vectorise via DSD builtins and move operands to f16: silicon gives 2.92/cyc vs 0.5/cyc, a 5.84x ceiling. Keep vector length well above the 16-cycle DSD setup.",
+  "evidence": {
+   "traces": "simulator",
+   "cost_model": "silicon"
+  }
+ },
+ {
+  "kernel": "RowParallel-Softmax",
+  "cycles": 29047,
+  "hot_pe_dispatches": 15630,
+  "ipc": 0.538,
+  "float_pct": 16.9,
+  "wavelets_per_dispatch": 0.15,
+  "application_pes": 2,
+  "bottleneck": "arithmetic_bound",
+  "recommended_fix": "Real math in the instruction stream. Vectorise via DSD builtins and move operands to f16: silicon gives 2.92/cyc vs 0.5/cyc, a 5.84x ceiling. Keep vector length well above the 16-cycle DSD setup.",
+  "evidence": {
+   "traces": "simulator",
+   "cost_model": "silicon"
+  }
+ },
+ {
+  "kernel": "L2-Norm-1PE",
+  "cycles": 52967,
+  "hot_pe_dispatches": 24913,
+  "ipc": 0.47,
+  "float_pct": 3.5,
+  "wavelets_per_dispatch": 0.2,
+  "application_pes": 1,
+  "bottleneck": "overhead_bound",
+  "recommended_fix": "Almost no arithmetic to speed up. Attack addressing and control: hoist comptime constants, chain DSD offsets, fix strides, specialise params. Vectorising will not help.",
+  "evidence": {
+   "traces": "simulator",
+   "cost_model": "silicon"
+  }
+ },
+ {
+  "kernel": "SAXPY-1PE",
+  "cycles": 49509,
+  "hot_pe_dispatches": 24103,
+  "ipc": 0.487,
+  "float_pct": 2.3,
+  "wavelets_per_dispatch": 0.31,
+  "application_pes": 1,
+  "bottleneck": "overhead_bound",
+  "recommended_fix": "Almost no arithmetic to speed up. Attack addressing and control: hoist comptime constants, chain DSD offsets, fix strides, specialise params. Vectorising will not help.",
+  "evidence": {
+   "traces": "simulator",
+   "cost_model": "silicon"
+  }
+ },
+ {
+  "kernel": "ReLU-1PE",
+  "cycles": 46642,
+  "hot_pe_dispatches": 22772,
+  "ipc": 0.488,
+  "float_pct": 1.2,
+  "wavelets_per_dispatch": 0.21,
+  "application_pes": 1,
+  "bottleneck": "overhead_bound",
+  "recommended_fix": "Almost no arithmetic to speed up. Attack addressing and control: hoist comptime constants, chain DSD offsets, fix strides, specialise params. Vectorising will not help.",
+  "evidence": {
+   "traces": "simulator",
+   "cost_model": "silicon"
+  }
+ },
+ {
+  "kernel": "Prefix-Sum-1PE",
+  "cycles": 44085,
+  "hot_pe_dispatches": 22770,
+  "ipc": 0.517,
+  "float_pct": 1.2,
+  "wavelets_per_dispatch": 0.21,
+  "application_pes": 1,
+  "bottleneck": "overhead_bound",
+  "recommended_fix": "Almost no arithmetic to speed up. Attack addressing and control: hoist comptime constants, chain DSD offsets, fix strides, specialise params. Vectorising will not help.",
+  "evidence": {
+   "traces": "simulator",
+   "cost_model": "silicon"
+  }
+ },
+ {
+  "kernel": "RMSNorm-1PE",
+  "cycles": 31691,
+  "hot_pe_dispatches": 13814,
+  "ipc": 0.436,
+  "float_pct": 4.2,
+  "wavelets_per_dispatch": 0.28,
+  "application_pes": 1,
+  "bottleneck": "overhead_bound",
+  "recommended_fix": "Almost no arithmetic to speed up. Attack addressing and control: hoist comptime constants, chain DSD offsets, fix strides, specialise params. Vectorising will not help.",
+  "evidence": {
+   "traces": "simulator",
+   "cost_model": "silicon"
+  }
+ },
+ {
+  "kernel": "ParBroadcast-Scale",
+  "cycles": 15308,
+  "hot_pe_dispatches": 7670,
+  "ipc": 0.501,
+  "float_pct": 1.4,
+  "wavelets_per_dispatch": 0.33,
+  "application_pes": 4,
+  "bottleneck": "overhead_bound",
+  "recommended_fix": "Almost no arithmetic to speed up. Attack addressing and control: hoist comptime constants, chain DSD offsets, fix strides, specialise params. Vectorising will not help.",
+  "evidence": {
+   "traces": "simulator",
+   "cost_model": "silicon"
+  }
+ },
+ {
+  "kernel": "Laplacian2D-Halo",
+  "cycles": 7150,
+  "hot_pe_dispatches": 3044,
+  "ipc": 0.426,
+  "float_pct": 1.3,
+  "wavelets_per_dispatch": 0.14,
+  "application_pes": 4,
+  "bottleneck": "overhead_bound",
+  "recommended_fix": "Almost no arithmetic to speed up. Attack addressing and control: hoist comptime constants, chain DSD offsets, fix strides, specialise params. Vectorising will not help.",
+  "evidence": {
+   "traces": "simulator",
+   "cost_model": "silicon"
+  }
+ },
+ {
+  "kernel": "Jacobi-2D-5pt",
+  "cycles": 6994,
+  "hot_pe_dispatches": 2950,
+  "ipc": 0.422,
+  "float_pct": 0.8,
+  "wavelets_per_dispatch": 0.14,
+  "application_pes": 4,
+  "bottleneck": "overhead_bound",
+  "recommended_fix": "Almost no arithmetic to speed up. Attack addressing and control: hoist comptime constants, chain DSD offsets, fix strides, specialise params. Vectorising will not help.",
+  "evidence": {
+   "traces": "simulator",
+   "cost_model": "silicon"
+  }
+ },
+ {
+  "kernel": "ParReduce-Sum",
+  "cycles": 6235,
+  "hot_pe_dispatches": 2107,
+  "ipc": 0.338,
+  "float_pct": 5.5,
+  "wavelets_per_dispatch": 0.71,
+  "application_pes": 4,
+  "bottleneck": "stalled",
+  "recommended_fix": "The core is waiting, not over-issuing. Overlap it: async DSDs on distinct microthreads (ut_id 0-7; the corpus uses at most 2), or break the dependency chain.",
+  "evidence": {
+   "traces": "simulator",
+   "cost_model": "silicon"
+  }
+ },
+ {
+  "kernel": "MSE-Loss-1PE",
+  "cycles": 17748,
+  "hot_pe_dispatches": 4270,
+  "ipc": 0.241,
+  "float_pct": 23.8,
+  "wavelets_per_dispatch": 1.51,
+  "application_pes": 1,
+  "bottleneck": "io_dominated",
+  "recommended_fix": "Fixed memcpy cost rules. Make the kernel bigger, fuse passes into one launch, or batch -- a 1-PE kernel already carries 23 infrastructure PEs.",
+  "evidence": {
+   "traces": "simulator",
+   "cost_model": "silicon"
+  }
+ },
+ {
+  "kernel": "Dot-Product-1PE",
+  "cycles": 16722,
+  "hot_pe_dispatches": 3771,
+  "ipc": 0.226,
+  "float_pct": 17.2,
+  "wavelets_per_dispatch": 1.63,
+  "application_pes": 1,
+  "bottleneck": "io_dominated",
+  "recommended_fix": "Fixed memcpy cost rules. Make the kernel bigger, fuse passes into one launch, or batch -- a 1-PE kernel already carries 23 infrastructure PEs.",
+  "evidence": {
+   "traces": "simulator",
+   "cost_model": "silicon"
+  }
+ },
+ {
+  "kernel": "Max-Reduction-1PE",
+  "cycles": 12383,
+  "hot_pe_dispatches": 2835,
+  "ipc": 0.229,
+  "float_pct": 11.6,
+  "wavelets_per_dispatch": 1.13,
+  "application_pes": 1,
+  "bottleneck": "io_dominated",
+  "recommended_fix": "Fixed memcpy cost rules. Make the kernel bigger, fuse passes into one launch, or batch -- a 1-PE kernel already carries 23 infrastructure PEs.",
+  "evidence": {
+   "traces": "simulator",
+   "cost_model": "silicon"
+  }
+ },
+ {
+  "kernel": "Sum-Reduction-1PE",
+  "cycles": 11888,
+  "hot_pe_dispatches": 2825,
+  "ipc": 0.238,
+  "float_pct": 11.6,
+  "wavelets_per_dispatch": 1.13,
+  "application_pes": 1,
+  "bottleneck": "io_dominated",
+  "recommended_fix": "Fixed memcpy cost rules. Make the kernel bigger, fuse passes into one launch, or batch -- a 1-PE kernel already carries 23 infrastructure PEs.",
+  "evidence": {
+   "traces": "simulator",
+   "cost_model": "silicon"
+  }
+ },
+ {
+  "kernel": "ParDot-Product",
+  "cycles": 9189,
+  "hot_pe_dispatches": 2825,
+  "ipc": 0.307,
+  "float_pct": 7.8,
+  "wavelets_per_dispatch": 0.98,
+  "application_pes": 4,
+  "bottleneck": "io_dominated",
+  "recommended_fix": "Fixed memcpy cost rules. Make the kernel bigger, fuse passes into one launch, or batch -- a 1-PE kernel already carries 23 infrastructure PEs.",
+  "evidence": {
+   "traces": "simulator",
+   "cost_model": "silicon"
+  }
+ }
+]

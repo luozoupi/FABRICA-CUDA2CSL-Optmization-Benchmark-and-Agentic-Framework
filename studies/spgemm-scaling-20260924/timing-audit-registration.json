@@ -1,0 +1,18 @@
+{
+  "created_utc": "2026-09-25T00:37:06.400243+00:00",
+  "targets": [
+    "density-m64-k64-n64-p4-d8-full",
+    "strong-m64-k64-n64-p64-d3-full"
+  ],
+  "reason": "Check whether queued rectangle-wide telemetry readback changes the root interval compared with first reading only the root after its completion acknowledgement.",
+  "policies": [
+    "rectangle_first",
+    "root_first"
+  ],
+  "repetitions": 3,
+  "warmups": 1,
+  "acceptance": "Replay the exact original ELF bundles. Validate all CSR/B/acknowledgement results and compare each root-cycle sample against the matching original record and other readback policy. Report all differences; do not silently replace the original sweep.",
+  "scope": "Independent timing-method audit; not one of the 28 registered size/PE configurations. No compiler or kernel changes.",
+  "execution": "After the primary sweep, serially under both shared SDK locks. Uniform input for density case; uniform and skewed equal-row-block inputs for the 64-PE case.",
+  "driver_sha256": "fb5066c3f32b226a8caf53493e668f9bff7f8a971f07e6bed96d37444e1afeb7"
+}

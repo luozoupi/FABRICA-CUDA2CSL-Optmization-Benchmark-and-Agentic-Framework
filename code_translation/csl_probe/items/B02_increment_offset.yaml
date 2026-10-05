@@ -1,0 +1,32 @@
+id: B02_increment_offset
+group: B_semantics
+prompt: 'Read this Cerebras CSL fragment (SDK 2.10, one PE) and answer the question. Assume every builtin behaves
+  as the SDK documents it. Reply with the answer first (three numbers), then one sentence of justification.
+
+
+  ```csl
+
+  var x = @zeros([8]f32); var y = @zeros([3]f32);
+
+  // x = [10,20,30,40,50,60,70,80]
+
+  const xd = @get_dsd(mem1d_dsd, .{ .tensor_access = |i|{3} -> x[i] });
+
+  const yd = @get_dsd(mem1d_dsd, .{ .tensor_access = |i|{3} -> y[i] });
+
+  const xd2 = @increment_dsd_offset(xd, 4, f32);
+
+  @fmovs(yd, xd2);
+
+  ```
+
+
+  Question: What does y contain? Give the three values in order.'
+expected:
+  values:
+  - 50
+  - 60
+  - 70
+scoring: trailing numbers within 1e-3 relative of the key, or the letter for choice items
+ground_truth: numpy/documented semantics; simulator confirmation of the numeric items pending (make_ground_truth.sh)
+source_citation: 'SDK builtins/DSD reference; B12: studies/wse3-characterization/FINDINGS.md section 10n (spmv_blk_dsdred)'

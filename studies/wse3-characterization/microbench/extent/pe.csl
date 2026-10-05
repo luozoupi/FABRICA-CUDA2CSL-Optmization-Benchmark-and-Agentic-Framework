@@ -1,0 +1,189 @@
+// DSD extent probe.  Arrays are fixed at the maximum length so that only the
+// requested DSD extent varies between variants.
+param memcpy_params;
+
+const EXIT: local_task_id = @get_local_task_id(9);
+const sys_mod = @import_module("<memcpy/memcpy>", memcpy_params);
+
+var A = @zeros([22000]f16);
+var ptr_C: [*]f16 = &A;
+
+fn bench_0() void {
+  const d0 = @get_dsd(mem1d_dsd, .{ .tensor_access = |i|{4096} -> A[i] });
+  const d1 = @get_dsd(mem1d_dsd, .{ .tensor_access = |i|{4096} -> A[i] });
+  const d2 = @get_dsd(mem1d_dsd, .{ .tensor_access = |i|{4096} -> A[i] });
+  @fmach(d2, d0, d1, @as(f16, 1.0009765625));
+}
+
+fn bench_1() void {
+  const d0 = @get_dsd(mem1d_dsd, .{ .tensor_access = |i|{8192} -> A[i] });
+  const d1 = @get_dsd(mem1d_dsd, .{ .tensor_access = |i|{8192} -> A[i] });
+  const d2 = @get_dsd(mem1d_dsd, .{ .tensor_access = |i|{8192} -> A[i] });
+  @fmach(d2, d0, d1, @as(f16, 1.0009765625));
+}
+
+fn bench_2() void {
+  const d0 = @get_dsd(mem1d_dsd, .{ .tensor_access = |i|{16384} -> A[i] });
+  const d1 = @get_dsd(mem1d_dsd, .{ .tensor_access = |i|{16384} -> A[i] });
+  const d2 = @get_dsd(mem1d_dsd, .{ .tensor_access = |i|{16384} -> A[i] });
+  @fmach(d2, d0, d1, @as(f16, 1.0009765625));
+}
+
+fn bench_3() void {
+  const d0 = @get_dsd(mem1d_dsd, .{ .tensor_access = |i|{20480} -> A[i] });
+  const d1 = @get_dsd(mem1d_dsd, .{ .tensor_access = |i|{20480} -> A[i] });
+  const d2 = @get_dsd(mem1d_dsd, .{ .tensor_access = |i|{20480} -> A[i] });
+  @fmach(d2, d0, d1, @as(f16, 1.0009765625));
+}
+
+fn bench_4() void {
+  const d0 = @get_dsd(mem1d_dsd, .{ .tensor_access = |i|{21000} -> A[i] });
+  const d1 = @get_dsd(mem1d_dsd, .{ .tensor_access = |i|{21000} -> A[i] });
+  const d2 = @get_dsd(mem1d_dsd, .{ .tensor_access = |i|{21000} -> A[i] });
+  @fmach(d2, d0, d1, @as(f16, 1.0009765625));
+}
+
+fn bench_5() void {
+  const d0 = @get_dsd(mem1d_dsd, .{ .tensor_access = |i|{21500} -> A[i] });
+  const d1 = @get_dsd(mem1d_dsd, .{ .tensor_access = |i|{21500} -> A[i] });
+  const d2 = @get_dsd(mem1d_dsd, .{ .tensor_access = |i|{21500} -> A[i] });
+  @fmach(d2, d0, d1, @as(f16, 1.0009765625));
+}
+
+fn bench_6() void {
+  const d0 = @get_dsd(mem1d_dsd, .{ .tensor_access = |i|{22000} -> A[i] });
+  const d1 = @get_dsd(mem1d_dsd, .{ .tensor_access = |i|{22000} -> A[i] });
+  const d2 = @get_dsd(mem1d_dsd, .{ .tensor_access = |i|{22000} -> A[i] });
+  @fmach(d2, d0, d1, @as(f16, 1.0009765625));
+}
+
+fn bench_7() void {
+  const d0 = @get_dsd(mem1d_dsd, .{ .tensor_access = |i|{4096} -> A[i] });
+  const d1 = @get_dsd(mem1d_dsd, .{ .tensor_access = |i|{4096} -> A[i] });
+  const d2 = @get_dsd(mem1d_dsd, .{ .tensor_access = |i|{4096} -> A[i] });
+  @fmovh(d2, @as(f16, 1.5));
+}
+
+fn bench_8() void {
+  const d0 = @get_dsd(mem1d_dsd, .{ .tensor_access = |i|{8192} -> A[i] });
+  const d1 = @get_dsd(mem1d_dsd, .{ .tensor_access = |i|{8192} -> A[i] });
+  const d2 = @get_dsd(mem1d_dsd, .{ .tensor_access = |i|{8192} -> A[i] });
+  @fmovh(d2, @as(f16, 1.5));
+}
+
+fn bench_9() void {
+  const d0 = @get_dsd(mem1d_dsd, .{ .tensor_access = |i|{16384} -> A[i] });
+  const d1 = @get_dsd(mem1d_dsd, .{ .tensor_access = |i|{16384} -> A[i] });
+  const d2 = @get_dsd(mem1d_dsd, .{ .tensor_access = |i|{16384} -> A[i] });
+  @fmovh(d2, @as(f16, 1.5));
+}
+
+fn bench_10() void {
+  const d0 = @get_dsd(mem1d_dsd, .{ .tensor_access = |i|{20480} -> A[i] });
+  const d1 = @get_dsd(mem1d_dsd, .{ .tensor_access = |i|{20480} -> A[i] });
+  const d2 = @get_dsd(mem1d_dsd, .{ .tensor_access = |i|{20480} -> A[i] });
+  @fmovh(d2, @as(f16, 1.5));
+}
+
+fn bench_11() void {
+  const d0 = @get_dsd(mem1d_dsd, .{ .tensor_access = |i|{21000} -> A[i] });
+  const d1 = @get_dsd(mem1d_dsd, .{ .tensor_access = |i|{21000} -> A[i] });
+  const d2 = @get_dsd(mem1d_dsd, .{ .tensor_access = |i|{21000} -> A[i] });
+  @fmovh(d2, @as(f16, 1.5));
+}
+
+fn bench_12() void {
+  const d0 = @get_dsd(mem1d_dsd, .{ .tensor_access = |i|{21500} -> A[i] });
+  const d1 = @get_dsd(mem1d_dsd, .{ .tensor_access = |i|{21500} -> A[i] });
+  const d2 = @get_dsd(mem1d_dsd, .{ .tensor_access = |i|{21500} -> A[i] });
+  @fmovh(d2, @as(f16, 1.5));
+}
+
+fn bench_13() void {
+  const d0 = @get_dsd(mem1d_dsd, .{ .tensor_access = |i|{22000} -> A[i] });
+  const d1 = @get_dsd(mem1d_dsd, .{ .tensor_access = |i|{22000} -> A[i] });
+  const d2 = @get_dsd(mem1d_dsd, .{ .tensor_access = |i|{22000} -> A[i] });
+  @fmovh(d2, @as(f16, 1.5));
+}
+
+fn bench_14() void {
+  const d0 = @get_dsd(mem1d_dsd, .{ .tensor_access = |i|{4096} -> A[i] });
+  const d1 = @get_dsd(mem1d_dsd, .{ .tensor_access = |i|{4096} -> A[i] });
+  const d2 = @get_dsd(mem1d_dsd, .{ .tensor_access = |i|{4096} -> A[i] });
+  @fmulh(d2, d0, d1);
+}
+
+fn bench_15() void {
+  const d0 = @get_dsd(mem1d_dsd, .{ .tensor_access = |i|{8192} -> A[i] });
+  const d1 = @get_dsd(mem1d_dsd, .{ .tensor_access = |i|{8192} -> A[i] });
+  const d2 = @get_dsd(mem1d_dsd, .{ .tensor_access = |i|{8192} -> A[i] });
+  @fmulh(d2, d0, d1);
+}
+
+fn bench_16() void {
+  const d0 = @get_dsd(mem1d_dsd, .{ .tensor_access = |i|{16384} -> A[i] });
+  const d1 = @get_dsd(mem1d_dsd, .{ .tensor_access = |i|{16384} -> A[i] });
+  const d2 = @get_dsd(mem1d_dsd, .{ .tensor_access = |i|{16384} -> A[i] });
+  @fmulh(d2, d0, d1);
+}
+
+fn bench_17() void {
+  const d0 = @get_dsd(mem1d_dsd, .{ .tensor_access = |i|{20480} -> A[i] });
+  const d1 = @get_dsd(mem1d_dsd, .{ .tensor_access = |i|{20480} -> A[i] });
+  const d2 = @get_dsd(mem1d_dsd, .{ .tensor_access = |i|{20480} -> A[i] });
+  @fmulh(d2, d0, d1);
+}
+
+fn bench_18() void {
+  const d0 = @get_dsd(mem1d_dsd, .{ .tensor_access = |i|{21000} -> A[i] });
+  const d1 = @get_dsd(mem1d_dsd, .{ .tensor_access = |i|{21000} -> A[i] });
+  const d2 = @get_dsd(mem1d_dsd, .{ .tensor_access = |i|{21000} -> A[i] });
+  @fmulh(d2, d0, d1);
+}
+
+fn bench_19() void {
+  const d0 = @get_dsd(mem1d_dsd, .{ .tensor_access = |i|{21500} -> A[i] });
+  const d1 = @get_dsd(mem1d_dsd, .{ .tensor_access = |i|{21500} -> A[i] });
+  const d2 = @get_dsd(mem1d_dsd, .{ .tensor_access = |i|{21500} -> A[i] });
+  @fmulh(d2, d0, d1);
+}
+
+fn bench_20() void {
+  const d0 = @get_dsd(mem1d_dsd, .{ .tensor_access = |i|{22000} -> A[i] });
+  const d1 = @get_dsd(mem1d_dsd, .{ .tensor_access = |i|{22000} -> A[i] });
+  const d2 = @get_dsd(mem1d_dsd, .{ .tensor_access = |i|{22000} -> A[i] });
+  @fmulh(d2, d0, d1);
+}
+
+fn compute() void {
+  bench_0();
+  bench_1();
+  bench_2();
+  bench_3();
+  bench_4();
+  bench_5();
+  bench_6();
+  bench_7();
+  bench_8();
+  bench_9();
+  bench_10();
+  bench_11();
+  bench_12();
+  bench_13();
+  bench_14();
+  bench_15();
+  bench_16();
+  bench_17();
+  bench_18();
+  bench_19();
+  bench_20();
+  @activate(EXIT);
+}
+
+task f_exit() void { sys_mod.unblock_cmd_stream(); }
+
+comptime {
+  @bind_local_task(f_exit, EXIT);
+  @export_symbol(ptr_C, "C");
+  @export_symbol(compute);
+}

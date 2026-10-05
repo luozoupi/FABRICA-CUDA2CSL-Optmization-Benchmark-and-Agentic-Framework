@@ -1,0 +1,275 @@
+{
+  "schema": 1,
+  "status": "summary_consistency_pass",
+  "revisions": {
+    "v2_0": "313e8ab01919298527d4f069bed3419c9eb6541e",
+    "sparse_ipdps": "7413ed46fa0f572f4b46e7fd9b7056462a31a770",
+    "paper": "bb7f61ad30873f64ebca758101f5e03d313c37d9",
+    "local_followup": "84553eef29952ea909490a031a2dc517231d4772"
+  },
+  "evidence_level": "Independent arithmetic and completeness audit of committed summaries; not independent replay of remote source/binaries or hardware jobs.",
+  "checked_paper_macros": {
+    "optGeomeanOOneOverOZero": "1.012",
+    "optGeomeanOOneIOverOOne": "0.972",
+    "hwRetainedPrograms": "21",
+    "hwRetainedRatioMin": "0.948",
+    "hwRetainedRatioMax": "1.009",
+    "hwRetainedRatioGeomean": "0.980",
+    "trRows": "81",
+    "trPassed": "81",
+    "trSpgemmHeldout": "2.32",
+    "trSpmmHeldout": "1.04",
+    "trSpmvHeldout": "1.02"
+  },
+  "optimizer": {
+    "cells": 27,
+    "retained": 27,
+    "candidate_records": 309,
+    "attempts_used": [
+      10,
+      11,
+      12
+    ],
+    "arm_speedup_ratios": {
+      "O1_over_O0": 1.011896268983615,
+      "O1I_over_O1": 0.9720781920188124
+    },
+    "medians": [
+      {
+        "kernel": "SpGEMM-Masked-Dot",
+        "arm": "O0",
+        "cycles": 209541.0
+      },
+      {
+        "kernel": "SpGEMM-Masked-Dot",
+        "arm": "O1",
+        "cycles": 202106.0
+      },
+      {
+        "kernel": "SpGEMM-Masked-Dot",
+        "arm": "O1I",
+        "cycles": 228040.0
+      },
+      {
+        "kernel": "SpMM-CSR-Dense",
+        "arm": "O0",
+        "cycles": 29270.0
+      },
+      {
+        "kernel": "SpMM-CSR-Dense",
+        "arm": "O1",
+        "cycles": 29289.0
+      },
+      {
+        "kernel": "SpMM-CSR-Dense",
+        "arm": "O1I",
+        "cycles": 29550.0
+      },
+      {
+        "kernel": "SpMV-RowBlock",
+        "arm": "O0",
+        "cycles": 37012.0
+      },
+      {
+        "kernel": "SpMV-RowBlock",
+        "arm": "O1",
+        "cycles": 37012.0
+      },
+      {
+        "kernel": "SpMV-RowBlock",
+        "arm": "O1I",
+        "cycles": 35396.0
+      }
+    ]
+  },
+  "hardware": {
+    "records": 21,
+    "expected_records": 30,
+    "missing": [
+      {
+        "kernel": "SpGEMM-Masked-Dot",
+        "arm": "O1I",
+        "seed": "1"
+      },
+      {
+        "kernel": "SpGEMM-Masked-Dot",
+        "arm": "O1I",
+        "seed": "2"
+      },
+      {
+        "kernel": "SpGEMM-Masked-Dot",
+        "arm": "O1I",
+        "seed": "3"
+      },
+      {
+        "kernel": "SpMM-CSR-Dense",
+        "arm": "O1I",
+        "seed": "1"
+      },
+      {
+        "kernel": "SpMM-CSR-Dense",
+        "arm": "O1I",
+        "seed": "2"
+      },
+      {
+        "kernel": "SpMM-CSR-Dense",
+        "arm": "O1I",
+        "seed": "3"
+      },
+      {
+        "kernel": "SpMV-RowBlock",
+        "arm": "O1I",
+        "seed": "1"
+      },
+      {
+        "kernel": "SpMV-RowBlock",
+        "arm": "O1I",
+        "seed": "2"
+      },
+      {
+        "kernel": "SpMV-RowBlock",
+        "arm": "O1I",
+        "seed": "3"
+      }
+    ],
+    "coverage": {
+      "full_success_records": 19,
+      "incomplete_records": [
+        {
+          "kernel": "SpMV-RowBlock",
+          "series": "O0",
+          "seed": "2",
+          "hw_status": "fail",
+          "hw_repeats_passed": "2/3 repeats passed"
+        },
+        {
+          "kernel": "SpMV-RowBlock",
+          "series": "O0",
+          "seed": "3",
+          "hw_status": "fail",
+          "hw_repeats_passed": "2/3 repeats passed"
+        }
+      ],
+      "reported_passing_trials": 61,
+      "reported_trials": 63
+    },
+    "ratio_min": 0.9477402946968423,
+    "ratio_max": 1.0094480189637656,
+    "ratio_geomean": 0.9801737229009133,
+    "rankings": {
+      "SpGEMM-Masked-Dot": {
+        "concordant": 20,
+        "discordant": 1,
+        "tied_sim_only": 0,
+        "tied_hw_only": 0,
+        "tied_both": 0,
+        "tau_b": 0.9047619047619048,
+        "untied_pair_ratio": 0.9047619047619048
+      },
+      "SpMM-CSR-Dense": {
+        "concordant": 20,
+        "discordant": 0,
+        "tied_sim_only": 0,
+        "tied_hw_only": 0,
+        "tied_both": 1,
+        "tau_b": 1.0,
+        "untied_pair_ratio": 1.0
+      },
+      "SpMV-RowBlock": {
+        "concordant": 0,
+        "discordant": 0,
+        "tied_sim_only": 0,
+        "tied_hw_only": 0,
+        "tied_both": 21,
+        "tau_b": null,
+        "untied_pair_ratio": null
+      }
+    },
+    "identity_limit": "Tables have no source/ELF hashes or raw per-trial records; arithmetic joins are not independent artifact replay."
+  },
+  "transfer": {
+    "retained_rows": 81,
+    "baseline_rows": 9,
+    "tasks": {
+      "SpGEMM-Masked-Dot": {
+        "rows": 27,
+        "passed": 27,
+        "speedup": 2.3180191632992284,
+        "per_arm": {
+          "O0": {
+            "rows": 9,
+            "beats_fc": 9
+          },
+          "O1": {
+            "rows": 9,
+            "beats_fc": 9
+          },
+          "O1I": {
+            "rows": 9,
+            "beats_fc": 9
+          }
+        }
+      },
+      "SpMM-CSR-Dense": {
+        "rows": 27,
+        "passed": 27,
+        "speedup": 1.0390598592174471,
+        "per_arm": {
+          "O0": {
+            "rows": 9,
+            "beats_fc": 9
+          },
+          "O1": {
+            "rows": 9,
+            "beats_fc": 9
+          },
+          "O1I": {
+            "rows": 9,
+            "beats_fc": 9
+          }
+        }
+      },
+      "SpMV-RowBlock": {
+        "rows": 27,
+        "passed": 27,
+        "speedup": 1.0210845598639375,
+        "per_arm": {
+          "O0": {
+            "rows": 9,
+            "beats_fc": 0
+          },
+          "O1": {
+            "rows": 9,
+            "beats_fc": 0
+          },
+          "O1I": {
+            "rows": 9,
+            "beats_fc": 6
+          }
+        }
+      }
+    },
+    "split_scope": "These are the matrices used by the retained-pass acceptance gate, not untouched final-test matrices."
+  },
+  "local": {
+    "scaling_rows": 20,
+    "scaling_passed": 17,
+    "scaling_timing_admission": "Provisional simulator cross-PE timestamp spans; clock alignment not audited. No hardware latency or scaling efficiency admitted.",
+    "deepseek_cells": 4,
+    "deepseek_recorded_pass": 4,
+    "deepseek_calls": 44,
+    "deepseek_improved_from_initial": 1,
+    "training_counts": {
+      "calls": 44,
+      "truncated": 2,
+      "unmatched": 37,
+      "correct": 5
+    },
+    "training_record_counts": {
+      "grpo_prompts.jsonl": 5,
+      "sft.jsonl": 5,
+      "outcomes.jsonl": 5
+    },
+    "raw_training_records_published": false
+  }
+}

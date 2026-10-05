@@ -1,0 +1,27 @@
+id: D07_fadds_forms
+group: D_api
+prompt: 'Answer this Cerebras CSL / WSE-3 question with the single letter of the correct option, then one sentence
+  of justification.
+
+
+  Which statement about `@fadds` is correct?
+
+
+  A) `@fadds(dest_dsd, src_dsd)` is the only form
+
+  B) it has a 3-operand form `@fadds(dest, src0, src1)` where dest may be a memory DSD, and a register-accumulator
+  form `@fadds(&acc, acc, dsd)`
+
+  C) it only accepts fabric DSDs
+
+  D) it accumulates f16 only'
+choices:
+- A) `@fadds(dest_dsd, src_dsd)` is the only form
+- B) it has a 3-operand form `@fadds(dest, src0, src1)` where dest may be a memory DSD, and a register-accumulator
+  form `@fadds(&acc, acc, dsd)`
+- C) it only accepts fabric DSDs
+- D) it accumulates f16 only
+expected:
+  choice: B
+scoring: first standalone letter A-D in the reply equals the key
+source_citation: "SDK builtins; FINDINGS \xA710n on the register-accumulator lowering"

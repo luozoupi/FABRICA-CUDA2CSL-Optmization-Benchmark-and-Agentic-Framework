@@ -1,0 +1,19 @@
+const memcpy = @import_module("<memcpy/get_params>", .{ .width = 1, .height = 1 });
+layout {
+  @set_rectangle(1, 1);
+  @set_tile_code(0, 0, "pe.csl", .{ .memcpy_params = memcpy.get_params(0) });
+  @export_name("row_ptr", [*]u16, true); @export_name("col_idx", [*]u16, true);
+  @export_name("col_start", [*]u16, true); @export_name("run_len", [*]u16, true);
+  @export_name("val", [*]f32, true);      @export_name("x", [*]f32, true);
+  @export_name("dia_val", [*]f32, true);  @export_name("dia_off", [*]u16, true);
+  @export_name("dia_len", [*]u16, true);  @export_name("dia_row0", [*]u16, true);
+  @export_name("dia_xoff", [*]u16, true);
+  @export_name("probe_seed", [*]f32, true); @export_name("probe_out", [*]f32, true);
+  @export_name("y_sc", [*]f32, true); @export_name("y_ir", [*]f32, true);
+  @export_name("y_bk", [*]f32, true); @export_name("y_di", [*]f32, true);
+  @export_name("mark", [*]u16, true);
+  @export_name("spmv_scalar", fn()void); @export_name("spmv_ir", fn()void);
+  @export_name("spmv_blk", fn()void);    @export_name("spmv_dia", fn()void);
+  @export_name("probe_reduce", fn()void); @export_name("probe_reduce_const", fn()void);
+  @export_name("spmv_blk_dsdred", fn()void); @export_name("y_bd", [*]f32, true);
+}

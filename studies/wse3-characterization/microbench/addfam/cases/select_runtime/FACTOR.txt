@@ -1,0 +1,4 @@
+control
+
+the single factor changed relative to `base`:
+if (k[0] > 0) { c[0] = a[0] + b[0]; } else { c[0] = a[1] + b[1]; }

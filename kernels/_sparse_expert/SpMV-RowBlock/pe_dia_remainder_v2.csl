@@ -1,0 +1,250 @@
+// SpMV-RowBlock compute (hand-written EXPERT VARIANT v2: diagonals as streams + remainder CSR, O(1) slot table): y_block = A_block * x on a 1 x P strip.
+//
+// PE 0 holds x (from the host) and broadcasts it east on color C_X; every other PE
+// receives x from the fabric into its own copy, then each PE runs the textbook scalar
+// CSR loop over its nrows_pe local rows (global column indices, gathered x). Timing is
+// device-internal (protocol device_internal_v2): f_tic_dev() opens the window at the
+// start of the launched entry point, f_toc_dev() closes it right before the host is
+// unblocked; the host takes max(end) - min(start) over the strip.
+// SDK 2.10-native syntax (untyped memcpy params); compiles on SDK 1.4 as well.
+
+param memcpy_params;
+
+param P: i16;
+param px: i16;
+param nrows_pe: u16;
+param ncols: u16;
+param max_nnz_pe: u16;
+param iters: u16;
+param structure_id: u16;
+param C_X: color;
+
+const EXIT: local_task_id = @get_local_task_id(9);
+const COMPUTE: local_task_id = @get_local_task_id(10);
+
+const sys_mod = @import_module("<memcpy/memcpy>", memcpy_params);
+const timestamp = @import_module("<time>");
+
+var tscStartBuffer = @zeros([timestamp.tsc_size_words]u16);
+var tscEndBuffer   = @zeros([timestamp.tsc_size_words]u16);
+var time_buf_u16   = @zeros([timestamp.tsc_size_words * 2]u16);
+var ptr_time_buf_u16: [*]u16 = &time_buf_u16;
+
+// Local CSR slice (rows of this PE), x (full), y slice. Host fills / reads via memcpy.
+var row_ptr_array = @zeros([nrows_pe + 1]u32);
+var col_idx_array = @zeros([max_nnz_pe]u32);
+var val_array     = @zeros([max_nnz_pe]f32);
+var x_array       = @zeros([ncols]f32);
+var y_array       = @zeros([nrows_pe]f32);
+
+var ptr_row_ptr: [*]u32 = &row_ptr_array;
+var ptr_col_idx: [*]u32 = &col_idx_array;
+var ptr_val:     [*]f32 = &val_array;
+var ptr_x:       [*]f32 = &x_array;
+var ptr_y:       [*]f32 = &y_array;
+
+// x as a stream: PE 0 sends it, the others receive it, ncols wavelets on C_X.
+const x_dsd     = @get_dsd(mem1d_dsd, .{ .tensor_access = |i|{ncols} -> x_array[i] });
+const fab_x_out = @get_dsd(fabout_dsd, .{ .extent = ncols, .fabric_color = C_X, .output_queue = @get_output_queue(2) });
+const fab_x_in  = @get_dsd(fabin_dsd,  .{ .extent = ncols, .fabric_color = C_X, .input_queue  = @get_input_queue(2) });
+
+// EXPERT VARIANT (2026-09-21): the axis change of P5, made robust to the held-out matrices.
+// The characterisation study measured the same SpMV at 36.2 cycles/nnz as a scalar CSR gather
+// and 7.3 vectorised ACROSS rows along the diagonals; this PE's training matrix holds 90% of
+// its nonzeros in 6 diagonals, and the translated kernels sit on the scalar rung. The host
+// contract stays CSR, so the diagonal layout is built ON the PE, once, inside the timed window
+// (this is the honest cost of the transformation under a CSR contract; it amortises over iters).
+// Nonzeros on the first MAX_DIAG distinct diagonals go to a dense diagonal store; the rest are
+// compacted in place into a remainder CSR and swept by the scalar loop. A matrix with few
+// diagonals runs almost entirely on descriptors; an unstructured one degrades to the reference
+// plus the conversion pass, and stays correct.
+const MAX_DIAG: u16 = 10;
+var dia_off  = @zeros([MAX_DIAG]i32);                    // global column - global row, per slot
+var dia_lo   = @zeros([MAX_DIAG]u16);                    // first local row with a valid x index
+var dia_len  = @zeros([MAX_DIAG]u16);                    // number of valid rows for this slot
+var dia_val  = @zeros([MAX_DIAG * nrows_pe]f32);         // dia_val[d * nrows_pe + r]
+var tmp_val  = @zeros([nrows_pe]f32);
+var rem_row_ptr = @zeros([nrows_pe + 1]u32);             // remainder CSR, compacted into col_idx/val
+var n_dia: u16 = 0;
+var converted: bool = false;
+const NO_SLOT: u16 = 0xFFFF;
+var slot_of = @constants([2 * ncols]u16, NO_SLOT);   // diagonal offset + ncols -> slot, O(1)
+
+const dia_dsd = @get_dsd(mem1d_dsd, .{ .tensor_access = |i|{nrows_pe} -> dia_val[i] });
+const tmp_dsd = @get_dsd(mem1d_dsd, .{ .tensor_access = |i|{nrows_pe} -> tmp_val[i] });
+const y_dsd   = @get_dsd(mem1d_dsd, .{ .tensor_access = |i|{nrows_pe} -> y_array[i] });
+const xw_dsd  = @get_dsd(mem1d_dsd, .{ .tensor_access = |i|{nrows_pe} -> x_array[i] });
+
+fn convert_to_dia() void {
+  const row0: i32 = @as(i32, px) * @as(i32, nrows_pe);
+  var w: u32 = 0;                                        // remainder write pointer (in place)
+  var r: u16 = 0;
+  while (r < nrows_pe) : (r += 1) {
+    rem_row_ptr[r] = w;
+    const start: u32 = row_ptr_array[r];
+    const end:   u32 = row_ptr_array[r + 1];
+    var j: u32 = start;
+    while (j < end) : (j += 1) {
+      const c: u32 = col_idx_array[j];
+      const v: f32 = val_array[j];
+      const off: i32 = @as(i32, c) - (row0 + @as(i32, r));
+      // find or open a slot for this diagonal: one table lookup, no search
+      const key: u32 = @as(u32, off + @as(i32, ncols));
+      var d: u16 = slot_of[key];
+      var found: bool = (d != NO_SLOT);
+      if (!found and n_dia < MAX_DIAG) {
+        d = n_dia;
+        dia_off[d] = off;
+        slot_of[key] = d;
+        n_dia += 1;
+        found = true;
+      }
+      if (found) {
+        dia_val[@as(u32, d) * @as(u32, nrows_pe) + @as(u32, r)] = v;
+      } else {
+        col_idx_array[w] = c;                            // remainder: compact in place
+        val_array[w] = v;
+        w += 1;
+      }
+    }
+  }
+  rem_row_ptr[nrows_pe] = w;
+  // valid row range per slot: 0 <= row0 + r + off < ncols
+  var d: u16 = 0;
+  while (d < n_dia) : (d += 1) {
+    const off: i32 = dia_off[d];
+    var lo: i32 = 0;
+    if (row0 + off < 0) { lo = -(row0 + off); }
+    var hi: i32 = @as(i32, nrows_pe);
+    const lim: i32 = @as(i32, ncols) - (row0 + off);
+    if (lim < hi) { hi = lim; }
+    if (hi < lo) { hi = lo; }
+    dia_lo[d] = @as(u16, lo);
+    dia_len[d] = @as(u16, hi - lo);
+  }
+  converted = true;
+}
+
+// y = (diagonal part, vectorised across rows) + (remainder, scalar CSR)
+fn spmv_rows() void {
+  if (!converted) { convert_to_dia(); }
+  const row0: i32 = @as(i32, px) * @as(i32, nrows_pe);
+  @fmovs(y_dsd, 0.0);
+  var d: u16 = 0;
+  while (d < n_dia) : (d += 1) {
+    const len: u16 = dia_len[d];
+    if (len == 0) { continue; }
+    const lo: u16 = dia_lo[d];
+    const xoff: i32 = row0 + dia_off[d] + @as(i32, lo);  // x index of local row lo on this diagonal
+    var vd = @set_dsd_length(dia_dsd, len);
+    vd = @increment_dsd_offset(vd, @as(i16, @as(u32, d) * @as(u32, nrows_pe) + @as(u32, lo)), f32);
+    var xd = @set_dsd_length(xw_dsd, len);
+    xd = @increment_dsd_offset(xd, @as(i16, xoff), f32);
+    var td = @set_dsd_length(tmp_dsd, len);
+    var yd = @set_dsd_length(y_dsd, len);
+    yd = @increment_dsd_offset(yd, @as(i16, lo), f32);
+    @fmuls(td, vd, xd);
+    @fadds(yd, yd, td);                                  // memory destination: no register hazard
+  }
+  var r: u16 = 0;
+  while (r < nrows_pe) : (r += 1) {
+    var sum: f32 = 0.0;
+    var j: u32 = rem_row_ptr[r];
+    const end: u32 = rem_row_ptr[r + 1];
+    while (j < end) : (j += 1) {
+      const c: u32 = col_idx_array[j];
+      sum += val_array[j] * x_array[c];
+    }
+    y_array[r] += sum;
+  }
+}
+
+// Entry point (host-launched): stamp, distribute x, then compute.
+fn main() void {
+  f_tic_dev();
+  if (P == 1) {
+    @activate(COMPUTE);
+  } else if (px == 0) {
+    @fmovs(fab_x_out, x_dsd, .{ .async = true });     // broadcast x east; local compute may start now
+    @activate(COMPUTE);
+  } else {
+    @fmovs(x_dsd, fab_x_in, .{ .async = true, .activate = COMPUTE });   // compute once x has arrived
+  }
+}
+
+task compute() void {
+  for (@range(u16, iters)) |_| {
+    spmv_rows();
+  }
+  @activate(EXIT);
+}
+
+task f_exit() void {
+  f_toc_dev();
+  sys_mod.unblock_cmd_stream();
+}
+
+fn f_enable_timer() void {
+  timestamp.enable_tsc();
+  sys_mod.unblock_cmd_stream();
+}
+
+// Device-internal timing window (protocol device_internal_v2). The start stamp
+// is taken inside the launched entry point and the end stamp in the completion
+// task, so the host RPC between separately launched f_tic/f_toc (~488 us per
+// launch on WSE-3 hardware) is no longer inside the measured window. f_tic and
+// f_toc stay exported for backward compatibility; the runner no longer launches
+// them. Both helpers are FROZEN (body and call sites) by the contract check.
+var tsc_window_open: bool = false;
+fn f_tic_dev() void {
+  if (!tsc_window_open) {
+    tsc_window_open = true;
+    timestamp.get_timestamp(&tscStartBuffer);
+  }
+}
+fn f_toc_dev() void {
+  timestamp.get_timestamp(&tscEndBuffer);
+}
+
+fn f_tic() void {
+  timestamp.get_timestamp(&tscStartBuffer);
+  sys_mod.unblock_cmd_stream();
+}
+
+fn f_toc() void {
+  timestamp.get_timestamp(&tscEndBuffer);
+  sys_mod.unblock_cmd_stream();
+}
+
+fn f_memcpy_timestamps() void {
+  time_buf_u16[0] = tscStartBuffer[0];
+  time_buf_u16[1] = tscStartBuffer[1];
+  time_buf_u16[2] = tscStartBuffer[2];
+  time_buf_u16[3] = tscEndBuffer[0];
+  time_buf_u16[4] = tscEndBuffer[1];
+  time_buf_u16[5] = tscEndBuffer[2];
+  sys_mod.unblock_cmd_stream();
+}
+
+comptime {
+  @comptime_assert(structure_id < 8);            // consumed here; the host reads it from out.json
+  @bind_local_task(compute, COMPUTE);
+  @bind_local_task(f_exit, EXIT);
+
+  if (P > 1 and @is_arch("wse3")) {
+    @initialize_queue(@get_output_queue(2), .{ .color = C_X });
+    @initialize_queue(@get_input_queue(2),  .{ .color = C_X });
+  }
+
+  @export_symbol(ptr_row_ptr, "row_ptr");
+  @export_symbol(ptr_col_idx, "col_idx");
+  @export_symbol(ptr_val,     "val");
+  @export_symbol(ptr_x,       "x");
+  @export_symbol(ptr_y,       "y");
+  @export_symbol(ptr_time_buf_u16, "time_buf_u16");
+  @export_symbol(main);
+  @export_symbol(f_tic);
+  @export_symbol(f_toc);
+  @export_symbol(f_memcpy_timestamps);
+  @export_symbol(f_enable_timer);
+}

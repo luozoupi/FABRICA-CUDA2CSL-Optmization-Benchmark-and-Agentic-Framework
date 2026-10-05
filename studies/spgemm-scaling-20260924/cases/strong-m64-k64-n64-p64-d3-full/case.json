@@ -1,0 +1,83 @@
+{
+  "id": "strong-m64-k64-n64-p64-d3-full",
+  "group": "strong",
+  "M": 64,
+  "K": 64,
+  "N": 64,
+  "P": 64,
+  "S": 8,
+  "R": 1,
+  "AC": 17,
+  "BC": 192,
+  "OC": 51,
+  "W": 64,
+  "degree": 3,
+  "variant": "full",
+  "sessions": [
+    {
+      "pattern": "banded",
+      "policy": "row_blocks",
+      "changed": false,
+      "matrix_hashes": {
+        "A": "8c61fe7ae14361f422ee7529be3435b77426f94df81a7c8f4f0d6e729634c630",
+        "B": "e87d2d6f14920130741970d72b490354401b917b8e6cf7e8ed4021efbcf48fdb"
+      }
+    },
+    {
+      "pattern": "uniform",
+      "policy": "row_blocks",
+      "changed": false,
+      "matrix_hashes": {
+        "A": "1df301320bec0d637b9e4bb9dfb62e3572f21d68672d117282c1cdd834bc1562",
+        "B": "05720ddab4ddd020c28a8cb8906678d2b96c1c88659cab39f25da63921c05894"
+      }
+    },
+    {
+      "pattern": "skewed",
+      "policy": "row_blocks",
+      "changed": false,
+      "matrix_hashes": {
+        "A": "7eabbd764da11b598349629d770d83568eb90f468003f387e40799bf6f8c3b2e",
+        "B": "05720ddab4ddd020c28a8cb8906678d2b96c1c88659cab39f25da63921c05894"
+      }
+    },
+    {
+      "pattern": "skewed",
+      "policy": "product_balanced",
+      "changed": false,
+      "matrix_hashes": {
+        "A": "7eabbd764da11b598349629d770d83568eb90f468003f387e40799bf6f8c3b2e",
+        "B": "05720ddab4ddd020c28a8cb8906678d2b96c1c88659cab39f25da63921c05894"
+      }
+    },
+    {
+      "pattern": "skewed",
+      "policy": "product_balanced",
+      "changed": true,
+      "matrix_hashes": {
+        "A": "5ada9d8dead6ff05e71a8ce876a62c99c1a0df8a5490f29c6fa99400f213138e",
+        "B": "1f1bbee00fbf8e45ccc99a5abab50621ca43f66cdd237885c75fc6baf1f58c29"
+      }
+    },
+    {
+      "pattern": "skewed",
+      "policy": "product_balanced",
+      "changed": false,
+      "matrix_hashes": {
+        "A": "7eabbd764da11b598349629d770d83568eb90f468003f387e40799bf6f8c3b2e",
+        "B": "05720ddab4ddd020c28a8cb8906678d2b96c1c88659cab39f25da63921c05894"
+      }
+    }
+  ],
+  "repetitions": 3,
+  "declared_application_bytes": 2868,
+  "allocation_rule": "Per-PE max over frozen sessions/partitions of sum(min(N,row candidate products)); input capacities likewise. Includes guard slots. No numerical oracle result used to choose capacity.",
+  "preflight": "compile_required",
+  "source_hashes": {
+    "single_collective.csl": "95db24b1ca3fd7e9d868657d0c991e4d9d3ff4601b154caf8d394523a19870b7",
+    "pe.csl": "8cc560b7f7a1fe6660f222c15d6a7d72a98cb6d5029b6734240e14cce65d5011",
+    "layout.csl": "0f841665ca0ea9f9e420e1099e5629bb4ab5aca660b85ce6540899c6ebe03f51",
+    "host.py": "afc8b5cb8fe9d182c3d3225fbba533ba233dbdbc38e82340a3e5723fd4101055",
+    "inputs.py": "99916fee5949cfa4bb7efc89b2da16ece9806de175d9bae4254f8e6504e5be4e"
+  }
+}

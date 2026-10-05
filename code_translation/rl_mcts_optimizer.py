@@ -8,7 +8,7 @@ Models the optimization process as a tree:
   Root: baseline translation result
 
 UCT selection, LLM rollout, backpropagation of normalised runtime improvement.
-Tree persists across runs in ~/.cache/fabrica/rl_data/mcts_tree.json.
+Tree persists across runs in ~/xkernel/rl_data/mcts_tree.json.
 """
 
 from __future__ import annotations
@@ -20,7 +20,7 @@ import os
 import random
 from typing import Any, Dict, List, Optional, Tuple
 
-DEFAULT_TREE_PATH = os.path.expanduser("~/.cache/fabrica/rl_data/mcts_tree.json")
+DEFAULT_TREE_PATH = os.path.expanduser("~/xkernel/rl_data/mcts_tree.json")
 UCT_C = 1.4     # exploration constant
 MAX_DEPTH = 4   # maximum step depth per episode
 

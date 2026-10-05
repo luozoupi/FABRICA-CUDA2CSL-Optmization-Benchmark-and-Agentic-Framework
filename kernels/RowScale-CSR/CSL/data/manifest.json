@@ -1,0 +1,40 @@
+{
+ "schema": 1,
+ "class": "hb_n512",
+ "train_seed": 7,
+ "values": "seeded_uniform",
+ "matrices": [
+  {
+   "id": "HB/494_bus",
+   "file": "494_bus.mtx",
+   "sha256": "68f051d52e72593d1331344ee8be58a168ac0fac2f90a666c8821b2d4d3bd6d3",
+   "n": 494,
+   "m": 494,
+   "nnz": 1666
+  },
+  {
+   "id": "HB/bcspwr05",
+   "file": "bcspwr05.mtx",
+   "sha256": "819053c354e0cd8220332d09292d73b2c915b84393ef07869f522ae80b9da5cb",
+   "n": 443,
+   "m": 443,
+   "nnz": 1623
+  },
+  {
+   "id": "HB/gre_512",
+   "file": "gre_512.mtx",
+   "sha256": "fc42049c67ad75636b279f0c6252e2df944aecb2314da9c67a9758505aff8322",
+   "n": 512,
+   "m": 512,
+   "nnz": 2192
+  },
+  {
+   "id": "HB/west0479",
+   "file": "west0479.mtx",
+   "sha256": "a45b04df5fc8b27c6e87dba0fae80f734267d4c44deb5313578f5893a6a6122b",
+   "n": 479,
+   "m": 479,
+   "nnz": 1910
+  }
+ ]
+}

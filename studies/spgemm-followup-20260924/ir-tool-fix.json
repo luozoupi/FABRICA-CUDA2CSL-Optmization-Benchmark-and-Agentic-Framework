@@ -1,0 +1,8 @@
+{
+  "created_utc": "2026-09-24T21:54:07.076154+00:00",
+  "reason": "Fix application/routing artifact overwrite when the IR shadow output is outside cwd; preserve existing names for outputs beneath cwd.",
+  "executed_tool_archive": "/home/USER/spgemm-followup-20260924/tools-used/cslc_ir.py",
+  "executed_tool_sha256": "6f3c9a6b4cdb24a3b2aec32122cfc71e208ca0bec952c452eabf1d74ff237bc8",
+  "fixed_tool_sha256": "df558b576397e7b556b2a5dd6201c94807ae33ee98340b2218d60a6cd2001a95",
+  "applied_after_all_measurements_and_IR_captures": true
+}

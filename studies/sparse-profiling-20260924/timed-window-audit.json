@@ -1,0 +1,702 @@
+{
+  "schema_version": 1,
+  "analyzer_sha256": "058edd7a59ebb5c644f49e10bef0925bc08732ff2716da8d16ab4d5913c87a2f",
+  "trace_parser_sha256": "b24b56aafa1ae5cfa1d28c59ea330a98113f562dc7b1a420a3386b295404568e",
+  "scope": "SDK timestamp low-word-read dispatch anchors, start inclusive/end exclusive. Includes in-window timestamp plumbing and output initialization; excludes host transfers. Recorded replay correctness is checked, not re-executed. Results are simulator events, not hardware retirement, stall attribution, or arithmetic utilization.",
+  "results": [
+    {
+      "id": "perf-gemm-row_dsd-16x16x16-r",
+      "passed": true,
+      "evidence": "retained WSE-3 simulator trace; offline analysis",
+      "case_directory": "/home/USER/wse-matmul-microbench/performance-traces/perf-gemm-row_dsd-16x16x16-r",
+      "compute_tile": {
+        "x": 4,
+        "y": 1,
+        "index": 12
+      },
+      "timer_candidate_pcs": [
+        330,
+        458,
+        478
+      ],
+      "observed_timer_pair": [
+        330,
+        478
+      ],
+      "windows": [
+        {
+          "repetition": 0,
+          "warmup": true,
+          "cycles": 17634,
+          "trace_start_cycle": 3749,
+          "trace_end_cycle": 21383,
+          "recorded_tsc_start": 223,
+          "recorded_tsc_end": 17857,
+          "dispatches": 7556,
+          "opcode_dispatches": {
+            "ADD16.NF": 1056,
+            "FMACS": 256,
+            "FMOV16.NF": 18,
+            "FMOV32.NF": 257,
+            "JMP": 272,
+            "LD16": 3,
+            "LDDWDS": 1,
+            "LTU16": 272,
+            "MOVRI": 6,
+            "NOP": 1540,
+            "SLL16.NF": 544,
+            "SLR16.NF": 256,
+            "ST16": 3075
+          },
+          "floating_dispatches": {
+            "FMACS": 256
+          },
+          "floating_result_elements": {
+            "FMACS": 4096
+          },
+          "floating_result_event_cycles": 4096,
+          "lane_field_counts": {
+            "0": 4096
+          },
+          "fma_result_span_cycles": {
+            "min": 31,
+            "median": 31.0,
+            "max": 31
+          },
+          "fma_dispatch_to_first_result_cycles": {
+            "min": 4,
+            "median": 4.0,
+            "max": 4
+          },
+          "conventional_flops": 8192,
+          "conventional_flops_per_cycle": 0.464557105591471,
+          "cycles_per_dispatch": 2.3337744838538907
+        },
+        {
+          "repetition": 1,
+          "warmup": false,
+          "cycles": 17634,
+          "trace_start_cycle": 42379,
+          "trace_end_cycle": 60013,
+          "recorded_tsc_start": 38853,
+          "recorded_tsc_end": 56487,
+          "dispatches": 7556,
+          "opcode_dispatches": {
+            "ADD16.NF": 1056,
+            "FMACS": 256,
+            "FMOV16.NF": 18,
+            "FMOV32.NF": 257,
+            "JMP": 272,
+            "LD16": 3,
+            "LDDWDS": 1,
+            "LTU16": 272,
+            "MOVRI": 6,
+            "NOP": 1540,
+            "SLL16.NF": 544,
+            "SLR16.NF": 256,
+            "ST16": 3075
+          },
+          "floating_dispatches": {
+            "FMACS": 256
+          },
+          "floating_result_elements": {
+            "FMACS": 4096
+          },
+          "floating_result_event_cycles": 4096,
+          "lane_field_counts": {
+            "0": 4096
+          },
+          "fma_result_span_cycles": {
+            "min": 31,
+            "median": 31.0,
+            "max": 31
+          },
+          "fma_dispatch_to_first_result_cycles": {
+            "min": 4,
+            "median": 4.0,
+            "max": 4
+          },
+          "conventional_flops": 8192,
+          "conventional_flops_per_cycle": 0.464557105591471,
+          "cycles_per_dispatch": 2.3337744838538907
+        },
+        {
+          "repetition": 2,
+          "warmup": false,
+          "cycles": 17634,
+          "trace_start_cycle": 77187,
+          "trace_end_cycle": 94821,
+          "recorded_tsc_start": 73661,
+          "recorded_tsc_end": 91295,
+          "dispatches": 7556,
+          "opcode_dispatches": {
+            "ADD16.NF": 1056,
+            "FMACS": 256,
+            "FMOV16.NF": 18,
+            "FMOV32.NF": 257,
+            "JMP": 272,
+            "LD16": 3,
+            "LDDWDS": 1,
+            "LTU16": 272,
+            "MOVRI": 6,
+            "NOP": 1540,
+            "SLL16.NF": 544,
+            "SLR16.NF": 256,
+            "ST16": 3075
+          },
+          "floating_dispatches": {
+            "FMACS": 256
+          },
+          "floating_result_elements": {
+            "FMACS": 4096
+          },
+          "floating_result_event_cycles": 4096,
+          "lane_field_counts": {
+            "0": 4096
+          },
+          "fma_result_span_cycles": {
+            "min": 31,
+            "median": 31.0,
+            "max": 31
+          },
+          "fma_dispatch_to_first_result_cycles": {
+            "min": 4,
+            "median": 4.0,
+            "max": 4
+          },
+          "conventional_flops": 8192,
+          "conventional_flops_per_cycle": 0.464557105591471,
+          "cycles_per_dispatch": 2.3337744838538907
+        },
+        {
+          "repetition": 3,
+          "warmup": false,
+          "cycles": 17634,
+          "trace_start_cycle": 112006,
+          "trace_end_cycle": 129640,
+          "recorded_tsc_start": 108480,
+          "recorded_tsc_end": 126114,
+          "dispatches": 7556,
+          "opcode_dispatches": {
+            "ADD16.NF": 1056,
+            "FMACS": 256,
+            "FMOV16.NF": 18,
+            "FMOV32.NF": 257,
+            "JMP": 272,
+            "LD16": 3,
+            "LDDWDS": 1,
+            "LTU16": 272,
+            "MOVRI": 6,
+            "NOP": 1540,
+            "SLL16.NF": 544,
+            "SLR16.NF": 256,
+            "ST16": 3075
+          },
+          "floating_dispatches": {
+            "FMACS": 256
+          },
+          "floating_result_elements": {
+            "FMACS": 4096
+          },
+          "floating_result_event_cycles": 4096,
+          "lane_field_counts": {
+            "0": 4096
+          },
+          "fma_result_span_cycles": {
+            "min": 31,
+            "median": 31.0,
+            "max": 31
+          },
+          "fma_dispatch_to_first_result_cycles": {
+            "min": 4,
+            "median": 4.0,
+            "max": 4
+          },
+          "conventional_flops": 8192,
+          "conventional_flops_per_cycle": 0.464557105591471,
+          "cycles_per_dispatch": 2.3337744838538907
+        }
+      ],
+      "discarded_events": 0,
+      "warnings": [],
+      "elf_sha256": {
+        "bin/out_0_0.elf": "0dcbbf4236029c0a87d594e04db4136b25848f7b64a1eb1b948180a73e9a5e0d",
+        "generated/default.elf": "1a4776e4e8ea2809c518b2e36632ed454f65a1b85b80172c13c8a616b46dafd1",
+        "generated/MEMCPY_XY_ROUTES.elf": "145cfdf2650e18ccdc7a3c92f7692e103dd9a03c2762a8f8e36727d7b9924b92",
+        "generated/coord.elf": "a8c0c8e70d82ceb0019009b65eb6883ffcbf91dc55b537bcc188343a08542a66",
+        "east/bin/out_1_0.elf": "ceaec0d944a6aab27e238890a6ba939b432fba4788be63c70b1012d9ea37be24",
+        "east/bin/out_0_0.elf": "f3a6926e08cfc09b009267b1704734e9a4c9c69e7a3f1a2e84dfeb9ba683443a",
+        "west/bin/out_1_0.elf": "f3e14e207bf62c669bdb5269208ffa2d9f342d433b7245c35bf3e194299f88cd",
+        "west/bin/out_2_0.elf": "603bac3d102d82db359a235d75d1432d914c2ebf234089bd6974cb6a5aa89d44",
+        "west/bin/out_0_0.elf": "3a73914d0f4e7dff0a8cdd28dddc9477f5d9aba57296ebf254e1e8e432d33271"
+      },
+      "input_sha256": {
+        "case.json": "28a3921b78dfa397b742279d950a0e1073f0cc6a9002819ce940b513b2d6eecc",
+        "trace-observations.json": "eece582ab5ac06d603799e502183c3a5823b8785f4a80e8074de14bafcd3bcd1",
+        "elf-binding.json": "bd7a5864e407d3fdaf4b3e78eab690c369a04efe48c780e7082b121138a829c8",
+        "disassembly.json": "be576ddc8234c1e171ea25d9b4e9a98f121b836102d5b2b25a9fc640142e96cd",
+        "pe.csl": "34794c192def73b64c974f4078e313be2611c1101d7ac4cd2d128c99efd4ab2e",
+        "layout.csl": "f38893acbc18a506eed3e6b466963b9e03ef40b9e681416bfb0a240ad6624a7e",
+        "simfab_traces/global_simdata.json": "2206c7bfeb19683d957733fdc246de92cf19b2b7b0debeb50f28ce39269a508f",
+        "simfab_traces/metadata": "c28f2067af2c1ab04d5b71f3768ee812ca059f0ae8737c167e8eb9e695810553",
+        "simfab_traces/stream0": "f67a29a44dd32755a3d9acb9e9eec07e31ee1bbd86ad83cd8c94a9aa9b252c70"
+      }
+    },
+    {
+      "id": "perf-gemm-column_dsd-16x16x16-r",
+      "passed": true,
+      "evidence": "retained WSE-3 simulator trace; offline analysis",
+      "case_directory": "/home/USER/wse-matmul-microbench/performance-traces/perf-gemm-column_dsd-16x16x16-r",
+      "compute_tile": {
+        "x": 4,
+        "y": 1,
+        "index": 12
+      },
+      "timer_candidate_pcs": [
+        330,
+        458,
+        478
+      ],
+      "observed_timer_pair": [
+        330,
+        478
+      ],
+      "windows": [
+        {
+          "repetition": 0,
+          "warmup": true,
+          "cycles": 17138,
+          "trace_start_cycle": 3749,
+          "trace_end_cycle": 20887,
+          "recorded_tsc_start": 223,
+          "recorded_tsc_end": 17361,
+          "dispatches": 7796,
+          "opcode_dispatches": {
+            "ADD16.NF": 1056,
+            "FMACS": 256,
+            "FMOV16.NF": 18,
+            "FMOV32.NF": 257,
+            "JMP": 272,
+            "LD16": 3,
+            "LDDWDS": 1,
+            "LTU16": 272,
+            "MOVRI": 6,
+            "NOP": 1540,
+            "SLL16.NF": 784,
+            "SLR16.NF": 256,
+            "ST16": 3075
+          },
+          "floating_dispatches": {
+            "FMACS": 256
+          },
+          "floating_result_elements": {
+            "FMACS": 4096
+          },
+          "floating_result_event_cycles": 4096,
+          "lane_field_counts": {
+            "0": 4096
+          },
+          "fma_result_span_cycles": {
+            "min": 26,
+            "median": 26.0,
+            "max": 44
+          },
+          "fma_dispatch_to_first_result_cycles": {
+            "min": 3,
+            "median": 3.0,
+            "max": 4
+          },
+          "conventional_flops": 8192,
+          "conventional_flops_per_cycle": 0.4780021005951686,
+          "cycles_per_dispatch": 2.198306824012314
+        },
+        {
+          "repetition": 1,
+          "warmup": false,
+          "cycles": 17138,
+          "trace_start_cycle": 40514,
+          "trace_end_cycle": 57652,
+          "recorded_tsc_start": 36988,
+          "recorded_tsc_end": 54126,
+          "dispatches": 7796,
+          "opcode_dispatches": {
+            "ADD16.NF": 1056,
+            "FMACS": 256,
+            "FMOV16.NF": 18,
+            "FMOV32.NF": 257,
+            "JMP": 272,
+            "LD16": 3,
+            "LDDWDS": 1,
+            "LTU16": 272,
+            "MOVRI": 6,
+            "NOP": 1540,
+            "SLL16.NF": 784,
+            "SLR16.NF": 256,
+            "ST16": 3075
+          },
+          "floating_dispatches": {
+            "FMACS": 256
+          },
+          "floating_result_elements": {
+            "FMACS": 4096
+          },
+          "floating_result_event_cycles": 4096,
+          "lane_field_counts": {
+            "0": 4096
+          },
+          "fma_result_span_cycles": {
+            "min": 26,
+            "median": 26.0,
+            "max": 44
+          },
+          "fma_dispatch_to_first_result_cycles": {
+            "min": 3,
+            "median": 3.0,
+            "max": 4
+          },
+          "conventional_flops": 8192,
+          "conventional_flops_per_cycle": 0.4780021005951686,
+          "cycles_per_dispatch": 2.198306824012314
+        },
+        {
+          "repetition": 2,
+          "warmup": false,
+          "cycles": 17138,
+          "trace_start_cycle": 74823,
+          "trace_end_cycle": 91961,
+          "recorded_tsc_start": 71297,
+          "recorded_tsc_end": 88435,
+          "dispatches": 7796,
+          "opcode_dispatches": {
+            "ADD16.NF": 1056,
+            "FMACS": 256,
+            "FMOV16.NF": 18,
+            "FMOV32.NF": 257,
+            "JMP": 272,
+            "LD16": 3,
+            "LDDWDS": 1,
+            "LTU16": 272,
+            "MOVRI": 6,
+            "NOP": 1540,
+            "SLL16.NF": 784,
+            "SLR16.NF": 256,
+            "ST16": 3075
+          },
+          "floating_dispatches": {
+            "FMACS": 256
+          },
+          "floating_result_elements": {
+            "FMACS": 4096
+          },
+          "floating_result_event_cycles": 4096,
+          "lane_field_counts": {
+            "0": 4096
+          },
+          "fma_result_span_cycles": {
+            "min": 26,
+            "median": 26.0,
+            "max": 44
+          },
+          "fma_dispatch_to_first_result_cycles": {
+            "min": 3,
+            "median": 3.0,
+            "max": 4
+          },
+          "conventional_flops": 8192,
+          "conventional_flops_per_cycle": 0.4780021005951686,
+          "cycles_per_dispatch": 2.198306824012314
+        },
+        {
+          "repetition": 3,
+          "warmup": false,
+          "cycles": 17138,
+          "trace_start_cycle": 109170,
+          "trace_end_cycle": 126308,
+          "recorded_tsc_start": 105644,
+          "recorded_tsc_end": 122782,
+          "dispatches": 7796,
+          "opcode_dispatches": {
+            "ADD16.NF": 1056,
+            "FMACS": 256,
+            "FMOV16.NF": 18,
+            "FMOV32.NF": 257,
+            "JMP": 272,
+            "LD16": 3,
+            "LDDWDS": 1,
+            "LTU16": 272,
+            "MOVRI": 6,
+            "NOP": 1540,
+            "SLL16.NF": 784,
+            "SLR16.NF": 256,
+            "ST16": 3075
+          },
+          "floating_dispatches": {
+            "FMACS": 256
+          },
+          "floating_result_elements": {
+            "FMACS": 4096
+          },
+          "floating_result_event_cycles": 4096,
+          "lane_field_counts": {
+            "0": 4096
+          },
+          "fma_result_span_cycles": {
+            "min": 26,
+            "median": 26.0,
+            "max": 44
+          },
+          "fma_dispatch_to_first_result_cycles": {
+            "min": 3,
+            "median": 3.0,
+            "max": 4
+          },
+          "conventional_flops": 8192,
+          "conventional_flops_per_cycle": 0.4780021005951686,
+          "cycles_per_dispatch": 2.198306824012314
+        }
+      ],
+      "discarded_events": 0,
+      "warnings": [],
+      "elf_sha256": {
+        "bin/out_0_0.elf": "b367c8665d8eb98ea96fa2b824569d519fd77d5921dea8e8b6697ceca2110177",
+        "generated/default.elf": "1a4776e4e8ea2809c518b2e36632ed454f65a1b85b80172c13c8a616b46dafd1",
+        "generated/MEMCPY_XY_ROUTES.elf": "145cfdf2650e18ccdc7a3c92f7692e103dd9a03c2762a8f8e36727d7b9924b92",
+        "generated/coord.elf": "a8c0c8e70d82ceb0019009b65eb6883ffcbf91dc55b537bcc188343a08542a66",
+        "east/bin/out_1_0.elf": "ceaec0d944a6aab27e238890a6ba939b432fba4788be63c70b1012d9ea37be24",
+        "east/bin/out_0_0.elf": "f3a6926e08cfc09b009267b1704734e9a4c9c69e7a3f1a2e84dfeb9ba683443a",
+        "west/bin/out_1_0.elf": "f3e14e207bf62c669bdb5269208ffa2d9f342d433b7245c35bf3e194299f88cd",
+        "west/bin/out_2_0.elf": "603bac3d102d82db359a235d75d1432d914c2ebf234089bd6974cb6a5aa89d44",
+        "west/bin/out_0_0.elf": "3a73914d0f4e7dff0a8cdd28dddc9477f5d9aba57296ebf254e1e8e432d33271"
+      },
+      "input_sha256": {
+        "case.json": "c4bc05c58f8922fe9d795d436254ced79efee1dde374ef47a71965240a62ab93",
+        "trace-observations.json": "74dc3ab8248bfb5691492460b04a3190cf29245f3e6aa1d6607c4bfa04eac074",
+        "elf-binding.json": "ef697cc0d5c875128528a8b5ddeae1576ef94c39fbf5f20423cdc45401f1578b",
+        "disassembly.json": "aaeef34900052668e41325f08ed30dea61c02d5644b6d19b3fc6c1c287ff8d1b",
+        "pe.csl": "f7c0d16be0db63413075e22d10f445229eefcc004230a9cd667501ece86932ff",
+        "layout.csl": "f38893acbc18a506eed3e6b466963b9e03ef40b9e681416bfb0a240ad6624a7e",
+        "simfab_traces/global_simdata.json": "b538494f3b945c1b0aa6b8d2356cc4c6cddd0db90ebff60b90ef9ed2e440072c",
+        "simfab_traces/metadata": "c28f2067af2c1ab04d5b71f3768ee812ca059f0ae8737c167e8eb9e695810553",
+        "simfab_traces/stream0": "b4b8ee481f4d5aa3508118d88450c51ddf1ab1cb5e3b3c7eb27eee9132158e5a"
+      }
+    },
+    {
+      "id": "perf-gemm-scalar_ijk-16x16x16-r",
+      "passed": true,
+      "evidence": "retained WSE-3 simulator trace; offline analysis",
+      "case_directory": "/home/USER/wse-matmul-microbench/performance-traces/perf-gemm-scalar_ijk-16x16x16-r",
+      "compute_tile": {
+        "x": 4,
+        "y": 1,
+        "index": 12
+      },
+      "timer_candidate_pcs": [
+        330,
+        448,
+        468
+      ],
+      "observed_timer_pair": [
+        330,
+        468
+      ],
+      "windows": [
+        {
+          "repetition": 0,
+          "warmup": true,
+          "cycles": 111296,
+          "trace_start_cycle": 3749,
+          "trace_end_cycle": 115045,
+          "recorded_tsc_start": 223,
+          "recorded_tsc_end": 111519,
+          "dispatches": 68706,
+          "opcode_dispatches": {
+            "ADD16.NF": 21264,
+            "FADDS": 4096,
+            "FMOV16.NF": 274,
+            "FMOV32.NF": 8705,
+            "FMULS": 4096,
+            "JMP": 4368,
+            "LD16": 259,
+            "LDDWDS": 1,
+            "LTU16": 4368,
+            "MOVRI": 4,
+            "NOP": 4,
+            "SLL16.NF": 12560,
+            "SLR16.NF": 8448,
+            "ST16": 259
+          },
+          "floating_dispatches": {
+            "FMULS": 4096,
+            "FADDS": 4096
+          },
+          "floating_result_elements": {
+            "FMULS": 4096,
+            "FADDS": 4096
+          },
+          "floating_result_event_cycles": 8192,
+          "lane_field_counts": {
+            "0": 8192
+          },
+          "fma_result_span_cycles": null,
+          "fma_dispatch_to_first_result_cycles": null,
+          "conventional_flops": 8192,
+          "conventional_flops_per_cycle": 0.07360552041403105,
+          "cycles_per_dispatch": 1.6198876371787034
+        },
+        {
+          "repetition": 1,
+          "warmup": false,
+          "cycles": 111296,
+          "trace_start_cycle": 136637,
+          "trace_end_cycle": 247933,
+          "recorded_tsc_start": 133111,
+          "recorded_tsc_end": 244407,
+          "dispatches": 68706,
+          "opcode_dispatches": {
+            "ADD16.NF": 21264,
+            "FADDS": 4096,
+            "FMOV16.NF": 274,
+            "FMOV32.NF": 8705,
+            "FMULS": 4096,
+            "JMP": 4368,
+            "LD16": 259,
+            "LDDWDS": 1,
+            "LTU16": 4368,
+            "MOVRI": 4,
+            "NOP": 4,
+            "SLL16.NF": 12560,
+            "SLR16.NF": 8448,
+            "ST16": 259
+          },
+          "floating_dispatches": {
+            "FMULS": 4096,
+            "FADDS": 4096
+          },
+          "floating_result_elements": {
+            "FMULS": 4096,
+            "FADDS": 4096
+          },
+          "floating_result_event_cycles": 8192,
+          "lane_field_counts": {
+            "0": 8192
+          },
+          "fma_result_span_cycles": null,
+          "fma_dispatch_to_first_result_cycles": null,
+          "conventional_flops": 8192,
+          "conventional_flops_per_cycle": 0.07360552041403105,
+          "cycles_per_dispatch": 1.6198876371787034
+        },
+        {
+          "repetition": 2,
+          "warmup": false,
+          "cycles": 111296,
+          "trace_start_cycle": 265101,
+          "trace_end_cycle": 376397,
+          "recorded_tsc_start": 261575,
+          "recorded_tsc_end": 372871,
+          "dispatches": 68706,
+          "opcode_dispatches": {
+            "ADD16.NF": 21264,
+            "FADDS": 4096,
+            "FMOV16.NF": 274,
+            "FMOV32.NF": 8705,
+            "FMULS": 4096,
+            "JMP": 4368,
+            "LD16": 259,
+            "LDDWDS": 1,
+            "LTU16": 4368,
+            "MOVRI": 4,
+            "NOP": 4,
+            "SLL16.NF": 12560,
+            "SLR16.NF": 8448,
+            "ST16": 259
+          },
+          "floating_dispatches": {
+            "FMULS": 4096,
+            "FADDS": 4096
+          },
+          "floating_result_elements": {
+            "FMULS": 4096,
+            "FADDS": 4096
+          },
+          "floating_result_event_cycles": 8192,
+          "lane_field_counts": {
+            "0": 8192
+          },
+          "fma_result_span_cycles": null,
+          "fma_dispatch_to_first_result_cycles": null,
+          "conventional_flops": 8192,
+          "conventional_flops_per_cycle": 0.07360552041403105,
+          "cycles_per_dispatch": 1.6198876371787034
+        },
+        {
+          "repetition": 3,
+          "warmup": false,
+          "cycles": 111296,
+          "trace_start_cycle": 393592,
+          "trace_end_cycle": 504888,
+          "recorded_tsc_start": 390066,
+          "recorded_tsc_end": 501362,
+          "dispatches": 68706,
+          "opcode_dispatches": {
+            "ADD16.NF": 21264,
+            "FADDS": 4096,
+            "FMOV16.NF": 274,
+            "FMOV32.NF": 8705,
+            "FMULS": 4096,
+            "JMP": 4368,
+            "LD16": 259,
+            "LDDWDS": 1,
+            "LTU16": 4368,
+            "MOVRI": 4,
+            "NOP": 4,
+            "SLL16.NF": 12560,
+            "SLR16.NF": 8448,
+            "ST16": 259
+          },
+          "floating_dispatches": {
+            "FMULS": 4096,
+            "FADDS": 4096
+          },
+          "floating_result_elements": {
+            "FMULS": 4096,
+            "FADDS": 4096
+          },
+          "floating_result_event_cycles": 8192,
+          "lane_field_counts": {
+            "0": 8192
+          },
+          "fma_result_span_cycles": null,
+          "fma_dispatch_to_first_result_cycles": null,
+          "conventional_flops": 8192,
+          "conventional_flops_per_cycle": 0.07360552041403105,
+          "cycles_per_dispatch": 1.6198876371787034
+        }
+      ],
+      "discarded_events": 0,
+      "warnings": [],
+      "elf_sha256": {
+        "bin/out_0_0.elf": "accc41070097b5f9b16e43a244132881ec00730d97e9444403192ea67b4c0c40",
+        "generated/default.elf": "1a4776e4e8ea2809c518b2e36632ed454f65a1b85b80172c13c8a616b46dafd1",
+        "generated/MEMCPY_XY_ROUTES.elf": "145cfdf2650e18ccdc7a3c92f7692e103dd9a03c2762a8f8e36727d7b9924b92",
+        "generated/coord.elf": "a8c0c8e70d82ceb0019009b65eb6883ffcbf91dc55b537bcc188343a08542a66",
+        "east/bin/out_1_0.elf": "ceaec0d944a6aab27e238890a6ba939b432fba4788be63c70b1012d9ea37be24",
+        "east/bin/out_0_0.elf": "f3a6926e08cfc09b009267b1704734e9a4c9c69e7a3f1a2e84dfeb9ba683443a",
+        "west/bin/out_1_0.elf": "f3e14e207bf62c669bdb5269208ffa2d9f342d433b7245c35bf3e194299f88cd",
+        "west/bin/out_2_0.elf": "603bac3d102d82db359a235d75d1432d914c2ebf234089bd6974cb6a5aa89d44",
+        "west/bin/out_0_0.elf": "3a73914d0f4e7dff0a8cdd28dddc9477f5d9aba57296ebf254e1e8e432d33271"
+      },
+      "input_sha256": {
+        "case.json": "dbd8611d5d69f53b7c3a948dac02b6e993b2e5a80b2511557294f594db80f625",
+        "trace-observations.json": "c6675a48b9e84a3be0f88416f2a9b8baa79a76ef2ce55687f8ab4bdd8b726a59",
+        "elf-binding.json": "1c782713125130a77ff54515b3d5b46d43947f05b128b048a7cf3d3276c2b8ca",
+        "disassembly.json": "78190c1d2c73b57adf4ecf1311b2827cb26306eca115bfbc71c64197e989d90c",
+        "pe.csl": "64b739db4252eba7e5d1d9600d550fdb7516b5716c6bf719ac844142d42da2ce",
+        "layout.csl": "f38893acbc18a506eed3e6b466963b9e03ef40b9e681416bfb0a240ad6624a7e",
+        "simfab_traces/global_simdata.json": "4f695556c10defaac6624ed76a5dbd11bcc1ad06121f20052cea859331d97cfc",
+        "simfab_traces/metadata": "c28f2067af2c1ab04d5b71f3768ee812ca059f0ae8737c167e8eb9e695810553",
+        "simfab_traces/stream0": "c197346e42547dab84ce74eab0979580bc465cf83d131958f05eeff2b0537210"
+      }
+    }
+  ]
+}

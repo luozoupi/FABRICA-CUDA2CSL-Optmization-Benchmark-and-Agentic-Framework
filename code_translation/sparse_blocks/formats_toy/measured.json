@@ -1,0 +1,242 @@
+{
+ "_note": "sparse_blocks/formats_toy on SDK 2.10 (simulator), 2026-10-04: CSR, CSC, dense column-major tile and 4x4 BSR, each converted on the PE from the same CSR input; cycles for 1 and 10 products; every method matches numpy",
+ "configs": {
+  "banded": {
+   "commands": "commands_banded.sh",
+   "status": "pass",
+   "rows": [
+    {
+     "kind": "banded",
+     "N": 128,
+     "nnz": 571,
+     "density": 0.0349,
+     "bsr_blocks": 111
+    },
+    {
+     "method": "csr",
+     "products": 1,
+     "cycles": 20720,
+     "nnz": 571,
+     "correct": true,
+     "max_abs_err": 1.1920928955078125e-07
+    },
+    {
+     "method": "csr",
+     "products": 10,
+     "cycles": 206930,
+     "nnz": 571,
+     "correct": true,
+     "max_abs_err": 1.1920928955078125e-07
+    },
+    {
+     "method": "csc",
+     "products": 1,
+     "cycles": 74521,
+     "nnz": 571,
+     "correct": true,
+     "max_abs_err": 1.1920928955078125e-07
+    },
+    {
+     "method": "csc",
+     "products": 10,
+     "cycles": 266770,
+     "nnz": 571,
+     "correct": true,
+     "max_abs_err": 1.1920928955078125e-07
+    },
+    {
+     "method": "bsr4",
+     "products": 1,
+     "cycles": 48541,
+     "nnz": 571,
+     "correct": true,
+     "max_abs_err": 1.1920928955078125e-07
+    },
+    {
+     "method": "bsr4",
+     "products": 10,
+     "cycles": 193081,
+     "nnz": 571,
+     "correct": true,
+     "max_abs_err": 1.1920928955078125e-07
+    }
+   ],
+   "summary": {
+    "csc": {
+     "sweep": 21361,
+     "conversion": 53160,
+     "per_product_vs_csr": 0.97,
+     "break_even_products": null,
+     "vs_csr_1": 0.28,
+     "vs_csr_10": 0.78
+    },
+    "bsr4": {
+     "sweep": 16060,
+     "conversion": 32481,
+     "per_product_vs_csr": 1.29,
+     "break_even_products": 7.0,
+     "vs_csr_1": 0.43,
+     "vs_csr_10": 1.07
+    }
+   }
+  },
+  "random": {
+   "commands": "commands_random.sh",
+   "status": "pass",
+   "rows": [
+    {
+     "kind": "random",
+     "N": 64,
+     "nnz": 986,
+     "density": 0.2407,
+     "bsr_blocks": 252
+    },
+    {
+     "method": "csr",
+     "products": 1,
+     "cycles": 30708,
+     "nnz": 986,
+     "correct": true,
+     "max_abs_err": 2.384185791015625e-07
+    },
+    {
+     "method": "csr",
+     "products": 10,
+     "cycles": 306792,
+     "nnz": 986,
+     "correct": true,
+     "max_abs_err": 2.384185791015625e-07
+    },
+    {
+     "method": "csc",
+     "products": 1,
+     "cycles": 103285,
+     "nnz": 986,
+     "correct": true,
+     "max_abs_err": 2.384185791015625e-07
+    },
+    {
+     "method": "csc",
+     "products": 10,
+     "cycles": 385588,
+     "nnz": 986,
+     "correct": true,
+     "max_abs_err": 2.384185791015625e-07
+    },
+    {
+     "method": "dense",
+     "products": 1,
+     "cycles": 41895,
+     "nnz": 986,
+     "correct": true,
+     "max_abs_err": 4.76837158203125e-07
+    },
+    {
+     "method": "dense",
+     "products": 10,
+     "cycles": 132750,
+     "nnz": 986,
+     "correct": true,
+     "max_abs_err": 4.76837158203125e-07
+    }
+   ],
+   "summary": {
+    "csc": {
+     "sweep": 31367,
+     "conversion": 71918,
+     "per_product_vs_csr": 0.98,
+     "break_even_products": null,
+     "vs_csr_1": 0.3,
+     "vs_csr_10": 0.8
+    },
+    "dense": {
+     "sweep": 10095,
+     "conversion": 31800,
+     "per_product_vs_csr": 3.04,
+     "break_even_products": 1.5,
+     "vs_csr_1": 0.73,
+     "vs_csr_10": 2.31
+    }
+   }
+  },
+  "block": {
+   "commands": "commands_block.sh",
+   "status": "pass",
+   "rows": [
+    {
+     "kind": "block",
+     "N": 128,
+     "nnz": 1335,
+     "density": 0.0815,
+     "bsr_blocks": 94
+    },
+    {
+     "method": "csr",
+     "products": 1,
+     "cycles": 42874,
+     "nnz": 1335,
+     "correct": true,
+     "max_abs_err": 2.384185791015625e-07
+    },
+    {
+     "method": "csr",
+     "products": 10,
+     "cycles": 428470,
+     "nnz": 1335,
+     "correct": true,
+     "max_abs_err": 2.384185791015625e-07
+    },
+    {
+     "method": "csc",
+     "products": 1,
+     "cycles": 158557,
+     "nnz": 1335,
+     "correct": true,
+     "max_abs_err": 2.384185791015625e-07
+    },
+    {
+     "method": "csc",
+     "products": 10,
+     "cycles": 563962,
+     "nnz": 1335,
+     "correct": true,
+     "max_abs_err": 2.384185791015625e-07
+    },
+    {
+     "method": "bsr4",
+     "products": 1,
+     "cycles": 78063,
+     "nnz": 1335,
+     "correct": true,
+     "max_abs_err": 2.384185791015625e-07
+    },
+    {
+     "method": "bsr4",
+     "products": 10,
+     "cycles": 201948,
+     "nnz": 1335,
+     "correct": true,
+     "max_abs_err": 2.384185791015625e-07
+    }
+   ],
+   "summary": {
+    "csc": {
+     "sweep": 45045,
+     "conversion": 113512,
+     "per_product_vs_csr": 0.95,
+     "break_even_products": null,
+     "vs_csr_1": 0.27,
+     "vs_csr_10": 0.76
+    },
+    "bsr4": {
+     "sweep": 13765,
+     "conversion": 64298,
+     "per_product_vs_csr": 3.11,
+     "break_even_products": 2.2,
+     "vs_csr_1": 0.55,
+     "vs_csr_10": 2.12
+    }
+   }
+  }
+ }
+}

@@ -1,0 +1,70 @@
+// SpMV-RowBlock-StreamTrim layout (stream variant + xlen, the matrix's column count) (expert headroom variant, harness-invisible): the reference strip and
+// routing unchanged, plus two per-PE host arrays (row processing order and the column each row waits for).
+// Original header follows.
+// SpMV-RowBlock layout: a 1 x P strip. The rows of A are split into P consecutive
+// blocks (one per PE, zero-padded to nrows_pe rows / max_nnz_pe nonzeros); x lives on
+// PE 0 and is broadcast EAST on one color, every PE past PE 0 receives (RAMP) and
+// forwards (EAST) except the last; each PE owns its slice of y. pe.csl is what the
+// agent translates; this layout is the launch/interface contract.
+// SDK 2.10-native (no comptime_struct); compiles on 1.4 too.
+
+param P: i16;             // strip width (PEs)
+param nrows_pe: u16;      // rows per PE (capacity)
+param ncols: u16;         // matrix columns = length of x
+param max_nnz_pe: u16;    // nonzero capacity per PE
+param iters: u16;         // repeat count for the timed window
+param structure_id: u16;  // host: which data/manifest[_<id>].json to load (0 = manifest.json)
+param rcm: u16;           // host only: 1 = reverse Cuthill-McKee order (symmetric permutation)
+
+const C_X: color = @get_color(8);
+
+const memcpy = @import_module("<memcpy/get_params>", .{
+  .width = P,
+  .height = 1,
+});
+
+layout {
+  @set_rectangle(P, 1);
+
+  var px: i16 = 0;
+  while (px < P) : (px += 1) {
+    @set_tile_code(px, 0, "pe.csl", .{
+      .memcpy_params = memcpy.get_params(px),
+      .P = P,
+      .px = px,
+      .nrows_pe = nrows_pe,
+      .ncols = ncols,
+      .max_nnz_pe = max_nnz_pe,
+      .iters = iters,
+      .structure_id = structure_id,
+      .C_X = C_X,
+    });
+  }
+
+  // x broadcast routing (P > 1): PE0 source RAMP->EAST; middle PEs WEST->{RAMP, EAST};
+  // last PE WEST->RAMP.
+  if (P > 1) {
+    @set_color_config(0, 0, C_X, .{ .routes = .{ .rx = .{ RAMP }, .tx = .{ EAST } } });
+    var q: i16 = 1;
+    while (q < P - 1) : (q += 1) {
+      @set_color_config(q, 0, C_X, .{ .routes = .{ .rx = .{ WEST }, .tx = .{ RAMP, EAST } } });
+    }
+    @set_color_config(P - 1, 0, C_X, .{ .routes = .{ .rx = .{ WEST }, .tx = .{ RAMP } } });
+  }
+
+  // Host-visible symbols (per-PE CSR slice, x on PE 0, y slices, timestamps, entrypoints).
+  @export_name("row_ptr", [*]u32, true);   // [nrows_pe+1] per PE, local rows
+  @export_name("col_idx", [*]u32, true);   // [max_nnz_pe] per PE, global columns
+  @export_name("val",     [*]f32, true);   // [max_nnz_pe] per PE
+  @export_name("x",       [*]f32, true);   // [ncols]; the host writes PE 0 only
+  @export_name("y",       [*]f32, true);   // [nrows_pe] per PE
+  @export_name("row_id",   [*]u32, true);  // [nrows_pe] per PE: processing slot -> local row of y
+  @export_name("row_need", [*]u32, true);
+  @export_name("xlen",    [*]u32, true);   // [1] per PE: columns of the matrix (<= ncols)  // [nrows_pe] per PE: largest column the row reads (0 if empty)
+  @export_name("time_buf_u16", [*]u16, true);
+  @export_name("main", fn()void);
+  @export_name("f_enable_timer", fn()void);
+  @export_name("f_memcpy_timestamps", fn()void);
+  @export_name("f_tic", fn()void);
+  @export_name("f_toc", fn()void);
+}

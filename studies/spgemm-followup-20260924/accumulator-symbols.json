@@ -1,0 +1,20 @@
+{
+  "full_row": [
+    {
+      "name": "seen",
+      "type": 1,
+      "section": 18,
+      "value": 10580,
+      "size": 32
+    }
+  ],
+  "tile4": [
+    {
+      "name": "seen",
+      "type": 1,
+      "section": 18,
+      "value": 10472,
+      "size": 8
+    }
+  ]
+}

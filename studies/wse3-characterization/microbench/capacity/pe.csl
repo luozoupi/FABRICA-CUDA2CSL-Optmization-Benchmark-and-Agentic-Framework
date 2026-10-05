@@ -1,0 +1,26 @@
+// The buffer must be written, not merely declared: the study has already lost one
+// measurement to dead-code elimination, and the study's own single-pe-sram probe
+// declares an array that never appears in the ELF symbol table at all.
+param memcpy_params;
+param words: i16;
+
+const EXIT: local_task_id = @get_local_task_id(9);
+const sys_mod = @import_module("<memcpy/memcpy>", memcpy_params);
+
+var buf = @zeros([words]u16);
+var ptr_buf: [*]u16 = &buf;
+
+const buf_dsd = @get_dsd(mem1d_dsd, .{ .tensor_access = |i|{words} -> buf[i] });
+
+fn compute() void {
+  @add16(buf_dsd, buf_dsd, @as(i16, 1));
+  @activate(EXIT);
+}
+
+task f_exit() void { sys_mod.unblock_cmd_stream(); }
+
+comptime {
+  @bind_local_task(f_exit, EXIT);
+  @export_symbol(ptr_buf, "buf");
+  @export_symbol(compute);
+}

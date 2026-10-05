@@ -1,0 +1,56 @@
+{
+  "id": "density-m64-k64-n64-p16-d8-full",
+  "group": "density",
+  "M": 64,
+  "K": 64,
+  "N": 64,
+  "P": 16,
+  "S": 4,
+  "R": 4,
+  "AC": 32,
+  "BC": 512,
+  "OC": 256,
+  "W": 64,
+  "degree": 8,
+  "variant": "full",
+  "sessions": [
+    {
+      "pattern": "uniform",
+      "policy": "row_blocks",
+      "changed": false,
+      "matrix_hashes": {
+        "A": "32544204264ab013881e78dc1decba53de92f551e863e60c5de635a8474dc3fc",
+        "B": "7abfd46832b30741c054f6f4d1e9502fdf764294837cdcea61e0481d5826ada5"
+      }
+    },
+    {
+      "pattern": "uniform",
+      "policy": "row_blocks",
+      "changed": true,
+      "matrix_hashes": {
+        "A": "71f2c11ffdd883ba6aa0f1bb174695034d5ceab0dbb7f6d9b77b080d8c2898c6",
+        "B": "8521e47373d6b48284a166576c2109f7b50ffcf36e99271312721ff371802b5f"
+      }
+    },
+    {
+      "pattern": "uniform",
+      "policy": "row_blocks",
+      "changed": false,
+      "matrix_hashes": {
+        "A": "32544204264ab013881e78dc1decba53de92f551e863e60c5de635a8474dc3fc",
+        "B": "7abfd46832b30741c054f6f4d1e9502fdf764294837cdcea61e0481d5826ada5"
+      }
+    }
+  ],
+  "repetitions": 3,
+  "declared_application_bytes": 7212,
+  "allocation_rule": "Per-PE max over frozen sessions/partitions of sum(min(N,row candidate products)); input capacities likewise. Includes guard slots. No numerical oracle result used to choose capacity.",
+  "preflight": "compile_required",
+  "source_hashes": {
+    "single_collective.csl": "95db24b1ca3fd7e9d868657d0c991e4d9d3ff4601b154caf8d394523a19870b7",
+    "pe.csl": "8cc560b7f7a1fe6660f222c15d6a7d72a98cb6d5029b6734240e14cce65d5011",
+    "layout.csl": "0f841665ca0ea9f9e420e1099e5629bb4ab5aca660b85ce6540899c6ebe03f51",
+    "host.py": "afc8b5cb8fe9d182c3d3225fbba533ba233dbdbc38e82340a3e5723fd4101055",
+    "inputs.py": "99916fee5949cfa4bb7efc89b2da16ece9806de175d9bae4254f8e6504e5be4e"
+  }
+}

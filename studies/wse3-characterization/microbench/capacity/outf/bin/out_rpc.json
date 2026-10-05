@@ -1,0 +1,19 @@
+{
+  "rpc_symbols": [
+    {
+      "id": 1,
+      "immutable": 0,
+      "kind": "Var",
+      "name": "buf",
+      "sym_name": "ptr_buf",
+      "type": "[*]u16"
+    },
+    {
+      "id": 2,
+      "kind": "Func",
+      "name": "compute",
+      "sym_name": "compute",
+      "type": "void"
+    }
+  ]
+}

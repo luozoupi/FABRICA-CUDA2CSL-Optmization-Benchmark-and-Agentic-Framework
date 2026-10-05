@@ -220,12 +220,19 @@ def validate_frozen_callsites(variant_src: str, reference_src: str,
     """Rule 4: when the reference uses the device_internal_v2 timing protocol,
     the variant must satisfy it too: every exported entry point starts with
     f_tic_dev() and every host unblock outside the helpers is immediately
-    preceded by f_toc_dev(). Structure-agnostic (an agent program may end in a
-    different task than the reference)."""
-    from timing_protocol import uses_protocol, check_device_window_contract
-    if not uses_protocol(reference_src):
+    preceded by f_toc_dev(). When the reference is a template-route program that
+    calls f_tic()/f_toc() on device instead, the variant must keep THAT window:
+    f_tic() first in every entry point, nothing but the completion signal after
+    f_toc(), and a completion task that only unblocks the host. Structure-agnostic
+    (an agent program may end in a different task than the reference)."""
+    from timing_protocol import (uses_protocol, check_device_window_contract,
+                                 uses_template_protocol, check_template_window_contract)
+    if uses_protocol(reference_src):
+        msg = check_device_window_contract(variant_src)
+    elif uses_template_protocol(reference_src):
+        msg = check_template_window_contract(variant_src)
+    else:
         return None
-    msg = check_device_window_contract(variant_src)
     return f"FROZEN timing window: {msg}" if msg else None
 
 
@@ -353,6 +360,7 @@ def validate_against_reference(
     reference_src: str,
     frozen_functions: Sequence[str] = DEFAULT_FROZEN_FUNCTIONS,
     frozen_params: Sequence[str] = DEFAULT_FROZEN_PARAMS,
+    frozen_function_src: Optional[str] = None,
 ) -> Optional[str]:
     """Validate a variant against the reference compute file.
 
@@ -381,9 +389,17 @@ def validate_against_reference(
 
     violations: List[str] = []
 
+    # A translated baseline may use different private helper/buffer names from
+    # the hidden human reference. Freeze its already measured wrapper without
+    # changing the authority for workload sizes or the device timing protocol.
+    function_src = reference_src if frozen_function_src is None else frozen_function_src
     # 1) Frozen-function bodies
     for fn in frozen_functions:
-        ref_body = extract_function_body(reference_src, fn)
+        ref_body = extract_function_body(function_src, fn)
+        if ref_body is None and function_src != reference_src:
+            # An absent baseline helper must not silently disable a required
+            # reference timing guard.
+            ref_body = extract_function_body(reference_src, fn)
         if ref_body is None:
             # Reference doesn't define this fn; nothing to compare for it.
             continue
@@ -423,6 +439,10 @@ def validate_against_reference(
     callsite_violation = validate_frozen_callsites(variant_src, reference_src)
     if callsite_violation:
         violations.append(callsite_violation)
+    if function_src != reference_src:
+        baseline_callsite_violation = validate_frozen_callsites(variant_src, function_src)
+        if baseline_callsite_violation and baseline_callsite_violation not in violations:
+            violations.append(baseline_callsite_violation)
 
     if violations:
         # Cap message length so log lines stay grep-friendly.

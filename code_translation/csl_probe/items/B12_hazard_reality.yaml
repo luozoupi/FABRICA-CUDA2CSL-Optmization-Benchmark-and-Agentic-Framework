@@ -1,0 +1,17 @@
+id: B12_hazard_reality
+group: B_semantics
+prompt: "Read this Cerebras CSL fragment (SDK 2.10, one PE) and answer the question. Assume every builtin behaves\
+  \ as the SDK documents it. Reply with the answer first (one letter), then one sentence of justification.\n\n```csl\n\
+  var t = @zeros([16]f32); var acc: f32 = 0.0; var len: u16 = 16;\n// t = [1,1,...,1] (sixteen ones); len is a runtime\
+  \ value\nconst td = @get_dsd(mem1d_dsd, .{ .tensor_access = |i|{16} -> t[i] });\nvar r: u16 = 0;\nwhile (r < 4)\
+  \ : (r += 1) {\n  const d = @set_dsd_length(td, len);\n  @fadds(&acc, acc, d);\n}\n```\n\nQuestion: Which statement\
+  \ is correct about this program compiled with SDK 2.10 for the WSE-3?\nA) acc is 64.0 in every build; the form\
+  \ is safe.\nB) acc can be 1.0 rather than 64.0: the register-accumulator lowering may put the destination in a\
+  \ different register than source-0, so each @fadds returns the last element; check the disassembly or use a memory-destination\
+  \ reduction.\nC) The program fails to compile because @set_dsd_length needs a comptime length.\nD) acc is 16.0\
+  \ because a DSD reduction resets the accumulator each call."
+expected:
+  choice: B
+scoring: trailing numbers within 1e-3 relative of the key, or the letter for choice items
+ground_truth: numpy/documented semantics; simulator confirmation of the numeric items pending (make_ground_truth.sh)
+source_citation: 'SDK builtins/DSD reference; B12: studies/wse3-characterization/FINDINGS.md section 10n (spmv_blk_dsdred)'

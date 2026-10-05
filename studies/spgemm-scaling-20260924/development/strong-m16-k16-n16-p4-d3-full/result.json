@@ -1,0 +1,67 @@
+{
+  "case": "strong-m16-k16-n16-p4-d3-full",
+  "status": "pass",
+  "phases": [
+    {
+      "phase": "compile",
+      "command": [
+        "/home/USER/cs_sdk/cslc",
+        "layout.csl",
+        "--arch=wse3",
+        "--fabric-dims=9,4",
+        "--fabric-offsets=4,1",
+        "--memcpy",
+        "--channels=1",
+        "--width-west-buf=0",
+        "--width-east-buf=0",
+        "--out-routes",
+        "--params=S:2,N:16,K:16,R:4,AC:16,BC:48,OC:36,W:16",
+        "-o",
+        "out"
+      ],
+      "returncode": 0,
+      "wall_seconds": 4.224361435000901
+    },
+    {
+      "phase": "run",
+      "command": [
+        "/home/USER/cs_sdk/cs_python",
+        "host.py"
+      ],
+      "returncode": 0,
+      "wall_seconds": 14.948225211002864
+    }
+  ],
+  "case_sha256": "5f65f1c30581c9ffab9edd27512daf83925093c8ef051a99d5876a9eaf231d72",
+  "queue_wait_seconds": 1.8439997802488506e-05,
+  "errors": [],
+  "elf_sha256": {
+    "out/bin/out_1_0.elf": "570839ca33d7892d7bde8bf1637ea3ebe06f79aba79b7452f0ed41d93796b969",
+    "out/bin/out_3_0.elf": "0b9d793e42116d35b9119a0cbe37c3ebacc37c8cec8c9bde3505b1b955907c83",
+    "out/bin/out_2_0.elf": "21b1b74fb50092f8a2922036c0fdecfe8b13a58faa79542fa297be05ac65b7d1",
+    "out/bin/out_0_0.elf": "b07173add046d4cc5a5b8106cad09a237297d83026e76a4be731e48877a11784",
+    "out/generated/default.elf": "c54f29292b8c02e7b06ab679bc4bd91639dde429ad8e49bea106a0c05f716703",
+    "out/generated/MEMCPY_XY_ROUTES.elf": "25ccab43c347aca5e3ef5bc7741be8653fac2a0743e8ee4de2bc3c2953b83155",
+    "out/generated/coord.elf": "a4fb4f74663f689b78e6693120fd0858fa59310608f81b75f32716ab2698603c",
+    "out/east/bin/out_1_0.elf": "16e6db5e760b71af4a3c82a208cf55854af80df54d8b338b061e153f783a800b",
+    "out/east/bin/out_3_0.elf": "75139edc97263118d0a98ac133c5365d6acd26baf6e6034e04e74316e2333113",
+    "out/east/bin/out_2_0.elf": "6c5ae64be8f3ed6c55a31aa75d8d6ba8957a803d375eb36a6dc681746644e992",
+    "out/east/bin/out_0_0.elf": "9b94276299d05caf27866fabde1cdc191318080a42232830f0aabf7226d11adf",
+    "out/west/bin/out_4_0.elf": "ad4c06f53bcd678c75dce5c042767ca44265820a1de76022462885ed9b7cfda2",
+    "out/west/bin/out_1_0.elf": "2445f3a29e39adc37237a22be5e361ee1c8a5e0a4e5828307c97a1dd256c9469",
+    "out/west/bin/out_3_0.elf": "c408e8c8f9daf7333c8b7d3ebc3bdd814cd889c4d193db33e15661c9dba0d25c",
+    "out/west/bin/out_5_0.elf": "4c8237ef799dc0982a5f6c7ead03505de573660dcc0e5e5ffab2a37fb5b22af3",
+    "out/west/bin/out_2_0.elf": "d803501bdfe73c2cb4937a1c5cad3de32513f6c3e32b51a399d94cf5cdbc0ce4",
+    "out/west/bin/out_0_0.elf": "0c92c6eab1339894363c0c6a9afa1624363dc6f456f589c80275890de0cb2e1d"
+  },
+  "source_sha256": {
+    "pe.csl": "8cc560b7f7a1fe6660f222c15d6a7d72a98cb6d5029b6734240e14cce65d5011",
+    "case.json": "5f65f1c30581c9ffab9edd27512daf83925093c8ef051a99d5876a9eaf231d72",
+    "layout.csl": "0f841665ca0ea9f9e420e1099e5629bb4ab5aca660b85ce6540899c6ebe03f51",
+    "inputs.py": "49cdb7d8602e94611157bdb98e75ea89bf5c692b82ea1e6c6e2d37cfc7f9ab73",
+    "host.py": "cd38e24bcdaa04a19383724de8c8bff73043169867e6c6d4760d4dc9f09edd5c",
+    "observations.json": "80a244a42c23061fe9292dff05bbb0cce8a34490c226ebba0e33e658d5ce539d",
+    "sim_stats.json": "c870bca0257eec5327260facbfbf7021695b2c9c306795f86009cbeac5ffb111",
+    "simconfig.json": "ac8861b1a0ab97042fb33484d83a4d3ef124877e9bef550a89a5efe1f6da2be3"
+  }
+}

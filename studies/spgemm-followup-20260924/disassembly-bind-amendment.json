@@ -1,0 +1,6 @@
+{
+  "created_utc": "2026-09-24T21:19:42.751557+00:00",
+  "reason": "Disassemble from the study root so retained ELFs can resolve their original absolute DWARF source paths during final/trace replays. Compiler and simulator invocations, sources, and ELFs are unchanged.",
+  "prior_runner_sha256": "28bf968960d27fbc500a8e6c5260ff52df0f3bf11d7e280ecb2fc97da24f9e7f",
+  "amended_runner_sha256": "c427aa49723c060c224f6a5bf0c7fbadcc0d74c920453aed139ac81c742114be"
+}

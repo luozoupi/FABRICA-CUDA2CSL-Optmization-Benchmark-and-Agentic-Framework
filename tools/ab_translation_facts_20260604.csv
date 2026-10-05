@@ -1,0 +1,20 @@
+kernel,attempt_id,prior_error_class,without_facts_structural_ok,with_facts_structural_ok,without_facts_error,with_facts_error,tokens_without_chars,tokens_with_chars,tokens_delta_chars
+GEMM-Collectives-2D,1,unknown,True,True,,,62065,62641,576
+GEMV-Collectives-2D,1,unknown,True,True,,,64995,65850,855
+FFT-1D-2D,1,unknown,True,False,,no ```csl fence in reply,74001,74803,802
+FFT-1D-2D,2,unknown,True,True,,,517411,518213,802
+Laplacian2D-Halo,1,unknown,True,True,,,68482,69303,821
+Laplacian2D-Reduce,1,unknown,True,True,,,63009,63717,708
+Laplacian2D-Reduce,2,unknown,True,True,,,248296,249004,708
+Mandelbrot,1,unknown,True,True,,,61222,61530,308
+Mandelbrot,2,unknown,True,True,,,130324,130632,308
+Mandelbrot,3,unknown,True,True,,,273440,273748,308
+Cholesky,1,unknown,True,True,,,65930,66724,794
+Cholesky,2,unknown,False,False,no ```csl fence in reply,no ```csl fence in reply,148979,149773,794
+Cholesky,3,unknown,True,True,,,278448,279242,794
+Game-of-Life,1,unknown,True,False,,no ```csl fence in reply,70669,71449,780
+Game-of-Life,2,unknown,True,True,,,337977,338757,780
+Game-of-Life,3,unknown,True,True,,,463559,464339,780
+Residual,1,unknown,True,True,,,68929,69767,838
+GEMV-Checkerboard,1,unknown,True,True,,,72006,72787,781
+GEMV-Checkerboard,2,unknown,True,True,,,382639,383420,781

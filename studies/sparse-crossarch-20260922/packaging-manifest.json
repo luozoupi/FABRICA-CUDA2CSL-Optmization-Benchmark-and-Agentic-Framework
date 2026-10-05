@@ -1,0 +1,1137 @@
+{
+  "schema": 1,
+  "origin_node": "NVIDIA RTX PRO 6000 Blackwell Server Edition with Cerebras SDK 2.10.1 simulator; no CS-3 measurements in this study",
+  "integration_base": "a6397750c1f2a00bfd47d829206b5865c1f87a05",
+  "other_node_branch_tip": "04e83a442b7041481a7c8972ee559c0dec9e3b75",
+  "paper_tip": "d1f9e720642fd030f0a7e1ec8334975ceeb4a99e",
+  "original_study_directory": "/home/USER/sparse-crossarch-20260922",
+  "omitted": "Large GPU validation outputs, profiler binary reports, compiled executables/ELFs, SDK distribution and the separate hardware replay archive remain on the NVIDIA node. Their identities are recorded in the included experiment manifests.",
+  "files": {
+    ".gitignore": {
+      "sha256": "5c56742dec0c0da2cf59a78c6ccd91a69ea7a388ba8376db812b137468f9033f",
+      "bytes": 193,
+      "change": "Added repository packaging, provenance or reproduction support."
+    },
+    "ANALYSIS.md": {
+      "sha256": "fb4711d48b49cf8bb4ac7467ec8c9feca7a2b07c7715d5df5bbff1ee2147d059",
+      "bytes": 15764,
+      "original_path": "ANALYSIS.md",
+      "original_sha256": "7501f840346710afeb48e89edc73200d3def351603bc4cbfdb71e7282b63315e",
+      "change": "Update the earlier-matmul evidence link to its packaged location."
+    },
+    "CAPACITY_AMENDMENT.md": {
+      "sha256": "0ab6bd7eafff0990985a622cc9aebbd98e5a355130b563e45033d48b41eb896c",
+      "bytes": 649,
+      "original_path": "CAPACITY_AMENDMENT.md",
+      "original_sha256": "0ab6bd7eafff0990985a622cc9aebbd98e5a355130b563e45033d48b41eb896c"
+    },
+    "HANDOFF.md": {
+      "sha256": "59839fa99829c90f5d33df802f7cdd2ce2432727f4517637e93a5d2ed03d73ce",
+      "bytes": 5219,
+      "original_path": "HANDOFF.md",
+      "original_sha256": "59839fa99829c90f5d33df802f7cdd2ce2432727f4517637e93a5d2ed03d73ce"
+    },
+    "INTEGRATION.md": {
+      "sha256": "9f82418b72a57839a066f0335fec6744389afdb02e0d5574909577f983aee72e",
+      "bytes": 6508,
+      "change": "Added repository packaging, provenance or reproduction support."
+    },
+    "PROTOCOL.md": {
+      "sha256": "274f7b4d36fc0b8b4e4128ced4dbb150579d51ceb2300a2fd370ad8aff81f56a",
+      "bytes": 5785,
+      "original_path": "PROTOCOL.md",
+      "original_sha256": "274f7b4d36fc0b8b4e4128ced4dbb150579d51ceb2300a2fd370ad8aff81f56a"
+    },
+    "README.md": {
+      "sha256": "8f7360c063302a43260020232cac9a86ecff3e4d47d4e82ef451153abd33a845",
+      "bytes": 7090,
+      "original_path": "README.md",
+      "original_sha256": "fcdd57a089c6030318b1a165562dff1a5ed991c5788959b83376c7ec058cd3b0",
+      "change": "Repository entry point, evidence scopes, artifact locations and fresh replay instructions."
+    },
+    "RESULTS.md": {
+      "sha256": "7b43f2566db395b30dbdcd59ed1c8ff8e03dced1a12c7ce35b63bc409ab68e22",
+      "bytes": 5266,
+      "original_path": "RESULTS.md",
+      "original_sha256": "7b43f2566db395b30dbdcd59ed1c8ff8e03dced1a12c7ce35b63bc409ab68e22"
+    },
+    "add_capacity.py": {
+      "sha256": "05ebc7cbb6ecd7f63370a55a6a74cc0ae7701f6a1d3e22546e5c71068a5d0e4c",
+      "bytes": 1655,
+      "original_path": "add_capacity.py",
+      "original_sha256": "05ebc7cbb6ecd7f63370a55a6a74cc0ae7701f6a1d3e22546e5c71068a5d0e4c"
+    },
+    "audit.json": {
+      "sha256": "d73d7dbe8fd9ff3c4cf433db5257c71c4b0a0b6ce7ede83090d5ce5dbd6fb19a",
+      "bytes": 9293,
+      "original_path": "audit.json",
+      "original_sha256": "d73d7dbe8fd9ff3c4cf433db5257c71c4b0a0b6ce7ede83090d5ce5dbd6fb19a"
+    },
+    "audit.py": {
+      "sha256": "5ab2b60212d22d82cbd22c25e3f0ad511d40a4a3a48ff9c1ef27cbab722b9570",
+      "bytes": 4182,
+      "original_path": "audit.py",
+      "original_sha256": "5ab2b60212d22d82cbd22c25e3f0ad511d40a4a3a48ff9c1ef27cbab722b9570"
+    },
+    "browser-report.json": {
+      "sha256": "33bb0f0611b1e6183611445462c6cc1237b0fdbb65eebaa9bfcccd7eccf197fd",
+      "bytes": 145,
+      "original_path": "browser-report.json",
+      "original_sha256": "33bb0f0611b1e6183611445462c6cc1237b0fdbb65eebaa9bfcccd7eccf197fd"
+    },
+    "browser_check.py": {
+      "sha256": "6d3a98f2990205383373232303c0e55328eb8f1b39b08520d561c771ef687144",
+      "bytes": 3970,
+      "original_path": "browser_check.py",
+      "original_sha256": "6d3a98f2990205383373232303c0e55328eb8f1b39b08520d561c771ef687144"
+    },
+    "build_gpu.py": {
+      "sha256": "153d115da1e7e7d88151bffa829b1eab33fd9fff6c9f3e3617b742e73105e7a6",
+      "bytes": 1798,
+      "original_path": "build_gpu.py",
+      "original_sha256": "66ef1681bc55cc3b517142f52bcfe86e0cf3fa2381750c3dc08c61cc654b7b4f",
+      "change": "Check pinned vendor hashes without nested Git; permit NVCC; protect the recorded directory."
+    },
+    "collect.py": {
+      "sha256": "2a5901c80748cd6bc85c0a0ee557fe8b3c001459b405e816b228af0595e182b4",
+      "bytes": 6202,
+      "original_path": "collect.py",
+      "original_sha256": "2a5901c80748cd6bc85c0a0ee557fe8b3c001459b405e816b228af0595e182b4"
+    },
+    "comparison-figure.pdf": {
+      "sha256": "68707a8e67bf9b1932f3e3f3c941fe32ec80c491aca0961935c2812d4fb0fe75",
+      "bytes": 25230,
+      "original_path": "comparison-figure.pdf",
+      "original_sha256": "68707a8e67bf9b1932f3e3f3c941fe32ec80c491aca0961935c2812d4fb0fe75"
+    },
+    "comparison-figure.svg": {
+      "sha256": "a30bc7f8ce4b00e4987d33bddbbeb871d97c0892992eb6ba421310254659788c",
+      "bytes": 51909,
+      "original_path": "comparison-figure.svg",
+      "original_sha256": "a30bc7f8ce4b00e4987d33bddbbeb871d97c0892992eb6ba421310254659788c"
+    },
+    "compiler-comparison.json": {
+      "sha256": "94f92643dad05148d03a90044c210c4a20a1ada3cc54fb5ec48dfdea4fd823ec",
+      "bytes": 896,
+      "original_path": "compiler-comparison.json",
+      "original_sha256": "94f92643dad05148d03a90044c210c4a20a1ada3cc54fb5ec48dfdea4fd823ec"
+    },
+    "descriptor-hoisting-n1.diff": {
+      "sha256": "34ed00abb1670e4c0883fc8e19d8483049118314d2721d7bbde44718b3cd6064",
+      "bytes": 1478,
+      "original_path": "descriptor-hoisting-n1.diff",
+      "original_sha256": "34ed00abb1670e4c0883fc8e19d8483049118314d2721d7bbde44718b3cd6064"
+    },
+    "descriptor-hoisting-n16.diff": {
+      "sha256": "a27ffea06672827037a63c6e6d9e689b43f203f826ea104f606ce5d8c6c359e7",
+      "bytes": 388,
+      "original_path": "descriptor-hoisting-n16.diff",
+      "original_sha256": "a27ffea06672827037a63c6e6d9e689b43f203f826ea104f606ce5d8c6c359e7"
+    },
+    "descriptor-hoisting-n4.diff": {
+      "sha256": "cc06f6198560ff134903f98546099859f9bd3872d4d36276b32423a61b4c3b79",
+      "bytes": 1478,
+      "original_path": "descriptor-hoisting-n4.diff",
+      "original_sha256": "cc06f6198560ff134903f98546099859f9bd3872d4d36276b32423a61b4c3b79"
+    },
+    "descriptor-hoisting-n64.diff": {
+      "sha256": "0990b4d5788dfa22c990bf8738fbcfe6bf6bc6a55f91f0a2fdfc6bf1443b1f3e",
+      "bytes": 1480,
+      "original_path": "descriptor-hoisting-n64.diff",
+      "original_sha256": "0990b4d5788dfa22c990bf8738fbcfe6bf6bc6a55f91f0a2fdfc6bf1443b1f3e"
+    },
+    "disassemble_wse.py": {
+      "sha256": "fff6e67153a88a081edddaaab106ae303c30787f9aa4ede60af8072258622441",
+      "bytes": 1125,
+      "original_path": "disassemble_wse.py",
+      "original_sha256": "9c3452470e3f96d266583fd5b4afacffdfc35bbbcf08924ddd1dec7ee0e1be8d",
+      "change": "Use the packaged parser and CEREBRAS_SDK_DIR."
+    },
+    "environment.json": {
+      "sha256": "c3091a9311668e1dcdf4c0ea94b1748ebaa1f43adad72a591c3c55203c27d143",
+      "bytes": 1475,
+      "original_path": "environment.json",
+      "original_sha256": "c3091a9311668e1dcdf4c0ea94b1748ebaa1f43adad72a591c3c55203c27d143"
+    },
+    "figure-provenance.json": {
+      "sha256": "222972e37069b766510baad831767978f0a5e748daf7284cd1f9649a808afc3e",
+      "bytes": 335,
+      "original_path": "figure-provenance.json",
+      "original_sha256": "222972e37069b766510baad831767978f0a5e748daf7284cd1f9649a808afc3e"
+    },
+    "finalize.py": {
+      "sha256": "be7b5d57bea4f21b71133f5b4e0a04614aad95a4748eaab4aa414f98ad70ba32",
+      "bytes": 1626,
+      "original_path": "finalize.py",
+      "original_sha256": "be7b5d57bea4f21b71133f5b4e0a04614aad95a4748eaab4aa414f98ad70ba32"
+    },
+    "ge_kernels.cuh": {
+      "sha256": "2886218471ba852c0030ddf4dab8ea60e185deb0fc105f959a81e6a60d8e1511",
+      "bytes": 14302,
+      "original_path": "ge_kernels.cuh",
+      "original_sha256": "2886218471ba852c0030ddf4dab8ea60e185deb0fc105f959a81e6a60d8e1511"
+    },
+    "gpu-build.json": {
+      "sha256": "207445af3f758cb114f2af0d76beb53981f866352ab06b029fe80b9eb2573e6e",
+      "bytes": 1010,
+      "original_path": "gpu-build.json",
+      "original_sha256": "207445af3f758cb114f2af0d76beb53981f866352ab06b029fe80b9eb2573e6e"
+    },
+    "gpu-results.csv": {
+      "sha256": "c1e358d6053969c800c4a76a728211f6e078cc0b5304e21c65589e86eb4907e5",
+      "bytes": 119272,
+      "original_path": "gpu-results.csv",
+      "original_sha256": "c1e358d6053969c800c4a76a728211f6e078cc0b5304e21c65589e86eb4907e5"
+    },
+    "gpu.cu": {
+      "sha256": "1576284d877e1da3366829e956fd43f0313d1823bc0383630cef85935697f276",
+      "bytes": 10078,
+      "original_path": "gpu.cu",
+      "original_sha256": "1576284d877e1da3366829e956fd43f0313d1823bc0383630cef85935697f276"
+    },
+    "handoff-manifest.json": {
+      "sha256": "08f30155fe8124ec9a8d5844e378859a6acc9f44450522a5e5c8e436f5dc9cde",
+      "bytes": 26781,
+      "original_path": "handoff-manifest.json",
+      "original_sha256": "08f30155fe8124ec9a8d5844e378859a6acc9f44450522a5e5c8e436f5dc9cde"
+    },
+    "hardware-bundle-manifest.json": {
+      "sha256": "de3befcc983d6e7b19e747603269b3fb4d9203d88b35b88c18863232116415d9",
+      "bytes": 105035,
+      "original_path": "hardware-bundle-manifest.json",
+      "original_sha256": "de3befcc983d6e7b19e747603269b3fb4d9203d88b35b88c18863232116415d9"
+    },
+    "index.html": {
+      "sha256": "2bf4c5aebb242999b7d0ace08b564ecac9e22820f4a53c549b41332825f2c0d0",
+      "bytes": 1989879,
+      "original_path": "index.html",
+      "original_sha256": "6dd6cb51fd1dad25bee56e916813fe9d0ba67c735dc9531790eff58776de5ca4",
+      "change": "Point the earlier-dataflow navigation at the package explanation."
+    },
+    "inputs/capacity-manifest.json": {
+      "sha256": "0bf8b26e12679b13205d9130859c4738ab38bdc8b205dbc1ff92b3488807d62f",
+      "bytes": 17921,
+      "original_path": "inputs/capacity-manifest.json",
+      "original_sha256": "0bf8b26e12679b13205d9130859c4738ab38bdc8b205dbc1ff92b3488807d62f"
+    },
+    "inputs/manifest.json": {
+      "sha256": "dd2eca32d88f54c38d2840e0d0cec674849a1af7fe80741e396064ac57b6f51f",
+      "bytes": 232291,
+      "original_path": "inputs/manifest.json",
+      "original_sha256": "dd2eca32d88f54c38d2840e0d0cec674849a1af7fe80741e396064ac57b6f51f"
+    },
+    "make_hardware_bundle.py": {
+      "sha256": "05e566f233bc58a24b855f0bb0e109401db6710b2baa45123e4897d733c2491d",
+      "bytes": 1345,
+      "original_path": "make_hardware_bundle.py",
+      "original_sha256": "05e566f233bc58a24b855f0bb0e109401db6710b2baa45123e4897d733c2491d"
+    },
+    "make_inputs.py": {
+      "sha256": "4ce59307b1ebab33d729e86f9d5bfbb29671eebedc13b5179081df40b6374d81",
+      "bytes": 4177,
+      "original_path": "make_inputs.py",
+      "original_sha256": "0744655a10f0a8a3031eb4d0a2f5bc6636dd1b2114f6ba0541c705762a98ae81",
+      "change": "Read the preserved Matrix Market sources from the study directory."
+    },
+    "make_wse.py": {
+      "sha256": "fbfc3f7955b31e4b36f55efc8ddc484310b7644f5238478011f5da7ab23c33b0",
+      "bytes": 3516,
+      "original_path": "make_wse.py",
+      "original_sha256": "fbfc3f7955b31e4b36f55efc8ddc484310b7644f5238478011f5da7ab23c33b0"
+    },
+    "numerical-diagnostic.json": {
+      "sha256": "e79d32aefd93b118e65b13951fbdf337ef4d861cdaa0806c529b73894c6cfb5d",
+      "bytes": 571,
+      "original_path": "numerical-diagnostic.json",
+      "original_sha256": "e79d32aefd93b118e65b13951fbdf337ef4d861cdaa0806c529b73894c6cfb5d"
+    },
+    "package.py": {
+      "sha256": "3a1598eed47b668a734f6888ba229f6d08a672a6729500f80eb01d51152dd4b3",
+      "bytes": 548,
+      "original_path": "package.py",
+      "original_sha256": "3a1598eed47b668a734f6888ba229f6d08a672a6729500f80eb01d51152dd4b3"
+    },
+    "partition-analysis.json": {
+      "sha256": "709e5ea5d86ebc81f5d656f5bd3d27ba5bf1142b0fb3d246baa4009f6c7392fe",
+      "bytes": 645826,
+      "original_path": "partition-analysis.json",
+      "original_sha256": "709e5ea5d86ebc81f5d656f5bd3d27ba5bf1142b0fb3d246baa4009f6c7392fe"
+    },
+    "partition_analysis.py": {
+      "sha256": "2551415da195bd0141424c5f1ce6f942f0f6c0b1726c69c959f42b311982a755",
+      "bytes": 2103,
+      "original_path": "partition_analysis.py",
+      "original_sha256": "2551415da195bd0141424c5f1ce6f942f0f6c0b1726c69c959f42b311982a755"
+    },
+    "plot.py": {
+      "sha256": "336b517b749e900e302051e1382022f680a2d35e6107c8b657f144b3ef5f0c79",
+      "bytes": 3032,
+      "original_path": "plot.py",
+      "original_sha256": "336b517b749e900e302051e1382022f680a2d35e6107c8b657f144b3ef5f0c79"
+    },
+    "prepare_replay.py": {
+      "sha256": "02699effb2afb63c15ec077609c226b02f03c0912d67fd35130c998833def0e7",
+      "bytes": 5082,
+      "change": "Added repository packaging, provenance or reproduction support."
+    },
+    "profile_gpu.py": {
+      "sha256": "5a41405d69ae22b3bcd9856e317bbcf736b68702579ac8b0d33c70f6cf826c0f",
+      "bytes": 2578,
+      "original_path": "profile_gpu.py",
+      "original_sha256": "5a41405d69ae22b3bcd9856e317bbcf736b68702579ac8b0d33c70f6cf826c0f"
+    },
+    "profile_traffic.py": {
+      "sha256": "8f1a4a27ea10336fc4521ba13c096e4b0a7dfbc5911ba3a6f75e2262288bdbf2",
+      "bytes": 1731,
+      "original_path": "profile_traffic.py",
+      "original_sha256": "8f1a4a27ea10336fc4521ba13c096e4b0a7dfbc5911ba3a6f75e2262288bdbf2"
+    },
+    "profiling/262144x262144-block8-n128-ge_merge2/counters.csv": {
+      "sha256": "5e615e0636cc27f8d7c5e9255ca7483e43f2fc7e009ae2d0bb91ef86fde50c64",
+      "bytes": 468,
+      "original_path": "profiling/262144x262144-block8-n128-ge_merge2/counters.csv",
+      "original_sha256": "5e615e0636cc27f8d7c5e9255ca7483e43f2fc7e009ae2d0bb91ef86fde50c64"
+    },
+    "profiling/262144x262144-block8-n128-ge_merge2/import-stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0,
+      "original_path": "profiling/262144x262144-block8-n128-ge_merge2/import-stderr.log",
+      "original_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "change": "Copied supporting evidence or renamed retained profiler log as text."
+    },
+    "profiling/262144x262144-block8-n128-ge_merge2/raw.csv": {
+      "sha256": "8a2ccacc456f76204f3fce3ada569f409f815d6240cb135a912eb7afee776d34",
+      "bytes": 13951,
+      "original_path": "profiling/262144x262144-block8-n128-ge_merge2/raw.csv",
+      "original_sha256": "8a2ccacc456f76204f3fce3ada569f409f815d6240cb135a912eb7afee776d34"
+    },
+    "profiling/262144x262144-block8-n128-ge_merge2/stderr.txt": {
+      "sha256": "3a6950f7e3cfb1fc86201b1252be6bfdc3e29c3c537ed28d613c06bad74e4fad",
+      "bytes": 598,
+      "original_path": "profiling/262144x262144-block8-n128-ge_merge2/stderr.log",
+      "original_sha256": "3a6950f7e3cfb1fc86201b1252be6bfdc3e29c3c537ed28d613c06bad74e4fad",
+      "change": "Copied supporting evidence or renamed retained profiler log as text."
+    },
+    "profiling/262144x262144-block8-n128-ge_merge2/stdout.txt": {
+      "sha256": "c8edebf27992493a9f59d725ba2e38488d95bbdd0b41e8c5aec189d1da3a0073",
+      "bytes": 1035,
+      "original_path": "profiling/262144x262144-block8-n128-ge_merge2/stdout.log",
+      "original_sha256": "c8edebf27992493a9f59d725ba2e38488d95bbdd0b41e8c5aec189d1da3a0073",
+      "change": "Copied supporting evidence or renamed retained profiler log as text."
+    },
+    "profiling/262144x262144-uniform8-n128-ge_merge2/counters.csv": {
+      "sha256": "43016237d20ebb3ea25d36bb393f1a10d21c0602a1536310121f3c19fe17f075",
+      "bytes": 470,
+      "original_path": "profiling/262144x262144-uniform8-n128-ge_merge2/counters.csv",
+      "original_sha256": "43016237d20ebb3ea25d36bb393f1a10d21c0602a1536310121f3c19fe17f075"
+    },
+    "profiling/262144x262144-uniform8-n128-ge_merge2/import-stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0,
+      "original_path": "profiling/262144x262144-uniform8-n128-ge_merge2/import-stderr.log",
+      "original_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "change": "Copied supporting evidence or renamed retained profiler log as text."
+    },
+    "profiling/262144x262144-uniform8-n128-ge_merge2/raw.csv": {
+      "sha256": "f52f0d135d713197c93529a7260f7f7809f72e8af421fa87d51ac5655db8ef1c",
+      "bytes": 13958,
+      "original_path": "profiling/262144x262144-uniform8-n128-ge_merge2/raw.csv",
+      "original_sha256": "f52f0d135d713197c93529a7260f7f7809f72e8af421fa87d51ac5655db8ef1c"
+    },
+    "profiling/262144x262144-uniform8-n128-ge_merge2/stderr.txt": {
+      "sha256": "3a6950f7e3cfb1fc86201b1252be6bfdc3e29c3c537ed28d613c06bad74e4fad",
+      "bytes": 598,
+      "original_path": "profiling/262144x262144-uniform8-n128-ge_merge2/stderr.log",
+      "original_sha256": "3a6950f7e3cfb1fc86201b1252be6bfdc3e29c3c537ed28d613c06bad74e4fad",
+      "change": "Copied supporting evidence or renamed retained profiler log as text."
+    },
+    "profiling/262144x262144-uniform8-n128-ge_merge2/stdout.txt": {
+      "sha256": "922ca2f24468635287f25952eb3aa409dfeef811491c496e4548ca32e858d6f3",
+      "bytes": 1037,
+      "original_path": "profiling/262144x262144-uniform8-n128-ge_merge2/stdout.log",
+      "original_sha256": "922ca2f24468635287f25952eb3aa409dfeef811491c496e4548ca32e858d6f3",
+      "change": "Copied supporting evidence or renamed retained profiler log as text."
+    },
+    "profiling/65536x65536-uniform8-n64-ge_cache/counters.csv": {
+      "sha256": "165eecfc2236e1b51d279c7e5182a56f37296e2c53afff93fc4bc6e8125bcfe5",
+      "bytes": 466,
+      "original_path": "profiling/65536x65536-uniform8-n64-ge_cache/counters.csv",
+      "original_sha256": "165eecfc2236e1b51d279c7e5182a56f37296e2c53afff93fc4bc6e8125bcfe5"
+    },
+    "profiling/65536x65536-uniform8-n64-ge_cache/import-stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0,
+      "original_path": "profiling/65536x65536-uniform8-n64-ge_cache/import-stderr.log",
+      "original_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "change": "Copied supporting evidence or renamed retained profiler log as text."
+    },
+    "profiling/65536x65536-uniform8-n64-ge_cache/raw.csv": {
+      "sha256": "5363a42d892c166c47a6e60df531b14dc563955aebc46c42756e78b5af4bbba0",
+      "bytes": 13936,
+      "original_path": "profiling/65536x65536-uniform8-n64-ge_cache/raw.csv",
+      "original_sha256": "5363a42d892c166c47a6e60df531b14dc563955aebc46c42756e78b5af4bbba0"
+    },
+    "profiling/65536x65536-uniform8-n64-ge_cache/stderr.txt": {
+      "sha256": "3a6950f7e3cfb1fc86201b1252be6bfdc3e29c3c537ed28d613c06bad74e4fad",
+      "bytes": 598,
+      "original_path": "profiling/65536x65536-uniform8-n64-ge_cache/stderr.log",
+      "original_sha256": "3a6950f7e3cfb1fc86201b1252be6bfdc3e29c3c537ed28d613c06bad74e4fad",
+      "change": "Copied supporting evidence or renamed retained profiler log as text."
+    },
+    "profiling/65536x65536-uniform8-n64-ge_cache/stdout.txt": {
+      "sha256": "b9c7e4ed0ef2e4ff769a52c02d8362d7b30c73848ae3fa622fdafc27b575eca6",
+      "bytes": 1033,
+      "original_path": "profiling/65536x65536-uniform8-n64-ge_cache/stdout.log",
+      "original_sha256": "b9c7e4ed0ef2e4ff769a52c02d8362d7b30c73848ae3fa622fdafc27b575eca6",
+      "change": "Copied supporting evidence or renamed retained profiler log as text."
+    },
+    "profiling/65536x65536-uniform8-n64-ge_merge2/counters.csv": {
+      "sha256": "164136d009b6634721b45d4cc8df9fd649b1ebab42d5e0bcaeb70b5cecb45e4b",
+      "bytes": 467,
+      "original_path": "profiling/65536x65536-uniform8-n64-ge_merge2/counters.csv",
+      "original_sha256": "164136d009b6634721b45d4cc8df9fd649b1ebab42d5e0bcaeb70b5cecb45e4b"
+    },
+    "profiling/65536x65536-uniform8-n64-ge_merge2/import-stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0,
+      "original_path": "profiling/65536x65536-uniform8-n64-ge_merge2/import-stderr.log",
+      "original_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "change": "Copied supporting evidence or renamed retained profiler log as text."
+    },
+    "profiling/65536x65536-uniform8-n64-ge_merge2/raw.csv": {
+      "sha256": "fcad2c9467071deb06427b672e5f6d563b75d722187d310292676f8ea3b6371a",
+      "bytes": 13935,
+      "original_path": "profiling/65536x65536-uniform8-n64-ge_merge2/raw.csv",
+      "original_sha256": "fcad2c9467071deb06427b672e5f6d563b75d722187d310292676f8ea3b6371a"
+    },
+    "profiling/65536x65536-uniform8-n64-ge_merge2/stderr.txt": {
+      "sha256": "3a6950f7e3cfb1fc86201b1252be6bfdc3e29c3c537ed28d613c06bad74e4fad",
+      "bytes": 598,
+      "original_path": "profiling/65536x65536-uniform8-n64-ge_merge2/stderr.log",
+      "original_sha256": "3a6950f7e3cfb1fc86201b1252be6bfdc3e29c3c537ed28d613c06bad74e4fad",
+      "change": "Copied supporting evidence or renamed retained profiler log as text."
+    },
+    "profiling/65536x65536-uniform8-n64-ge_merge2/stdout.txt": {
+      "sha256": "3508fb8d4e39d22f3c586294e958c4452b2318ca521c63e6940e9a007dead779",
+      "bytes": 1037,
+      "original_path": "profiling/65536x65536-uniform8-n64-ge_merge2/stdout.log",
+      "original_sha256": "3508fb8d4e39d22f3c586294e958c4452b2318ca521c63e6940e9a007dead779",
+      "change": "Copied supporting evidence or renamed retained profiler log as text."
+    },
+    "profiling/65536x65536-uniform8-n64-ge_plain/counters.csv": {
+      "sha256": "713728b68b595e55717717a268222a4e1b5e5facf6344279077ef7edfa4f71b2",
+      "bytes": 466,
+      "original_path": "profiling/65536x65536-uniform8-n64-ge_plain/counters.csv",
+      "original_sha256": "713728b68b595e55717717a268222a4e1b5e5facf6344279077ef7edfa4f71b2"
+    },
+    "profiling/65536x65536-uniform8-n64-ge_plain/import-stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0,
+      "original_path": "profiling/65536x65536-uniform8-n64-ge_plain/import-stderr.log",
+      "original_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "change": "Copied supporting evidence or renamed retained profiler log as text."
+    },
+    "profiling/65536x65536-uniform8-n64-ge_plain/raw.csv": {
+      "sha256": "9018eee25881bf04dd07c5720c512c1c210188224bd7f1cde6af1e5df9830855",
+      "bytes": 13929,
+      "original_path": "profiling/65536x65536-uniform8-n64-ge_plain/raw.csv",
+      "original_sha256": "9018eee25881bf04dd07c5720c512c1c210188224bd7f1cde6af1e5df9830855"
+    },
+    "profiling/65536x65536-uniform8-n64-ge_plain/stderr.txt": {
+      "sha256": "3a6950f7e3cfb1fc86201b1252be6bfdc3e29c3c537ed28d613c06bad74e4fad",
+      "bytes": 598,
+      "original_path": "profiling/65536x65536-uniform8-n64-ge_plain/stderr.log",
+      "original_sha256": "3a6950f7e3cfb1fc86201b1252be6bfdc3e29c3c537ed28d613c06bad74e4fad",
+      "change": "Copied supporting evidence or renamed retained profiler log as text."
+    },
+    "profiling/65536x65536-uniform8-n64-ge_plain/stdout.txt": {
+      "sha256": "1d12d0ba79369d83a0eabde249cf275a7d67aa46b36b5ed9ceadd4fba739bfe5",
+      "bytes": 1039,
+      "original_path": "profiling/65536x65536-uniform8-n64-ge_plain/stdout.log",
+      "original_sha256": "1d12d0ba79369d83a0eabde249cf275a7d67aa46b36b5ed9ceadd4fba739bfe5",
+      "change": "Copied supporting evidence or renamed retained profiler log as text."
+    },
+    "profiling/counters.json": {
+      "sha256": "2cfe440e35672e4e6c49118a5e2ef75e2985aac09336d31396c0b957315fea6d",
+      "bytes": 1980,
+      "original_path": "profiling/counters.json",
+      "original_sha256": "2cfe440e35672e4e6c49118a5e2ef75e2985aac09336d31396c0b957315fea6d"
+    },
+    "profiling/gpu-capacity-gpu-after.csv": {
+      "sha256": "432d3a1ec0e933e7b59dacb5640f7fd0ff211a841c118f03ce4d59e212d60a8d",
+      "bytes": 309,
+      "original_path": "gpu-capacity/gpu-after.csv",
+      "original_sha256": "432d3a1ec0e933e7b59dacb5640f7fd0ff211a841c118f03ce4d59e212d60a8d",
+      "change": "Copied supporting evidence or renamed retained profiler log as text."
+    },
+    "profiling/gpu-capacity-gpu-before.csv": {
+      "sha256": "66b226739e01fa04f9674153a72432242ba6e9a13f093f10f5159535b3f663a2",
+      "bytes": 307,
+      "original_path": "gpu-capacity/gpu-before.csv",
+      "original_sha256": "66b226739e01fa04f9674153a72432242ba6e9a13f093f10f5159535b3f663a2",
+      "change": "Copied supporting evidence or renamed retained profiler log as text."
+    },
+    "profiling/gpu-gpu-after.csv": {
+      "sha256": "712334fb7fe6b07f20b8a633dd0b047ddcb83056408aabc63ea7e76db8580834",
+      "bytes": 310,
+      "original_path": "gpu/gpu-after.csv",
+      "original_sha256": "712334fb7fe6b07f20b8a633dd0b047ddcb83056408aabc63ea7e76db8580834",
+      "change": "Copied supporting evidence or renamed retained profiler log as text."
+    },
+    "profiling/gpu-gpu-before.csv": {
+      "sha256": "b8a31431847618820ee47a1f8ced0c75c66f76b7f5cf03a64df2408c098010bf",
+      "bytes": 307,
+      "original_path": "gpu/gpu-before.csv",
+      "original_sha256": "b8a31431847618820ee47a1f8ced0c75c66f76b7f5cf03a64df2408c098010bf",
+      "change": "Copied supporting evidence or renamed retained profiler log as text."
+    },
+    "profiling/manifest.json": {
+      "sha256": "1f9cf39bf2fc3d4f9c9f892a9afb1c3a9a1cb95919b9b957967d4a95f71579d9",
+      "bytes": 8756,
+      "original_path": "profiling/manifest.json",
+      "original_sha256": "1f9cf39bf2fc3d4f9c9f892a9afb1c3a9a1cb95919b9b957967d4a95f71579d9"
+    },
+    "profiling/sanitizer/ge_cache-stdout.txt": {
+      "sha256": "bd1281dd74f406ebf2cd1e2b208278589a9a7f7f9d887808efcd2f542ee43a07",
+      "bytes": 1030,
+      "original_path": "profiling/sanitizer/ge_cache-stdout.log",
+      "original_sha256": "bd1281dd74f406ebf2cd1e2b208278589a9a7f7f9d887808efcd2f542ee43a07",
+      "change": "Copied supporting evidence or renamed retained profiler log as text."
+    },
+    "profiling/sanitizer/ge_cache.txt": {
+      "sha256": "a9d061cee538182f762e132abeea7bac7bddb844338f25751bbbb043f242c425",
+      "bytes": 62,
+      "original_path": "profiling/sanitizer/ge_cache.log",
+      "original_sha256": "a9d061cee538182f762e132abeea7bac7bddb844338f25751bbbb043f242c425",
+      "change": "Copied supporting evidence or renamed retained profiler log as text."
+    },
+    "profiling/sanitizer/ge_merge2-stdout.txt": {
+      "sha256": "c9062464c7134faf08a0ce5c7c62f60989b1ac9fedae6cace619842884bbe722",
+      "bytes": 1030,
+      "original_path": "profiling/sanitizer/ge_merge2-stdout.log",
+      "original_sha256": "c9062464c7134faf08a0ce5c7c62f60989b1ac9fedae6cace619842884bbe722",
+      "change": "Copied supporting evidence or renamed retained profiler log as text."
+    },
+    "profiling/sanitizer/ge_merge2.txt": {
+      "sha256": "a9d061cee538182f762e132abeea7bac7bddb844338f25751bbbb043f242c425",
+      "bytes": 62,
+      "original_path": "profiling/sanitizer/ge_merge2.log",
+      "original_sha256": "a9d061cee538182f762e132abeea7bac7bddb844338f25751bbbb043f242c425",
+      "change": "Copied supporting evidence or renamed retained profiler log as text."
+    },
+    "profiling/sanitizer/ge_merge4-stdout.txt": {
+      "sha256": "2b593959bcd41b8547ca60fc49b7e5e117ae5f142c59bc3e1ba9ed833603cc42",
+      "bytes": 1031,
+      "original_path": "profiling/sanitizer/ge_merge4-stdout.log",
+      "original_sha256": "2b593959bcd41b8547ca60fc49b7e5e117ae5f142c59bc3e1ba9ed833603cc42",
+      "change": "Copied supporting evidence or renamed retained profiler log as text."
+    },
+    "profiling/sanitizer/ge_merge4.txt": {
+      "sha256": "a9d061cee538182f762e132abeea7bac7bddb844338f25751bbbb043f242c425",
+      "bytes": 62,
+      "original_path": "profiling/sanitizer/ge_merge4.log",
+      "original_sha256": "a9d061cee538182f762e132abeea7bac7bddb844338f25751bbbb043f242c425",
+      "change": "Copied supporting evidence or renamed retained profiler log as text."
+    },
+    "profiling-traffic/262144x262144-block8-n128-ge_merge2/capture.txt": {
+      "sha256": "3d49ba29a6a0855e66017338bba04ac1701e552b0feee214a36292b9f31d85be",
+      "bytes": 546,
+      "original_path": "profiling-traffic/262144x262144-block8-n128-ge_merge2/capture.log",
+      "original_sha256": "3d49ba29a6a0855e66017338bba04ac1701e552b0feee214a36292b9f31d85be",
+      "change": "Copied supporting evidence or renamed retained profiler log as text."
+    },
+    "profiling-traffic/262144x262144-block8-n128-ge_merge2/raw.csv": {
+      "sha256": "23e33ad25b5e6205742793414027b74d77a6dcd67aaf57e7df1d88d84be0f5f5",
+      "bytes": 13773,
+      "original_path": "profiling-traffic/262144x262144-block8-n128-ge_merge2/raw.csv",
+      "original_sha256": "23e33ad25b5e6205742793414027b74d77a6dcd67aaf57e7df1d88d84be0f5f5"
+    },
+    "profiling-traffic/262144x262144-block8-n128-ge_merge2/stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0,
+      "original_path": "profiling-traffic/262144x262144-block8-n128-ge_merge2/stderr.log",
+      "original_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "change": "Copied supporting evidence or renamed retained profiler log as text."
+    },
+    "profiling-traffic/262144x262144-block8-n128-ge_merge2/stdout.txt": {
+      "sha256": "70213ff271620993631f34bf024db947fdfdfaefeea0eec506b71e8c23413037",
+      "bytes": 1040,
+      "original_path": "profiling-traffic/262144x262144-block8-n128-ge_merge2/stdout.log",
+      "original_sha256": "70213ff271620993631f34bf024db947fdfdfaefeea0eec506b71e8c23413037",
+      "change": "Copied supporting evidence or renamed retained profiler log as text."
+    },
+    "profiling-traffic/262144x262144-uniform8-n128-ge_merge2/capture.txt": {
+      "sha256": "54bc72116264b03bdaa0aa15e0625ea9ad61ea2b5b1bbae35dbcd0c10e0192ec",
+      "bytes": 548,
+      "original_path": "profiling-traffic/262144x262144-uniform8-n128-ge_merge2/capture.log",
+      "original_sha256": "54bc72116264b03bdaa0aa15e0625ea9ad61ea2b5b1bbae35dbcd0c10e0192ec",
+      "change": "Copied supporting evidence or renamed retained profiler log as text."
+    },
+    "profiling-traffic/262144x262144-uniform8-n128-ge_merge2/raw.csv": {
+      "sha256": "45edeef84c8e0a71acb05c9172f9ef46ad7aa6104262b3c0d6a20864a2f0c72a",
+      "bytes": 13777,
+      "original_path": "profiling-traffic/262144x262144-uniform8-n128-ge_merge2/raw.csv",
+      "original_sha256": "45edeef84c8e0a71acb05c9172f9ef46ad7aa6104262b3c0d6a20864a2f0c72a"
+    },
+    "profiling-traffic/262144x262144-uniform8-n128-ge_merge2/stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0,
+      "original_path": "profiling-traffic/262144x262144-uniform8-n128-ge_merge2/stderr.log",
+      "original_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "change": "Copied supporting evidence or renamed retained profiler log as text."
+    },
+    "profiling-traffic/262144x262144-uniform8-n128-ge_merge2/stdout.txt": {
+      "sha256": "86b453dbf60dff6f4afd89b1276d1b0f4506eb23f34b9fa9eb7a82c1c9a14ae7",
+      "bytes": 1038,
+      "original_path": "profiling-traffic/262144x262144-uniform8-n128-ge_merge2/stdout.log",
+      "original_sha256": "86b453dbf60dff6f4afd89b1276d1b0f4506eb23f34b9fa9eb7a82c1c9a14ae7",
+      "change": "Copied supporting evidence or renamed retained profiler log as text."
+    },
+    "profiling-traffic/65536x65536-uniform8-n64-ge_cache/capture.txt": {
+      "sha256": "24621143ffb06353a6980b9469f7192313fdd4d285e75a5005f4c33aad560679",
+      "bytes": 544,
+      "original_path": "profiling-traffic/65536x65536-uniform8-n64-ge_cache/capture.log",
+      "original_sha256": "24621143ffb06353a6980b9469f7192313fdd4d285e75a5005f4c33aad560679",
+      "change": "Copied supporting evidence or renamed retained profiler log as text."
+    },
+    "profiling-traffic/65536x65536-uniform8-n64-ge_cache/raw.csv": {
+      "sha256": "fc26c17af1b2bcbc9de3c28d6617da42c764f8f95e8e95d5d57e7409fb2743a1",
+      "bytes": 13742,
+      "original_path": "profiling-traffic/65536x65536-uniform8-n64-ge_cache/raw.csv",
+      "original_sha256": "fc26c17af1b2bcbc9de3c28d6617da42c764f8f95e8e95d5d57e7409fb2743a1"
+    },
+    "profiling-traffic/65536x65536-uniform8-n64-ge_cache/stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0,
+      "original_path": "profiling-traffic/65536x65536-uniform8-n64-ge_cache/stderr.log",
+      "original_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "change": "Copied supporting evidence or renamed retained profiler log as text."
+    },
+    "profiling-traffic/65536x65536-uniform8-n64-ge_cache/stdout.txt": {
+      "sha256": "73351254e37439af927e7ca3aa320953ce9b4c048c0b1ae2c25846a1d7831fee",
+      "bytes": 1034,
+      "original_path": "profiling-traffic/65536x65536-uniform8-n64-ge_cache/stdout.log",
+      "original_sha256": "73351254e37439af927e7ca3aa320953ce9b4c048c0b1ae2c25846a1d7831fee",
+      "change": "Copied supporting evidence or renamed retained profiler log as text."
+    },
+    "profiling-traffic/65536x65536-uniform8-n64-ge_merge2/capture.txt": {
+      "sha256": "68f8062c2069f8abaf2ecfee8783de970f19f5d81032338c82264d69060a19d7",
+      "bytes": 545,
+      "original_path": "profiling-traffic/65536x65536-uniform8-n64-ge_merge2/capture.log",
+      "original_sha256": "68f8062c2069f8abaf2ecfee8783de970f19f5d81032338c82264d69060a19d7",
+      "change": "Copied supporting evidence or renamed retained profiler log as text."
+    },
+    "profiling-traffic/65536x65536-uniform8-n64-ge_merge2/raw.csv": {
+      "sha256": "786d5fab85779b1844fe7a03baf348a8b90b4c2d9bcebf923ac400158019a8f0",
+      "bytes": 13730,
+      "original_path": "profiling-traffic/65536x65536-uniform8-n64-ge_merge2/raw.csv",
+      "original_sha256": "786d5fab85779b1844fe7a03baf348a8b90b4c2d9bcebf923ac400158019a8f0"
+    },
+    "profiling-traffic/65536x65536-uniform8-n64-ge_merge2/stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0,
+      "original_path": "profiling-traffic/65536x65536-uniform8-n64-ge_merge2/stderr.log",
+      "original_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "change": "Copied supporting evidence or renamed retained profiler log as text."
+    },
+    "profiling-traffic/65536x65536-uniform8-n64-ge_merge2/stdout.txt": {
+      "sha256": "88f72f79d84a6223d0b6a146c68715666aecbcc84c1e0e18197afd8da09acaa3",
+      "bytes": 1038,
+      "original_path": "profiling-traffic/65536x65536-uniform8-n64-ge_merge2/stdout.log",
+      "original_sha256": "88f72f79d84a6223d0b6a146c68715666aecbcc84c1e0e18197afd8da09acaa3",
+      "change": "Copied supporting evidence or renamed retained profiler log as text."
+    },
+    "profiling-traffic/65536x65536-uniform8-n64-ge_plain/capture.txt": {
+      "sha256": "f5ff7a1aeb498d3445c4a1ea068821578614399d2e7b18b43b787daeb5e1857b",
+      "bytes": 544,
+      "original_path": "profiling-traffic/65536x65536-uniform8-n64-ge_plain/capture.log",
+      "original_sha256": "f5ff7a1aeb498d3445c4a1ea068821578614399d2e7b18b43b787daeb5e1857b",
+      "change": "Copied supporting evidence or renamed retained profiler log as text."
+    },
+    "profiling-traffic/65536x65536-uniform8-n64-ge_plain/raw.csv": {
+      "sha256": "872a80522911e65287296651f55dc69f5971a986a171ea8cd8b1a4a1384e6250",
+      "bytes": 13730,
+      "original_path": "profiling-traffic/65536x65536-uniform8-n64-ge_plain/raw.csv",
+      "original_sha256": "872a80522911e65287296651f55dc69f5971a986a171ea8cd8b1a4a1384e6250"
+    },
+    "profiling-traffic/65536x65536-uniform8-n64-ge_plain/stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0,
+      "original_path": "profiling-traffic/65536x65536-uniform8-n64-ge_plain/stderr.log",
+      "original_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "change": "Copied supporting evidence or renamed retained profiler log as text."
+    },
+    "profiling-traffic/65536x65536-uniform8-n64-ge_plain/stdout.txt": {
+      "sha256": "454ea8a50f4973e33c7350eca08374cc2920f1514e270f2713b6d8897136d6d9",
+      "bytes": 1037,
+      "original_path": "profiling-traffic/65536x65536-uniform8-n64-ge_plain/stdout.log",
+      "original_sha256": "454ea8a50f4973e33c7350eca08374cc2920f1514e270f2713b6d8897136d6d9",
+      "change": "Copied supporting evidence or renamed retained profiler log as text."
+    },
+    "profiling-traffic/summary.json": {
+      "sha256": "fdbb8c40eed6550a2dd270f51ed72488d0e2cad5121d0c718f923f6294d3955f",
+      "bytes": 7487,
+      "original_path": "profiling-traffic/summary.json",
+      "original_sha256": "fdbb8c40eed6550a2dd270f51ed72488d0e2cad5121d0c718f923f6294d3955f"
+    },
+    "replay-registration.json": {
+      "sha256": "814a46dbbcf53b8a885559a35d8edcfd60492d37b47357aea1094f42a6a10b51",
+      "bytes": 600,
+      "original_path": "replay-registration.json",
+      "original_sha256": "814a46dbbcf53b8a885559a35d8edcfd60492d37b47357aea1094f42a6a10b51"
+    },
+    "replay_gpu.py": {
+      "sha256": "25f6769323faa8cb0dfc94476b112ce7f1c70a16ac8bffec1e3a60da19dc09d3",
+      "bytes": 1065,
+      "original_path": "replay_gpu.py",
+      "original_sha256": "25f6769323faa8cb0dfc94476b112ce7f1c70a16ac8bffec1e3a60da19dc09d3"
+    },
+    "report.py": {
+      "sha256": "359793866765333ba4187985aa5913ed3e2de617becf1b106eacaf874d1d1dc8",
+      "bytes": 5044,
+      "original_path": "report.py",
+      "original_sha256": "359793866765333ba4187985aa5913ed3e2de617becf1b106eacaf874d1d1dc8"
+    },
+    "results.json": {
+      "sha256": "9f95a8662a9fa1e5225b07214e7fc891893c02976ece9e7e53431b88a34e82e1",
+      "bytes": 4266252,
+      "original_path": "results.json",
+      "original_sha256": "9f95a8662a9fa1e5225b07214e7fc891893c02976ece9e7e53431b88a34e82e1"
+    },
+    "run_gpu.py": {
+      "sha256": "ffed154b034d37c58ab046e9baaec708a928474a9e3fb34dc1abde6d54c781f1",
+      "bytes": 2846,
+      "original_path": "run_gpu.py",
+      "original_sha256": "ffed154b034d37c58ab046e9baaec708a928474a9e3fb34dc1abde6d54c781f1"
+    },
+    "run_wse.py": {
+      "sha256": "dc4906283285ca57f53370154a5b4852e4d9ffe82598e93ff4796c2788af4acf",
+      "bytes": 2599,
+      "original_path": "run_wse.py",
+      "original_sha256": "1142b1db500302fe919bb9265e1b0795f11df08865123ed0d68c5ec1d613d7cf",
+      "change": "Permit CEREBRAS_SDK_DIR and protect the recorded directory."
+    },
+    "sources/bcspwr09.mtx": {
+      "sha256": "c396a96af9aab55af84522dd1b8d95ecb87c9c4b014f3597bc4f55067930b1ea",
+      "bytes": 37546,
+      "original_path": "sources/bcspwr09.mtx",
+      "original_sha256": "c396a96af9aab55af84522dd1b8d95ecb87c9c4b014f3597bc4f55067930b1ea"
+    },
+    "sources/bcsstk08.mtx": {
+      "sha256": "3b34aaa2dc8dbcf2f1fca9360f524f8a0927352d5d926cf52f05cf383f670124",
+      "bytes": 154982,
+      "original_path": "sources/bcsstk08.mtx",
+      "original_sha256": "3b34aaa2dc8dbcf2f1fca9360f524f8a0927352d5d926cf52f05cf383f670124"
+    },
+    "sources/sherman1.mtx": {
+      "sha256": "c3aaff0fca59d2ff29ff1d879c0cf0e57bba73cab718da5107c3e4e88652a9b4",
+      "bytes": 34760,
+      "original_path": "sources/sherman1.mtx",
+      "original_sha256": "c3aaff0fca59d2ff29ff1d879c0cf0e57bba73cab718da5107c3e4e88652a9b4"
+    },
+    "supporting/earlier-matmul-FINDINGS.md": {
+      "sha256": "b4062c558dd44abba6257de41645496bbf8361fd5327df067788271cccb376df",
+      "bytes": 7086,
+      "original_path": "/home/USER/wse-matmul-microbench/FINDINGS.md",
+      "original_sha256": "97da835512276debf067693210b4f431870d4b621067793cdf80f3b89eddefea",
+      "change": "Update links to packaged earlier-matmul supporting evidence."
+    },
+    "supporting/earlier-matmul-PROTOCOL.md": {
+      "sha256": "38917b4a26e573eff519f781febf8f7dca0c4a6fce5fcbe31ae38b05e6bcf16c",
+      "bytes": 6171,
+      "original_path": "/home/USER/wse-matmul-microbench/PROTOCOL.md",
+      "original_sha256": "38917b4a26e573eff519f781febf8f7dca0c4a6fce5fcbe31ae38b05e6bcf16c",
+      "change": "Copied supporting evidence or renamed retained profiler log as text."
+    },
+    "supporting/earlier-matmul-RESULTS.md": {
+      "sha256": "3eaf4a0c71c466a9d00e0349bcb838fe08b1461b9f091dea82b8161478b5741b",
+      "bytes": 3645,
+      "original_path": "/home/USER/wse-matmul-microbench/RESULTS.md",
+      "original_sha256": "3eaf4a0c71c466a9d00e0349bcb838fe08b1461b9f091dea82b8161478b5741b",
+      "change": "Copied supporting evidence or renamed retained profiler log as text."
+    },
+    "supporting/earlier-matmul-performance-trace-analysis.json": {
+      "sha256": "4a819f334538d21681f784c918400ec93989bc4c600e4fa7548486e94fadcb7d",
+      "bytes": 7979,
+      "original_path": "/home/USER/wse-matmul-microbench/performance-trace-analysis.json",
+      "original_sha256": "4a819f334538d21681f784c918400ec93989bc4c600e4fa7548486e94fadcb7d",
+      "change": "Copied supporting evidence or renamed retained profiler log as text."
+    },
+    "supporting/earlier-matmul-results.json": {
+      "sha256": "f1da9d0929fdf76da7cf32550e7816997b78c1cb1b5d65ac579aecc3177c5557",
+      "bytes": 3005578,
+      "original_path": "/home/USER/wse-matmul-microbench/results.json",
+      "original_sha256": "f1da9d0929fdf76da7cf32550e7816997b78c1cb1b5d65ac579aecc3177c5557",
+      "change": "Copied supporting evidence or renamed retained profiler log as text."
+    },
+    "supporting/earlier-matmul-safe-reduction-amendment.json": {
+      "sha256": "a8cccf79e823368bcf67eba85b6761c5aeade7c253c214041f855e2a2ed032c3",
+      "bytes": 8404,
+      "original_path": "/home/USER/wse-matmul-microbench/safe-reduction-amendment.json",
+      "original_sha256": "a8cccf79e823368bcf67eba85b6761c5aeade7c253c214041f855e2a2ed032c3",
+      "change": "Copied supporting evidence or renamed retained profiler log as text."
+    },
+    "tools/csdisasm.py": {
+      "sha256": "3e091384a46dba46d5433a923432928af66ccb873a9d49f596d55cd5e2c7228b",
+      "bytes": 6821,
+      "change": "Added repository packaging, provenance or reproduction support."
+    },
+    "vendor/ge-spmm/LICENSE": {
+      "sha256": "75a4c32215557d9fdcf50a649f27f15e3b3c322d0a9bc81d0eb7617451e007a1",
+      "bytes": 1068,
+      "original_path": "vendor/ge-spmm/LICENSE",
+      "original_sha256": "75a4c32215557d9fdcf50a649f27f15e3b3c322d0a9bc81d0eb7617451e007a1"
+    },
+    "vendor/ge-spmm/source.json": {
+      "sha256": "ba4c51da0b10d8505ae3ae491834373573cce9695cf80d3f6cd89b2968f409cd",
+      "bytes": 304,
+      "change": "Added repository packaging, provenance or reproduction support."
+    },
+    "vendor/ge-spmm/spmm_test.cu": {
+      "sha256": "d91d62fe42f8e787f09c5e6e0bb921420ae4afe01e64e5119af1e04aa0136384",
+      "bytes": 29243,
+      "original_path": "vendor/ge-spmm/spmm_test.cu",
+      "original_sha256": "d91d62fe42f8e787f09c5e6e0bb921420ae4afe01e64e5119af1e04aa0136384"
+    },
+    "verify_snapshot.py": {
+      "sha256": "35723dbe45ef114148121604e8ec03ff03f7f6b5121ac9b965b6723e57194659",
+      "bytes": 2814,
+      "change": "Added repository packaging, provenance or reproduction support."
+    },
+    "viewer-manifest.json": {
+      "sha256": "dfaf5a49e91ec56ce6738e9e4e478fc8c248b107b481f72344dff086c89366a6",
+      "bytes": 176,
+      "original_path": "viewer-manifest.json",
+      "original_sha256": "dfaf5a49e91ec56ce6738e9e4e478fc8c248b107b481f72344dff086c89366a6"
+    },
+    "viewer-template.html": {
+      "sha256": "90e358bacbd4047c78189851769b5500133e919ffe07645d61620c2591acb75f",
+      "bytes": 16926,
+      "original_path": "viewer-template.html",
+      "original_sha256": "a99d66fa058b9fdae57b5e76d56fe4cb2838aecb7263d31569baa7feda254291",
+      "change": "Point the earlier-dataflow navigation at the package explanation."
+    },
+    "wse/descriptor-n1/case.json": {
+      "sha256": "c575a1b061077d40421fc382ef02eb0e6b407abf45d91f029460501a65d408c1",
+      "bytes": 3715,
+      "original_path": "wse/descriptor-n1/case.json",
+      "original_sha256": "c575a1b061077d40421fc382ef02eb0e6b407abf45d91f029460501a65d408c1"
+    },
+    "wse/descriptor-n1/host.py": {
+      "sha256": "1db7c71e9e24552bfba177da91266f247ae676e23f6a141f16af8e74b2b95e35",
+      "bytes": 3291,
+      "original_path": "wse/descriptor-n1/host.py",
+      "original_sha256": "1db7c71e9e24552bfba177da91266f247ae676e23f6a141f16af8e74b2b95e35"
+    },
+    "wse/descriptor-n1/layout.csl": {
+      "sha256": "33f30692f28910ce81e48bafac4132ece5492c195cc6f7a65da943e5099e38d8",
+      "bytes": 458,
+      "original_path": "wse/descriptor-n1/layout.csl",
+      "original_sha256": "33f30692f28910ce81e48bafac4132ece5492c195cc6f7a65da943e5099e38d8"
+    },
+    "wse/descriptor-n1/pe.csl": {
+      "sha256": "6facf0e38c62735b65d32186b724fbbf48f7cae7e60f9ba71b43b796bec3eefd",
+      "bytes": 1591,
+      "original_path": "wse/descriptor-n1/pe.csl",
+      "original_sha256": "6facf0e38c62735b65d32186b724fbbf48f7cae7e60f9ba71b43b796bec3eefd"
+    },
+    "wse/descriptor-n16/case.json": {
+      "sha256": "9f2111d63a9c80c9e995fc3bd2221f04a2e5e31c01b8ae3d9d70449532a73502",
+      "bytes": 3723,
+      "original_path": "wse/descriptor-n16/case.json",
+      "original_sha256": "9f2111d63a9c80c9e995fc3bd2221f04a2e5e31c01b8ae3d9d70449532a73502"
+    },
+    "wse/descriptor-n16/host.py": {
+      "sha256": "1db7c71e9e24552bfba177da91266f247ae676e23f6a141f16af8e74b2b95e35",
+      "bytes": 3291,
+      "original_path": "wse/descriptor-n16/host.py",
+      "original_sha256": "1db7c71e9e24552bfba177da91266f247ae676e23f6a141f16af8e74b2b95e35"
+    },
+    "wse/descriptor-n16/layout.csl": {
+      "sha256": "33f30692f28910ce81e48bafac4132ece5492c195cc6f7a65da943e5099e38d8",
+      "bytes": 458,
+      "original_path": "wse/descriptor-n16/layout.csl",
+      "original_sha256": "33f30692f28910ce81e48bafac4132ece5492c195cc6f7a65da943e5099e38d8"
+    },
+    "wse/descriptor-n16/pe.csl": {
+      "sha256": "c477712502f40f1eea7140c35ac9ee4102efb5a171a60ae24d415e38ae63fbf5",
+      "bytes": 1595,
+      "original_path": "wse/descriptor-n16/pe.csl",
+      "original_sha256": "c477712502f40f1eea7140c35ac9ee4102efb5a171a60ae24d415e38ae63fbf5"
+    },
+    "wse/descriptor-n4/case.json": {
+      "sha256": "aaeb177c825b994adbd58241c746766f16ff06f9b4871dc0a521e95d997bfc02",
+      "bytes": 3715,
+      "original_path": "wse/descriptor-n4/case.json",
+      "original_sha256": "aaeb177c825b994adbd58241c746766f16ff06f9b4871dc0a521e95d997bfc02"
+    },
+    "wse/descriptor-n4/host.py": {
+      "sha256": "1db7c71e9e24552bfba177da91266f247ae676e23f6a141f16af8e74b2b95e35",
+      "bytes": 3291,
+      "original_path": "wse/descriptor-n4/host.py",
+      "original_sha256": "1db7c71e9e24552bfba177da91266f247ae676e23f6a141f16af8e74b2b95e35"
+    },
+    "wse/descriptor-n4/layout.csl": {
+      "sha256": "33f30692f28910ce81e48bafac4132ece5492c195cc6f7a65da943e5099e38d8",
+      "bytes": 458,
+      "original_path": "wse/descriptor-n4/layout.csl",
+      "original_sha256": "33f30692f28910ce81e48bafac4132ece5492c195cc6f7a65da943e5099e38d8"
+    },
+    "wse/descriptor-n4/pe.csl": {
+      "sha256": "40bf4181a2cfb2cd47f11a2913025065bf784d73f3aa4ae7c8d606124b35d6cd",
+      "bytes": 1593,
+      "original_path": "wse/descriptor-n4/pe.csl",
+      "original_sha256": "40bf4181a2cfb2cd47f11a2913025065bf784d73f3aa4ae7c8d606124b35d6cd"
+    },
+    "wse/descriptor-n64/case.json": {
+      "sha256": "91a6dac3130d3847f832966bf8dcb9f697b2cb7d550e4f1c3493a3a454b12e01",
+      "bytes": 3723,
+      "original_path": "wse/descriptor-n64/case.json",
+      "original_sha256": "91a6dac3130d3847f832966bf8dcb9f697b2cb7d550e4f1c3493a3a454b12e01"
+    },
+    "wse/descriptor-n64/host.py": {
+      "sha256": "1db7c71e9e24552bfba177da91266f247ae676e23f6a141f16af8e74b2b95e35",
+      "bytes": 3291,
+      "original_path": "wse/descriptor-n64/host.py",
+      "original_sha256": "1db7c71e9e24552bfba177da91266f247ae676e23f6a141f16af8e74b2b95e35"
+    },
+    "wse/descriptor-n64/layout.csl": {
+      "sha256": "33f30692f28910ce81e48bafac4132ece5492c195cc6f7a65da943e5099e38d8",
+      "bytes": 458,
+      "original_path": "wse/descriptor-n64/layout.csl",
+      "original_sha256": "33f30692f28910ce81e48bafac4132ece5492c195cc6f7a65da943e5099e38d8"
+    },
+    "wse/descriptor-n64/pe.csl": {
+      "sha256": "64bb89f542ecc33bbca80d073e6b386f9314d62f2c096b369187508351cb1cbd",
+      "bytes": 1596,
+      "original_path": "wse/descriptor-n64/pe.csl",
+      "original_sha256": "64bb89f542ecc33bbca80d073e6b386f9314d62f2c096b369187508351cb1cbd"
+    },
+    "wse/hoisted-n1/case.json": {
+      "sha256": "6783455d478dfafc8c5b9a024844344a0199eddf84e3865316ce47473e57f7a1",
+      "bytes": 3709,
+      "original_path": "wse/hoisted-n1/case.json",
+      "original_sha256": "6783455d478dfafc8c5b9a024844344a0199eddf84e3865316ce47473e57f7a1"
+    },
+    "wse/hoisted-n1/host.py": {
+      "sha256": "1db7c71e9e24552bfba177da91266f247ae676e23f6a141f16af8e74b2b95e35",
+      "bytes": 3291,
+      "original_path": "wse/hoisted-n1/host.py",
+      "original_sha256": "1db7c71e9e24552bfba177da91266f247ae676e23f6a141f16af8e74b2b95e35"
+    },
+    "wse/hoisted-n1/layout.csl": {
+      "sha256": "33f30692f28910ce81e48bafac4132ece5492c195cc6f7a65da943e5099e38d8",
+      "bytes": 458,
+      "original_path": "wse/hoisted-n1/layout.csl",
+      "original_sha256": "33f30692f28910ce81e48bafac4132ece5492c195cc6f7a65da943e5099e38d8"
+    },
+    "wse/hoisted-n1/pe.csl": {
+      "sha256": "b64bad326b4fc0d9c34c21e948c6c9ff3b1889a62301b86ccfb1286cb187a49d",
+      "bytes": 1591,
+      "original_path": "wse/hoisted-n1/pe.csl",
+      "original_sha256": "b64bad326b4fc0d9c34c21e948c6c9ff3b1889a62301b86ccfb1286cb187a49d"
+    },
+    "wse/hoisted-n16/case.json": {
+      "sha256": "a6eec87d3cbdf00486d74ddd11545f4189dd1ef9197dec06f539c479ee66bb86",
+      "bytes": 3717,
+      "original_path": "wse/hoisted-n16/case.json",
+      "original_sha256": "a6eec87d3cbdf00486d74ddd11545f4189dd1ef9197dec06f539c479ee66bb86"
+    },
+    "wse/hoisted-n16/host.py": {
+      "sha256": "1db7c71e9e24552bfba177da91266f247ae676e23f6a141f16af8e74b2b95e35",
+      "bytes": 3291,
+      "original_path": "wse/hoisted-n16/host.py",
+      "original_sha256": "1db7c71e9e24552bfba177da91266f247ae676e23f6a141f16af8e74b2b95e35"
+    },
+    "wse/hoisted-n16/layout.csl": {
+      "sha256": "33f30692f28910ce81e48bafac4132ece5492c195cc6f7a65da943e5099e38d8",
+      "bytes": 458,
+      "original_path": "wse/hoisted-n16/layout.csl",
+      "original_sha256": "33f30692f28910ce81e48bafac4132ece5492c195cc6f7a65da943e5099e38d8"
+    },
+    "wse/hoisted-n16/pe.csl": {
+      "sha256": "9f332f27218fcb1324944a659b776051422b134f0dc0733dbbd550ddd44ad485",
+      "bytes": 1595,
+      "original_path": "wse/hoisted-n16/pe.csl",
+      "original_sha256": "9f332f27218fcb1324944a659b776051422b134f0dc0733dbbd550ddd44ad485"
+    },
+    "wse/hoisted-n4/case.json": {
+      "sha256": "db213dbcbc76b0471cfa6d742cce2fc41d05b020aba7e33beebd84a0ebbf5b9b",
+      "bytes": 3709,
+      "original_path": "wse/hoisted-n4/case.json",
+      "original_sha256": "db213dbcbc76b0471cfa6d742cce2fc41d05b020aba7e33beebd84a0ebbf5b9b"
+    },
+    "wse/hoisted-n4/host.py": {
+      "sha256": "1db7c71e9e24552bfba177da91266f247ae676e23f6a141f16af8e74b2b95e35",
+      "bytes": 3291,
+      "original_path": "wse/hoisted-n4/host.py",
+      "original_sha256": "1db7c71e9e24552bfba177da91266f247ae676e23f6a141f16af8e74b2b95e35"
+    },
+    "wse/hoisted-n4/layout.csl": {
+      "sha256": "33f30692f28910ce81e48bafac4132ece5492c195cc6f7a65da943e5099e38d8",
+      "bytes": 458,
+      "original_path": "wse/hoisted-n4/layout.csl",
+      "original_sha256": "33f30692f28910ce81e48bafac4132ece5492c195cc6f7a65da943e5099e38d8"
+    },
+    "wse/hoisted-n4/pe.csl": {
+      "sha256": "d366d1bd1d1ecdf2112afe43ea0005cb446c135c985f6ac75fbaba545acf048d",
+      "bytes": 1593,
+      "original_path": "wse/hoisted-n4/pe.csl",
+      "original_sha256": "d366d1bd1d1ecdf2112afe43ea0005cb446c135c985f6ac75fbaba545acf048d"
+    },
+    "wse/hoisted-n64/case.json": {
+      "sha256": "10852251c4084bb5a65bdff1e984cfb1f6fcde3eaff17c755d57ce2f62696f21",
+      "bytes": 3717,
+      "original_path": "wse/hoisted-n64/case.json",
+      "original_sha256": "10852251c4084bb5a65bdff1e984cfb1f6fcde3eaff17c755d57ce2f62696f21"
+    },
+    "wse/hoisted-n64/host.py": {
+      "sha256": "1db7c71e9e24552bfba177da91266f247ae676e23f6a141f16af8e74b2b95e35",
+      "bytes": 3291,
+      "original_path": "wse/hoisted-n64/host.py",
+      "original_sha256": "1db7c71e9e24552bfba177da91266f247ae676e23f6a141f16af8e74b2b95e35"
+    },
+    "wse/hoisted-n64/layout.csl": {
+      "sha256": "33f30692f28910ce81e48bafac4132ece5492c195cc6f7a65da943e5099e38d8",
+      "bytes": 458,
+      "original_path": "wse/hoisted-n64/layout.csl",
+      "original_sha256": "33f30692f28910ce81e48bafac4132ece5492c195cc6f7a65da943e5099e38d8"
+    },
+    "wse/hoisted-n64/pe.csl": {
+      "sha256": "756d46ac48a8382250085ccacc2b138247af294209e47536a0fec9b6ef9538bd",
+      "bytes": 1596,
+      "original_path": "wse/hoisted-n64/pe.csl",
+      "original_sha256": "756d46ac48a8382250085ccacc2b138247af294209e47536a0fec9b6ef9538bd"
+    },
+    "wse/scalar-n1/case.json": {
+      "sha256": "2283df4a35847f9d50ba79ba23bbca0b070295d984b33b48d8fc157086e799c1",
+      "bytes": 3707,
+      "original_path": "wse/scalar-n1/case.json",
+      "original_sha256": "2283df4a35847f9d50ba79ba23bbca0b070295d984b33b48d8fc157086e799c1"
+    },
+    "wse/scalar-n1/host.py": {
+      "sha256": "1db7c71e9e24552bfba177da91266f247ae676e23f6a141f16af8e74b2b95e35",
+      "bytes": 3291,
+      "original_path": "wse/scalar-n1/host.py",
+      "original_sha256": "1db7c71e9e24552bfba177da91266f247ae676e23f6a141f16af8e74b2b95e35"
+    },
+    "wse/scalar-n1/layout.csl": {
+      "sha256": "33f30692f28910ce81e48bafac4132ece5492c195cc6f7a65da943e5099e38d8",
+      "bytes": 458,
+      "original_path": "wse/scalar-n1/layout.csl",
+      "original_sha256": "33f30692f28910ce81e48bafac4132ece5492c195cc6f7a65da943e5099e38d8"
+    },
+    "wse/scalar-n1/pe.csl": {
+      "sha256": "35a978e48d450f5afe1926ddec3f9bdf5ccf64bb0d8bb9cb1dd82839863757a3",
+      "bytes": 1414,
+      "original_path": "wse/scalar-n1/pe.csl",
+      "original_sha256": "35a978e48d450f5afe1926ddec3f9bdf5ccf64bb0d8bb9cb1dd82839863757a3"
+    },
+    "wse/scalar-n16/case.json": {
+      "sha256": "986a8555e61389a3af81de19da5863a98d003b3b2607c38c6efe04767ae42c9e",
+      "bytes": 3715,
+      "original_path": "wse/scalar-n16/case.json",
+      "original_sha256": "986a8555e61389a3af81de19da5863a98d003b3b2607c38c6efe04767ae42c9e"
+    },
+    "wse/scalar-n16/host.py": {
+      "sha256": "1db7c71e9e24552bfba177da91266f247ae676e23f6a141f16af8e74b2b95e35",
+      "bytes": 3291,
+      "original_path": "wse/scalar-n16/host.py",
+      "original_sha256": "1db7c71e9e24552bfba177da91266f247ae676e23f6a141f16af8e74b2b95e35"
+    },
+    "wse/scalar-n16/layout.csl": {
+      "sha256": "33f30692f28910ce81e48bafac4132ece5492c195cc6f7a65da943e5099e38d8",
+      "bytes": 458,
+      "original_path": "wse/scalar-n16/layout.csl",
+      "original_sha256": "33f30692f28910ce81e48bafac4132ece5492c195cc6f7a65da943e5099e38d8"
+    },
+    "wse/scalar-n16/pe.csl": {
+      "sha256": "dacb5a2b3e5f8f26f60493beefe88a691e5b69e1b2f2d411651ff254fdb6411c",
+      "bytes": 1418,
+      "original_path": "wse/scalar-n16/pe.csl",
+      "original_sha256": "dacb5a2b3e5f8f26f60493beefe88a691e5b69e1b2f2d411651ff254fdb6411c"
+    },
+    "wse/scalar-n4/case.json": {
+      "sha256": "82def9f6e6c9561ef002f26aad6507c2fcccaab3d2703f7773cb3c50579bb416",
+      "bytes": 3707,
+      "original_path": "wse/scalar-n4/case.json",
+      "original_sha256": "82def9f6e6c9561ef002f26aad6507c2fcccaab3d2703f7773cb3c50579bb416"
+    },
+    "wse/scalar-n4/host.py": {
+      "sha256": "1db7c71e9e24552bfba177da91266f247ae676e23f6a141f16af8e74b2b95e35",
+      "bytes": 3291,
+      "original_path": "wse/scalar-n4/host.py",
+      "original_sha256": "1db7c71e9e24552bfba177da91266f247ae676e23f6a141f16af8e74b2b95e35"
+    },
+    "wse/scalar-n4/layout.csl": {
+      "sha256": "33f30692f28910ce81e48bafac4132ece5492c195cc6f7a65da943e5099e38d8",
+      "bytes": 458,
+      "original_path": "wse/scalar-n4/layout.csl",
+      "original_sha256": "33f30692f28910ce81e48bafac4132ece5492c195cc6f7a65da943e5099e38d8"
+    },
+    "wse/scalar-n4/pe.csl": {
+      "sha256": "519c6b294af284c04342b6e93fd6afb7abc71e2fba7a7dcab4c04969b67cbd08",
+      "bytes": 1416,
+      "original_path": "wse/scalar-n4/pe.csl",
+      "original_sha256": "519c6b294af284c04342b6e93fd6afb7abc71e2fba7a7dcab4c04969b67cbd08"
+    },
+    "wse/scalar-n64/case.json": {
+      "sha256": "e654754babd631a835a804c965878d0a0d148e5a753c7c51037877c06717b17b",
+      "bytes": 3715,
+      "original_path": "wse/scalar-n64/case.json",
+      "original_sha256": "e654754babd631a835a804c965878d0a0d148e5a753c7c51037877c06717b17b"
+    },
+    "wse/scalar-n64/host.py": {
+      "sha256": "1db7c71e9e24552bfba177da91266f247ae676e23f6a141f16af8e74b2b95e35",
+      "bytes": 3291,
+      "original_path": "wse/scalar-n64/host.py",
+      "original_sha256": "1db7c71e9e24552bfba177da91266f247ae676e23f6a141f16af8e74b2b95e35"
+    },
+    "wse/scalar-n64/layout.csl": {
+      "sha256": "33f30692f28910ce81e48bafac4132ece5492c195cc6f7a65da943e5099e38d8",
+      "bytes": 458,
+      "original_path": "wse/scalar-n64/layout.csl",
+      "original_sha256": "33f30692f28910ce81e48bafac4132ece5492c195cc6f7a65da943e5099e38d8"
+    },
+    "wse/scalar-n64/pe.csl": {
+      "sha256": "69c2be2ff66afa9a4af6d3a13a511ed960d237585ec474a9a1580a1123989f91",
+      "bytes": 1419,
+      "original_path": "wse/scalar-n64/pe.csl",
+      "original_sha256": "69c2be2ff66afa9a4af6d3a13a511ed960d237585ec474a9a1580a1123989f91"
+    },
+    "wse-manifest.json": {
+      "sha256": "4b845fcddff6963b9eeb18f33c7e491d5bce9b7e6dfae141fcb5d65f85ac1584",
+      "bytes": 46531,
+      "original_path": "wse-manifest.json",
+      "original_sha256": "4b845fcddff6963b9eeb18f33c7e491d5bce9b7e6dfae141fcb5d65f85ac1584"
+    },
+    "wse-results.csv": {
+      "sha256": "61deb89e38d8fcb06e397a19183a835dca4b2e25c0b81479cc4173ae322e8447",
+      "bytes": 2284,
+      "original_path": "wse-results.csv",
+      "original_sha256": "61deb89e38d8fcb06e397a19183a835dca4b2e25c0b81479cc4173ae322e8447"
+    },
+    "wse-summary.json": {
+      "sha256": "c690c4734a3bfe72a4d4b866d51fa792d9981265bd137253df646f9b0e8ba76c",
+      "bytes": 94286,
+      "original_path": "wse-summary.json",
+      "original_sha256": "c690c4734a3bfe72a4d4b866d51fa792d9981265bd137253df646f9b0e8ba76c"
+    },
+    "wse_host.py": {
+      "sha256": "1db7c71e9e24552bfba177da91266f247ae676e23f6a141f16af8e74b2b95e35",
+      "bytes": 3291,
+      "original_path": "wse_host.py",
+      "original_sha256": "1db7c71e9e24552bfba177da91266f247ae676e23f6a141f16af8e74b2b95e35"
+    },
+    ".gitattributes": {
+      "change": "Added repository packaging, provenance or reproduction support.",
+      "sha256": "47215a212348d9372e696acaa5fe8e22ae415485db70d86e83c5e992343d9672",
+      "bytes": 323
+    },
+    "packaging-validation.json": {
+      "change": "Added repository packaging, provenance or reproduction support.",
+      "sha256": "fbe0f6634b933942d6acf647b2f81ee8a8412ded22e53d2695a575392a72da4c",
+      "bytes": 1068
+    }
+  }
+}

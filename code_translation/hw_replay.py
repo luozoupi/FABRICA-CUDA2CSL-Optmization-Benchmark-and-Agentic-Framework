@@ -150,6 +150,17 @@ def reconstruct_bundle(entry: Dict, dest_root: Path) -> Optional[Path]:
     tgt = dest / entry["target_relpath"]
     tgt.parent.mkdir(parents=True, exist_ok=True)
     shutil.copyfile(entry["artifact"], tgt)
+    # hw_vs_sim.benchmark_kernel always runs commands_wse3.sh: a run benchmarked with a size script
+    # (e.g. commands_wse3_p64.sh) gets that script in its place (1 Oct 2026).
+    cmd = entry.get("commands_script") or "commands_wse3.sh"
+    if cmd != "commands_wse3.sh" and (dest / cmd).is_file():
+        shutil.copyfile(dest / cmd, dest / "commands_wse3.sh")
+    # Host-side files the agent wrote next to its final program (wafer-level mapping hook).
+    if entry.get("version", "final") == "final":
+        for extra in ("row_order.py",):
+            src = Path(entry["artifact"]).parent / extra
+            if src.is_file():
+                shutil.copyfile(src, dest / extra)
     logger.info("[%s] bundle at %s (agent file -> %s)",
                 entry["kernel"], dest, entry["target_relpath"])
     return dest

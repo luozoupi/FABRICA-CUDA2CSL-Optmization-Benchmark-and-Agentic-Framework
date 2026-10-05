@@ -1,0 +1,24 @@
+id: B11_range_count
+group: B_semantics
+prompt: 'Read this Cerebras CSL fragment (SDK 2.10, one PE) and answer the question. Assume every builtin behaves
+  as the SDK documents it. Reply with the answer first (one number), then one sentence of justification.
+
+
+  ```csl
+
+  var n: u16 = 0;
+
+  for (@range(u16, 6)) |_| { n += 1; }
+
+  for (@range(u16, 2, 8, 3)) |_| { n += 1; }
+
+  ```
+
+
+  Question: What is n afterwards (@range(T, start, stop, step) iterates start, start+step, ... while < stop)?'
+expected:
+  values:
+  - 8
+scoring: trailing numbers within 1e-3 relative of the key, or the letter for choice items
+ground_truth: numpy/documented semantics; simulator confirmation of the numeric items pending (make_ground_truth.sh)
+source_citation: 'SDK builtins/DSD reference; B12: studies/wse3-characterization/FINDINGS.md section 10n (spmv_blk_dsdred)'

@@ -1,0 +1,19 @@
+{
+  "kernel": "Preconditioned-CG",
+  "run_dir": "code_translation/results/full_template_sweep_20260722_192305/Preconditioned-CG/run_20260723_042215",
+  "status": "extracted",
+  "n_attempts": 13,
+  "model": "claude-opus-4-8",
+  "target_relpath": "src/kernel_pcg.csl",
+  "reference_dir": "/home/USER/xkernel/kernels/Preconditioned CG/CSL",
+  "fc_attempt_index": 8,
+  "fc_cycles_send": 15764,
+  "fc_cycles_send_runs": [
+    15764
+  ],
+  "fc_code_lines": 392,
+  "fc_heldout_eval": null,
+  "translated_path": "/home/USER/xkernel/code_translation/sandbox/cuda2csl/preconditioned-cg_7rsikzpg/src/kernel_pcg.csl",
+  "source": "sandbox",
+  "dest": "code_translation/results/first_correct/template_20260722/Preconditioned-CG/src/kernel_pcg.csl"
+}

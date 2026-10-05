@@ -1,0 +1,122 @@
+// ParBroadcast-Scale compute file.
+// PE0 broadcasts alpha east on C_BCAST; PE1-3 receive it; all PEs do out = alpha * x.
+// Routing (RAMP->EAST at src, WEST->{RAMP,EAST} interior, WEST->RAMP terminal)
+// is configured in layout.csl. This file only supplies the DSD endpoints.
+//
+// FIX: layout.csl exports no STARTUP task, so timestamp.enable_tsc() is called
+// inside compute() on the root PE BEFORE the first get_timestamp(), so the HW
+// cycle counter is live for the tic/toc window (previously cycles_send==0).
+
+param memcpy_params: comptime_struct;
+param n_per_pe: u16;
+param px: i16;
+param width: i16;
+param C_BCAST: color;
+
+const sys_mod = @import_module("<memcpy/memcpy>", memcpy_params);
+const timestamp = @import_module("<time>");
+
+// ---- Host-visible buffers ----
+var x = @zeros([n_per_pe]f32);
+var out = @zeros([n_per_pe]f32);
+var alpha = @zeros([1]f32);          // PE0 gets it via H2D; others receive via fabric
+var maxmin_time = @zeros([3]f32);    // timer, read from PE0
+
+var ptr_x: [*]f32 = &x;
+var ptr_out: [*]f32 = &out;
+var ptr_alpha: [*]f32 = &alpha;
+var ptr_maxmin_time: [*]f32 = &maxmin_time;
+
+// ---- Timestamp scratch ----
+var tscStartBuffer = @zeros([timestamp.tsc_size_words]u16);
+var tscEndBuffer   = @zeros([timestamp.tsc_size_words]u16);
+
+// ---- Task IDs ----
+const scale_task: local_task_id = @get_local_task_id(10);
+
+// ---- Fabric queues (input queues 0,1 are memcpy-reserved) ----
+const recv_iq: input_queue  = @get_input_queue(2);
+const send_oq: output_queue = @get_output_queue(3);
+
+// DSDs over the local tiles for the elementwise scale.
+const x_dsd = @get_dsd(mem1d_dsd, .{
+  .tensor_access = |i|{n_per_pe} -> x[i]
+});
+const out_dsd = @get_dsd(mem1d_dsd, .{
+  .tensor_access = |i|{n_per_pe} -> out[i]
+});
+
+// Fabric DSDs for the one-word alpha broadcast.
+const bcast_out_dsd = @get_dsd(fabout_dsd, .{
+  .fabric_color = C_BCAST, .extent = 1, .output_queue = send_oq
+});
+const bcast_in_dsd = @get_dsd(fabin_dsd, .{
+  .fabric_color = C_BCAST, .extent = 1, .input_queue = recv_iq
+});
+
+// Local alpha slot: receive destination on non-root, send source on root.
+const alpha_mem_dsd = @get_dsd(mem1d_dsd, .{
+  .tensor_access = |i|{1} -> alpha[i]
+});
+
+// Step 2: scale out = alpha * x, then finalize timing (PE0) and release stream.
+task scale_fn() void {
+  // @fmuls with a scalar operand broadcasts alpha[0] across the vector.
+  @fmuls(out_dsd, x_dsd, alpha[0]);
+
+  if (px == 0) {
+    timestamp.get_timestamp(&tscEndBuffer);
+    // pack start/end tsc words into maxmin_time (3 f32 = 6 u16)
+    var mm_u16: [*]u16 = @ptrcast([*]u16, &maxmin_time);
+    mm_u16[0] = tscStartBuffer[0];
+    mm_u16[1] = tscStartBuffer[1];
+    mm_u16[2] = tscStartBuffer[2];
+    mm_u16[3] = tscEndBuffer[0];
+    mm_u16[4] = tscEndBuffer[1];
+    mm_u16[5] = tscEndBuffer[2];
+  }
+
+  sys_mod.unblock_cmd_stream();
+}
+
+// Entry point launched by the host.
+fn compute() void {
+  // Enable the HW timestamp counter BEFORE any get_timestamp() call.
+  // Without this the counter is frozen and start==end -> cycles_send==0.
+  timestamp.enable_tsc();
+
+  if (px == 0) {
+    // Record start timestamp on the root PE.
+    timestamp.get_timestamp(&tscStartBuffer);
+    // Broadcast alpha east: send exactly one wavelet, then run the scale.
+    @fmovs(bcast_out_dsd, alpha_mem_dsd, .{
+      .async = true, .activate = scale_task
+    });
+  } else {
+    // Receive the single alpha wavelet into the local alpha slot;
+    // when it lands, activate the scale task. Scaling cannot start
+    // before alpha arrives.
+    @fmovs(alpha_mem_dsd, bcast_in_dsd, .{
+      .async = true, .activate = scale_task
+    });
+  }
+}
+
+comptime {
+  @bind_local_task(scale_fn, scale_task);
+}
+
+comptime {
+  if (@is_arch("wse3")) {
+    @initialize_queue(recv_iq, .{ .color = C_BCAST });
+    @initialize_queue(send_oq, .{ .color = C_BCAST });
+  }
+}
+
+comptime {
+  @export_symbol(ptr_x, "x");
+  @export_symbol(ptr_out, "out");
+  @export_symbol(ptr_alpha, "alpha");
+  @export_symbol(ptr_maxmin_time, "maxmin_time");
+  @export_symbol(compute);
+}

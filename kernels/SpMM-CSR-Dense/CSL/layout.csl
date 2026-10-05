@@ -1,0 +1,52 @@
+// SpMM-CSR-Dense layout: a P x P mesh, communication-free. Mesh row py holds the rows
+// [py*Mt, (py+1)*Mt) of A as a local CSR tile (replicated along the mesh row); mesh
+// column px holds the columns [px*Nt, (px+1)*Nt) of the dense B (K x Nt, row-major,
+// replicated down the mesh column); PE (px, py) computes its Mt x Nt tile of C = A*B.
+// pe.csl is what the agent translates; this layout is the launch/interface contract.
+// SDK 2.10-native (no comptime_struct); compiles on 1.4 too.
+
+param P: i16;             // mesh side
+param Mt: u16;            // rows of A per PE (capacity)
+param K: u16;             // columns of A = rows of B (capacity)
+param Nt: u16;            // columns of B/C per PE
+param max_nnz_pe: u16;    // nonzero capacity per PE (its row tile)
+param iters: u16;         // repeat count for the timed window
+param structure_id: u16;  // host: which data/manifest[_<id>].json to load (0 = manifest.json)
+
+const memcpy = @import_module("<memcpy/get_params>", .{
+  .width = P,
+  .height = P,
+});
+
+layout {
+  @set_rectangle(P, P);
+
+  var px: i16 = 0;
+  while (px < P) : (px += 1) {
+    var py: i16 = 0;
+    while (py < P) : (py += 1) {
+      @set_tile_code(px, py, "pe.csl", .{
+        .memcpy_params = memcpy.get_params(px),
+        .Mt = Mt,
+        .K = K,
+        .Nt = Nt,
+        .max_nnz_pe = max_nnz_pe,
+        .iters = iters,
+        .structure_id = structure_id,
+      });
+    }
+  }
+
+  // Host-visible symbols (per-PE CSR tile, B slice, C tile, timestamps, entrypoints).
+  @export_name("row_ptr", [*]u32, true);   // [Mt+1] per PE, local rows
+  @export_name("col_idx", [*]u32, true);   // [max_nnz_pe] per PE, global k
+  @export_name("val",     [*]f32, true);   // [max_nnz_pe] per PE
+  @export_name("B_tile",  [*]f32, true);   // [K*Nt] per PE, row-major
+  @export_name("C_tile",  [*]f32, true);   // [Mt*Nt] per PE, row-major
+  @export_name("time_buf_u16", [*]u16, true);
+  @export_name("main", fn()void);
+  @export_name("f_enable_timer", fn()void);
+  @export_name("f_memcpy_timestamps", fn()void);
+  @export_name("f_tic", fn()void);
+  @export_name("f_toc", fn()void);
+}

@@ -1,0 +1,244 @@
+// SpMV-RowBlock with a DISTRIBUTED x and a halo exchange (expert headroom variant, harness-invisible).
+//
+// The benchmark task gives x to PE 0 and the kernel broadcasts all ncols entries through every PE;
+// on 64-256 PEs that broadcast is most of the time. Here x is distributed like y, as in an iterative
+// solver (PE p owns the x block of its own rows), the host orders the matrix with reverse
+// Cuthill-McKee so the columns of a row block stay near its rows, and each PE fetches only the blocks
+// of its `halo` nearest neighbours on each side: `halo` systolic steps east and `halo` steps west, one
+// block of nrows_pe values per step, on two alternating (checkerboard) colors per direction.
+//
+// Window layout: xw holds 2*halo+1 blocks; slot s holds the block of PE px - halo + s (own block at
+// slot halo). The host rewrites column indices relative to the window. mode = 1 preloads the whole
+// window from the host and skips the exchange: the zero-communication bound of the same compute.
+// Timing: device_internal_v2, as in the reference (window opens at the start of main).
+
+param memcpy_params;
+
+param P: i16;
+param px: i16;
+param nrows_pe: u16;
+param halo: u16;
+param max_nnz_pe: u16;
+param mode: u16;
+param iters: u16;
+param C_E0: color;
+param C_E1: color;
+param C_W0: color;
+param C_W1: color;
+
+const W: u16 = (2 * halo + 1) * nrows_pe;
+const has_west: bool = px > 0;
+const has_east: bool = px < P - 1;
+const even: bool = (px % 2) == 0;
+// east pass (data moves east): send on my parity's color, receive from the west neighbour on the other
+const e_send_color: color = if (even) C_E0 else C_E1;
+const e_recv_color: color = if (even) C_E1 else C_E0;
+const w_send_color: color = if (even) C_W0 else C_W1;
+const w_recv_color: color = if (even) C_W1 else C_W0;
+
+const EXIT: local_task_id = @get_local_task_id(9);
+const COMPUTE: local_task_id = @get_local_task_id(10);
+const ESTEP: local_task_id = @get_local_task_id(11);
+const WSTEP: local_task_id = @get_local_task_id(12);
+
+const sys_mod = @import_module("<memcpy/memcpy>", memcpy_params);
+const timestamp = @import_module("<time>");
+
+var tscStartBuffer = @zeros([timestamp.tsc_size_words]u16);
+var tscEndBuffer   = @zeros([timestamp.tsc_size_words]u16);
+var time_buf_u16   = @zeros([timestamp.tsc_size_words * 2]u16);
+var ptr_time_buf_u16: [*]u16 = &time_buf_u16;
+
+var row_ptr_array = @zeros([nrows_pe + 1]u32);
+var col_idx_array = @zeros([max_nnz_pe]u32);   // window-relative columns
+var val_array     = @zeros([max_nnz_pe]f32);
+var xw            = @zeros([W]f32);             // x window: 2*halo+1 blocks
+var xo            = @zeros([nrows_pe]f32);      // own x block (host-written in mode 0)
+var y_array       = @zeros([nrows_pe]f32);
+
+var ptr_row_ptr: [*]u32 = &row_ptr_array;
+var ptr_col_idx: [*]u32 = &col_idx_array;
+var ptr_val:     [*]f32 = &val_array;
+var ptr_xw:      [*]f32 = &xw;
+var ptr_xo:      [*]f32 = &xo;
+var ptr_y:       [*]f32 = &y_array;
+
+const blk    = @get_dsd(mem1d_dsd, .{ .tensor_access = |i|{nrows_pe} -> xw[i] });   // slot 0
+const xo_dsd = @get_dsd(mem1d_dsd, .{ .tensor_access = |i|{nrows_pe} -> xo[i] });
+const e_out = @get_dsd(fabout_dsd, .{ .extent = nrows_pe, .fabric_color = e_send_color, .output_queue = @get_output_queue(2) });
+const e_in  = @get_dsd(fabin_dsd,  .{ .extent = nrows_pe, .fabric_color = e_recv_color, .input_queue  = @get_input_queue(2) });
+const w_out = @get_dsd(fabout_dsd, .{ .extent = nrows_pe, .fabric_color = w_send_color, .output_queue = @get_output_queue(3) });
+const w_in  = @get_dsd(fabin_dsd,  .{ .extent = nrows_pe, .fabric_color = w_recv_color, .input_queue  = @get_input_queue(3) });
+
+// Explicit microthreads (WSE-3): by default an op runs on the microthread of its queue number, so the
+// east send (output queue 2) and the east receive (input queue 2) would share microthread 2.
+const UT_EO = @get_ut_id(4);
+const UT_EI = @get_ut_id(5);
+const UT_WO = @get_ut_id(6);
+const UT_WI = @get_ut_id(7);
+
+fn slot(s: u16) mem1d_dsd {
+  return @increment_dsd_offset(blk, @as(i16, s * nrows_pe), f32);
+}
+
+var e_t: u16 = 0;
+var w_t: u16 = 0;
+var e_done: bool = false;
+var w_done: bool = false;
+
+// East pass, step e_t+1: forward the block received in the previous step (own block first) to the east
+// neighbour, receive the next block from the west neighbour into the slot west of it.
+fn start_east() void {
+  e_t += 1;
+  if (has_west and has_east) {
+    @block(ESTEP);
+    @fmovs(e_out, slot(halo - e_t + 1), .{ .async = true, .ut_id = UT_EO, .unblock = ESTEP });
+    @fmovs(slot(halo - e_t), e_in, .{ .async = true, .ut_id = UT_EI, .activate = ESTEP });
+  } else if (has_east) {
+    @fmovs(e_out, slot(halo - e_t + 1), .{ .async = true, .ut_id = UT_EO, .activate = ESTEP });
+  } else {
+    @fmovs(slot(halo - e_t), e_in, .{ .async = true, .ut_id = UT_EI, .activate = ESTEP });
+  }
+}
+
+fn start_west() void {
+  w_t += 1;
+  if (has_west and has_east) {
+    @block(WSTEP);
+    @fmovs(w_out, slot(halo + w_t - 1), .{ .async = true, .ut_id = UT_WO, .unblock = WSTEP });
+    @fmovs(slot(halo + w_t), w_in, .{ .async = true, .ut_id = UT_WI, .activate = WSTEP });
+  } else if (has_west) {
+    @fmovs(w_out, slot(halo + w_t - 1), .{ .async = true, .ut_id = UT_WO, .activate = WSTEP });
+  } else {
+    @fmovs(slot(halo + w_t), w_in, .{ .async = true, .ut_id = UT_WI, .activate = WSTEP });
+  }
+}
+
+fn maybe_compute() void {
+  if (e_done and w_done) {
+    @activate(COMPUTE);
+  }
+}
+
+task estep() void {
+  if (e_t == halo) {
+    e_done = true;
+    maybe_compute();
+  } else {
+    start_east();
+  }
+}
+
+task wstep() void {
+  if (w_t == halo) {
+    w_done = true;
+    maybe_compute();
+  } else {
+    start_west();
+  }
+}
+
+fn spmv_rows() void {
+  var r: u16 = 0;
+  while (r < nrows_pe) : (r += 1) {
+    const start: u32 = row_ptr_array[r];
+    const end:   u32 = row_ptr_array[r + 1];
+    var sum: f32 = 0.0;
+    var j: u32 = start;
+    while (j < end) : (j += 1) {
+      const c: u32 = col_idx_array[j];
+      sum += val_array[j] * xw[c];
+    }
+    y_array[r] = sum;
+  }
+}
+
+fn main() void {
+  f_tic_dev();
+  if (mode == 1 or halo == 0 or P == 1) {
+    @activate(COMPUTE);
+  } else {
+    @fmovs(slot(halo), xo_dsd);      // own block into its slot (an iterative solver's y lands here)
+    start_east();
+    start_west();
+  }
+}
+
+task compute() void {
+  for (@range(u16, iters)) |_| {
+    spmv_rows();
+  }
+  @activate(EXIT);
+}
+
+task f_exit() void {
+  f_toc_dev();
+  sys_mod.unblock_cmd_stream();
+}
+
+fn f_enable_timer() void {
+  timestamp.enable_tsc();
+  sys_mod.unblock_cmd_stream();
+}
+
+var tsc_window_open: bool = false;
+fn f_tic_dev() void {
+  if (!tsc_window_open) {
+    tsc_window_open = true;
+    timestamp.get_timestamp(&tscStartBuffer);
+  }
+}
+fn f_toc_dev() void {
+  timestamp.get_timestamp(&tscEndBuffer);
+}
+
+fn f_tic() void {
+  timestamp.get_timestamp(&tscStartBuffer);
+  sys_mod.unblock_cmd_stream();
+}
+
+fn f_toc() void {
+  timestamp.get_timestamp(&tscEndBuffer);
+  sys_mod.unblock_cmd_stream();
+}
+
+fn f_memcpy_timestamps() void {
+  time_buf_u16[0] = tscStartBuffer[0];
+  time_buf_u16[1] = tscStartBuffer[1];
+  time_buf_u16[2] = tscStartBuffer[2];
+  time_buf_u16[3] = tscEndBuffer[0];
+  time_buf_u16[4] = tscEndBuffer[1];
+  time_buf_u16[5] = tscEndBuffer[2];
+  sys_mod.unblock_cmd_stream();
+}
+
+comptime {
+  @bind_local_task(compute, COMPUTE);
+  @bind_local_task(f_exit, EXIT);
+  @bind_local_task(estep, ESTEP);
+  @bind_local_task(wstep, WSTEP);
+
+  if (P > 1 and @is_arch("wse3")) {
+    if (has_east) {
+      @initialize_queue(@get_output_queue(2), .{ .color = e_send_color });
+      @initialize_queue(@get_input_queue(3),  .{ .color = w_recv_color });
+    }
+    if (has_west) {
+      @initialize_queue(@get_input_queue(2),  .{ .color = e_recv_color });
+      @initialize_queue(@get_output_queue(3), .{ .color = w_send_color });
+    }
+  }
+
+  @export_symbol(ptr_row_ptr, "row_ptr");
+  @export_symbol(ptr_col_idx, "col_idx");
+  @export_symbol(ptr_val,     "val");
+  @export_symbol(ptr_xw,      "x_win");
+  @export_symbol(ptr_xo,      "x_own");
+  @export_symbol(ptr_y,       "y");
+  @export_symbol(ptr_time_buf_u16, "time_buf_u16");
+  @export_symbol(main);
+  @export_symbol(f_tic);
+  @export_symbol(f_toc);
+  @export_symbol(f_memcpy_timestamps);
+  @export_symbol(f_enable_timer);
+}

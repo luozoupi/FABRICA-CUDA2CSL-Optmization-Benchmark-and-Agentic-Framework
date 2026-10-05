@@ -1,0 +1,5 @@
+|    PE    | color | rx        | tx        | sw-1  | sw-2  | sw-3  |
+|    0,0   | 21    | R         | E         | rx=R  |       |       |
+|          | 22    | W         | R         |       |       |       |
+|          | 23    | W         | R         |       |       |       |
+Total 3 row(s).

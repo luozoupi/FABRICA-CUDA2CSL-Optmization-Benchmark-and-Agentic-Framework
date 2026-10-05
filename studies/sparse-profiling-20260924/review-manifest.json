@@ -1,0 +1,45 @@
+{
+  "created_utc": "2026-09-24T07:55:50.258992+00:00",
+  "node": "NVIDIA GPU node with Cerebras SDK; no physical WSE access",
+  "paper_commit": "bb7f61ad30873f64ebca758101f5e03d313c37d9",
+  "base_v2_0_commit": "3264cfc3707b00aa3c0cc31788b1c974f74e4f44",
+  "sparse_ipdps_commit": "7413ed46fa0f572f4b46e7fd9b7056462a31a770",
+  "files": {
+    "timed-window-audit.json": "436148465929ee71dfbbeca57caeac5919051984115f4d0440081da97ce01b7e",
+    "README.md": "657457040ca6c82b15335357990d25d532b467852af41bf9ec9e9583c62e15c3",
+    "profile_timed_windows.py": "058edd7a59ebb5c644f49e10bef0925bc08732ff2716da8d16ab4d5913c87a2f"
+  },
+  "review_inputs": {
+    "/home/USER/6a64e2c9def474810517b3d0/ipdps2027_sparse.tex": "87c83a32d73fbcf6f7ccfb21ee8c3f57ca4efb96e5ae22b25441823023f68df8",
+    "/home/USER/6a64e2c9def474810517b3d0/ipdps2027_sparse-numbers.tex": "23ae4fb37b108e926212d7e92b976b3fb9349b5709a07085667b67cb32737c7b",
+    "/home/USER/wse-matmul-microbench/freeze.json": "1289ecc002e607a54f9e7fb94c4a25567bf6bc1d0f8fe05311b7a96d052b463a",
+    "/home/USER/wse-matmul-microbench/performance-trace-analysis.json": "4a819f334538d21681f784c918400ec93989bc4c600e4fa7548486e94fadcb7d",
+    "/home/USER/xkernel-progress-audit-20260923/studies/sparse-progress-20260923/audit.json": "eafbdcb97ca1ef97c3471fc97d38ac30fb75fe92aaa265fb748168c1d17f1b07"
+  },
+  "official_document_urls": {
+    "debugging": "https://sdk.cerebras.ai/debug/debugging.md",
+    "tutorials": "https://sdk.cerebras.ai/csl/tutorials/index.md",
+    "appendix": "https://sdk.cerebras.ai/csl/language/appendix.md",
+    "microthreads": "https://sdk.cerebras.ai/csl/language/microthreads_wse3.md",
+    "architecture": "https://sdk.cerebras.ai/computing-with-cerebras.md",
+    "dsds": "https://sdk.cerebras.ai/csl/language/dsds.md"
+  },
+  "official_document_local_sha256": {
+    "dsds.txt": "241911484668957e188a3e1a8c01fdf318ca2bea620007c0f3746f18638bb093",
+    "tutorials.txt": "ac5b8db2eefbd2681b6f6e5af82eae299eb12f7c142b3ec7b708d0a50cfdedba",
+    "architecture.txt": "fb09c0a6df698baf875ce3dd92aa927fd56e9bef2fb226b998abf38257ec1263",
+    "debugging.txt": "60bc3aedb71a07d0dc3879260398995727f097e1accab9ba0960e4f77b409f01",
+    "appendix.txt": "dba13ebefebf2bc7e76797f4c5e7dce4124d8bd1c0c6542664b2232be9e06039",
+    "microthreads.txt": "d51a831dcee1b286cf0b99eb94c9a9bf05deb810e31a7565a81a3baee64e5534"
+  },
+  "documentation_scope": "Live documentation retrieved 2026-09-24; not a frozen SDK 2.10.1 manual. Raw external documents retained locally, not distributed in this Git contribution.",
+  "new_device_runs": 0,
+  "new_api_calls": 0,
+  "completed_trace_cases": 3,
+  "completed_launch_windows": 12,
+  "negative_checks": [
+    "changed ELF hash rejected",
+    "missing timestamp event rejected",
+    "inconsistent timer interval rejected"
+  ]
+}

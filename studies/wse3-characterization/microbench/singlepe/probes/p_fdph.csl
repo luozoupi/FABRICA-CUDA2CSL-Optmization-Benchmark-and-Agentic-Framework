@@ -1,0 +1,8 @@
+// B2: does a dot-product builtin exist? (fdph appears in the extracted LLVM table)
+var A = @zeros([64]f16);
+var B = @zeros([64]f16);
+var s: f16 = 0.0;
+const A_dsd = @get_dsd(mem1d_dsd, .{ .tensor_access = |i|{64} -> A[i] });
+const B_dsd = @get_dsd(mem1d_dsd, .{ .tensor_access = |i|{64} -> B[i] });
+fn f() void { @fdph(&s, A_dsd, B_dsd); }
+

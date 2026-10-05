@@ -19,7 +19,7 @@ set -e
 # Override with XKERNEL_ROOT=/some/path if you want explicit pinning.
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 XKERNEL_ROOT="${XKERNEL_ROOT:-$SCRIPT_DIR}"
-source "$XKERNEL_ROOT/fabrica_env.sh"
+source "$XKERNEL_ROOT/xkernel_env.sh"
 
 KEY_FILE="${ARGO_API_KEY_FILE:-${ARGO_KEY_FILE:-$HOME/.argo-api-key.txt}}"
 SETTINGS_FILE="${ARGO_SETTINGS_FILE:-$HOME/.claude/settings.json}"
@@ -48,7 +48,8 @@ export ANTHROPIC_BASE_URL
 export no_proxy="localhost,127.0.0.1"
 export NO_PROXY="localhost,127.0.0.1"
 
-xk_python "$XKERNEL_ROOT/code_translation/cuda2csl.py" \
+exec "$XKERNEL_MICROMAMBA" run -n "$XKERNEL_ENV" \
+  python "$XKERNEL_ROOT/code_translation/cuda2csl.py" \
     --api-key-file "$KEY_FILE" \
     --model "${ARGO_MODEL:-claude-opus-4-7}" \
     --sdk-root "$XKERNEL_SDK_ROOT" \

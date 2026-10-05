@@ -1,0 +1,28 @@
+param memcpy_params;
+const EXIT: local_task_id = @get_local_task_id(9);
+const sys_mod = @import_module("<memcpy/memcpy>", memcpy_params);
+
+// every array is exported, so its stores are externally visible and the intended work stays live
+var a = @zeros([64]i16); var b = @zeros([64]i16); var c = @zeros([64]i16);
+var idx = @zeros([4]i16); var k = @zeros([4]i16);
+var p_a: [*]i16 = &a; var p_b: [*]i16 = &b; var p_c: [*]i16 = &c;
+var p_idx: [*]i16 = &idx; var p_k: [*]i16 = &k;
+
+const ad = @get_dsd(mem1d_dsd, .{ .tensor_access = |i|{16} -> a[i] });
+const bd = @get_dsd(mem1d_dsd, .{ .tensor_access = |i|{16} -> b[i] });
+const cd = @get_dsd(mem1d_dsd, .{ .tensor_access = |i|{16} -> c[i] });
+
+fn compute() void {
+  var i: u16 = @as(u16, idx[0]);
+  a[i] = a[i] + b[i];
+  @activate(EXIT);
+}
+
+task f_exit() void { sys_mod.unblock_cmd_stream(); }
+
+comptime {
+  @bind_local_task(f_exit, EXIT);
+  @export_symbol(p_a, "a"); @export_symbol(p_b, "b"); @export_symbol(p_c, "c");
+  @export_symbol(p_idx, "idx"); @export_symbol(p_k, "k");
+  @export_symbol(compute);
+}

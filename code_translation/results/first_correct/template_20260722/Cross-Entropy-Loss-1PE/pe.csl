@@ -1,0 +1,91 @@
+param memcpy_params: comptime_struct;
+// === SLOT: EXTRA_PARAMS ===
+// Declare any compile-time params your kernel needs from layout.csl
+param n_classes: u16;
+
+const EXIT: local_task_id = @get_local_task_id(9);
+const sys_mod = @import_module("<memcpy/memcpy>", memcpy_params);
+
+// === SLOT: EXTRA_IMPORTS ===
+const math = @import_module("<math>");
+
+const timestamp = @import_module("<time>");
+var tsc_start_buf = @zeros([timestamp.tsc_size_words]u16);
+var tsc_end_buf   = @zeros([timestamp.tsc_size_words]u16);
+var timer_buf = @zeros([3]f32);
+var ptr_timer_buf: [*]f32 = &timer_buf;
+
+// === SLOT: DATA_BUFFERS ===
+var logits_array = @zeros([n_classes]f32);
+var ptr_logits: [*]f32 = &logits_array;
+
+var label_array = @zeros([1]u32);
+var ptr_label: [*]u32 = &label_array;
+
+var result_array = @zeros([1]f32);
+var ptr_result: [*]f32 = &result_array;
+
+// === SLOT: KERNEL_FUNCTION ===
+fn cross_entropy() void {
+    // 1. Find max logit (numerical stability)
+    var mx: f32 = logits_array[0];
+    var c: u16 = 1;
+    while (c < n_classes) : (c += 1) {
+        if (logits_array[c] > mx) {
+            mx = logits_array[c];
+        }
+    }
+
+    // 2. Compute log_sum = sum(exp(logits[c] - mx))
+    var log_sum: f32 = 0.0;
+    c = 0;
+    while (c < n_classes) : (c += 1) {
+        const e: f32 = math.exp(logits_array[c] - mx);
+        log_sum += e;
+    }
+
+    // 3. loss = -(logits[label] - mx - log(log_sum))
+    const label_idx: u16 = @as(u16, label_array[0]);
+    const row_label: f32 = logits_array[label_idx];
+    const loss: f32 = -(row_label - mx - math.log(log_sum));
+
+    result_array[0] = loss;
+}
+
+fn compute() void {
+    timestamp.enable_tsc();
+    timestamp.get_timestamp(&tsc_start_buf);
+
+    // === SLOT: KERNEL_CALL ===
+    cross_entropy();
+
+    timestamp.get_timestamp(&tsc_end_buf);
+    timestamp.disable_tsc();
+
+    var lo_: u16 = 0;
+    var hi_: u16 = 0;
+    lo_ = tsc_start_buf[0]; hi_ = tsc_start_buf[1];
+    timer_buf[0] = @bitcast(f32, (@as(u32, hi_) << @as(u16, 16)) | @as(u32, lo_));
+    lo_ = tsc_start_buf[2]; hi_ = tsc_end_buf[0];
+    timer_buf[1] = @bitcast(f32, (@as(u32, hi_) << @as(u16, 16)) | @as(u32, lo_));
+    lo_ = tsc_end_buf[1]; hi_ = tsc_end_buf[2];
+    timer_buf[2] = @bitcast(f32, (@as(u32, hi_) << @as(u16, 16)) | @as(u32, lo_));
+
+    @activate(EXIT);
+}
+
+task f_exit() void {
+    sys_mod.unblock_cmd_stream();
+}
+
+comptime {
+    @bind_local_task(f_exit, EXIT);
+
+    // === SLOT: EXPORT_SYMBOLS ===
+    @export_symbol(ptr_logits, "logits");
+    @export_symbol(ptr_label, "label");
+    @export_symbol(ptr_result, "result");
+
+    @export_symbol(ptr_timer_buf, "maxmin_time");
+    @export_symbol(compute);
+}

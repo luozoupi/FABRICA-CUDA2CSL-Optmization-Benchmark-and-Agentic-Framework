@@ -1,0 +1,57 @@
+{
+  "id": "masked-baseline",
+  "op": "masked",
+  "variant": "baseline",
+  "M": 16,
+  "K": 16,
+  "N": 16,
+  "layout": "row-major",
+  "debug": false,
+  "application_pes": 1,
+  "patterns": [
+    "banded",
+    "uniform"
+  ],
+  "repetitions": 1,
+  "buffers": {
+    "A": [
+      "f32",
+      256
+    ],
+    "B": [
+      "f32",
+      256
+    ],
+    "C": [
+      "f32",
+      256
+    ],
+    "row_ptr": [
+      "u32",
+      17
+    ],
+    "col_idx": [
+      "u32",
+      256
+    ],
+    "values": [
+      "f32",
+      256
+    ],
+    "present": [
+      "u16",
+      256
+    ],
+    "time_words": [
+      "u16",
+      6
+    ]
+  },
+  "source_hashes": {
+    "pe.csl": "54b4dae2e63ec6c3960294d15b0f53352f61a7059ff1a3c8cf6bb561b6556470",
+    "layout.csl": "f38893acbc18a506eed3e6b466963b9e03ef40b9e681416bfb0a240ad6624a7e",
+    "host.py": "6785edb68f53404e6ffaba9e4ad8846559639c0196884166fb9431f5a9876059",
+    "inputs.py": "38ca49cab7d4cae285ab234420d6f0ac5c3a2477f599a2643892af0de541f6fc"
+  },
+  "phase": "trace"
+}

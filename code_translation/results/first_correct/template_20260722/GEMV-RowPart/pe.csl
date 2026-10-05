@@ -1,0 +1,111 @@
+param memcpy_params: comptime_struct;
+// === SLOT: EXTRA_PARAMS ===
+// Number of matrix rows stored locally on this PE, and the vector length N.
+param rows_per_pe: u16;
+param N: u16;
+
+const EXIT: local_task_id = @get_local_task_id(9);
+const sys_mod = @import_module("<memcpy/memcpy>", memcpy_params);
+
+// === SLOT: EXTRA_IMPORTS ===
+// (no extra imports needed)
+
+const timestamp = @import_module("<time>");
+var tsc_start_buf = @zeros([timestamp.tsc_size_words]u16);
+var tsc_end_buf   = @zeros([timestamp.tsc_size_words]u16);
+var timer_buf = @zeros([3]f32);
+var ptr_timer_buf: [*]f32 = &timer_buf;
+
+// === SLOT: DATA_BUFFERS ===
+// A_local: rows_per_pe rows, each of length N (row-major).
+// x: full input vector length N (broadcast to all PEs).
+// y: local output vector length rows_per_pe.
+var A_array = @zeros([rows_per_pe * N]f32);
+var x_array = @zeros([N]f32);
+var y_array = @zeros([rows_per_pe]f32);
+var prod = @zeros([N]f32);
+
+var ptr_A: [*]f32 = &A_array;
+var ptr_x: [*]f32 = &x_array;
+var ptr_y: [*]f32 = &y_array;
+
+// === SLOT: KERNEL_FUNCTION ===
+// y_local[i] = sum_j A_local[i*N + j] * x[j]
+// Use DSDs for the N-length elementwise product per row. The A-row DSD is
+// advanced to row i via @increment_dsd_offset (element offset i*N),
+// avoiding both mixed-type index arithmetic and pointer-type mismatches.
+
+// DSD over the vector x (length N, stride 1).
+const x_dsd = @get_dsd(mem1d_dsd, .{
+    .tensor_access = |j| { N } -> x_array[j],
+});
+
+// DSD over the temp product buffer (length N, stride 1).
+const prod_dsd = @get_dsd(mem1d_dsd, .{
+    .tensor_access = |j| { N } -> prod[j],
+});
+
+// DSD over row 0 of A; per-row DSDs are derived by offsetting this one.
+const row_dsd_base = @get_dsd(mem1d_dsd, .{
+    .tensor_access = |j| { N } -> A_array[j],
+});
+
+fn gemv() void {
+    const Ni16: i16 = @as(i16, N);
+    var i: i16 = 0;
+    while (i < @as(i16, rows_per_pe)) : (i += 1) {
+        // Advance the row DSD to row i (element offset i*N).
+        const row_dsd = @increment_dsd_offset(row_dsd_base, i * Ni16, f32);
+
+        // Elementwise product A_row .* x into the temp buffer.
+        @fmuls(prod_dsd, row_dsd, x_dsd);
+
+        // Sequential reduction of prod into a scalar sum (matches CUDA order).
+        var sum: f32 = 0.0;
+        var j: i16 = 0;
+        while (j < Ni16) : (j += 1) {
+            sum += prod[@as(u16, j)];
+        }
+        y_array[@as(u16, i)] = sum;
+    }
+}
+
+// === SLOT: KERNEL_FUNCTION END ===
+
+fn compute() void {
+    timestamp.enable_tsc();
+    timestamp.get_timestamp(&tsc_start_buf);
+
+    // === SLOT: KERNEL_CALL ===
+    gemv();
+
+    timestamp.get_timestamp(&tsc_end_buf);
+    timestamp.disable_tsc();
+
+    var lo_: u16 = 0;
+    var hi_: u16 = 0;
+    lo_ = tsc_start_buf[0]; hi_ = tsc_start_buf[1];
+    timer_buf[0] = @bitcast(f32, (@as(u32, hi_) << @as(u16, 16)) | @as(u32, lo_));
+    lo_ = tsc_start_buf[2]; hi_ = tsc_end_buf[0];
+    timer_buf[1] = @bitcast(f32, (@as(u32, hi_) << @as(u16, 16)) | @as(u32, lo_));
+    lo_ = tsc_end_buf[1]; hi_ = tsc_end_buf[2];
+    timer_buf[2] = @bitcast(f32, (@as(u32, hi_) << @as(u16, 16)) | @as(u32, lo_));
+
+    @activate(EXIT);
+}
+
+task f_exit() void {
+    sys_mod.unblock_cmd_stream();
+}
+
+comptime {
+    @bind_local_task(f_exit, EXIT);
+
+    // === SLOT: EXPORT_SYMBOLS ===
+    @export_symbol(ptr_A, "A");
+    @export_symbol(ptr_x, "x");
+    @export_symbol(ptr_y, "y");
+
+    @export_symbol(ptr_timer_buf, "maxmin_time");
+    @export_symbol(compute);
+}

@@ -1,0 +1,121 @@
+// Controlled CSR A*B with host-assigned complete output rows.
+// Collective wiring follows the installed SDK collectives_2d examples.
+param memcpy_params;
+param c2d_params;
+param N: u16;
+param K: u16;
+param R: u16;
+param AC: u16;
+param BC: u16;
+param OC: u16;
+param W: u16;
+const sys = @import_module("<memcpy/memcpy>", memcpy_params);
+const clock = @import_module("<time>");
+const mx = if (@get_rectangle().width==1) @import_module("single_collective.csl", .{}) else @import_module("<collectives_2d/pe>", .{.dim_params=c2d_params.x});
+const my = if (@get_rectangle().height==1) @import_module("single_collective.csl", .{}) else @import_module("<collectives_2d/pe>", .{.dim_params=c2d_params.y});
+const X_DONE: local_task_id = @get_local_task_id(12);
+const CALC: local_task_id = @get_local_task_id(13);
+const Y_ACK: local_task_id = @get_local_task_id(14);
+const EXIT: local_task_id = @get_local_task_id(15);
+var aa = @zeros([R+1+2*AC]u32);
+var bb = @zeros([K+2+2*BC]u32);
+var cc = @zeros([R+1+2*(OC+4)]u32);
+var config = @zeros([4]u16); // rows, B words, mode: 0=broadcast,1=resident,2=communication-only; capacity
+var report = @zeros([24]u16); // t0,t1,t2,t3 (3 words each), output count/status, rest reserved
+var acc = @zeros([W]f32);
+var seen = @zeros([W]u16);
+var token = @zeros([1]f32);
+var column_sum = @zeros([1]f32);
+var total_sum = @zeros([1]f32);
+var stamp0 = @zeros([3]u16);
+var stamp1 = @zeros([3]u16);
+var stamp2 = @zeros([3]u16);
+var stamp3 = @zeros([3]u16);
+var ptr_aa: [*]u32 = &aa;
+var ptr_bb: [*]u32 = &bb;
+var ptr_cc: [*]u32 = &cc;
+var ptr_config: [*]u16 = &config;
+var ptr_report: [*]u16 = &report;
+var ptr_total: [*]f32 = &total_sum;
+const acc_dsd = @get_dsd(mem1d_dsd, .{.tensor_access=|x|{W}->acc[x]});
+fn kernel() void {
+  const af = @ptrcast([*]f32, &aa);
+  const bf = @ptrcast([*]f32, &bb);
+  const cf = @ptrcast([*]f32, &cc);
+  const bnnz: u16 = @as(u16,bb[0]);
+  var cnt: u16 = 0;
+  report[12]=0; report[13]=0;
+  cc[0]=0;
+  var i: u16 = 0;
+  while (i < config[0]) : (i += 1) {
+    var lo: u16 = 0;
+    while (lo < N) : (lo += W) {
+      @fmovs(acc_dsd, @as(f32,0.0));
+      var t: u16 = 0;
+      while (t < W) : (t += 1) { seen[t]=0; }
+      var p: u16 = @as(u16,aa[i]);
+      const pend: u16 = @as(u16,aa[i+1]);
+      while (p < pend) : (p += 1) {
+        const k: u16 = @as(u16,aa[R+1+p]);
+        const aval: f32 = af[R+1+AC+p];
+        var q: u16 = @as(u16,bb[1+k]);
+        const qend: u16 = @as(u16,bb[2+k]);
+        while (q < qend) : (q += 1) {
+          const j: u16 = @as(u16,bb[K+2+q]);
+          if (j >= lo and j < lo+W) {
+            const local_j: u16 = j-lo;
+            acc[local_j] += aval * bf[K+2+bnnz+q];
+            seen[local_j]=1;
+          }
+        }
+      }
+      t=0;
+      while (t < W) : (t += 1) {
+        if (seen[t] != 0) {
+          if (cnt >= config[3]) { report[13]=1; report[12]=cnt; return; }
+          cc[R+1+cnt]=@as(u32,lo+t);
+          cf[R+1+OC+4+cnt]=acc[t];
+          cnt += 1;
+        }
+      }
+    }
+    cc[i+1]=@as(u32,cnt);
+  }
+  report[12]=cnt;
+}
+fn start() void {
+  // Each operation has a fresh, causally root-started broadcast and returned acknowledgement.
+  token[0]=1.0; column_sum[0]=0.0; total_sum[0]=0.0;
+  clock.get_timestamp(&stamp0);
+  if (my.pe_id == 0) {
+    mx.broadcast(0,ptr_bb,if (config[2]==1) @as(u16,1) else config[1],X_DONE);
+  } else { @activate(X_DONE); }
+}
+task after_x() void {
+  my.broadcast(0,ptr_bb,if (config[2]==1) @as(u16,1) else config[1],CALC);
+}
+task calculate() void {
+  clock.get_timestamp(&stamp1);
+  if (config[2] != 2) { kernel(); }
+  clock.get_timestamp(&stamp2);
+  my.reduce_fadds(0,&token,&column_sum,1,Y_ACK);
+}
+task after_y_ack() void {
+  if (my.pe_id == 0) { mx.reduce_fadds(0,&column_sum,&total_sum,1,EXIT); }
+  else { @activate(EXIT); }
+}
+task finish() void {
+  clock.get_timestamp(&stamp3);
+  for (@range(u16,3)) |i| {
+    report[i]=stamp0[i]; report[3+i]=stamp1[i]; report[6+i]=stamp2[i]; report[9+i]=stamp3[i];
+  }
+  sys.unblock_cmd_stream();
+}
+fn init() void { clock.enable_tsc(); mx.init(); my.init(); sys.unblock_cmd_stream(); }
+comptime {
+  @bind_local_task(after_x,X_DONE); @bind_local_task(calculate,CALC);
+  @bind_local_task(after_y_ack,Y_ACK); @bind_local_task(finish,EXIT);
+  @export_symbol(ptr_aa,"aa"); @export_symbol(ptr_bb,"bb"); @export_symbol(ptr_cc,"cc");
+  @export_symbol(ptr_config,"config"); @export_symbol(ptr_report,"report"); @export_symbol(ptr_total,"total_sum");
+  @export_symbol(start); @export_symbol(init);
+}

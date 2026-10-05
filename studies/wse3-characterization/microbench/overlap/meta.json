@@ -1,0 +1,20 @@
+{
+ "L": 2048,
+ "S": 256,
+ "attribution": {
+  "A_dsd": [
+   "icAd"
+  ],
+  "C_dsd": [
+   "icCd"
+  ],
+  "B_scalar": [
+   "accB",
+   "kB"
+  ],
+  "C_scalar": [
+   "accC",
+   "kC"
+  ]
+ }
+}

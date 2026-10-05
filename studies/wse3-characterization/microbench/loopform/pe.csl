@@ -1,0 +1,123 @@
+// Loop-form probe.  Every variant performs 4096 f16 FMA elements.
+param memcpy_params;
+
+const EXIT: local_task_id = @get_local_task_id(9);
+const sys_mod = @import_module("<memcpy/memcpy>", memcpy_params);
+const timestamp = @import_module("<time>");
+
+var tsc_s0 = @zeros([timestamp.tsc_size_words]u16);
+var tsc_e0 = @zeros([timestamp.tsc_size_words]u16);
+var tsc_s1 = @zeros([timestamp.tsc_size_words]u16);
+var tsc_e1 = @zeros([timestamp.tsc_size_words]u16);
+var tsc_s2 = @zeros([timestamp.tsc_size_words]u16);
+var tsc_e2 = @zeros([timestamp.tsc_size_words]u16);
+var tsc_s3 = @zeros([timestamp.tsc_size_words]u16);
+var tsc_e3 = @zeros([timestamp.tsc_size_words]u16);
+
+var timer_buf = @zeros([12]f32);
+var ptr_timer_buf: [*]f32 = &timer_buf;
+
+var A = @zeros([4096]f16);
+var B = @zeros([4096]f16);
+var C = @zeros([4096]f16);
+var ptr_C: [*]f16 = &C;
+
+// L0: the whole problem as one hardware loop.
+fn bench_L0() void {
+  const a = @get_dsd(mem1d_dsd, .{ .tensor_access = |i|{4096} -> A[i] });
+  const b = @get_dsd(mem1d_dsd, .{ .tensor_access = |i|{4096} -> B[i] });
+  const c = @get_dsd(mem1d_dsd, .{ .tensor_access = |i|{4096} -> C[i] });
+  @fmach(c, a, b, @as(f16, 1.0009765625));
+}
+
+// L1: one software loop over 16-element tiles.
+fn bench_L1() void {
+  var i: u16 = 0;
+  while (i < 256) : (i += 1) {
+    const a = @get_dsd(mem1d_dsd, .{ .tensor_access = |k|{16} -> A[k] });
+    const b = @get_dsd(mem1d_dsd, .{ .tensor_access = |k|{16} -> B[k] });
+    const c = @get_dsd(mem1d_dsd, .{ .tensor_access = |k|{16} -> C[k] });
+    @fmach(c, a, b, @as(f16, 1.0009765625));
+  }
+}
+
+// L2: @map over a DSD -- the MeshGEMV shape.
+const map_a = @get_dsd(mem1d_dsd, .{ .tensor_access = |k|{16} -> A[k] });
+const map_b = @get_dsd(mem1d_dsd, .{ .tensor_access = |k|{16} -> B[k] });
+const map_c = @get_dsd(mem1d_dsd, .{ .tensor_access = |k|{16} -> C[k] });
+const outer_dsd = @get_dsd(mem1d_dsd, .{ .tensor_access = |i|{256} -> A[i] });
+
+fn step(cur: f16) void {
+  @fmach(map_c, map_a, map_b, cur);
+}
+
+fn bench_L2() void {
+  @map(step, outer_dsd);
+}
+
+// L3: for + @map + DSD -- the MeshGEMM shape.
+const inner_dsd = @get_dsd(mem1d_dsd, .{ .tensor_access = |i|{16} -> A[i] });
+
+fn bench_L3() void {
+  for (@range(i16, 16)) |k| {
+    @map(step, inner_dsd);
+  }
+}
+
+fn compute() void {
+  var lo_: u16 = 0;
+  var hi_: u16 = 0;
+  timestamp.enable_tsc();
+
+  timestamp.get_timestamp(&tsc_s0);
+  bench_L0();
+  timestamp.get_timestamp(&tsc_e0);
+  lo_ = tsc_s0[0]; hi_ = tsc_s0[1];
+  timer_buf[0] = @bitcast(f32, (@as(u32, hi_) << @as(u16, 16)) | @as(u32, lo_));
+  lo_ = tsc_s0[2]; hi_ = tsc_e0[0];
+  timer_buf[1] = @bitcast(f32, (@as(u32, hi_) << @as(u16, 16)) | @as(u32, lo_));
+  lo_ = tsc_e0[1]; hi_ = tsc_e0[2];
+  timer_buf[2] = @bitcast(f32, (@as(u32, hi_) << @as(u16, 16)) | @as(u32, lo_));
+
+  timestamp.get_timestamp(&tsc_s1);
+  bench_L1();
+  timestamp.get_timestamp(&tsc_e1);
+  lo_ = tsc_s1[0]; hi_ = tsc_s1[1];
+  timer_buf[3] = @bitcast(f32, (@as(u32, hi_) << @as(u16, 16)) | @as(u32, lo_));
+  lo_ = tsc_s1[2]; hi_ = tsc_e1[0];
+  timer_buf[4] = @bitcast(f32, (@as(u32, hi_) << @as(u16, 16)) | @as(u32, lo_));
+  lo_ = tsc_e1[1]; hi_ = tsc_e1[2];
+  timer_buf[5] = @bitcast(f32, (@as(u32, hi_) << @as(u16, 16)) | @as(u32, lo_));
+
+  timestamp.get_timestamp(&tsc_s2);
+  bench_L2();
+  timestamp.get_timestamp(&tsc_e2);
+  lo_ = tsc_s2[0]; hi_ = tsc_s2[1];
+  timer_buf[6] = @bitcast(f32, (@as(u32, hi_) << @as(u16, 16)) | @as(u32, lo_));
+  lo_ = tsc_s2[2]; hi_ = tsc_e2[0];
+  timer_buf[7] = @bitcast(f32, (@as(u32, hi_) << @as(u16, 16)) | @as(u32, lo_));
+  lo_ = tsc_e2[1]; hi_ = tsc_e2[2];
+  timer_buf[8] = @bitcast(f32, (@as(u32, hi_) << @as(u16, 16)) | @as(u32, lo_));
+
+  timestamp.get_timestamp(&tsc_s3);
+  bench_L3();
+  timestamp.get_timestamp(&tsc_e3);
+  lo_ = tsc_s3[0]; hi_ = tsc_s3[1];
+  timer_buf[9] = @bitcast(f32, (@as(u32, hi_) << @as(u16, 16)) | @as(u32, lo_));
+  lo_ = tsc_s3[2]; hi_ = tsc_e3[0];
+  timer_buf[10] = @bitcast(f32, (@as(u32, hi_) << @as(u16, 16)) | @as(u32, lo_));
+  lo_ = tsc_e3[1]; hi_ = tsc_e3[2];
+  timer_buf[11] = @bitcast(f32, (@as(u32, hi_) << @as(u16, 16)) | @as(u32, lo_));
+
+  timestamp.disable_tsc();
+  @activate(EXIT);
+}
+
+task f_exit() void { sys_mod.unblock_cmd_stream(); }
+
+comptime {
+  @bind_local_task(f_exit, EXIT);
+  @export_symbol(ptr_C, "C");
+  @export_symbol(ptr_timer_buf, "maxmin_time");
+  @export_symbol(compute);
+}

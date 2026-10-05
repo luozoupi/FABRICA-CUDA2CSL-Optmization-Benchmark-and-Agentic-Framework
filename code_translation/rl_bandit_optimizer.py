@@ -4,7 +4,7 @@ Multi-armed bandit optimizer for CSL optimization step selection.
 
 Replaces the fixed-order step loop with Thompson Sampling (Beta-Bernoulli bandit)
 that learns which optimization steps consistently improve run_time_ms. State
-persists across sessions in ~/.cache/fabrica/rl_data/bandit_stats.json.
+persists across sessions in ~/xkernel/rl_data/bandit_stats.json.
 
 Used by cuda2csl.py via --rl-bandit flag.
 """
@@ -17,7 +17,7 @@ import os
 import random
 from typing import Any, Dict, List, Optional, Tuple
 
-DEFAULT_STATS_PATH = os.path.expanduser("~/.cache/fabrica/rl_data/bandit_stats.json")
+DEFAULT_STATS_PATH = os.path.expanduser("~/xkernel/rl_data/bandit_stats.json")
 MIN_PULLS_BEFORE_EXPLOIT = 3   # cold-start: explore before exploiting
 
 

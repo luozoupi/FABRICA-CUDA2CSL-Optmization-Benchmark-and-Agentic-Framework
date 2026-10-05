@@ -1,0 +1,55 @@
+{
+  "kernel": "Cross-Entropy-Loss-1PE",
+  "run_dir": "code_translation/results/full_template_sweep_20260722_192305/Cross-Entropy-Loss-1PE/run_20260723_064700",
+  "status": "extracted",
+  "n_attempts": 14,
+  "model": "claude-opus-4-8",
+  "target_relpath": "pe.csl",
+  "reference_dir": "/home/USER/xkernel/kernels/Cross-Entropy-Loss-1PE/CSL",
+  "fc_attempt_index": 3,
+  "fc_cycles_send": 30050,
+  "fc_cycles_send_runs": [
+    30050
+  ],
+  "fc_code_lines": 91,
+  "fc_heldout_eval": {
+    "passed": true,
+    "failing_seed": null,
+    "per_seed": [
+      {
+        "seed": 101,
+        "steps": [
+          {
+            "command": "cs_python run.py --name out",
+            "ok": true,
+            "returncode": 0
+          }
+        ]
+      },
+      {
+        "seed": 202,
+        "steps": [
+          {
+            "command": "cs_python run.py --name out",
+            "ok": true,
+            "returncode": 0
+          }
+        ]
+      },
+      {
+        "seed": 303,
+        "steps": [
+          {
+            "command": "cs_python run.py --name out",
+            "ok": true,
+            "returncode": 0
+          }
+        ]
+      }
+    ],
+    "reason": "passed all 3 held-out seeds"
+  },
+  "translated_path": "/home/USER/xkernel/code_translation/sandbox/cuda2csl/cross-entropy-loss-1pe_l3iafk9_/pe.csl",
+  "source": "sandbox",
+  "dest": "code_translation/results/first_correct/template_20260722/Cross-Entropy-Loss-1PE/pe.csl"
+}

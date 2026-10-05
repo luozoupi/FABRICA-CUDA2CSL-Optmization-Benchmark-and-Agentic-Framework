@@ -1,0 +1,55 @@
+{
+  "kernel": "Histogram-Inline",
+  "run_dir": "code_translation/results/full_template_sweep_20260722_192305/Histogram-Inline/run_20260723_014016",
+  "status": "extracted",
+  "n_attempts": 14,
+  "model": "claude-opus-4-8",
+  "target_relpath": "pe.csl",
+  "reference_dir": "/home/USER/xkernel/kernels/Histogram-Inline/CSL",
+  "fc_attempt_index": 3,
+  "fc_cycles_send": 1967,
+  "fc_cycles_send_runs": [
+    1967
+  ],
+  "fc_code_lines": 107,
+  "fc_heldout_eval": {
+    "passed": true,
+    "failing_seed": null,
+    "per_seed": [
+      {
+        "seed": 101,
+        "steps": [
+          {
+            "command": "cs_python run.py --name out",
+            "ok": true,
+            "returncode": 0
+          }
+        ]
+      },
+      {
+        "seed": 202,
+        "steps": [
+          {
+            "command": "cs_python run.py --name out",
+            "ok": true,
+            "returncode": 0
+          }
+        ]
+      },
+      {
+        "seed": 303,
+        "steps": [
+          {
+            "command": "cs_python run.py --name out",
+            "ok": true,
+            "returncode": 0
+          }
+        ]
+      }
+    ],
+    "reason": "passed all 3 held-out seeds"
+  },
+  "translated_path": "/home/USER/xkernel/code_translation/sandbox/cuda2csl/histogram-inline_yt0u8q7f/pe.csl",
+  "source": "sandbox",
+  "dest": "code_translation/results/first_correct/template_20260722/Histogram-Inline/pe.csl"
+}

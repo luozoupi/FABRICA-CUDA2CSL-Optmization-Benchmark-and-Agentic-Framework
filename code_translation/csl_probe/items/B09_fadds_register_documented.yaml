@@ -1,0 +1,26 @@
+id: B09_fadds_register_documented
+group: B_semantics
+prompt: 'Read this Cerebras CSL fragment (SDK 2.10, one PE) and answer the question. Assume every builtin behaves
+  as the SDK documents it. Reply with the answer first (one number), then one sentence of justification.
+
+
+  ```csl
+
+  var v = @zeros([5]f32); var acc: f32 = 0.0;
+
+  // v = [1,2,3,4,5]
+
+  const vd = @get_dsd(mem1d_dsd, .{ .tensor_access = |i|{5} -> v[i] });
+
+  @fadds(&acc, acc, vd);
+
+  ```
+
+
+  Question: According to the documented semantics of @fadds with a register accumulator, what is acc afterwards?'
+expected:
+  values:
+  - 15
+scoring: trailing numbers within 1e-3 relative of the key, or the letter for choice items
+ground_truth: numpy/documented semantics; simulator confirmation of the numeric items pending (make_ground_truth.sh)
+source_citation: 'SDK builtins/DSD reference; B12: studies/wse3-characterization/FINDINGS.md section 10n (spmv_blk_dsdred)'

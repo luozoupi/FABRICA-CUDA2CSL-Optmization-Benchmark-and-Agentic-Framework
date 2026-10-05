@@ -1,0 +1,15 @@
+{
+  "original": "/home/USER/wse-matmul-microbench/builds/perf-masked-merge-16x16x16-r",
+  "elf_sha256": {
+    "bin/out_0_0.elf": "fab4d378b090ff7563eddb50c2566147a723404c42e67c86646f1f17d2ebdf70",
+    "generated/default.elf": "1a4776e4e8ea2809c518b2e36632ed454f65a1b85b80172c13c8a616b46dafd1",
+    "generated/MEMCPY_XY_ROUTES.elf": "145cfdf2650e18ccdc7a3c92f7692e103dd9a03c2762a8f8e36727d7b9924b92",
+    "generated/coord.elf": "a8c0c8e70d82ceb0019009b65eb6883ffcbf91dc55b537bcc188343a08542a66",
+    "east/bin/out_1_0.elf": "ceaec0d944a6aab27e238890a6ba939b432fba4788be63c70b1012d9ea37be24",
+    "east/bin/out_0_0.elf": "f3a6926e08cfc09b009267b1704734e9a4c9c69e7a3f1a2e84dfeb9ba683443a",
+    "west/bin/out_1_0.elf": "f3e14e207bf62c669bdb5269208ffa2d9f342d433b7245c35bf3e194299f88cd",
+    "west/bin/out_2_0.elf": "603bac3d102d82db359a235d75d1432d914c2ebf234089bd6974cb6a5aa89d44",
+    "west/bin/out_0_0.elf": "3a73914d0f4e7dff0a8cdd28dddc9477f5d9aba57296ebf254e1e8e432d33271"
+  },
+  "original_observations_sha256": "ae87dfeca3fa379738966085cb771584f0adfbb2ad9935924500a40500064110"
+}

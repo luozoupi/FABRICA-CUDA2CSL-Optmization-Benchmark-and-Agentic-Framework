@@ -1,0 +1,169 @@
+[
+  {
+    "group": "development-failures",
+    "case": "strong-m16-k16-n16-p4-d3-full",
+    "status": "compile_failed",
+    "phases": [
+      {
+        "phase": "compile",
+        "command": [
+          "/home/USER/cs_sdk/cslc",
+          "layout.csl",
+          "--arch=wse3",
+          "--fabric-dims=9,4",
+          "--fabric-offsets=4,1",
+          "--memcpy",
+          "--channels=1",
+          "--width-west-buf=0",
+          "--width-east-buf=0",
+          "--out-routes",
+          "--params=S:2,N:16,K:16,R:4,AC:16,BC:48,OC:36,W:16",
+          "-o",
+          "out"
+        ],
+        "returncode": 1,
+        "wall_seconds": 2.018574352012365
+      }
+    ],
+    "case_sha256": "960cbbddb7c08e7fb57355ae80498110c82a0aea0db8af84d3edb7059d3307f3",
+    "queue_wait_seconds": 1.7120008124038577e-05,
+    "elf_sha256": {},
+    "source_sha256": {
+      "pe.csl": "4acbab45330942524bd7fb7dc2b965d56cf70058433645ed17884d0fe5e37e13",
+      "case.json": "960cbbddb7c08e7fb57355ae80498110c82a0aea0db8af84d3edb7059d3307f3",
+      "layout.csl": "0f841665ca0ea9f9e420e1099e5629bb4ab5aca660b85ce6540899c6ebe03f51",
+      "inputs.py": "49cdb7d8602e94611157bdb98e75ea89bf5c692b82ea1e6c6e2d37cfc7f9ab73",
+      "host.py": "cd38e24bcdaa04a19383724de8c8bff73043169867e6c6d4760d4dc9f09edd5c"
+    }
+  },
+  {
+    "group": "development-failures",
+    "case": "strong-m16-k16-n16-p1-d3-full",
+    "status": "compile_failed",
+    "phases": [
+      {
+        "phase": "compile",
+        "command": [
+          "/home/USER/cs_sdk/cslc",
+          "layout.csl",
+          "--arch=wse3",
+          "--fabric-dims=8,3",
+          "--fabric-offsets=4,1",
+          "--memcpy",
+          "--channels=1",
+          "--width-west-buf=0",
+          "--width-east-buf=0",
+          "--out-routes",
+          "--params=S:1,N:16,K:16,R:16,AC:48,BC:48,OC:144,W:16",
+          "-o",
+          "out"
+        ],
+        "returncode": 1,
+        "wall_seconds": 2.018198787001893
+      }
+    ],
+    "case_sha256": "eaf811a151b588cb4b50f183085701ab647fa1dc8c944858abd70d5279d97f5b",
+    "queue_wait_seconds": 1.2930002412758768e-05,
+    "elf_sha256": {},
+    "source_sha256": {
+      "pe.csl": "8cc560b7f7a1fe6660f222c15d6a7d72a98cb6d5029b6734240e14cce65d5011",
+      "case.json": "eaf811a151b588cb4b50f183085701ab647fa1dc8c944858abd70d5279d97f5b",
+      "layout.csl": "0f841665ca0ea9f9e420e1099e5629bb4ab5aca660b85ce6540899c6ebe03f51",
+      "inputs.py": "3bf06691ac20c2049ca6f4c1b08dd26bb521607929942b3333136359abd09573",
+      "host.py": "cf62d43d015a76463834c0e6880ebf8c8b0cd294ff4414099f5045233c3e04ae"
+    }
+  },
+  {
+    "group": "development-failures",
+    "case": "strong-m16-k16-n16-p1-d3-full",
+    "status": "compile_failed",
+    "phases": [
+      {
+        "phase": "compile",
+        "command": [
+          "/home/USER/cs_sdk/cslc",
+          "layout.csl",
+          "--arch=wse3",
+          "--fabric-dims=8,3",
+          "--fabric-offsets=4,1",
+          "--memcpy",
+          "--channels=1",
+          "--width-west-buf=0",
+          "--width-east-buf=0",
+          "--out-routes",
+          "--params=S:1,N:16,K:16,R:16,AC:48,BC:48,OC:144,W:16",
+          "-o",
+          "out"
+        ],
+        "returncode": 1,
+        "wall_seconds": 2.069079075998161
+      }
+    ],
+    "case_sha256": "1c307cd2e1d1d9b87119ec4b16c0cae623534dceba61c5a825aa8261c538df83",
+    "queue_wait_seconds": 1.794000854715705e-05,
+    "elf_sha256": {},
+    "source_sha256": {
+      "single_collective.csl": "9bb534125f148b0b2179fde1ae8d9dd5efcf2801165d6c80b5f26052d43e0e6f",
+      "pe.csl": "9566a4d8db17c8f10e824c1c2345440934993c0c2d67cb0e03ea92c119fcd113",
+      "case.json": "1c307cd2e1d1d9b87119ec4b16c0cae623534dceba61c5a825aa8261c538df83",
+      "layout.csl": "0f841665ca0ea9f9e420e1099e5629bb4ab5aca660b85ce6540899c6ebe03f51",
+      "inputs.py": "99916fee5949cfa4bb7efc89b2da16ece9806de175d9bae4254f8e6504e5be4e",
+      "host.py": "afc8b5cb8fe9d182c3d3225fbba533ba233dbdbc38e82340a3e5723fd4101055"
+    }
+  },
+  {
+    "group": "interrupted-attempts",
+    "case": "strong-m256-k256-n256-p1-d3-full",
+    "status": "interrupted_supervision",
+    "phases": [],
+    "case_sha256": "ce4e3cb87d0a5199a51e4b98042d331500a8353c56eb8457f4f8883d0fe18ed1",
+    "elf_sha256": {
+      "out/bin/out_0_0.elf": "98dcd1645036c7023cfca43936b59e60b4ddd011903e64c35152f204e2ae545a",
+      "out/west/bin/out_1_0.elf": "f3e14e207bf62c669bdb5269208ffa2d9f342d433b7245c35bf3e194299f88cd",
+      "out/west/bin/out_2_0.elf": "603bac3d102d82db359a235d75d1432d914c2ebf234089bd6974cb6a5aa89d44",
+      "out/west/bin/out_0_0.elf": "3a73914d0f4e7dff0a8cdd28dddc9477f5d9aba57296ebf254e1e8e432d33271",
+      "out/generated/default.elf": "1a4776e4e8ea2809c518b2e36632ed454f65a1b85b80172c13c8a616b46dafd1",
+      "out/generated/MEMCPY_XY_ROUTES.elf": "145cfdf2650e18ccdc7a3c92f7692e103dd9a03c2762a8f8e36727d7b9924b92",
+      "out/generated/coord.elf": "a8c0c8e70d82ceb0019009b65eb6883ffcbf91dc55b537bcc188343a08542a66",
+      "out/east/bin/out_1_0.elf": "ceaec0d944a6aab27e238890a6ba939b432fba4788be63c70b1012d9ea37be24",
+      "out/east/bin/out_0_0.elf": "f3a6926e08cfc09b009267b1704734e9a4c9c69e7a3f1a2e84dfeb9ba683443a"
+    },
+    "source_sha256": {
+      "single_collective.csl": "95db24b1ca3fd7e9d868657d0c991e4d9d3ff4601b154caf8d394523a19870b7",
+      "pe.csl": "c5f1faad9e3331ced546ce8e83c2e9f318855d8137e49001cd23a9f9baaccb0b",
+      "case.json": "ce4e3cb87d0a5199a51e4b98042d331500a8353c56eb8457f4f8883d0fe18ed1",
+      "layout.csl": "0f841665ca0ea9f9e420e1099e5629bb4ab5aca660b85ce6540899c6ebe03f51",
+      "inputs.py": "99916fee5949cfa4bb7efc89b2da16ece9806de175d9bae4254f8e6504e5be4e",
+      "host.py": "afc8b5cb8fe9d182c3d3225fbba533ba233dbdbc38e82340a3e5723fd4101055",
+      "observations.json": "d481ce9486590fd896b710f91e22538409eb5a4a340af74ac08e8ebf559fc4fd",
+      "sim_stats.json": "92a28270f82ac77da639d1bf7c32e7088a4ab9e57e0cb668d23b66f2679db90b",
+      "simconfig.json": "ac8861b1a0ab97042fb33484d83a4d3ef124877e9bef550a89a5efe1f6da2be3"
+    },
+    "recovered_utc": "2026-09-25T17:19:30.192167+00:00",
+    "child_observation_status": "pass",
+    "verified_distributed_launches": 40,
+    "verified_communication_controls": 4,
+    "unsupervised_simulator_reported_seconds": 3895.3,
+    "reason": "The tool interruption ended the supervisor and its watchdog. The SDK child completed later without a supervisor result, after exceeding the registered 2400-second limit. Retained separately, excluded from primary timing and completion results. No exit status or outer-process wall duration is reconstructed."
+  },
+  {
+    "group": "coordination-failures",
+    "status": "queue_timeout_before_launch",
+    "case": "strong-m256-k256-n256-p1-d3-full",
+    "phase_launched": false,
+    "queue_limit_seconds": 600,
+    "measured_wait_seconds": null,
+    "phases": [],
+    "reason": "Prior detached supervisor ended after the registered runner raised its shared-lock queue timeout. No new compiler or simulator phase started; numerical results did not change.",
+    "prior_state": {
+      "pid": 3882769,
+      "started_utc": "2026-09-25T17:19:30.252969+00:00",
+      "status": "supervisor_failed",
+      "command": [
+        "python3",
+        "run.py"
+      ],
+      "error": "CalledProcessError(1, ['python3', 'run.py'])"
+    }
+  }
+]

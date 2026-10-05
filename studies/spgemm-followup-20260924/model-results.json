@@ -1,0 +1,56 @@
+{
+  "registration_sha256": "c36b10005c28a9a3232cb34fe56aa58b0911b81f22d7b7942b0478e400ca4b72",
+  "observations_sha256": "378cb2897a2eca2b30f4f90d5a224b65309a8d58be03d1c98c5fcb4a88401e87",
+  "results": [
+    {
+      "pattern": "probe928",
+      "input_sha256": {
+        "A": "8eb4ca16aeaa6d4d42bec85c8e040e28e89bef28065c23e949ca3bc547f8ee16",
+        "B": "d5d1164e3129d64121ac5dd7bda76b70bd223f85bc3cc421c00a9eccbeff81dc"
+      },
+      "products": 144,
+      "output_nnz": 121,
+      "predicted_cycles": 21011.0,
+      "observed_cycles": [
+        21011,
+        21011,
+        21011,
+        21011
+      ],
+      "all_predictions_exact": true,
+      "errors": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "correct_launches": 4
+    },
+    {
+      "pattern": "probe930",
+      "input_sha256": {
+        "A": "8eb4ca16aeaa6d4d42bec85c8e040e28e89bef28065c23e949ca3bc547f8ee16",
+        "B": "02acc201cb803726ef08128a6219dc2fa2ce9d45068ea01dce6b050fcf7ec703"
+      },
+      "products": 144,
+      "output_nnz": 115,
+      "predicted_cycles": 20861.0,
+      "observed_cycles": [
+        20861,
+        20861,
+        20861,
+        20861
+      ],
+      "all_predictions_exact": true,
+      "errors": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "correct_launches": 4
+    }
+  ],
+  "all_predictions_exact": true,
+  "correct_launches": 8
+}

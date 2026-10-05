@@ -1,0 +1,81 @@
+param memcpy_params: comptime_struct;
+// === SLOT: EXTRA_PARAMS ===
+param n: u16;
+
+const EXIT: local_task_id = @get_local_task_id(9);
+const sys_mod = @import_module("<memcpy/memcpy>", memcpy_params);
+
+// === SLOT: EXTRA_IMPORTS ===
+const math = @import_module("<math>");
+
+const timestamp = @import_module("<time>");
+var tsc_start_buf = @zeros([timestamp.tsc_size_words]u16);
+var tsc_end_buf   = @zeros([timestamp.tsc_size_words]u16);
+var timer_buf = @zeros([3]f32);
+var ptr_timer_buf: [*]f32 = &timer_buf;
+
+// === SLOT: DATA_BUFFERS ===
+var x_array = @zeros([n]f32);
+var out_array = @zeros([n]f32);
+var ptr_x: [*]f32 = &x_array;
+var ptr_out: [*]f32 = &out_array;
+
+// === SLOT: KERNEL_FUNCTION ===
+// tanh(z) = (e^{2z} - 1) / (e^{2z} + 1), computed in a numerically safe way.
+// For large |z| this saturates to +/-1; we clamp z to avoid exp overflow.
+fn tanh_f32(z: f32) f32 {
+    // Clamp to a safe range so exp does not overflow; tanh saturates anyway.
+    var zc: f32 = z;
+    if (zc > 15.0) { zc = 15.0; }
+    if (zc < -15.0) { zc = -15.0; }
+    const e2z = math.exp(2.0 * zc);
+    return (e2z - 1.0) / (e2z + 1.0);
+}
+
+fn gelu() void {
+    const sqrt_2_over_pi: f32 = 0.7978845608;
+    const coeff: f32 = 0.044715;
+    var i: u16 = 0;
+    while (i < n) : (i += 1) {
+        const v = x_array[i];
+        const inner = sqrt_2_over_pi * (v + coeff * v * v * v);
+        out_array[i] = 0.5 * v * (1.0 + tanh_f32(inner));
+    }
+}
+
+fn compute() void {
+    timestamp.enable_tsc();
+    timestamp.get_timestamp(&tsc_start_buf);
+
+    // === SLOT: KERNEL_CALL ===
+    gelu();
+
+    timestamp.get_timestamp(&tsc_end_buf);
+    timestamp.disable_tsc();
+
+    var lo_: u16 = 0;
+    var hi_: u16 = 0;
+    lo_ = tsc_start_buf[0]; hi_ = tsc_start_buf[1];
+    timer_buf[0] = @bitcast(f32, (@as(u32, hi_) << @as(u16, 16)) | @as(u32, lo_));
+    lo_ = tsc_start_buf[2]; hi_ = tsc_end_buf[0];
+    timer_buf[1] = @bitcast(f32, (@as(u32, hi_) << @as(u16, 16)) | @as(u32, lo_));
+    lo_ = tsc_end_buf[1]; hi_ = tsc_end_buf[2];
+    timer_buf[2] = @bitcast(f32, (@as(u32, hi_) << @as(u16, 16)) | @as(u32, lo_));
+
+    @activate(EXIT);
+}
+
+task f_exit() void {
+    sys_mod.unblock_cmd_stream();
+}
+
+comptime {
+    @bind_local_task(f_exit, EXIT);
+
+    // === SLOT: EXPORT_SYMBOLS ===
+    @export_symbol(ptr_x, "x");
+    @export_symbol(ptr_out, "out");
+
+    @export_symbol(ptr_timer_buf, "maxmin_time");
+    @export_symbol(compute);
+}

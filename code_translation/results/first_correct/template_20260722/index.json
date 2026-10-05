@@ -1,0 +1,1863 @@
+[
+  {
+    "kernel": "7pt-Stencil",
+    "run_dir": "code_translation/results/full_template_sweep_20260722_192305/7pt-Stencil/run_20260722_192308",
+    "status": "extracted",
+    "n_attempts": 16,
+    "model": "claude-opus-4-8",
+    "target_relpath": "src/kernel.csl",
+    "reference_dir": "/home/USER/xkernel/kernels/7-Point Stencil/CSL",
+    "fc_attempt_index": 11,
+    "fc_cycles_send": 2139,
+    "fc_cycles_send_runs": [
+      2139
+    ],
+    "fc_code_lines": 182,
+    "fc_heldout_eval": null,
+    "translated_path": "/home/USER/xkernel/code_translation/sandbox/cuda2csl/7pt-stencil_v2a881xs/src/kernel.csl",
+    "source": "sandbox",
+    "dest": "code_translation/results/first_correct/template_20260722/7pt-Stencil/src/kernel.csl"
+  },
+  {
+    "kernel": "Attention-1PE",
+    "run_dir": "code_translation/results/attention_translate_20260908/Attention-1PE/seed_1/run_20260908_154103",
+    "status": "extracted",
+    "n_attempts": 4,
+    "model": "claude-opus-4-8",
+    "target_relpath": "pe.csl",
+    "reference_dir": "/home/USER/xkernel/kernels/Attention-1PE/CSL",
+    "fc_attempt_index": 4,
+    "fc_cycles_send": 1194262,
+    "fc_cycles_send_runs": [
+      1194262
+    ],
+    "fc_code_lines": 149,
+    "fc_heldout_eval": {
+      "passed": true,
+      "failing_seed": null,
+      "per_seed": [
+        {
+          "seed": 101,
+          "steps": [
+            {
+              "command": "cs_python run.py --name out",
+              "ok": true,
+              "returncode": 0
+            }
+          ]
+        },
+        {
+          "seed": 202,
+          "steps": [
+            {
+              "command": "cs_python run.py --name out",
+              "ok": true,
+              "returncode": 0
+            }
+          ]
+        },
+        {
+          "seed": 303,
+          "steps": [
+            {
+              "command": "cs_python run.py --name out",
+              "ok": true,
+              "returncode": 0
+            }
+          ]
+        }
+      ],
+      "reason": "passed all 3 held-out seeds"
+    },
+    "translated_path": "/home/USER/xkernel/code_translation/sandbox/cuda2csl/attention-1pe_wp8uuxzk/pe.csl",
+    "source": "sandbox",
+    "dest": "code_translation/results/first_correct/template_20260722/Attention-1PE/pe.csl",
+    "source_group": "seed_1",
+    "sibling_fc_cycles": {
+      "seed_1": 1194262,
+      "seed_2": 3707629,
+      "seed_3": 3707629
+    },
+    "seed_choice_rule": "lowest-sorted run group that yielded an extraction (blind to cycle counts)"
+  },
+  {
+    "kernel": "Attention-QP",
+    "run_dir": "code_translation/results/attention_translate_20260908/Attention-QP/seed_1/run_20260908_163510",
+    "status": "extracted",
+    "n_attempts": 4,
+    "model": "claude-opus-4-8",
+    "target_relpath": "pe.csl",
+    "reference_dir": "/home/USER/xkernel/kernels/Attention-QP/CSL",
+    "fc_attempt_index": 4,
+    "fc_cycles_send": 264770,
+    "fc_cycles_send_runs": [
+      264770
+    ],
+    "fc_code_lines": 147,
+    "fc_heldout_eval": {
+      "passed": true,
+      "failing_seed": null,
+      "per_seed": [
+        {
+          "seed": 101,
+          "steps": [
+            {
+              "command": "cs_python run.py --name out",
+              "ok": true,
+              "returncode": 0
+            }
+          ]
+        },
+        {
+          "seed": 202,
+          "steps": [
+            {
+              "command": "cs_python run.py --name out",
+              "ok": true,
+              "returncode": 0
+            }
+          ]
+        },
+        {
+          "seed": 303,
+          "steps": [
+            {
+              "command": "cs_python run.py --name out",
+              "ok": true,
+              "returncode": 0
+            }
+          ]
+        }
+      ],
+      "reason": "passed all 3 held-out seeds"
+    },
+    "translated_path": "/home/USER/xkernel/code_translation/sandbox/cuda2csl/attention-qp_jcmcfmgy/pe.csl",
+    "source": "sandbox",
+    "dest": "code_translation/results/first_correct/template_20260722/Attention-QP/pe.csl",
+    "source_group": "seed_1",
+    "sibling_fc_cycles": {
+      "seed_1": 264770,
+      "seed_2": 421676,
+      "seed_3": 260858
+    },
+    "seed_choice_rule": "lowest-sorted run group that yielded an extraction (blind to cycle counts)"
+  },
+  {
+    "kernel": "BiCGSTAB",
+    "run_dir": "code_translation/results/full_template_sweep_20260722_192305/BiCGSTAB/run_20260723_031906",
+    "status": "extracted",
+    "n_attempts": 19,
+    "model": "claude-opus-4-8",
+    "target_relpath": "src/kernel_bicgstab.csl",
+    "reference_dir": "/home/USER/xkernel/kernels/BiCGSTAB/CSL",
+    "fc_attempt_index": 9,
+    "fc_cycles_send": 61297,
+    "fc_cycles_send_runs": [
+      61297
+    ],
+    "fc_code_lines": 421,
+    "fc_heldout_eval": null,
+    "translated_path": "/home/USER/xkernel/code_translation/sandbox/cuda2csl/bicgstab_jlln9pbh/src/kernel_bicgstab.csl",
+    "source": "sandbox",
+    "dest": "code_translation/results/first_correct/template_20260722/BiCGSTAB/src/kernel_bicgstab.csl"
+  },
+  {
+    "kernel": "CG",
+    "run_dir": "code_translation/results/full_template_sweep_20260722_192305/CG/run_20260723_034907",
+    "status": "extracted",
+    "n_attempts": 9,
+    "model": "claude-opus-4-8",
+    "target_relpath": "src/kernel_cg.csl",
+    "reference_dir": "/home/USER/xkernel/kernels/Conjugate Gradient/CSL",
+    "fc_attempt_index": 4,
+    "fc_cycles_send": 10351,
+    "fc_cycles_send_runs": [
+      10351
+    ],
+    "fc_code_lines": 356,
+    "fc_heldout_eval": null,
+    "translated_path": "/home/USER/xkernel/code_translation/sandbox/cuda2csl/cg_iptt372t/src/kernel_cg.csl",
+    "source": "sandbox",
+    "dest": "code_translation/results/first_correct/template_20260722/CG/src/kernel_cg.csl"
+  },
+  {
+    "kernel": "Cross-Entropy-Loss-1PE",
+    "run_dir": "code_translation/results/full_template_sweep_20260722_192305/Cross-Entropy-Loss-1PE/run_20260723_064700",
+    "status": "extracted",
+    "n_attempts": 14,
+    "model": "claude-opus-4-8",
+    "target_relpath": "pe.csl",
+    "reference_dir": "/home/USER/xkernel/kernels/Cross-Entropy-Loss-1PE/CSL",
+    "fc_attempt_index": 3,
+    "fc_cycles_send": 30050,
+    "fc_cycles_send_runs": [
+      30050
+    ],
+    "fc_code_lines": 91,
+    "fc_heldout_eval": {
+      "passed": true,
+      "failing_seed": null,
+      "per_seed": [
+        {
+          "seed": 101,
+          "steps": [
+            {
+              "command": "cs_python run.py --name out",
+              "ok": true,
+              "returncode": 0
+            }
+          ]
+        },
+        {
+          "seed": 202,
+          "steps": [
+            {
+              "command": "cs_python run.py --name out",
+              "ok": true,
+              "returncode": 0
+            }
+          ]
+        },
+        {
+          "seed": 303,
+          "steps": [
+            {
+              "command": "cs_python run.py --name out",
+              "ok": true,
+              "returncode": 0
+            }
+          ]
+        }
+      ],
+      "reason": "passed all 3 held-out seeds"
+    },
+    "translated_path": "/home/USER/xkernel/code_translation/sandbox/cuda2csl/cross-entropy-loss-1pe_l3iafk9_/pe.csl",
+    "source": "sandbox",
+    "dest": "code_translation/results/first_correct/template_20260722/Cross-Entropy-Loss-1PE/pe.csl"
+  },
+  {
+    "kernel": "DFT-1PE",
+    "run_dir": "code_translation/results/full_template_sweep_20260722_192305/DFT-1PE/run_20260722_200842",
+    "status": "extracted",
+    "n_attempts": 19,
+    "model": "claude-opus-4-8",
+    "target_relpath": "pe.csl",
+    "reference_dir": "/home/USER/xkernel/kernels/DFT-1PE/CSL",
+    "fc_attempt_index": 5,
+    "fc_cycles_send": 145233,
+    "fc_cycles_send_runs": [
+      145233
+    ],
+    "fc_code_lines": 90,
+    "fc_heldout_eval": {
+      "passed": true,
+      "failing_seed": null,
+      "per_seed": [
+        {
+          "seed": 101,
+          "steps": [
+            {
+              "command": "cs_python run.py --name out",
+              "ok": true,
+              "returncode": 0
+            }
+          ]
+        },
+        {
+          "seed": 202,
+          "steps": [
+            {
+              "command": "cs_python run.py --name out",
+              "ok": true,
+              "returncode": 0
+            }
+          ]
+        },
+        {
+          "seed": 303,
+          "steps": [
+            {
+              "command": "cs_python run.py --name out",
+              "ok": true,
+              "returncode": 0
+            }
+          ]
+        }
+      ],
+      "reason": "passed all 3 held-out seeds"
+    },
+    "translated_path": "/home/USER/xkernel/code_translation/sandbox/cuda2csl/dft-1pe_d2j7375w/pe.csl",
+    "source": "sandbox",
+    "dest": "code_translation/results/first_correct/template_20260722/DFT-1PE/pe.csl"
+  },
+  {
+    "kernel": "Dot-Product-1PE",
+    "run_dir": "code_translation/results/full_template_sweep_20260722_192305/Dot-Product-1PE/run_20260723_055013",
+    "status": "extracted",
+    "n_attempts": 13,
+    "model": "claude-opus-4-8",
+    "target_relpath": "pe.csl",
+    "reference_dir": "/home/USER/xkernel/kernels/Dot-Product-1PE/CSL",
+    "fc_attempt_index": 2,
+    "fc_cycles_send": 8723,
+    "fc_cycles_send_runs": [
+      8723
+    ],
+    "fc_code_lines": 81,
+    "fc_heldout_eval": {
+      "passed": true,
+      "failing_seed": null,
+      "per_seed": [
+        {
+          "seed": 101,
+          "steps": [
+            {
+              "command": "cs_python run.py --name out",
+              "ok": true,
+              "returncode": 0
+            }
+          ]
+        },
+        {
+          "seed": 202,
+          "steps": [
+            {
+              "command": "cs_python run.py --name out",
+              "ok": true,
+              "returncode": 0
+            }
+          ]
+        },
+        {
+          "seed": 303,
+          "steps": [
+            {
+              "command": "cs_python run.py --name out",
+              "ok": true,
+              "returncode": 0
+            }
+          ]
+        }
+      ],
+      "reason": "passed all 3 held-out seeds"
+    },
+    "translated_path": "/home/USER/xkernel/code_translation/sandbox/cuda2csl/dot-product-1pe_3s4546xg/pe.csl",
+    "source": "sandbox",
+    "dest": "code_translation/results/first_correct/template_20260722/Dot-Product-1PE/pe.csl"
+  },
+  {
+    "kernel": "GELU-1PE",
+    "run_dir": "code_translation/results/full_template_sweep_20260722_192305/GELU-1PE/run_20260723_045602",
+    "status": "extracted",
+    "n_attempts": 15,
+    "model": "claude-opus-4-8",
+    "target_relpath": "pe.csl",
+    "reference_dir": "/home/USER/xkernel/kernels/GELU-1PE/CSL",
+    "fc_attempt_index": 2,
+    "fc_cycles_send": 114712,
+    "fc_cycles_send_runs": [
+      114712
+    ],
+    "fc_code_lines": 81,
+    "fc_heldout_eval": {
+      "passed": true,
+      "failing_seed": null,
+      "per_seed": [
+        {
+          "seed": 101,
+          "steps": [
+            {
+              "command": "cs_python run.py --name out",
+              "ok": true,
+              "returncode": 0
+            }
+          ]
+        },
+        {
+          "seed": 202,
+          "steps": [
+            {
+              "command": "cs_python run.py --name out",
+              "ok": true,
+              "returncode": 0
+            }
+          ]
+        },
+        {
+          "seed": 303,
+          "steps": [
+            {
+              "command": "cs_python run.py --name out",
+              "ok": true,
+              "returncode": 0
+            }
+          ]
+        }
+      ],
+      "reason": "passed all 3 held-out seeds"
+    },
+    "translated_path": "/home/USER/xkernel/code_translation/sandbox/cuda2csl/gelu-1pe_xlho0ffq/pe.csl",
+    "source": "sandbox",
+    "dest": "code_translation/results/first_correct/template_20260722/GELU-1PE/pe.csl"
+  },
+  {
+    "kernel": "GEMM",
+    "run_dir": "code_translation/results/full_template_sweep_20260722_192305/GEMM/run_20260723_020327",
+    "status": "extracted",
+    "n_attempts": 14,
+    "model": "claude-opus-4-8",
+    "target_relpath": "pe.csl",
+    "reference_dir": "/home/USER/xkernel/kernels/GEMM/CSL",
+    "fc_attempt_index": 9,
+    "fc_cycles_send": 51169,
+    "fc_cycles_send_runs": [
+      51169
+    ],
+    "fc_code_lines": 182,
+    "fc_heldout_eval": {
+      "passed": true,
+      "failing_seed": null,
+      "per_seed": [
+        {
+          "seed": 101,
+          "steps": [
+            {
+              "command": "cs_python run.py --name out",
+              "ok": true,
+              "returncode": 0
+            }
+          ]
+        },
+        {
+          "seed": 202,
+          "steps": [
+            {
+              "command": "cs_python run.py --name out",
+              "ok": true,
+              "returncode": 0
+            }
+          ]
+        },
+        {
+          "seed": 303,
+          "steps": [
+            {
+              "command": "cs_python run.py --name out",
+              "ok": true,
+              "returncode": 0
+            }
+          ]
+        }
+      ],
+      "reason": "passed all 3 held-out seeds"
+    },
+    "translated_path": "/home/USER/xkernel/code_translation/sandbox/cuda2csl/gemm_vv1o71u0/pe.csl",
+    "source": "sandbox",
+    "dest": "code_translation/results/first_correct/template_20260722/GEMM/pe.csl",
+    "timing_protocol_patch": "device_internal_v2 stamps added mechanically (timing_protocol.instrument_device_window) 2026-09-08",
+    "fc_cycles_send_v2": 50817,
+    "fc_cycles_send_runs_v2": [
+      50817,
+      50817,
+      50817
+    ]
+  },
+  {
+    "kernel": "GEMM-Collectives-2D",
+    "run_dir": "code_translation/results/full_template_sweep_20260722_192305/GEMM-Collectives-2D/run_20260723_023907",
+    "status": "extracted",
+    "n_attempts": 12,
+    "model": "claude-opus-4-8",
+    "target_relpath": "pe.csl",
+    "reference_dir": "/home/USER/xkernel/kernels/GEMM Collectives 2D/CSL",
+    "fc_attempt_index": 7,
+    "fc_cycles_send": 48188,
+    "fc_cycles_send_runs": [
+      48188
+    ],
+    "fc_code_lines": 201,
+    "fc_heldout_eval": null,
+    "translated_path": "/home/USER/xkernel/code_translation/sandbox/cuda2csl/gemm-collectives-2d_u4lkzg8_/pe.csl",
+    "source": "sandbox",
+    "dest": "code_translation/results/first_correct/template_20260722/GEMM-Collectives-2D/pe.csl",
+    "timing_protocol_patch": "device_internal_v2 stamps added mechanically (timing_protocol.instrument_device_window) 2026-09-08",
+    "fc_cycles_send_v2": 48187,
+    "fc_cycles_send_runs_v2": [
+      48187,
+      48187,
+      48187
+    ]
+  },
+  {
+    "kernel": "GEMV-Collectives-2D",
+    "run_dir": "code_translation/results/full_template_sweep_20260722_192305/GEMV-Collectives-2D/run_20260723_025427",
+    "status": "extracted",
+    "n_attempts": 22,
+    "model": "claude-opus-4-8",
+    "target_relpath": "pe.csl",
+    "reference_dir": "/home/USER/xkernel/kernels/GEMV Collectives 2D/CSL",
+    "fc_attempt_index": 12,
+    "fc_cycles_send": 4360,
+    "fc_cycles_send_runs": [
+      4360
+    ],
+    "fc_code_lines": 227,
+    "fc_heldout_eval": null,
+    "translated_path": "/home/USER/xkernel/code_translation/sandbox/cuda2csl/gemv-collectives-2d_qfxv8gil/pe.csl",
+    "source": "sandbox",
+    "dest": "code_translation/results/first_correct/template_20260722/GEMV-Collectives-2D/pe.csl",
+    "timing_protocol_patch": "device_internal_v2 stamps added mechanically (timing_protocol.instrument_device_window) 2026-09-08",
+    "fc_cycles_send_v2": 4023,
+    "fc_cycles_send_runs_v2": [
+      4023,
+      4023,
+      4023
+    ]
+  },
+  {
+    "kernel": "GEMV-RowPart",
+    "run_dir": "code_translation/results/full_template_sweep_20260722_192305/GEMV-RowPart/run_20260723_015313",
+    "status": "extracted",
+    "n_attempts": 16,
+    "model": "claude-opus-4-8",
+    "target_relpath": "pe.csl",
+    "reference_dir": "/home/USER/xkernel/kernels/GEMV-RowPart/CSL",
+    "fc_attempt_index": 4,
+    "fc_cycles_send": 485,
+    "fc_cycles_send_runs": [
+      485
+    ],
+    "fc_code_lines": 111,
+    "fc_heldout_eval": {
+      "passed": true,
+      "failing_seed": null,
+      "per_seed": [
+        {
+          "seed": 101,
+          "steps": [
+            {
+              "command": "cs_python run.py --name out",
+              "ok": true,
+              "returncode": 0
+            }
+          ]
+        },
+        {
+          "seed": 202,
+          "steps": [
+            {
+              "command": "cs_python run.py --name out",
+              "ok": true,
+              "returncode": 0
+            }
+          ]
+        },
+        {
+          "seed": 303,
+          "steps": [
+            {
+              "command": "cs_python run.py --name out",
+              "ok": true,
+              "returncode": 0
+            }
+          ]
+        }
+      ],
+      "reason": "passed all 3 held-out seeds"
+    },
+    "translated_path": "/home/USER/xkernel/code_translation/sandbox/cuda2csl/gemv-rowpart_fe1f07ps/pe.csl",
+    "source": "sandbox",
+    "dest": "code_translation/results/first_correct/template_20260722/GEMV-RowPart/pe.csl"
+  },
+  {
+    "kernel": "Histogram-1PE",
+    "run_dir": "code_translation/results/full_template_sweep_20260722_192305/Histogram-1PE/run_20260722_212827",
+    "status": "extracted",
+    "n_attempts": 13,
+    "model": "claude-opus-4-8",
+    "target_relpath": "pe.csl",
+    "reference_dir": "/home/USER/xkernel/kernels/Histogram-1PE/CSL",
+    "fc_attempt_index": 2,
+    "fc_cycles_send": 6191,
+    "fc_cycles_send_runs": [
+      6191
+    ],
+    "fc_code_lines": 104,
+    "fc_heldout_eval": {
+      "passed": true,
+      "failing_seed": null,
+      "per_seed": [
+        {
+          "seed": 101,
+          "steps": [
+            {
+              "command": "cs_python run.py --name out",
+              "ok": true,
+              "returncode": 0
+            }
+          ]
+        },
+        {
+          "seed": 202,
+          "steps": [
+            {
+              "command": "cs_python run.py --name out",
+              "ok": true,
+              "returncode": 0
+            }
+          ]
+        },
+        {
+          "seed": 303,
+          "steps": [
+            {
+              "command": "cs_python run.py --name out",
+              "ok": true,
+              "returncode": 0
+            }
+          ]
+        }
+      ],
+      "reason": "passed all 3 held-out seeds"
+    },
+    "translated_path": "/home/USER/xkernel/code_translation/sandbox/cuda2csl/histogram-1pe_3t4v7q3p/pe.csl",
+    "source": "sandbox",
+    "dest": "code_translation/results/first_correct/template_20260722/Histogram-1PE/pe.csl"
+  },
+  {
+    "kernel": "Histogram-Inline",
+    "run_dir": "code_translation/results/full_template_sweep_20260722_192305/Histogram-Inline/run_20260723_014016",
+    "status": "extracted",
+    "n_attempts": 14,
+    "model": "claude-opus-4-8",
+    "target_relpath": "pe.csl",
+    "reference_dir": "/home/USER/xkernel/kernels/Histogram-Inline/CSL",
+    "fc_attempt_index": 3,
+    "fc_cycles_send": 1967,
+    "fc_cycles_send_runs": [
+      1967
+    ],
+    "fc_code_lines": 107,
+    "fc_heldout_eval": {
+      "passed": true,
+      "failing_seed": null,
+      "per_seed": [
+        {
+          "seed": 101,
+          "steps": [
+            {
+              "command": "cs_python run.py --name out",
+              "ok": true,
+              "returncode": 0
+            }
+          ]
+        },
+        {
+          "seed": 202,
+          "steps": [
+            {
+              "command": "cs_python run.py --name out",
+              "ok": true,
+              "returncode": 0
+            }
+          ]
+        },
+        {
+          "seed": 303,
+          "steps": [
+            {
+              "command": "cs_python run.py --name out",
+              "ok": true,
+              "returncode": 0
+            }
+          ]
+        }
+      ],
+      "reason": "passed all 3 held-out seeds"
+    },
+    "translated_path": "/home/USER/xkernel/code_translation/sandbox/cuda2csl/histogram-inline_yt0u8q7f/pe.csl",
+    "source": "sandbox",
+    "dest": "code_translation/results/first_correct/template_20260722/Histogram-Inline/pe.csl"
+  },
+  {
+    "kernel": "L2-Norm-1PE",
+    "run_dir": "code_translation/results/full_template_sweep_20260722_192305/L2-Norm-1PE/run_20260723_063212",
+    "status": "extracted",
+    "n_attempts": 8,
+    "model": "claude-opus-4-8",
+    "target_relpath": "pe.csl",
+    "reference_dir": "/home/USER/xkernel/kernels/L2-Norm-1PE/CSL",
+    "fc_attempt_index": 3,
+    "fc_cycles_send": 9420,
+    "fc_cycles_send_runs": [
+      9420
+    ],
+    "fc_code_lines": 87,
+    "fc_heldout_eval": {
+      "passed": true,
+      "failing_seed": null,
+      "per_seed": [
+        {
+          "seed": 101,
+          "steps": [
+            {
+              "command": "cs_python run.py --name out",
+              "ok": true,
+              "returncode": 0
+            }
+          ]
+        },
+        {
+          "seed": 202,
+          "steps": [
+            {
+              "command": "cs_python run.py --name out",
+              "ok": true,
+              "returncode": 0
+            }
+          ]
+        },
+        {
+          "seed": 303,
+          "steps": [
+            {
+              "command": "cs_python run.py --name out",
+              "ok": true,
+              "returncode": 0
+            }
+          ]
+        }
+      ],
+      "reason": "passed all 3 held-out seeds"
+    },
+    "translated_path": "/home/USER/xkernel/code_translation/sandbox/cuda2csl/l2-norm-1pe_0xfdulx0/pe.csl",
+    "source": "sandbox",
+    "dest": "code_translation/results/first_correct/template_20260722/L2-Norm-1PE/pe.csl"
+  },
+  {
+    "kernel": "Laplacian2D-Halo",
+    "run_dir": "code_translation/results/full_template_sweep_20260722_192305/Laplacian2D-Halo/run_20260722_220045",
+    "status": "extracted",
+    "n_attempts": 19,
+    "model": "claude-opus-4-8",
+    "target_relpath": "pe.csl",
+    "reference_dir": "/home/USER/xkernel/kernels/Laplacian2D-Halo/CSL",
+    "fc_attempt_index": 9,
+    "fc_cycles_send": 1799,
+    "fc_cycles_send_runs": [
+      1799
+    ],
+    "fc_code_lines": 375,
+    "fc_heldout_eval": {
+      "passed": true,
+      "failing_seed": null,
+      "per_seed": [
+        {
+          "seed": 101,
+          "steps": [
+            {
+              "command": "cs_python run.py --name out --iters 1",
+              "ok": true,
+              "returncode": 0
+            }
+          ]
+        },
+        {
+          "seed": 202,
+          "steps": [
+            {
+              "command": "cs_python run.py --name out --iters 1",
+              "ok": true,
+              "returncode": 0
+            }
+          ]
+        },
+        {
+          "seed": 303,
+          "steps": [
+            {
+              "command": "cs_python run.py --name out --iters 1",
+              "ok": true,
+              "returncode": 0
+            }
+          ]
+        }
+      ],
+      "reason": "passed all 3 held-out seeds"
+    },
+    "translated_path": "/home/USER/xkernel/code_translation/sandbox/cuda2csl/laplacian2d-halo_bw0jzzwn/pe.csl",
+    "source": "sandbox",
+    "dest": "code_translation/results/first_correct/template_20260722/Laplacian2D-Halo/pe.csl",
+    "timing_protocol_patch": "device_internal_v2 stamps added mechanically (timing_protocol.instrument_device_window) 2026-09-08",
+    "fc_cycles_send_v2": 1363,
+    "fc_cycles_send_runs_v2": [
+      1363,
+      1363,
+      1363
+    ]
+  },
+  {
+    "kernel": "MSE-Loss-1PE",
+    "run_dir": "code_translation/results/full_template_sweep_20260722_192305/MSE-Loss-1PE/run_20260723_063749",
+    "status": "extracted",
+    "n_attempts": 12,
+    "model": "claude-opus-4-8",
+    "target_relpath": "pe.csl",
+    "reference_dir": "/home/USER/xkernel/kernels/MSE-Loss-1PE/CSL",
+    "fc_attempt_index": 2,
+    "fc_cycles_send": 8983,
+    "fc_cycles_send_runs": [
+      8983
+    ],
+    "fc_code_lines": 82,
+    "fc_heldout_eval": {
+      "passed": true,
+      "failing_seed": null,
+      "per_seed": [
+        {
+          "seed": 101,
+          "steps": [
+            {
+              "command": "cs_python run.py --name out",
+              "ok": true,
+              "returncode": 0
+            }
+          ]
+        },
+        {
+          "seed": 202,
+          "steps": [
+            {
+              "command": "cs_python run.py --name out",
+              "ok": true,
+              "returncode": 0
+            }
+          ]
+        },
+        {
+          "seed": 303,
+          "steps": [
+            {
+              "command": "cs_python run.py --name out",
+              "ok": true,
+              "returncode": 0
+            }
+          ]
+        }
+      ],
+      "reason": "passed all 3 held-out seeds"
+    },
+    "translated_path": "/home/USER/xkernel/code_translation/sandbox/cuda2csl/mse-loss-1pe_9th_y5q2/pe.csl",
+    "source": "sandbox",
+    "dest": "code_translation/results/first_correct/template_20260722/MSE-Loss-1PE/pe.csl"
+  },
+  {
+    "kernel": "Max-Reduction-1PE",
+    "run_dir": "code_translation/results/full_template_sweep_20260722_192305/Max-Reduction-1PE/run_20260723_054027",
+    "status": "extracted",
+    "n_attempts": 13,
+    "model": "claude-opus-4-8",
+    "target_relpath": "pe.csl",
+    "reference_dir": "/home/USER/xkernel/kernels/Max-Reduction-1PE/CSL",
+    "fc_attempt_index": 3,
+    "fc_cycles_send": 527,
+    "fc_cycles_send_runs": [
+      527
+    ],
+    "fc_code_lines": 79,
+    "fc_heldout_eval": {
+      "passed": true,
+      "failing_seed": null,
+      "per_seed": [
+        {
+          "seed": 101,
+          "steps": [
+            {
+              "command": "cs_python run.py --name out",
+              "ok": true,
+              "returncode": 0
+            }
+          ]
+        },
+        {
+          "seed": 202,
+          "steps": [
+            {
+              "command": "cs_python run.py --name out",
+              "ok": true,
+              "returncode": 0
+            }
+          ]
+        },
+        {
+          "seed": 303,
+          "steps": [
+            {
+              "command": "cs_python run.py --name out",
+              "ok": true,
+              "returncode": 0
+            }
+          ]
+        }
+      ],
+      "reason": "passed all 3 held-out seeds"
+    },
+    "translated_path": "/home/USER/xkernel/code_translation/sandbox/cuda2csl/max-reduction-1pe_mxn_c8wr/pe.csl",
+    "source": "sandbox",
+    "dest": "code_translation/results/first_correct/template_20260722/Max-Reduction-1PE/pe.csl"
+  },
+  {
+    "kernel": "PDFT-Pi-Pipeline",
+    "run_dir": "code_translation/results/full_template_sweep_20260722_192305/PDFT-Pi-Pipeline/run_20260722_231232",
+    "status": "extracted",
+    "n_attempts": 17,
+    "model": "claude-opus-4-8",
+    "target_relpath": "pe.csl",
+    "reference_dir": "/home/USER/xkernel/kernels/PDFT-Pi-Pipeline/CSL",
+    "fc_attempt_index": 4,
+    "fc_cycles_send": 125065,
+    "fc_cycles_send_runs": [
+      125065
+    ],
+    "fc_code_lines": 112,
+    "fc_heldout_eval": {
+      "passed": true,
+      "failing_seed": null,
+      "per_seed": [
+        {
+          "seed": 101,
+          "steps": [
+            {
+              "command": "cs_python ./run.py --name out",
+              "ok": true,
+              "returncode": 0
+            }
+          ]
+        },
+        {
+          "seed": 202,
+          "steps": [
+            {
+              "command": "cs_python ./run.py --name out",
+              "ok": true,
+              "returncode": 0
+            }
+          ]
+        },
+        {
+          "seed": 303,
+          "steps": [
+            {
+              "command": "cs_python ./run.py --name out",
+              "ok": true,
+              "returncode": 0
+            }
+          ]
+        }
+      ],
+      "reason": "passed all 3 held-out seeds"
+    },
+    "translated_path": "/home/USER/xkernel/code_translation/sandbox/cuda2csl/pdft-pi-pipeline_vn669e28/pe.csl",
+    "source": "sandbox",
+    "dest": "code_translation/results/first_correct/template_20260722/PDFT-Pi-Pipeline/pe.csl"
+  },
+  {
+    "kernel": "ParBroadcast-Scale",
+    "run_dir": "code_translation/results/full_template_sweep_20260722_192305/ParBroadcast-Scale/run_20260723_071349",
+    "status": "extracted",
+    "n_attempts": 19,
+    "model": "claude-opus-4-8",
+    "target_relpath": "pe.csl",
+    "reference_dir": "/home/USER/xkernel/kernels/ParBroadcast-Scale/CSL",
+    "fc_attempt_index": 6,
+    "fc_cycles_send": 154,
+    "fc_cycles_send_runs": [
+      154
+    ],
+    "fc_code_lines": 122,
+    "fc_heldout_eval": {
+      "passed": true,
+      "failing_seed": null,
+      "per_seed": [
+        {
+          "seed": 101,
+          "steps": [
+            {
+              "command": "cs_python run.py --name out",
+              "ok": true,
+              "returncode": 0
+            }
+          ]
+        },
+        {
+          "seed": 202,
+          "steps": [
+            {
+              "command": "cs_python run.py --name out",
+              "ok": true,
+              "returncode": 0
+            }
+          ]
+        },
+        {
+          "seed": 303,
+          "steps": [
+            {
+              "command": "cs_python run.py --name out",
+              "ok": true,
+              "returncode": 0
+            }
+          ]
+        }
+      ],
+      "reason": "passed all 3 held-out seeds"
+    },
+    "translated_path": "/home/USER/xkernel/code_translation/sandbox/cuda2csl/parbroadcast-scale_yon4ba_v/pe.csl",
+    "source": "sandbox",
+    "dest": "code_translation/results/first_correct/template_20260722/ParBroadcast-Scale/pe.csl"
+  },
+  {
+    "kernel": "ParDot-Product",
+    "run_dir": "code_translation/results/full_template_sweep_20260722_192305/ParDot-Product/run_20260723_072623",
+    "status": "extracted",
+    "n_attempts": 19,
+    "model": "claude-opus-4-8",
+    "target_relpath": "pe.csl",
+    "reference_dir": "/home/USER/xkernel/kernels/ParDot-Product/CSL",
+    "fc_attempt_index": 5,
+    "fc_cycles_send": 2638,
+    "fc_cycles_send_runs": [
+      2638
+    ],
+    "fc_code_lines": 224,
+    "fc_heldout_eval": {
+      "passed": true,
+      "failing_seed": null,
+      "per_seed": [
+        {
+          "seed": 101,
+          "steps": [
+            {
+              "command": "cs_python run.py --name out",
+              "ok": true,
+              "returncode": 0
+            }
+          ]
+        },
+        {
+          "seed": 202,
+          "steps": [
+            {
+              "command": "cs_python run.py --name out",
+              "ok": true,
+              "returncode": 0
+            }
+          ]
+        },
+        {
+          "seed": 303,
+          "steps": [
+            {
+              "command": "cs_python run.py --name out",
+              "ok": true,
+              "returncode": 0
+            }
+          ]
+        }
+      ],
+      "reason": "passed all 3 held-out seeds"
+    },
+    "translated_path": "/home/USER/xkernel/code_translation/sandbox/cuda2csl/pardot-product_xl74tamg/pe.csl",
+    "source": "sandbox",
+    "dest": "code_translation/results/first_correct/template_20260722/ParDot-Product/pe.csl"
+  },
+  {
+    "kernel": "ParReduce-Sum",
+    "run_dir": "code_translation/results/full_template_sweep_20260722_192305/ParReduce-Sum/run_20260723_065604",
+    "status": "extracted",
+    "n_attempts": 18,
+    "model": "claude-opus-4-8",
+    "target_relpath": "pe.csl",
+    "reference_dir": "/home/USER/xkernel/kernels/ParReduce-Sum/CSL",
+    "fc_attempt_index": 6,
+    "fc_cycles_send": 1992,
+    "fc_cycles_send_runs": [
+      1992
+    ],
+    "fc_code_lines": 251,
+    "fc_heldout_eval": {
+      "passed": true,
+      "failing_seed": null,
+      "per_seed": [
+        {
+          "seed": 101,
+          "steps": [
+            {
+              "command": "cs_python run.py --name out",
+              "ok": true,
+              "returncode": 0
+            }
+          ]
+        },
+        {
+          "seed": 202,
+          "steps": [
+            {
+              "command": "cs_python run.py --name out",
+              "ok": true,
+              "returncode": 0
+            }
+          ]
+        },
+        {
+          "seed": 303,
+          "steps": [
+            {
+              "command": "cs_python run.py --name out",
+              "ok": true,
+              "returncode": 0
+            }
+          ]
+        }
+      ],
+      "reason": "passed all 3 held-out seeds"
+    },
+    "translated_path": "/home/USER/xkernel/code_translation/sandbox/cuda2csl/parreduce-sum_mgn44t0m/pe.csl",
+    "source": "sandbox",
+    "dest": "code_translation/results/first_correct/template_20260722/ParReduce-Sum/pe.csl"
+  },
+  {
+    "kernel": "Preconditioned-CG",
+    "run_dir": "code_translation/results/full_template_sweep_20260722_192305/Preconditioned-CG/run_20260723_042215",
+    "status": "extracted",
+    "n_attempts": 13,
+    "model": "claude-opus-4-8",
+    "target_relpath": "src/kernel_pcg.csl",
+    "reference_dir": "/home/USER/xkernel/kernels/Preconditioned CG/CSL",
+    "fc_attempt_index": 8,
+    "fc_cycles_send": 15764,
+    "fc_cycles_send_runs": [
+      15764
+    ],
+    "fc_code_lines": 392,
+    "fc_heldout_eval": null,
+    "translated_path": "/home/USER/xkernel/code_translation/sandbox/cuda2csl/preconditioned-cg_7rsikzpg/src/kernel_pcg.csl",
+    "source": "sandbox",
+    "dest": "code_translation/results/first_correct/template_20260722/Preconditioned-CG/src/kernel_pcg.csl"
+  },
+  {
+    "kernel": "Prefix-Sum-1PE",
+    "run_dir": "code_translation/results/full_template_sweep_20260722_192305/Prefix-Sum-1PE/run_20260723_061211",
+    "status": "extracted",
+    "n_attempts": 15,
+    "model": "claude-opus-4-8",
+    "target_relpath": "pe.csl",
+    "reference_dir": "/home/USER/xkernel/kernels/Prefix-Sum-1PE/CSL",
+    "fc_attempt_index": 2,
+    "fc_cycles_send": 9229,
+    "fc_cycles_send_runs": [
+      9229
+    ],
+    "fc_code_lines": 70,
+    "fc_heldout_eval": {
+      "passed": true,
+      "failing_seed": null,
+      "per_seed": [
+        {
+          "seed": 101,
+          "steps": [
+            {
+              "command": "cs_python run.py --name out",
+              "ok": true,
+              "returncode": 0
+            }
+          ]
+        },
+        {
+          "seed": 202,
+          "steps": [
+            {
+              "command": "cs_python run.py --name out",
+              "ok": true,
+              "returncode": 0
+            }
+          ]
+        },
+        {
+          "seed": 303,
+          "steps": [
+            {
+              "command": "cs_python run.py --name out",
+              "ok": true,
+              "returncode": 0
+            }
+          ]
+        }
+      ],
+      "reason": "passed all 3 held-out seeds"
+    },
+    "translated_path": "/home/USER/xkernel/code_translation/sandbox/cuda2csl/prefix-sum-1pe_0d9dy1av/pe.csl",
+    "source": "sandbox",
+    "dest": "code_translation/results/first_correct/template_20260722/Prefix-Sum-1PE/pe.csl"
+  },
+  {
+    "kernel": "RMSNorm-1PE",
+    "run_dir": "code_translation/results/full_template_sweep_20260722_192305/RMSNorm-1PE/run_20260723_062538",
+    "status": "extracted",
+    "n_attempts": 8,
+    "model": "claude-opus-4-8",
+    "target_relpath": "pe.csl",
+    "reference_dir": "/home/USER/xkernel/kernels/RMSNorm-1PE/CSL",
+    "fc_attempt_index": 3,
+    "fc_cycles_send": 5331,
+    "fc_cycles_send_runs": [
+      5331
+    ],
+    "fc_code_lines": 91,
+    "fc_heldout_eval": {
+      "passed": true,
+      "failing_seed": null,
+      "per_seed": [
+        {
+          "seed": 101,
+          "steps": [
+            {
+              "command": "cs_python run.py --name out",
+              "ok": true,
+              "returncode": 0
+            }
+          ]
+        },
+        {
+          "seed": 202,
+          "steps": [
+            {
+              "command": "cs_python run.py --name out",
+              "ok": true,
+              "returncode": 0
+            }
+          ]
+        },
+        {
+          "seed": 303,
+          "steps": [
+            {
+              "command": "cs_python run.py --name out",
+              "ok": true,
+              "returncode": 0
+            }
+          ]
+        }
+      ],
+      "reason": "passed all 3 held-out seeds"
+    },
+    "translated_path": "/home/USER/xkernel/code_translation/sandbox/cuda2csl/rmsnorm-1pe_98z1zsn8/pe.csl",
+    "source": "sandbox",
+    "dest": "code_translation/results/first_correct/template_20260722/RMSNorm-1PE/pe.csl"
+  },
+  {
+    "kernel": "ReLU-1PE",
+    "run_dir": "code_translation/results/full_template_sweep_20260722_192305/ReLU-1PE/run_20260723_043755",
+    "status": "extracted",
+    "n_attempts": 14,
+    "model": "claude-opus-4-8",
+    "target_relpath": "pe.csl",
+    "reference_dir": "/home/USER/xkernel/kernels/ReLU-1PE/CSL",
+    "fc_attempt_index": 2,
+    "fc_cycles_send": 272,
+    "fc_cycles_send_runs": [
+      272
+    ],
+    "fc_code_lines": 77,
+    "fc_heldout_eval": {
+      "passed": true,
+      "failing_seed": null,
+      "per_seed": [
+        {
+          "seed": 101,
+          "steps": [
+            {
+              "command": "cs_python run.py --name out",
+              "ok": true,
+              "returncode": 0
+            }
+          ]
+        },
+        {
+          "seed": 202,
+          "steps": [
+            {
+              "command": "cs_python run.py --name out",
+              "ok": true,
+              "returncode": 0
+            }
+          ]
+        },
+        {
+          "seed": 303,
+          "steps": [
+            {
+              "command": "cs_python run.py --name out",
+              "ok": true,
+              "returncode": 0
+            }
+          ]
+        }
+      ],
+      "reason": "passed all 3 held-out seeds"
+    },
+    "translated_path": "/home/USER/xkernel/code_translation/sandbox/cuda2csl/relu-1pe_ezfyec5l/pe.csl",
+    "source": "sandbox",
+    "dest": "code_translation/results/first_correct/template_20260722/ReLU-1PE/pe.csl"
+  },
+  {
+    "kernel": "RowParallel-Softmax",
+    "run_dir": "code_translation/results/full_template_sweep_20260722_192305/RowParallel-Softmax/run_20260723_074428",
+    "status": "extracted",
+    "n_attempts": 21,
+    "model": "claude-opus-4-8",
+    "target_relpath": "pe.csl",
+    "reference_dir": "/home/USER/xkernel/kernels/RowParallel-Softmax/CSL",
+    "fc_attempt_index": 9,
+    "fc_cycles_send": 17892,
+    "fc_cycles_send_runs": [
+      17892
+    ],
+    "fc_code_lines": 284,
+    "fc_heldout_eval": {
+      "passed": true,
+      "failing_seed": null,
+      "per_seed": [
+        {
+          "seed": 101,
+          "steps": [
+            {
+              "command": "cs_python run.py --name out",
+              "ok": true,
+              "returncode": 0
+            }
+          ]
+        },
+        {
+          "seed": 202,
+          "steps": [
+            {
+              "command": "cs_python run.py --name out",
+              "ok": true,
+              "returncode": 0
+            }
+          ]
+        },
+        {
+          "seed": 303,
+          "steps": [
+            {
+              "command": "cs_python run.py --name out",
+              "ok": true,
+              "returncode": 0
+            }
+          ]
+        }
+      ],
+      "reason": "passed all 3 held-out seeds"
+    },
+    "translated_path": "/home/USER/xkernel/code_translation/sandbox/cuda2csl/rowparallel-softmax_4xmmr4lo/pe.csl",
+    "source": "sandbox",
+    "dest": "code_translation/results/first_correct/template_20260722/RowParallel-Softmax/pe.csl"
+  },
+  {
+    "kernel": "SAXPY-1PE",
+    "run_dir": "code_translation/results/full_template_sweep_20260722_192305/SAXPY-1PE/run_20260723_060030",
+    "status": "extracted",
+    "n_attempts": 13,
+    "model": "claude-opus-4-8",
+    "target_relpath": "pe.csl",
+    "reference_dir": "/home/USER/xkernel/kernels/SAXPY-1PE/CSL",
+    "fc_attempt_index": 2,
+    "fc_cycles_send": 1040,
+    "fc_cycles_send_runs": [
+      1040
+    ],
+    "fc_code_lines": 80,
+    "fc_heldout_eval": {
+      "passed": true,
+      "failing_seed": null,
+      "per_seed": [
+        {
+          "seed": 101,
+          "steps": [
+            {
+              "command": "cs_python run.py --name out",
+              "ok": true,
+              "returncode": 0
+            }
+          ]
+        },
+        {
+          "seed": 202,
+          "steps": [
+            {
+              "command": "cs_python run.py --name out",
+              "ok": true,
+              "returncode": 0
+            }
+          ]
+        },
+        {
+          "seed": 303,
+          "steps": [
+            {
+              "command": "cs_python run.py --name out",
+              "ok": true,
+              "returncode": 0
+            }
+          ]
+        }
+      ],
+      "reason": "passed all 3 held-out seeds"
+    },
+    "translated_path": "/home/USER/xkernel/code_translation/sandbox/cuda2csl/saxpy-1pe_2dsqipvk/pe.csl",
+    "source": "sandbox",
+    "dest": "code_translation/results/first_correct/template_20260722/SAXPY-1PE/pe.csl"
+  },
+  {
+    "kernel": "SiLU-1PE",
+    "run_dir": "code_translation/results/full_template_sweep_20260722_192305/SiLU-1PE/run_20260723_051154",
+    "status": "extracted",
+    "n_attempts": 12,
+    "model": "claude-opus-4-8",
+    "target_relpath": "pe.csl",
+    "reference_dir": "/home/USER/xkernel/kernels/SiLU-1PE/CSL",
+    "fc_attempt_index": 2,
+    "fc_cycles_send": 103450,
+    "fc_cycles_send_runs": [
+      103450
+    ],
+    "fc_code_lines": 69,
+    "fc_heldout_eval": {
+      "passed": true,
+      "failing_seed": null,
+      "per_seed": [
+        {
+          "seed": 101,
+          "steps": [
+            {
+              "command": "cs_python run.py --name out",
+              "ok": true,
+              "returncode": 0
+            }
+          ]
+        },
+        {
+          "seed": 202,
+          "steps": [
+            {
+              "command": "cs_python run.py --name out",
+              "ok": true,
+              "returncode": 0
+            }
+          ]
+        },
+        {
+          "seed": 303,
+          "steps": [
+            {
+              "command": "cs_python run.py --name out",
+              "ok": true,
+              "returncode": 0
+            }
+          ]
+        }
+      ],
+      "reason": "passed all 3 held-out seeds"
+    },
+    "translated_path": "/home/USER/xkernel/code_translation/sandbox/cuda2csl/silu-1pe_346si41p/pe.csl",
+    "source": "sandbox",
+    "dest": "code_translation/results/first_correct/template_20260722/SiLU-1PE/pe.csl"
+  },
+  {
+    "kernel": "Sigmoid-1PE",
+    "run_dir": "code_translation/results/full_template_sweep_20260722_192305/Sigmoid-1PE/run_20260723_044953",
+    "status": "extracted",
+    "n_attempts": 7,
+    "model": "claude-opus-4-8",
+    "target_relpath": "pe.csl",
+    "reference_dir": "/home/USER/xkernel/kernels/Sigmoid-1PE/CSL",
+    "fc_attempt_index": 2,
+    "fc_cycles_send": 107546,
+    "fc_cycles_send_runs": [
+      107546
+    ],
+    "fc_code_lines": 68,
+    "fc_heldout_eval": {
+      "passed": true,
+      "failing_seed": null,
+      "per_seed": [
+        {
+          "seed": 101,
+          "steps": [
+            {
+              "command": "cs_python run.py --name out",
+              "ok": true,
+              "returncode": 0
+            }
+          ]
+        },
+        {
+          "seed": 202,
+          "steps": [
+            {
+              "command": "cs_python run.py --name out",
+              "ok": true,
+              "returncode": 0
+            }
+          ]
+        },
+        {
+          "seed": 303,
+          "steps": [
+            {
+              "command": "cs_python run.py --name out",
+              "ok": true,
+              "returncode": 0
+            }
+          ]
+        }
+      ],
+      "reason": "passed all 3 held-out seeds"
+    },
+    "translated_path": "/home/USER/xkernel/code_translation/sandbox/cuda2csl/sigmoid-1pe_z0mns1ym/pe.csl",
+    "source": "sandbox",
+    "dest": "code_translation/results/first_correct/template_20260722/Sigmoid-1PE/pe.csl"
+  },
+  {
+    "kernel": "Single-Tile-Matvec",
+    "run_dir": "code_translation/results/full_template_sweep_20260722_192305/Single-Tile-Matvec/run_20260722_235305",
+    "status": "extracted",
+    "n_attempts": 17,
+    "model": "claude-opus-4-8",
+    "target_relpath": "pe_matvec.csl",
+    "reference_dir": "/home/USER/xkernel/kernels/Single Tile Matvec/CSL",
+    "fc_attempt_index": 3,
+    "fc_cycles_send": 1350,
+    "fc_cycles_send_runs": [
+      1350
+    ],
+    "fc_code_lines": 100,
+    "fc_heldout_eval": {
+      "passed": true,
+      "failing_seed": null,
+      "per_seed": [
+        {
+          "seed": 101,
+          "steps": [
+            {
+              "command": "cs_python ./run.py --name out --verify",
+              "ok": true,
+              "returncode": 0
+            }
+          ]
+        },
+        {
+          "seed": 202,
+          "steps": [
+            {
+              "command": "cs_python ./run.py --name out --verify",
+              "ok": true,
+              "returncode": 0
+            }
+          ]
+        },
+        {
+          "seed": 303,
+          "steps": [
+            {
+              "command": "cs_python ./run.py --name out --verify",
+              "ok": true,
+              "returncode": 0
+            }
+          ]
+        }
+      ],
+      "reason": "passed all 3 held-out seeds"
+    },
+    "translated_path": "/home/USER/xkernel/code_translation/sandbox/cuda2csl/single-tile-matvec_1s43gc7w/pe_matvec.csl",
+    "source": "sandbox",
+    "dest": "code_translation/results/first_correct/template_20260722/Single-Tile-Matvec/pe_matvec.csl"
+  },
+  {
+    "kernel": "Softmax-1PE",
+    "run_dir": "code_translation/results/full_template_sweep_20260722_192305/Softmax-1PE/run_20260723_052115",
+    "status": "extracted",
+    "n_attempts": 13,
+    "model": "claude-opus-4-8",
+    "target_relpath": "pe.csl",
+    "reference_dir": "/home/USER/xkernel/kernels/Softmax-1PE/CSL",
+    "fc_attempt_index": 3,
+    "fc_cycles_send": 31615,
+    "fc_cycles_send_runs": [
+      31615
+    ],
+    "fc_code_lines": 87,
+    "fc_heldout_eval": {
+      "passed": true,
+      "failing_seed": null,
+      "per_seed": [
+        {
+          "seed": 101,
+          "steps": [
+            {
+              "command": "cs_python run.py --name out",
+              "ok": true,
+              "returncode": 0
+            }
+          ]
+        },
+        {
+          "seed": 202,
+          "steps": [
+            {
+              "command": "cs_python run.py --name out",
+              "ok": true,
+              "returncode": 0
+            }
+          ]
+        },
+        {
+          "seed": 303,
+          "steps": [
+            {
+              "command": "cs_python run.py --name out",
+              "ok": true,
+              "returncode": 0
+            }
+          ]
+        }
+      ],
+      "reason": "passed all 3 held-out seeds"
+    },
+    "translated_path": "/home/USER/xkernel/code_translation/sandbox/cuda2csl/softmax-1pe_uibug2cj/pe.csl",
+    "source": "sandbox",
+    "dest": "code_translation/results/first_correct/template_20260722/Softmax-1PE/pe.csl"
+  },
+  {
+    "kernel": "SpMV-CSR",
+    "run_dir": "code_translation/results/full_template_sweep_20260722_192305/SpMV-CSR/run_20260723_001049",
+    "status": "extracted",
+    "n_attempts": 12,
+    "model": "claude-opus-4-8",
+    "target_relpath": "pe.csl",
+    "reference_dir": "/home/USER/xkernel/kernels/SpMV-CSR/CSL",
+    "fc_attempt_index": 2,
+    "fc_cycles_send": 6927,
+    "fc_cycles_send_runs": [
+      6927
+    ],
+    "fc_code_lines": 117,
+    "fc_heldout_eval": {
+      "passed": true,
+      "failing_seed": null,
+      "per_seed": [
+        {
+          "seed": 101,
+          "steps": [
+            {
+              "command": "cs_python run.py --name out",
+              "ok": true,
+              "returncode": 0
+            }
+          ]
+        },
+        {
+          "seed": 202,
+          "steps": [
+            {
+              "command": "cs_python run.py --name out",
+              "ok": true,
+              "returncode": 0
+            }
+          ]
+        },
+        {
+          "seed": 303,
+          "steps": [
+            {
+              "command": "cs_python run.py --name out",
+              "ok": true,
+              "returncode": 0
+            }
+          ]
+        }
+      ],
+      "reason": "passed all 3 held-out seeds"
+    },
+    "translated_path": "/home/USER/xkernel/code_translation/sandbox/cuda2csl/spmv-csr_p9cxbcdt/pe.csl",
+    "source": "sandbox",
+    "dest": "code_translation/results/first_correct/template_20260722/SpMV-CSR/pe.csl"
+  },
+  {
+    "kernel": "Stencil7pt-1PE",
+    "run_dir": "code_translation/results/full_template_sweep_20260722_192305/Stencil7pt-1PE/run_20260723_003102",
+    "status": "extracted",
+    "n_attempts": 17,
+    "model": "claude-opus-4-8",
+    "target_relpath": "pe.csl",
+    "reference_dir": "/home/USER/xkernel/kernels/Stencil7pt-1PE/CSL",
+    "fc_attempt_index": 2,
+    "fc_cycles_send": 40497,
+    "fc_cycles_send_runs": [
+      40497
+    ],
+    "fc_code_lines": 100,
+    "fc_heldout_eval": {
+      "passed": true,
+      "failing_seed": null,
+      "per_seed": [
+        {
+          "seed": 101,
+          "steps": [
+            {
+              "command": "cs_python run.py --name out",
+              "ok": true,
+              "returncode": 0
+            }
+          ]
+        },
+        {
+          "seed": 202,
+          "steps": [
+            {
+              "command": "cs_python run.py --name out",
+              "ok": true,
+              "returncode": 0
+            }
+          ]
+        },
+        {
+          "seed": 303,
+          "steps": [
+            {
+              "command": "cs_python run.py --name out",
+              "ok": true,
+              "returncode": 0
+            }
+          ]
+        }
+      ],
+      "reason": "passed all 3 held-out seeds"
+    },
+    "translated_path": "/home/USER/xkernel/code_translation/sandbox/cuda2csl/stencil7pt-1pe_k0p043eo/pe.csl",
+    "source": "sandbox",
+    "dest": "code_translation/results/first_correct/template_20260722/Stencil7pt-1PE/pe.csl"
+  },
+  {
+    "kernel": "Sum-Reduction-1PE",
+    "run_dir": "code_translation/results/full_template_sweep_20260722_192305/Sum-Reduction-1PE/run_20260723_052947",
+    "status": "extracted",
+    "n_attempts": 18,
+    "model": "claude-opus-4-8",
+    "target_relpath": "pe.csl",
+    "reference_dir": "/home/USER/xkernel/kernels/Sum-Reduction-1PE/CSL",
+    "fc_attempt_index": 2,
+    "fc_cycles_send": 7693,
+    "fc_cycles_send_runs": [
+      7693
+    ],
+    "fc_code_lines": 100,
+    "fc_heldout_eval": {
+      "passed": true,
+      "failing_seed": null,
+      "per_seed": [
+        {
+          "seed": 101,
+          "steps": [
+            {
+              "command": "cs_python run.py --name out",
+              "ok": true,
+              "returncode": 0
+            }
+          ]
+        },
+        {
+          "seed": 202,
+          "steps": [
+            {
+              "command": "cs_python run.py --name out",
+              "ok": true,
+              "returncode": 0
+            }
+          ]
+        },
+        {
+          "seed": 303,
+          "steps": [
+            {
+              "command": "cs_python run.py --name out",
+              "ok": true,
+              "returncode": 0
+            }
+          ]
+        }
+      ],
+      "reason": "passed all 3 held-out seeds"
+    },
+    "translated_path": "/home/USER/xkernel/code_translation/sandbox/cuda2csl/sum-reduction-1pe_su4tnv99/pe.csl",
+    "source": "sandbox",
+    "dest": "code_translation/results/first_correct/template_20260722/Sum-Reduction-1PE/pe.csl"
+  },
+  {
+    "kernel": "Tensor-Transpose-021",
+    "run_dir": "code_translation/results/full_template_sweep_20260722_192305/Tensor-Transpose-021/run_20260723_004625",
+    "status": "extracted",
+    "n_attempts": 18,
+    "model": "claude-opus-4-8",
+    "target_relpath": "pe.csl",
+    "reference_dir": "/home/USER/xkernel/kernels/Tensor-Transpose-021/CSL",
+    "fc_attempt_index": 4,
+    "fc_cycles_send": 5695,
+    "fc_cycles_send_runs": [
+      5695
+    ],
+    "fc_code_lines": 87,
+    "fc_heldout_eval": {
+      "passed": true,
+      "failing_seed": null,
+      "per_seed": [
+        {
+          "seed": 101,
+          "steps": [
+            {
+              "command": "cs_python ./run.py --name out",
+              "ok": true,
+              "returncode": 0
+            }
+          ]
+        },
+        {
+          "seed": 202,
+          "steps": [
+            {
+              "command": "cs_python ./run.py --name out",
+              "ok": true,
+              "returncode": 0
+            }
+          ]
+        },
+        {
+          "seed": 303,
+          "steps": [
+            {
+              "command": "cs_python ./run.py --name out",
+              "ok": true,
+              "returncode": 0
+            }
+          ]
+        }
+      ],
+      "reason": "passed all 3 held-out seeds"
+    },
+    "translated_path": "/home/USER/xkernel/code_translation/sandbox/cuda2csl/tensor-transpose-021_5yjwotyr/pe.csl",
+    "source": "sandbox",
+    "dest": "code_translation/results/first_correct/template_20260722/Tensor-Transpose-021/pe.csl"
+  }
+]

@@ -1,0 +1,186 @@
+{
+ "suite": "C2",
+ "tag": "",
+ "rows": [
+  {
+   "name": "ewmul_8",
+   "family": "ewmul",
+   "elems": 8,
+   "reps": 1024,
+   "flop": 1,
+   "bytes": 6,
+   "cycles": 12299,
+   "total_elems": 8192,
+   "t_start": 5,
+   "t_end": 12304,
+   "cyc_per_elem": 1.50134,
+   "elem_per_cyc": 0.6661,
+   "sink": 4.125
+  },
+  {
+   "name": "ewmul_64",
+   "family": "ewmul",
+   "elems": 64,
+   "reps": 128,
+   "flop": 1,
+   "bytes": 6,
+   "cycles": 3465,
+   "total_elems": 8192,
+   "t_start": 12328,
+   "t_end": 15793,
+   "cyc_per_elem": 0.42297,
+   "elem_per_cyc": 2.3642,
+   "sink": 4.125
+  },
+  {
+   "name": "ewmul_512",
+   "family": "ewmul",
+   "elems": 512,
+   "reps": 16,
+   "flop": 1,
+   "bytes": 6,
+   "cycles": 2154,
+   "total_elems": 8192,
+   "t_start": 15817,
+   "t_end": 17971,
+   "cyc_per_elem": 0.26294,
+   "elem_per_cyc": 3.8032,
+   "sink": 4.125
+  },
+  {
+   "name": "ewmul_2048",
+   "family": "ewmul",
+   "elems": 2048,
+   "reps": 4,
+   "flop": 1,
+   "bytes": 6,
+   "cycles": 2082,
+   "total_elems": 8192,
+   "t_start": 17994,
+   "t_end": 20076,
+   "cyc_per_elem": 0.25415,
+   "elem_per_cyc": 3.9347,
+   "sink": 4.125
+  },
+  {
+   "name": "ewmul_6144",
+   "family": "ewmul",
+   "elems": 6144,
+   "reps": 1,
+   "flop": 1,
+   "bytes": 6,
+   "cycles": 1552,
+   "total_elems": 6144,
+   "t_start": 20099,
+   "t_end": 21651,
+   "cyc_per_elem": 0.2526,
+   "elem_per_cyc": 3.9588,
+   "sink": 4.125
+  },
+  {
+   "name": "ewadd_8",
+   "family": "ewadd",
+   "elems": 8,
+   "reps": 1024,
+   "flop": 1,
+   "bytes": 6,
+   "cycles": 12297,
+   "total_elems": 8192,
+   "t_start": 21674,
+   "t_end": 33971,
+   "cyc_per_elem": 1.5011,
+   "elem_per_cyc": 0.6662,
+   "sink": -4.25
+  },
+  {
+   "name": "ewadd_64",
+   "family": "ewadd",
+   "elems": 64,
+   "reps": 128,
+   "flop": 1,
+   "bytes": 6,
+   "cycles": 3464,
+   "total_elems": 8192,
+   "t_start": 33995,
+   "t_end": 37459,
+   "cyc_per_elem": 0.42285,
+   "elem_per_cyc": 2.3649,
+   "sink": -4.25
+  },
+  {
+   "name": "ewadd_512",
+   "family": "ewadd",
+   "elems": 512,
+   "reps": 16,
+   "flop": 1,
+   "bytes": 6,
+   "cycles": 2154,
+   "total_elems": 8192,
+   "t_start": 37483,
+   "t_end": 39637,
+   "cyc_per_elem": 0.26294,
+   "elem_per_cyc": 3.8032,
+   "sink": -4.25
+  },
+  {
+   "name": "ewadd_2048",
+   "family": "ewadd",
+   "elems": 2048,
+   "reps": 4,
+   "flop": 1,
+   "bytes": 6,
+   "cycles": 2082,
+   "total_elems": 8192,
+   "t_start": 39660,
+   "t_end": 41742,
+   "cyc_per_elem": 0.25415,
+   "elem_per_cyc": 3.9347,
+   "sink": -4.25
+  },
+  {
+   "name": "ewadd_6144",
+   "family": "ewadd",
+   "elems": 6144,
+   "reps": 1,
+   "flop": 1,
+   "bytes": 6,
+   "cycles": 1552,
+   "total_elems": 6144,
+   "t_start": 41765,
+   "t_end": 43317,
+   "cyc_per_elem": 0.2526,
+   "elem_per_cyc": 3.9588,
+   "sink": -4.25
+  }
+ ],
+ "verification": {
+  "pass": true,
+  "report": [
+   {
+    "item": "a3",
+    "detail": "max 0.0 ulp, exact 100.0%",
+    "ok": true
+   },
+   {
+    "item": "b3",
+    "detail": "max 0.0 ulp, exact 100.0%",
+    "ok": true
+   },
+   {
+    "item": "c3",
+    "detail": "max 0.0 ulp, exact 100.0%",
+    "ok": true
+   },
+   {
+    "item": "sink:ewmul",
+    "detail": "worst ewmul_8: got 4.125 expected 4.125 (0.0 ulp)",
+    "ok": true
+   },
+   {
+    "item": "sink:ewadd",
+    "detail": "worst ewadd_8: got -4.25 expected -4.25 (0.0 ulp)",
+    "ok": true
+   }
+  ]
+ }
+}

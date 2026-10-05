@@ -1,0 +1,162 @@
+param memcpy_params;
+// === SLOT: EXTRA_PARAMS ===
+param n: u16;         // number of columns
+param max_nnz: u16;   // capacity of row_idx/val/c_val/c_row arrays
+param iters: u16;     // repeat count (passed by layout; unused compute-wise)
+
+const EXIT: local_task_id = @get_local_task_id(9);
+const sys_mod = @import_module("<memcpy/memcpy>", memcpy_params);
+
+// === SLOT: EXTRA_IMPORTS ===
+// (no extra imports needed)
+
+const timestamp = @import_module("<time>");
+var tsc_start_buf = @zeros([timestamp.tsc_size_words]u16);
+var tsc_end_buf   = @zeros([timestamp.tsc_size_words]u16);
+var timer_buf = @zeros([3]f32);
+var ptr_timer_buf: [*]f32 = &timer_buf;
+
+// === SLOT: DATA_BUFFERS ===
+// Inputs
+var col_ptr_array = @zeros([n + 1]u32);   // CSC column pointers, nnz = col_ptr[n]
+var row_idx_array = @zeros([max_nnz]u32);  // row indices (sorted within column)
+var val_array     = @zeros([max_nnz]f32);  // values
+
+// Outputs
+var c_val_array   = @zeros([max_nnz]f32);
+var c_row_array   = @zeros([max_nnz]u32);
+var nzombies_arr  = @zeros([1]u32);
+
+var ptr_col_ptr:  [*]u32 = &col_ptr_array;
+var ptr_row_idx:  [*]u32 = &row_idx_array;
+var ptr_val:      [*]f32 = &val_array;
+var ptr_c_val:    [*]f32 = &c_val_array;
+var ptr_c_row:    [*]u32 = &c_row_array;
+var ptr_nzombies: [*]u32 = &nzombies_arr;
+
+// Comptime-hoisted dimensions used by the hot path.
+const N_U32: u32 = @as(u32, n);
+
+// Build the output DSD once. The active-length DSD is offset-chained
+// from this base before the initialization move.
+const dsd_c_val = @get_dsd(mem1d_dsd, .{
+    .base_address = &c_val_array,
+    .extent = max_nnz
+});
+var zero_val = @zeros([1]f32);
+const dsd_zero_val = @get_dsd(mem1d_dsd, .{
+    .base_address = &zero_val,
+    .extent = 1
+});
+
+// === SLOT: KERNEL_FUNCTION ===
+
+fn spgemm_masked_dot() void {
+    // Clear only the active mask region. The remaining capacity is already
+    // zero-initialized and is outside the current nnz result.
+    const nnz: u32 = col_ptr_array[N_U32];
+    if (nnz != 0) {
+        const dsd_c_val_active = @set_dsd_length(
+            dsd_c_val,
+            @as(u16, nnz)
+        );
+        @fmovs(dsd_c_val_active, dsd_zero_val);
+    }
+
+    var zombies: u32 = 0;
+
+    // The mask positions are stored in column order. Walk col_ptr
+    // monotonically so the hot loop uses a sequential stride rather than
+    // performing a binary-search gather for every mask entry.
+    var pair_id: u32 = 0;
+    var j: u32 = 0;
+    var next_col_end: u32 = col_ptr_array[1];
+
+    while (pair_id < nnz) : (pair_id += 1) {
+        // Since pair_id < nnz == col_ptr_array[n], this loop cannot
+        // advance beyond the final column.
+        while (pair_id >= next_col_end) {
+            j += 1;
+            next_col_end = col_ptr_array[j + 1];
+        }
+
+        const i: u32 = row_idx_array[pair_id];       // M(i,j): row
+
+        var pA:     u32 = col_ptr_array[i];          // A(:,i)
+        const pA_e: u32 = col_ptr_array[i + 1];
+        var pB:     u32 = col_ptr_array[j];          // B(:,j) with B := A
+        const pB_e: u32 = col_ptr_array[j + 1];
+
+        var cij: f32 = 0.0;
+        var cij_exists: bool = false;
+
+        while (pA < pA_e and pB < pB_e) {
+            const ia: u32 = row_idx_array[pA];
+            const ib: u32 = row_idx_array[pB];
+
+            if (ia < ib) {
+                pA += 1;
+            } else if (ib < ia) {
+                pB += 1;
+            } else {
+                cij += val_array[pA] * val_array[pB];
+                cij_exists = true;
+                pA += 1;
+                pB += 1;
+            }
+        }
+
+        if (cij_exists) {
+            c_val_array[pair_id] = cij;
+            c_row_array[pair_id] = i;                // live entry
+        } else {
+            // c_val_array[pair_id] is already zero from initialization.
+            // GB_ZOMBIE(i) = ~i in two's complement 32-bit.
+            c_row_array[pair_id] = ~i;
+            zombies += 1;
+        }
+    }
+
+    nzombies_arr[0] = zombies;
+}
+
+fn compute() void {
+    timestamp.enable_tsc();
+    timestamp.get_timestamp(&tsc_start_buf);
+
+    // === SLOT: KERNEL_CALL ===
+    spgemm_masked_dot();
+
+    timestamp.get_timestamp(&tsc_end_buf);
+    timestamp.disable_tsc();
+
+    var lo_: u16 = 0;
+    var hi_: u16 = 0;
+    lo_ = tsc_start_buf[0]; hi_ = tsc_start_buf[1];
+    timer_buf[0] = @bitcast(f32, (@as(u32, hi_) << @as(u16, 16)) | @as(u32, lo_));
+    lo_ = tsc_start_buf[2]; hi_ = tsc_end_buf[0];
+    timer_buf[1] = @bitcast(f32, (@as(u32, hi_) << @as(u16, 16)) | @as(u32, lo_));
+    lo_ = tsc_end_buf[1]; hi_ = tsc_end_buf[2];
+    timer_buf[2] = @bitcast(f32, (@as(u32, hi_) << @as(u16, 16)) | @as(u32, lo_));
+
+    @activate(EXIT);
+}
+
+task f_exit() void {
+    sys_mod.unblock_cmd_stream();
+}
+
+comptime {
+    @bind_local_task(f_exit, EXIT);
+
+    // === SLOT: EXPORT_SYMBOLS ===
+    @export_symbol(ptr_col_ptr,  "col_ptr");
+    @export_symbol(ptr_row_idx,  "row_idx");
+    @export_symbol(ptr_val,      "val");
+    @export_symbol(ptr_c_val,    "c_val");
+    @export_symbol(ptr_c_row,    "c_row");
+    @export_symbol(ptr_nzombies, "nzombies");
+
+    @export_symbol(ptr_timer_buf, "maxmin_time");
+    @export_symbol(compute);
+}

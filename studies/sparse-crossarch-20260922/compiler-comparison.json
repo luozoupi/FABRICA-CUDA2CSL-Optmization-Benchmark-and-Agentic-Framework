@@ -1,0 +1,46 @@
+[
+  {
+    "N": 1,
+    "static_instructions": [
+      821,
+      821
+    ],
+    "different_positions": 16,
+    "last_difference_index": 210,
+    "last_difference_pc": 452,
+    "tail_identical_after_last_difference": true
+  },
+  {
+    "N": 4,
+    "static_instructions": [
+      821,
+      821
+    ],
+    "different_positions": 16,
+    "last_difference_index": 210,
+    "last_difference_pc": 452,
+    "tail_identical_after_last_difference": true
+  },
+  {
+    "N": 16,
+    "static_instructions": [
+      820,
+      820
+    ],
+    "different_positions": 4,
+    "last_difference_index": 157,
+    "last_difference_pc": 346,
+    "tail_identical_after_last_difference": true
+  },
+  {
+    "N": 64,
+    "static_instructions": [
+      821,
+      821
+    ],
+    "different_positions": 16,
+    "last_difference_index": 210,
+    "last_difference_pc": 452,
+    "tail_identical_after_last_difference": true
+  }
+]

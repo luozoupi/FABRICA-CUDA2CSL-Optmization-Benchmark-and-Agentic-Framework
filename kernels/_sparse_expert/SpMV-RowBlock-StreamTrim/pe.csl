@@ -1,0 +1,192 @@
+// StreamTrim: the stream variant broadcasting only the matrix's columns (xlen, set by the host).
+// SpMV-RowBlock, computing while x arrives (expert headroom variant, harness-invisible).
+//
+// The reference waits for all ncols entries of x before any PE computes, so on 64-256 PEs every PE
+// pays the whole broadcast before its own work. Here every PE starts the asynchronous receive of x and
+// computes at once: the host orders each PE's rows by the largest column they read (row_need), and
+// before a row the PE checks that x[row_need] has arrived. x arrives in index order, so one arrived
+// entry means all smaller ones have too. The host fills x with a NaN sentinel on PEs 1..P-1 before the
+// launch; see wait_for for how the read is kept inside the wait loop. PE 0 already holds x and never waits.
+// Same strip, routing, timing window (device_internal_v2) and host contract as the reference, plus the
+// two host arrays row_id / row_need. A PE closes its window once its rows are done and its receive has
+// drained, so every wavelet of x is consumed before the host reads y.
+
+param memcpy_params;
+
+param P: i16;
+param px: i16;
+param nrows_pe: u16;
+param ncols: u16;
+param max_nnz_pe: u16;
+param iters: u16;
+param structure_id: u16;
+param C_X: color;
+
+const EXIT: local_task_id = @get_local_task_id(9);
+const COMPUTE: local_task_id = @get_local_task_id(10);
+const RECV_DONE: local_task_id = @get_local_task_id(11);
+
+const sys_mod = @import_module("<memcpy/memcpy>", memcpy_params);
+const timestamp = @import_module("<time>");
+
+var tscStartBuffer = @zeros([timestamp.tsc_size_words]u16);
+var tscEndBuffer   = @zeros([timestamp.tsc_size_words]u16);
+var time_buf_u16   = @zeros([timestamp.tsc_size_words * 2]u16);
+var ptr_time_buf_u16: [*]u16 = &time_buf_u16;
+
+// Local CSR slice in processing order, x (full), y slice, processing order and wait column.
+var row_ptr_array = @zeros([nrows_pe + 1]u32);
+var col_idx_array = @zeros([max_nnz_pe]u32);
+var val_array     = @zeros([max_nnz_pe]f32);
+var x_array       = @zeros([ncols + 1]f32);   // one extra slot: the wait loop's aliasing store
+var y_array       = @zeros([nrows_pe]f32);
+var row_id_array  = @zeros([nrows_pe]u32);
+var row_need_array = @zeros([nrows_pe]u32);
+var xlen_array     = @zeros([1]u32);
+
+var ptr_row_ptr: [*]u32 = &row_ptr_array;
+var ptr_col_idx: [*]u32 = &col_idx_array;
+var ptr_val:     [*]f32 = &val_array;
+var ptr_x:       [*]f32 = &x_array;
+var ptr_y:       [*]f32 = &y_array;
+var ptr_row_id:  [*]u32 = &row_id_array;
+var ptr_row_need: [*]u32 = &row_need_array;
+var ptr_xlen: [*]u32 = &xlen_array;
+
+const x_dsd     = @get_dsd(mem1d_dsd, .{ .tensor_access = |i|{ncols} -> x_array[i] });
+const fab_x_out = @get_dsd(fabout_dsd, .{ .extent = ncols, .fabric_color = C_X, .output_queue = @get_output_queue(2) });
+const fab_x_in  = @get_dsd(fabin_dsd,  .{ .extent = ncols, .fabric_color = C_X, .input_queue  = @get_input_queue(2) });
+
+// arrival wait: a plain load of x[c] in a loop that also stores to the extra slot x_array[ncols]. The
+// compiler cannot prove the two do not alias, so it reloads x[c] on every iteration (checked in the
+// disassembly; without the store the load is hoisted and the loop spins forever). SDK 2.10 reserves
+// `volatile` but does not accept it. A first version copied x[c] through a one-element DSD; those
+// synchronous DSD operations waited behind the asynchronous broadcast and made even PE 0 43% slower.
+// Receiving x in chunks re-armed by a task was worse still: every re-arm gap on any PE stalls the
+// multicast for all PEs downstream.
+const SENTINEL: u32 = 0x7FC0DEAD;
+fn wait_for(c: u32) void {
+  while (@bitcast(u32, x_array[c]) == SENTINEL) { x_array[ncols] = 0.0; }
+}
+
+var compute_done: bool = false;
+var recv_done: bool = false;
+
+// One pass over the local rows in host order; wait only when a row needs an entry not yet seen.
+fn spmv_rows_streaming() void {
+  var ready: u32 = 0;
+  var have: bool = (px == 0);
+  var r: u16 = 0;
+  while (r < nrows_pe) : (r += 1) {
+    const need: u32 = row_need_array[r];
+    if (px != 0 and (!have or need > ready)) {
+      wait_for(need);
+      ready = need;
+      have = true;
+    }
+    const start: u32 = row_ptr_array[r];
+    const end:   u32 = row_ptr_array[r + 1];
+    var sum: f32 = 0.0;
+    var j: u32 = start;
+    while (j < end) : (j += 1) {
+      const c: u32 = col_idx_array[j];
+      sum += val_array[j] * x_array[c];
+    }
+    y_array[row_id_array[r]] = sum;
+  }
+}
+
+fn main() void {
+  f_tic_dev();
+  if (P == 1) {
+    @activate(COMPUTE);
+  } else if (px == 0) {
+    const n: u16 = @as(u16, xlen_array[0]);
+    @fmovs(@set_dsd_length(fab_x_out, n), @set_dsd_length(x_dsd, n), .{ .async = true });   // the matrix's columns only
+    @activate(COMPUTE);
+  } else {
+    const n: u16 = @as(u16, xlen_array[0]);
+    @fmovs(@set_dsd_length(x_dsd, n), @set_dsd_length(fab_x_in, n), .{ .async = true, .activate = RECV_DONE });
+    @activate(COMPUTE);                                                   // and compute meanwhile
+  }
+}
+
+task compute() void {
+  spmv_rows_streaming();
+  compute_done = true;
+  if (px == 0 or recv_done) { @activate(EXIT); }
+}
+
+task recv_done_task() void {
+  recv_done = true;
+  if (compute_done) { @activate(EXIT); }
+}
+
+task f_exit() void {
+  f_toc_dev();
+  sys_mod.unblock_cmd_stream();
+}
+
+fn f_enable_timer() void {
+  timestamp.enable_tsc();
+  sys_mod.unblock_cmd_stream();
+}
+
+var tsc_window_open: bool = false;
+fn f_tic_dev() void {
+  if (!tsc_window_open) {
+    tsc_window_open = true;
+    timestamp.get_timestamp(&tscStartBuffer);
+  }
+}
+fn f_toc_dev() void {
+  timestamp.get_timestamp(&tscEndBuffer);
+}
+
+fn f_tic() void {
+  timestamp.get_timestamp(&tscStartBuffer);
+  sys_mod.unblock_cmd_stream();
+}
+
+fn f_toc() void {
+  timestamp.get_timestamp(&tscEndBuffer);
+  sys_mod.unblock_cmd_stream();
+}
+
+fn f_memcpy_timestamps() void {
+  time_buf_u16[0] = tscStartBuffer[0];
+  time_buf_u16[1] = tscStartBuffer[1];
+  time_buf_u16[2] = tscStartBuffer[2];
+  time_buf_u16[3] = tscEndBuffer[0];
+  time_buf_u16[4] = tscEndBuffer[1];
+  time_buf_u16[5] = tscEndBuffer[2];
+  sys_mod.unblock_cmd_stream();
+}
+
+comptime {
+  @comptime_assert(structure_id < 8);
+  @comptime_assert(iters == 1);                  // one product: the variant targets the broadcast
+  @bind_local_task(compute, COMPUTE);
+  @bind_local_task(recv_done_task, RECV_DONE);
+  @bind_local_task(f_exit, EXIT);
+
+  if (P > 1 and @is_arch("wse3")) {
+    @initialize_queue(@get_output_queue(2), .{ .color = C_X });
+    @initialize_queue(@get_input_queue(2),  .{ .color = C_X });
+  }
+
+  @export_symbol(ptr_row_ptr, "row_ptr");
+  @export_symbol(ptr_col_idx, "col_idx");
+  @export_symbol(ptr_val,     "val");
+  @export_symbol(ptr_x,       "x");
+  @export_symbol(ptr_y,       "y");
+  @export_symbol(ptr_row_id,  "row_id");
+  @export_symbol(ptr_row_need, "row_need");
+  @export_symbol(ptr_xlen, "xlen");
+  @export_symbol(ptr_time_buf_u16, "time_buf_u16");
+  @export_symbol(main);
+  @export_symbol(f_tic);
+  @export_symbol(f_toc);
+  @export_symbol(f_memcpy_timestamps);
+  @export_symbol(f_enable_timer);
+}

@@ -1,4 +1,4 @@
-# FABRICA-BENCH — per-kernel spec format
+# xkernel-bench — per-kernel spec format
 
 **Format:** YAML, one `spec.yaml` per `kernels/<name>/` directory.
 **Scope:** describes what a kernel does, how it's measured, and what the agent is allowed to see.
@@ -13,7 +13,7 @@ The spec exists so the framework knows two things it currently has to infer from
 ```
 kernels/<kernel_id>/
 ├── spec.yaml             # this file
-├── CUDA/kernel.cu        # the CUDA source (FABRICA-BENCH input)
+├── CUDA/kernel.cu        # the CUDA source (xkernel-bench input)
 ├── CSL/                  # the human-written CSL bundle (reference, hidden from workflow-2 agent)
 │   ├── *.csl
 │   ├── run.py            # host driver — its tic()/toc() prints define cycles_send
@@ -68,7 +68,7 @@ sizes:
     wse3_reference: {cycles_send: null, time_send_us: null}   # measured by WS1.2 crossover
 
 # Per-pair classification (Phase-2). Governs the train/test split + which kernels
-# count as real translation tasks. See code_translation/FIREWALL.md.
+# count as real translation tasks. See docs/SPLIT_AND_LEAKAGE.md.
 #   real-translation : CUDA explicit compute -> CSL explicit compute (a real task)
 #   library-wrapper  : both sides just call a library (e.g. cuFFT <-> SDK fft lib) -> quarantined
 #   algorithm-level  : requires re-deriving the algorithm, not a line-by-line port
@@ -76,7 +76,7 @@ sizes:
 #                      agent must translate the whole program + its intermediate
 #                      buffers, not one kernel. Document the data-flow in `stages:`.
 task_class: "real-translation"
-split: "train"                            # train | test (held-out); see code_translation/FIREWALL.md
+split: "train"                            # train | test (held-out); see SPLIT_AND_LEAKAGE.md
 
 # OPTIONAL — input-level train/test split (2026-06-24). Defends against
 # answer-hardcoding: the agent is shown run.py (the host-side contract), which
@@ -224,7 +224,7 @@ O1S ablation arm).
 - All of the above PLUS
 - `hidden_from_optimize_only` (list of paths the agent must NOT see)
 
-## fast_p scoring (FABRICA-BENCH's success metric)
+## fast_p scoring (xkernel-bench's success metric)
 
 A submission for a kernel reports a single `fast_p` value:
 

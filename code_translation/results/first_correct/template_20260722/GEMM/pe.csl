@@ -1,0 +1,197 @@
+// SUMMA GEMM on a P x P PE mesh. Each PE holds Mt x Kt of A, Kt x Nt of B,
+// computes Mt x Nt of C. P steps: broadcast A along rows (x), B along
+// columns (y), accumulate C += A_panel * B_panel via @fmacs.
+//
+// IMPORTANT: run.py delivers/reads all local tiles COLUMN-MAJOR:
+//   A[m,k] -> A_recv[k*Mt + m]   (Mt-by-Kt col-major)
+//   B[k,n] -> B_recv[n*Kt + k]   (Kt-by-Nt col-major)
+//   C[m,n] -> C_tile[n*Mt + m]   (Mt-by-Nt col-major)
+// So the inner bulk FMA runs over a COLUMN (length Mt), not a row.
+
+param memcpy_params: comptime_struct;
+param c2d_params: comptime_struct;
+
+// Per-PE tile dimensions (plumbed from layout.csl @set_tile_code).
+param Mt: u16;
+param Kt: u16;
+param Nt: u16;
+
+// Mesh size (square). c2d params carry NUM_PES per dimension at comptime.
+const P: u16 = c2d_params.x.NUM_PES;
+
+const EXIT: local_task_id = @get_local_task_id(12);
+const x_task_id: local_task_id = @get_local_task_id(14);
+const y_task_id: local_task_id = @get_local_task_id(15);
+
+const sys_mod = @import_module("<memcpy/memcpy>", memcpy_params);
+const layout_mod = @import_module("<layout>");
+
+// Collectives module, imported separately for x (rows) and y (cols).
+// dim_params comes directly from the layout-provided c2d sub-struct.
+const mpi_x = @import_module("<collectives_2d/pe>", .{
+  .dim_params   = c2d_params.x,
+  .queues       = [2]u16{ 2, 3 },
+  .dest_dsr_ids = [1]u16{ 1 },
+  .src0_dsr_ids = [1]u16{ 1 },
+  .src1_dsr_ids = [1]u16{ 1 },
+});
+const mpi_y = @import_module("<collectives_2d/pe>", .{
+  .dim_params   = c2d_params.y,
+  .queues       = [2]u16{ 4, 5 },
+  .dest_dsr_ids = [1]u16{ 6 },
+  .src0_dsr_ids = [1]u16{ 6 },
+  .src1_dsr_ids = [1]u16{ 6 },
+});
+
+const timestamp = @import_module("<time>");
+var tsc_start_buf = @zeros([timestamp.tsc_size_words]u16);
+var tsc_end_buf   = @zeros([timestamp.tsc_size_words]u16);
+var time_buf_u16  = @zeros([6]u16);
+var ptr_time_buf_u16: [*]u16 = &time_buf_u16;
+
+// ----- Data buffers (all col-major locally) -----
+var A_tile = @zeros([Mt * Kt]f32);
+var B_tile = @zeros([Kt * Nt]f32);
+var C_tile = @zeros([Mt * Nt]f32);
+
+// Broadcast receive buffers.
+var A_recv = @zeros([Mt * Kt]f32);
+var B_recv = @zeros([Kt * Nt]f32);
+
+var ptr_A: [*]f32 = &A_tile;
+var ptr_B: [*]f32 = &B_tile;
+var ptr_C: [*]f32 = &C_tile;
+
+// ----- SUMMA state -----
+var summa_step: u16 = 0;
+
+// Column-length DSDs (length Mt) resliced via @set_dsd_base_addr each iter.
+// C column n starts at C_tile[n*Mt]; A column k starts at A_recv[k*Mt].
+var c_col_dsd = @get_dsd(mem1d_dsd, .{ .tensor_access = |i| { Mt } -> C_tile[i] });
+var a_col_dsd = @get_dsd(mem1d_dsd, .{ .tensor_access = |i| { Mt } -> A_recv[i] });
+
+// Whole-tile DSDs for copies / zeroing.
+var c_all_dsd  = @get_dsd(mem1d_dsd, .{ .tensor_access = |i| { Mt * Nt } -> C_tile[i] });
+var a_src_dsd  = @get_dsd(mem1d_dsd, .{ .tensor_access = |i| { Mt * Kt } -> A_tile[i] });
+var a_dst_dsd  = @get_dsd(mem1d_dsd, .{ .tensor_access = |i| { Mt * Kt } -> A_recv[i] });
+var b_src_dsd  = @get_dsd(mem1d_dsd, .{ .tensor_access = |i| { Kt * Nt } -> B_tile[i] });
+var b_dst_dsd  = @get_dsd(mem1d_dsd, .{ .tensor_access = |i| { Kt * Nt } -> B_recv[i] });
+
+// C[:,n] += A[:,k] * B[k,n]  (col-major rank-1 update over Mt-length columns)
+// @fmacs(dst, src0, src1, scalar) computes dst = src0 + scalar * src1.
+fn accumulate() void {
+  var n: u16 = 0;
+  while (n < Nt) : (n += 1) {
+    // Reslice C column n: base = &C_tile[n*Mt].
+    const c_dsd = @set_dsd_base_addr(c_col_dsd, @ptrcast([*]f32, &C_tile[n * Mt]));
+    var k: u16 = 0;
+    while (k < Kt) : (k += 1) {
+      // Reslice A column k: base = &A_recv[k*Mt].
+      const a_dsd = @set_dsd_base_addr(a_col_dsd, @ptrcast([*]f32, &A_recv[k * Mt]));
+      // Scalar B[k,n] at col-major index n*Kt + k.
+      @fmacs(c_dsd, c_dsd, a_dsd, B_recv[n * Kt + k]);
+    }
+  }
+}
+
+// Broadcast A along x (rows). Root for this step is column == summa_step.
+fn broadcast_A() void {
+  if (layout_mod.get_x_coord() == summa_step) {
+    @fmovs(a_dst_dsd, a_src_dsd);
+  }
+  mpi_x.broadcast(summa_step, @ptrcast([*]u32, &A_recv), Mt * Kt, x_task_id);
+}
+
+// After A broadcast: broadcast B along y (columns). Root row == summa_step.
+task x_done() void {
+  if (layout_mod.get_y_coord() == summa_step) {
+    @fmovs(b_dst_dsd, b_src_dsd);
+  }
+  mpi_y.broadcast(summa_step, @ptrcast([*]u32, &B_recv), Kt * Nt, y_task_id);
+}
+
+// After B broadcast: accumulate, advance the step.
+task y_done() void {
+  accumulate();
+  summa_step += 1;
+  if (summa_step < P) {
+    broadcast_A();
+  } else {
+    @activate(EXIT);
+  }
+}
+
+// Entrypoint invoked by host as "main".
+fn main() void {
+  f_tic_dev();
+  mpi_x.init();
+  mpi_y.init();
+  summa_step = 0;
+
+  // Zero the accumulator once.
+  @fmovs(c_all_dsd, 0.0);
+
+  broadcast_A();
+}
+
+// ----- Timer entrypoints -----
+fn f_enable_timer() void {
+  timestamp.enable_tsc();
+  sys_mod.unblock_cmd_stream();
+}
+
+// Device-internal timing window (protocol device_internal_v2): start stamp at
+// entry-point start, end stamp immediately before the host is unblocked.
+var tsc_window_open: bool = false;
+fn f_tic_dev() void {
+  if (!tsc_window_open) {
+    tsc_window_open = true;
+    timestamp.get_timestamp(&tsc_start_buf);
+  }
+}
+fn f_toc_dev() void {
+  timestamp.get_timestamp(&tsc_end_buf);
+}
+
+fn f_tic() void {
+  timestamp.get_timestamp(&tsc_start_buf);
+  sys_mod.unblock_cmd_stream();
+}
+
+fn f_toc() void {
+  timestamp.get_timestamp(&tsc_end_buf);
+  timestamp.disable_tsc();
+  sys_mod.unblock_cmd_stream();
+}
+
+fn f_memcpy_timestamps() void {
+  time_buf_u16[0] = tsc_start_buf[0];
+  time_buf_u16[1] = tsc_start_buf[1];
+  time_buf_u16[2] = tsc_start_buf[2];
+  time_buf_u16[3] = tsc_end_buf[0];
+  time_buf_u16[4] = tsc_end_buf[1];
+  time_buf_u16[5] = tsc_end_buf[2];
+  sys_mod.unblock_cmd_stream();
+}
+
+task f_exit() void {
+  f_toc_dev();
+  sys_mod.unblock_cmd_stream();
+}
+
+comptime {
+  @bind_local_task(f_exit, EXIT);
+  @bind_local_task(x_done, x_task_id);
+  @bind_local_task(y_done, y_task_id);
+
+  @export_symbol(ptr_A, "A");
+  @export_symbol(ptr_B, "B");
+  @export_symbol(ptr_C, "C");
+  @export_symbol(ptr_time_buf_u16, "time_buf_u16");
+
+  @export_symbol(main);
+  @export_symbol(f_enable_timer);
+  @export_symbol(f_tic);
+  @export_symbol(f_toc);
+  @export_symbol(f_memcpy_timestamps);
+}

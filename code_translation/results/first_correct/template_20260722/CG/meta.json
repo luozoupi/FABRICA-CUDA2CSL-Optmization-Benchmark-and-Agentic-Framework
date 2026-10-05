@@ -1,0 +1,19 @@
+{
+  "kernel": "CG",
+  "run_dir": "code_translation/results/full_template_sweep_20260722_192305/CG/run_20260723_034907",
+  "status": "extracted",
+  "n_attempts": 9,
+  "model": "claude-opus-4-8",
+  "target_relpath": "src/kernel_cg.csl",
+  "reference_dir": "/home/USER/xkernel/kernels/Conjugate Gradient/CSL",
+  "fc_attempt_index": 4,
+  "fc_cycles_send": 10351,
+  "fc_cycles_send_runs": [
+    10351
+  ],
+  "fc_code_lines": 356,
+  "fc_heldout_eval": null,
+  "translated_path": "/home/USER/xkernel/code_translation/sandbox/cuda2csl/cg_iptt372t/src/kernel_cg.csl",
+  "source": "sandbox",
+  "dest": "code_translation/results/first_correct/template_20260722/CG/src/kernel_cg.csl"
+}

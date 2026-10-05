@@ -1,0 +1,3 @@
+# Preserve the bytes of the hash-pinned CSV evidence, including CRLF endings.
+evidence/** -text
+evidence/**/*.csv -whitespace

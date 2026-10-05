@@ -1,0 +1,214 @@
+// SpMV-RowBlock-Iter compute file (pe.csl).
+// 1 x P strip: each PE owns a CSR row-block + a full local copy of x (broadcast on C_X),
+// computes y = A*x over its local rows, then applies the recurrence and repeats iters times.
+// Device-internal timing: main calls f_tic() first; f_toc() fires after the last product.
+//
+// Correctness fix (row-0/1 self-reference clobber on PE 0):
+// The prior versions gated PE 0's compute on the async send's completion (.activate =
+// recv_done_task). The send only completes once ALL downstream PEs have drained the
+// broadcast through fabric backpressure — and worse, chaining compute off the send's
+// completion interleaved x-buffer state incorrectly, zeroing the first rows of PE 0's y.
+// Fix: DECOUPLE PE 0's broadcast from its compute entirely. PE 0 snapshots the resident
+// host-written x into an immutable send buffer, fires the async broadcast (fire-and-forget,
+// no .activate), then computes DIRECTLY from the untouched resident `x` in the same call.
+// Its compute never depends on the send draining, so the diagonal self-reference in rows
+// 0/1 reads the correct resident x. Downstream PEs (px>0) still gate compute on their
+// receive completing (recv_done_task), because they must wait for x to arrive.
+// (csdb wavelet-trace needs host-side changes I can't make; applied reviewer's ordering
+//  rationale directly.)
+
+param memcpy_params;
+param P: i16;
+param px: i16;
+param nrows_pe: u16;
+param ncols: u16;
+param max_nnz_pe: u16;
+param iters: u16;
+param structure_id: u16;
+param C_X: color;
+
+const sys_mod = @import_module("<memcpy/memcpy>", memcpy_params);
+const timestamp = @import_module("<time>");
+
+// Comptime role discriminators (px is a param — safe to use at module scope).
+const IS_FIRST: bool = (px == 0);
+const IS_LAST:  bool = (px == P - 1);
+const MULTI_PE: bool = (P > 1);
+
+// ---------------- Host-visible buffers ----------------
+var row_ptr = @zeros([nrows_pe + 1]u32);   // local CSR row offsets (rebased to 0)
+var col_idx = @zeros([max_nnz_pe]u32);     // global column indices
+var val     = @zeros([max_nnz_pe]f32);     // nonzero values
+var x       = @zeros([ncols]f32);          // full local copy of x (PE 0 written by host)
+var y       = @zeros([nrows_pe]f32);       // this PE's y slice
+
+var ptr_row_ptr: [*]u32 = &row_ptr;
+var ptr_col_idx: [*]u32 = &col_idx;
+var ptr_val:     [*]f32 = &val;
+var ptr_x:       [*]f32 = &x;
+var ptr_y:       [*]f32 = &y;
+
+// PE 0 broadcast snapshot: immutable copy of the initial x, never touched by compute.
+var x_send_buf = @zeros([ncols]f32);
+
+// ---------------- Timestamps ----------------
+var tscStartBuffer = @zeros([timestamp.tsc_size_words]u16);
+var tscEndBuffer   = @zeros([timestamp.tsc_size_words]u16);
+var time_buf_u16   = @zeros([6]u16);
+var ptr_time_buf_u16: [*]u16 = &time_buf_u16;
+
+// ---------------- Task IDs ----------------
+const recv_done_task: local_task_id = @get_local_task_id(10);
+
+// ---------------- Fabric queues / DSDs for x broadcast ----------------
+// PE 0: output queue only.  PE > 0: input queue only.  Never both on C_X.
+const x_iq = @get_input_queue(2);
+const x_oq = @get_output_queue(3);
+
+// Receive x from WEST via RAMP (PE > 0)
+const x_recv_dsd = @get_dsd(fabin_dsd, .{
+  .fabric_color = C_X,
+  .extent = ncols,
+  .input_queue = x_iq,
+});
+
+// Local memory views
+const x_mem_dsd  = @get_dsd(mem1d_dsd, .{ .base_address = &x,          .extent = ncols });
+const x_snap_dsd = @get_dsd(mem1d_dsd, .{ .base_address = &x_send_buf, .extent = ncols });
+
+// Send from the immutable snapshot EAST (PE 0 only)
+const x_send_dsd = @get_dsd(fabout_dsd, .{
+  .fabric_color = C_X,
+  .extent = ncols,
+  .output_queue = x_oq,
+});
+
+// ---------------- Compute: iters products with the per-product recurrence ----------------
+fn run_iters() void {
+  const base: u32 = @as(u32, px) * @as(u32, nrows_pe);
+
+  var k: u16 = 0;
+  while (k < iters) : (k += 1) {
+
+    // One SpMV product over local rows. Reads the CURRENT resident x
+    // (post-previous-product recurrence), matching the numpy reference exactly.
+    var r: i16 = 0;
+    while (r < @as(i16, nrows_pe)) : (r += 1) {
+      const s: u32 = row_ptr[@as(u32, r)];
+      const e: u32 = row_ptr[@as(u32, r) + 1];
+      var sum: f32 = 0.0;
+      var p: u32 = s;
+      while (p < e) : (p += 1) {
+        const c: u32 = col_idx[p];
+        sum += val[p] * x[c];
+      }
+      y[@as(u32, r)] = sum;
+    }
+
+    // Recurrence: after each product but the last, overwrite this PE's own
+    // block of its local x copy with 0.25 * y. Done AFTER the full product,
+    // so product k+1 reads these updated values — matching the reference.
+    if (k + 1 < iters) {
+      var rr: i16 = 0;
+      while (rr < @as(i16, nrows_pe)) : (rr += 1) {
+        x[base + @as(u32, rr)] = 0.25 * y[@as(u32, rr)];
+      }
+    }
+  }
+}
+
+// ---------------- Device timing entrypoints ----------------
+fn f_tic() void {
+  timestamp.get_timestamp(&tscStartBuffer);
+  sys_mod.unblock_cmd_stream();
+}
+
+fn f_toc() void {
+  timestamp.get_timestamp(&tscEndBuffer);
+  sys_mod.unblock_cmd_stream();
+}
+
+fn f_enable_timer() void {
+  timestamp.enable_tsc();
+  sys_mod.unblock_cmd_stream();
+}
+
+// Used by downstream PEs (px > 0): fires after the receive drains, i.e. x has arrived.
+task recv_done() void {
+  run_iters();
+  f_toc();
+}
+
+fn main() void {
+  // Stamp START as the very first statement of the timed window.
+  f_tic();
+
+  if (MULTI_PE) {
+    if (IS_FIRST) {
+      // Snapshot the resident host-written x into an immutable send buffer.
+      var i: u32 = 0;
+      while (i < @as(u32, ncols)) : (i += 1) {
+        x_send_buf[i] = x[i];
+      }
+      // Fire the broadcast (fire-and-forget). Downstream fabric switches tee
+      // WEST -> {RAMP, EAST}, filling every PE's copy. No .activate: PE 0's own
+      // compute does NOT depend on this draining.
+      @fmovs(x_send_dsd, x_snap_dsd, .{ .async = true });
+      // Compute immediately from the untouched resident `x`. The diagonal
+      // self-reference in rows 0/1 reads correct values; no send/compute race.
+      run_iters();
+      f_toc();
+    } else {
+      // PE > 0: receive x into local buffer via RAMP; compute is gated on that
+      // receive completing (recv_done). Forwarding EAST is done by the fabric switch.
+      @fmovs(x_mem_dsd, x_recv_dsd, .{ .async = true, .activate = recv_done_task });
+    }
+  } else {
+    // Single-PE: x already resident, compute directly.
+    run_iters();
+    f_toc();
+  }
+}
+
+fn f_memcpy_timestamps() void {
+  time_buf_u16[0] = tscStartBuffer[0];
+  time_buf_u16[1] = tscStartBuffer[1];
+  time_buf_u16[2] = tscStartBuffer[2];
+  time_buf_u16[3] = tscEndBuffer[0];
+  time_buf_u16[4] = tscEndBuffer[1];
+  time_buf_u16[5] = tscEndBuffer[2];
+  sys_mod.unblock_cmd_stream();
+}
+
+// ---------------- Comptime: queue init, task binding, symbol export ----------------
+comptime {
+  if (@is_arch("wse3")) {
+    if (MULTI_PE) {
+      // Initialize ONLY the queue this PE actually uses on C_X.
+      // PE 0 injects   -> output queue on C_X.
+      // PE > 0 receive -> input queue on C_X.
+      if (IS_FIRST) {
+        @initialize_queue(x_oq, .{ .color = C_X });
+      } else {
+        @initialize_queue(x_iq, .{ .color = C_X });
+      }
+    }
+  }
+
+  @bind_local_task(recv_done, recv_done_task);
+}
+
+comptime {
+  @export_symbol(ptr_row_ptr, "row_ptr");
+  @export_symbol(ptr_col_idx, "col_idx");
+  @export_symbol(ptr_val, "val");
+  @export_symbol(ptr_x, "x");
+  @export_symbol(ptr_y, "y");
+  @export_symbol(ptr_time_buf_u16, "time_buf_u16");
+
+  @export_symbol(main);
+  @export_symbol(f_enable_timer);
+  @export_symbol(f_memcpy_timestamps);
+  @export_symbol(f_tic);
+  @export_symbol(f_toc);
+}

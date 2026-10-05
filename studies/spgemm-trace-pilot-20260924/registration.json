@@ -1,0 +1,32 @@
+{
+  "created_utc": "2026-09-24T19:56:40.421471+00:00",
+  "framework_commit": "3b8ebd80b0452e9245fb50601975aa11b48c81c5",
+  "scope": "Masked sparse A^T A at positions present in A; one PE; fixed output and structural-presence buffers. Not general SpGEMM.",
+  "cases": [
+    "merge",
+    "nested"
+  ],
+  "dimensions": [
+    16,
+    16,
+    16
+  ],
+  "patterns": [
+    "banded",
+    "uniform",
+    "skewed"
+  ],
+  "sessions": [
+    "original",
+    "changed values and column pattern",
+    "restore original"
+  ],
+  "warmups": 1,
+  "timing_repetitions": 3,
+  "expected_kernel_launches": 72,
+  "timer_controls_per_case": 3,
+  "prediction": "Replay the existing algorithm ranking reversal; use executed index comparisons, branch successors and arithmetic events to explain why dimensions, density and degree do not suffice.",
+  "new_compilations": 0,
+  "new_api_calls": 0,
+  "hardware_runs": 0
+}

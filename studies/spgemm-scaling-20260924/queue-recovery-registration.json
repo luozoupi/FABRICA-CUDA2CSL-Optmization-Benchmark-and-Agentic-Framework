@@ -1,0 +1,31 @@
+{
+  "created_utc": "2026-09-26T20:16:27.594036+00:00",
+  "revision": "queue-admission-v2",
+  "driver_sha256": {
+    "supervise.py": "3d7609c28b2b24293c4931a4a17f6094e241ea92a794a1bee4bf31e456e239c1",
+    "queue_retry.py": "3d5b6a5c1f03455f20ae77429e553cadc05e3c54c97ee8cfa37b73adbb307938"
+  },
+  "registered_runner_sha256": "3c9035b5ac3db41ff8354f0a1b5776c47e6fd8808ea8637d269d1e7973e7a12f",
+  "reason": "Shared SDK lock contention ended the prior recovery before SDK launch.",
+  "change": "Preserve the 600-second queue-attempt limit, record each admission timeout, and retry admission while keeping the configuration pending. Total pre-launch waiting is now open-ended and reported separately; this is a recorded administrative protocol revision.",
+  "unchanged": [
+    "frozen case and source hashes",
+    "input matrices and row assignments",
+    "one warmup plus three timing samples",
+    "600-second compile watchdog",
+    "2400-second simulator watchdog",
+    "SDK failures are retained and never retried automatically",
+    "shared SDK locks and serialized execution"
+  ],
+  "accounting": "Admission retries are not new kernel attempts because no compiler/simulator phase started. Retain admission failures separately from the interrupted SDK attempt and all configuration outcomes.",
+  "previous_queue_failure": "/home/USER/spgemm-scaling-20260924/coordination-failures/20260925-queue-timeout",
+  "pending_cases": [
+    "strong-m256-k256-n256-p1-d3-full",
+    "strong-m256-k256-n256-p16-d3-full",
+    "strong-m256-k256-n256-p16-d3-tiled",
+    "strong-m256-k256-n256-p4-d3-full",
+    "strong-m256-k256-n256-p4-d3-tiled",
+    "strong-m256-k256-n256-p64-d3-full",
+    "strong-m256-k256-n256-p64-d3-tiled"
+  ]
+}

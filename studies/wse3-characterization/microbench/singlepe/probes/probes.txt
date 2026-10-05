@@ -1,0 +1,8 @@
+p_add16_dsd OK
+p_fdph FAIL ./p.csl:10:15: error: unknown builtin @fdph
+p_i8 OK
+p_mult16 FAIL ./p.csl:11:15: error: unknown builtin @mult16
+p_mult16_scalar OK
+p_scalar_dest OK
+p_stride0_dest OK
+FIN

@@ -1,0 +1,24 @@
+{
+  "id": "general-tile4",
+  "variant": "tile4",
+  "application_pes": 1,
+  "M": 16,
+  "K": 16,
+  "N": 16,
+  "tile_width": 4,
+  "accumulator_bytes": 24,
+  "output_capacity": 256,
+  "guard_elements": 4,
+  "patterns": [
+    "banded",
+    "uniform"
+  ],
+  "repetitions": 1,
+  "source_hashes": {
+    "pe.csl": "d20c870bb52911516057b3972d06d17d2725d0b58d2494e5cc693028da83b691",
+    "layout.csl": "e704accecebe9e2cf86b7e5895e300a96ac401c78f060552fc487284643c39c2",
+    "host.py": "702551d2852c4d7996a4da724112565920ef4dc77b0925d6989ca22d2e658de5",
+    "inputs.py": "38ca49cab7d4cae285ab234420d6f0ac5c3a2477f599a2643892af0de541f6fc"
+  },
+  "phase": "trace"
+}

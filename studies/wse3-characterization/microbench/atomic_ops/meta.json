@@ -1,0 +1,112 @@
+[
+ {
+  "cls": "arith",
+  "name": "sub_i16",
+  "csl": "ci[0] = ai[0] - bi[0];"
+ },
+ {
+  "cls": "arith",
+  "name": "mul_i16",
+  "csl": "ci[1] = ai[0] * bi[0];"
+ },
+ {
+  "cls": "arith",
+  "name": "mul_f16",
+  "csl": "cf[0] = af[0] * bf[0];"
+ },
+ {
+  "cls": "arith",
+  "name": "fma_f16",
+  "csl": "cf[1] = af[0] * bf[0] + af[1];"
+ },
+ {
+  "cls": "logic",
+  "name": "and_i16",
+  "csl": "ci[2] = ai[0] & bi[0];"
+ },
+ {
+  "cls": "logic",
+  "name": "or_i16",
+  "csl": "ci[3] = ai[0] | bi[0];"
+ },
+ {
+  "cls": "logic",
+  "name": "xor_i16",
+  "csl": "ci[4] = ai[0] ^ bi[0];"
+ },
+ {
+  "cls": "logic",
+  "name": "shl_i16",
+  "csl": "ci[5] = ai[0] << 3;"
+ },
+ {
+  "cls": "logic",
+  "name": "shr_i16",
+  "csl": "ci[6] = ai[0] >> 2;"
+ },
+ {
+  "cls": "control",
+  "name": "br_taken",
+  "csl": "if (ai[2] < bi[2]) { ci[7] = 11; } else { ci[7] = 22; }"
+ },
+ {
+  "cls": "control",
+  "name": "br_not",
+  "csl": "if (ai[3] < bi[3]) { ci[8] = 11; } else { ci[8] = 22; }"
+ },
+ {
+  "cls": "control",
+  "name": "loop2",
+  "csl": "var k: u16 = 0;\n  while (k < @as(u16, bi[1])) : (k += 1) { ci[9] = ci[9] + ai[k]; }"
+ },
+ {
+  "cls": "convert",
+  "name": "f16_to_f32",
+  "csl": "c32[0] = @as(f32, af[0]);"
+ },
+ {
+  "cls": "convert",
+  "name": "f32_to_f16",
+  "csl": "cf[2] = @as(f16, a32[0]);"
+ },
+ {
+  "cls": "memory",
+  "name": "dsd_fill8",
+  "csl": "@fmovh(c8, @as(f16, 1.5));"
+ },
+ {
+  "cls": "memory",
+  "name": "dsd_copy8",
+  "csl": "@fmovh(c8b, a8);"
+ },
+ {
+  "cls": "memory",
+  "name": "dsd_stride2",
+  "csl": "@fmovh(c8c, a8s2);"
+ },
+ {
+  "cls": "memory",
+  "name": "dsd_reduce8",
+  "csl": "@faddh(&acc, acc, a8);\n  cf[3] = acc;"
+ },
+ {
+  "cls": "vector",
+  "name": "dsd_mulh8",
+  "csl": "@fmulh(c8d, a8, b8);"
+ },
+ {
+  "cls": "vector",
+  "name": "dsd_fmach8",
+  "csl": "@fmach(c8e, a8, b8, @as(f16, 0.5));"
+ },
+ {
+  "cls": "vector",
+  "name": "dsd_add16x8",
+  "csl": "@add16(ic8, ia8, ib8);"
+ },
+ {
+  "cls": "vector",
+  "name": "dsd_fadds8",
+  "csl": "@fadds(c32d, a32d, b32d);"
+ }
+]

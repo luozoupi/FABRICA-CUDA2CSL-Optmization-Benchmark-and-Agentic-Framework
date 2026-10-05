@@ -1,0 +1,10 @@
+# Keep the curated snapshot; fresh runs belong outside this directory.
+/gpu-bench
+/gpu/
+/gpu-capacity/
+/gpu-replay*/
+/.plot-venv/
+*.ncu-rep
+*.am
+/wse/*/observations.json
+/wse/*/acceptance.json

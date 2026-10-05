@@ -1,0 +1,4 @@
+reference
+
+the single factor changed relative to `base`:
+c[0] = a[0] + b[0];

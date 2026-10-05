@@ -1,0 +1,14 @@
+{
+  "id": "perf-masked-nested-16x16x16-r",
+  "debug": false,
+  "status": "pass",
+  "observations_sha256": "9d86764411a679f789eadc9693116a64999ddea8e94bde180d24ff7ca5233479",
+  "source_hashes": {
+    "pe.csl": "aa7613c3eda4303d0c5a627011dcc12cd024c86985462cee675b21c6cb421a47",
+    "layout.csl": "f38893acbc18a506eed3e6b466963b9e03ef40b9e681416bfb0a240ad6624a7e",
+    "host.py": "962b98260d76bc1bc572440b4c73e21619ebe02e260263b8963a7fa1bfd71e53"
+  },
+  "elf_hashes": {
+    "out/bin/out_0_0.elf": "77aa05e8315208cb1b3055ea509b8a1a76a07b94d147ca0cb7b380590ecd421f"
+  }
+}

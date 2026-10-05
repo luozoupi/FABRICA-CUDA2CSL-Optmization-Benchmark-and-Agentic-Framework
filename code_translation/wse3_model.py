@@ -1,7 +1,7 @@
 """Silicon-model adapter: turn a staged bundle's simulator trace into the
 WSE-3 performance-model readout the optimizer consumes.
 
-The model itself lives in ``code_translation/performance_model`` (constants, cost
+The model itself lives in ``studies/wse3-characterization`` (constants, cost
 models, classifier). This module imports those tools lazily so the study stays
 the single source of truth; nothing here copies a constant. If the study is
 absent, or the bundle has no trace, every entry point returns ``None`` and the
@@ -33,7 +33,7 @@ from pathlib import Path
 from typing import Any, Dict, Iterable, List, Optional
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
-DEFAULT_STUDY_REL = Path("code_translation") / "performance_model"
+DEFAULT_STUDY_REL = Path("studies") / "wse3-characterization"
 
 # Roofline ceilings, FLOP per cycle per PE: FMA = 2 FLOP per element.
 _FLOP_PER_FMA_ELEM = 2.0
@@ -309,8 +309,8 @@ def runtime_bound(events_gz: Path) -> Optional[Dict[str, Any]]:
 
 
 def _fitted_prediction(runtime_doc: Dict[str, Any]) -> Optional[float]:
-    """T_pred = roof + k*D + c with the study's fitted k, c (runtime_fit.json)."""
-    summ = study_root() / "runtime_fit.json"
+    """T_pred = roof + k*D + c with the study's fitted k, c (results/runtime_model/summary.json)."""
+    summ = study_root() / "results" / "runtime_model" / "summary.json"
     if not summ.is_file():
         return None
     try:

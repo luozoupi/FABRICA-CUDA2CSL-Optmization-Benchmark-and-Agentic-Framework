@@ -1,0 +1,305 @@
+// Verified building blocks, version 3 (XKERNEL_SPARSE_BLOCKS=3): storage formats for SpMV on one PE.
+// The same CSR host input (u32 row pointers and column indices, f32 values) is converted on the PE to
+// CSC, a dense column-major tile, 4x4 BSR or diagonals + compacted remainder, then multiplied. The
+// first product of a launch includes the conversion; later products reuse it, so cycles(k) =
+// conversion + k * sweep. run.py checks every method against numpy. Regions between "BLOCK <name>
+// BEGIN/END" are what the optimizer sees; names and sizes are the toy's own.
+// Dense and BSR use the column form y += A[:, c] * x[c] (@fmacs into y in memory: no horizontal
+// reduction, no register accumulation of a DSD).
+
+param memcpy_params;
+param N: u16;        // rows = columns (multiple of 4)
+param CAP: u16;      // nonzero capacity
+param DENSE: u16;    // 1: build the dense N x N tile (only small N fits)
+param NB: u16;       // BSR block capacity
+
+const EXIT: local_task_id = @get_local_task_id(9);
+const sys_mod = @import_module("<memcpy/memcpy>", memcpy_params);
+const timestamp = @import_module("<time>");
+var tsc_a = @zeros([timestamp.tsc_size_words]u16);
+var tsc_b = @zeros([timestamp.tsc_size_words]u16);
+var tbuf = @zeros([3]f32);
+var ptr_tbuf: [*]f32 = &tbuf;
+
+var rp = @zeros([N + 1]u32);
+var ci = @zeros([CAP]u32);
+var va = @zeros([CAP]f32);
+var xv = @zeros([N]f32);
+var yv = @zeros([N]f32);
+var ctl = @zeros([2]u32);
+var ptr_rp: [*]u32 = &rp; var ptr_ci: [*]u32 = &ci; var ptr_va: [*]f32 = &va;
+var ptr_xv: [*]f32 = &xv; var ptr_yv: [*]f32 = &yv; var ptr_ctl: [*]u32 = &ctl;
+const y_all = @get_dsd(mem1d_dsd, .{ .tensor_access = |i|{N} -> yv[i] });
+
+// ---------------------------------------------------------------- 0: CSR, scalar gather (baseline)
+fn spmv_csr() void {
+  var r: u16 = 0;
+  while (r < N) : (r += 1) {
+    var acc: f32 = 0.0;
+    var j: u16 = @as(u16, rp[r]);
+    const e: u16 = @as(u16, rp[r + 1]);
+    while (j < e) : (j += 1) { acc += va[j] * xv[@as(u16, ci[j])]; }
+    yv[r] = acc;
+  }
+}
+
+// ---------------------------------------------------------------- 1: CSC, scalar scatter-add
+var ccp = @zeros([N + 1]u16);
+var cfill = @zeros([N]u16);
+var cri = @zeros([CAP]u16);
+var ccv = @zeros([CAP]f32);
+var have_csc: bool = false;
+fn build_csc() void {
+  var c: u16 = 0;
+  while (c <= N) : (c += 1) { ccp[c] = 0; }
+  const nnz: u16 = @as(u16, rp[N]);
+  var j: u16 = 0;
+  while (j < nnz) : (j += 1) { ccp[@as(u16, ci[j]) + 1] += 1; }
+  c = 0;
+  while (c < N) : (c += 1) { ccp[c + 1] += ccp[c]; cfill[c] = ccp[c]; }
+  var r: u16 = 0;
+  while (r < N) : (r += 1) {
+    j = @as(u16, rp[r]);
+    const e: u16 = @as(u16, rp[r + 1]);
+    while (j < e) : (j += 1) {
+      const col: u16 = @as(u16, ci[j]);
+      const pos: u16 = cfill[col];
+      cri[pos] = r; ccv[pos] = va[j]; cfill[col] = pos + 1;
+    }
+  }
+  have_csc = true;
+}
+fn spmv_csc() void {
+  if (!have_csc) { build_csc(); }
+  @fmovs(y_all, 0.0);
+  var c: u16 = 0;
+  while (c < N) : (c += 1) {
+    const xc: f32 = xv[c];
+    var k: u16 = ccp[c];
+    const e: u16 = ccp[c + 1];
+    while (k < e) : (k += 1) { yv[cri[k]] += ccv[k] * xc; }
+  }
+}
+
+// ---------------------------------------------------------------- 2: dense column-major tile
+// BLOCK dense_tile_format BEGIN
+// Dense column-major tile dn[c * N + r], built once from the CSR input inside the timed work (zero it,
+// scatter the nonzeros), then y = sum_c dn[:, c] * x[c]: one @fmacs per column into y in memory (no
+// horizontal reduction, no gather). About 2.5 cycles per stored element, so it beats the scalar CSR
+// loop above ~8% density; N * N * 4 bytes must fit next to the other arrays (N <= 64 here).
+const DSZ: u16 = if (DENSE == 1) N * N else 4;
+var dn = @zeros([DSZ]f32);
+var have_dense: bool = false;
+const dn_all = @get_dsd(mem1d_dsd, .{ .tensor_access = |i|{DSZ} -> dn[i] });
+const DCOL: u16 = if (DENSE == 1) N else 4;
+const dn_col = @get_dsd(mem1d_dsd, .{ .tensor_access = |i|{DCOL} -> dn[i] });
+fn build_dense() void {
+  @fmovs(dn_all, 0.0);
+  var r: u16 = 0;
+  while (r < N) : (r += 1) {
+    var j: u16 = @as(u16, rp[r]);
+    const e: u16 = @as(u16, rp[r + 1]);
+    while (j < e) : (j += 1) { dn[@as(u16, ci[j]) * N + r] = va[j]; }
+  }
+  have_dense = true;
+}
+fn spmv_dense() void {
+  if (!have_dense) { build_dense(); }
+  @fmovs(y_all, 0.0);
+  var c: u16 = 0;
+  while (c < N) : (c += 1) {
+    const col = @increment_dsd_offset(dn_col, @as(i16, c * N), f32);
+    @fmacs(y_all, y_all, col, xv[c]);
+  }
+}
+// BLOCK dense_tile_format END
+
+// ---------------------------------------------------------------- 3: BSR, 4x4 blocks, column-major inside
+// BLOCK block_sparse_format BEGIN
+// 4x4 block CSR (BSR): bptr per block row, bcol per block, bval 16 floats per block (column-major
+// inside). Built once from the CSR input (bmap marks the blocks of the current block row), then each
+// block adds bval[:, c] * x[c] into the 4 rows of y with one @fmacs per block column. Pays when the
+// 4x4 blocks are mostly full (struct_blocked); on a banded matrix it gains little.
+var bptr = @zeros([N / 4 + 1]u16);
+var bcol = @zeros([NB]u16);
+var bval = @zeros([NB * 16]f32);
+var bmap = @zeros([N / 4]u16);           // block column -> slot + 1 while a block row is built
+var have_bsr: bool = false;
+const bval_all = @get_dsd(mem1d_dsd, .{ .tensor_access = |i|{NB * 16} -> bval[i] });
+const b4 = @get_dsd(mem1d_dsd, .{ .tensor_access = |i|{4} -> bval[i] });
+const y4 = @get_dsd(mem1d_dsd, .{ .tensor_access = |i|{4} -> yv[i] });
+fn build_bsr() void {
+  @fmovs(bval_all, 0.0);
+  var nb: u16 = 0;
+  var br: u16 = 0;
+  while (br < N / 4) : (br += 1) {
+    bptr[br] = nb;
+    var r: u16 = br * 4;
+    while (r < br * 4 + 4) : (r += 1) {
+      var j: u16 = @as(u16, rp[r]);
+      const e: u16 = @as(u16, rp[r + 1]);
+      while (j < e) : (j += 1) {
+        const col: u16 = @as(u16, ci[j]);
+        const bc: u16 = col / 4;
+        var s: u16 = bmap[bc];
+        if (s == 0) { bcol[nb] = bc; nb += 1; s = nb; bmap[bc] = s; }
+        bval[(s - 1) * 16 + (col % 4) * 4 + (r % 4)] = va[j];
+      }
+    }
+    var k: u16 = bptr[br];
+    while (k < nb) : (k += 1) { bmap[bcol[k]] = 0; }
+  }
+  bptr[N / 4] = nb;
+  have_bsr = true;
+}
+fn spmv_bsr() void {
+  if (!have_bsr) { build_bsr(); }
+  @fmovs(y_all, 0.0);
+  var br: u16 = 0;
+  while (br < N / 4) : (br += 1) {
+    const yb = @increment_dsd_offset(y4, @as(i16, br * 4), f32);
+    var k: u16 = bptr[br];
+    const e: u16 = bptr[br + 1];
+    while (k < e) : (k += 1) {
+      const x0: u16 = bcol[k] * 4;
+      var cc: u16 = 0;
+      while (cc < 4) : (cc += 1) {
+        const blk = @increment_dsd_offset(b4, @as(i16, k * 16 + cc * 4), f32);
+        @fmacs(yb, yb, blk, xv[x0 + cc]);
+      }
+    }
+  }
+}
+// BLOCK block_sparse_format END
+
+
+// ---------------------------------------------------------------- 4: diagonals + remainder compacted in place
+// BLOCK vectorise_along_structure BEGIN
+// Diagonal (DIA) store plus the remaining nonzeros compacted IN PLACE into the CSR arrays: entries that
+// are not on a stored diagonal are moved down to ci[w], va[w] (w <= j, so nothing is overwritten
+// before it is read), and rem_rp[r] marks where row r's remainder starts. Each product then sweeps the
+// diagonals with two DSD operations each and visits only the remainder entries, never the full list
+// again, and no second copy of the index and value arrays is needed. A table indexed by
+// (column - row + N) finds a nonzero's diagonal in O(1). The conversion is measured work: it runs on
+// the first product inside the timed function and later products reuse it (have_dia). On a multi-PE
+// kernel use the global row in off and in the valid row range, and clamp the range (hi < lo).
+const MAXD: u16 = 8;
+const NOSLOT: u16 = 0xFFFF;
+var slot = @constants([2 * N]u16, NOSLOT);
+var doff = @zeros([MAXD]i16);
+var dlo  = @zeros([MAXD]u16);
+var dlen = @zeros([MAXD]u16);
+var dval = @zeros([MAXD * N]f32);
+var tr   = @zeros([N]f32);
+var rem_rp = @zeros([N + 1]u16);
+var nd: u16 = 0;
+var have_dia: bool = false;
+const dv_all = @get_dsd(mem1d_dsd, .{ .tensor_access = |i|{MAXD * N} -> dval[i] });
+const xv_all = @get_dsd(mem1d_dsd, .{ .tensor_access = |i|{N} -> xv[i] });
+const tr_all = @get_dsd(mem1d_dsd, .{ .tensor_access = |i|{N} -> tr[i] });
+fn build_dia_compact() void {
+  @fmovs(dv_all, 0.0);
+  var w: u16 = 0;
+  var r: u16 = 0;
+  while (r < N) : (r += 1) {
+    rem_rp[r] = w;
+    var j: u16 = @as(u16, rp[r]);
+    const e: u16 = @as(u16, rp[r + 1]);
+    while (j < e) : (j += 1) {
+      const c: u16 = @as(u16, ci[j]);
+      const off: i16 = @as(i16, c) - @as(i16, r);
+      const key: u16 = @as(u16, off + @as(i16, N));
+      var d: u16 = slot[key];
+      if (d == NOSLOT and nd < MAXD) { d = nd; slot[key] = d; doff[d] = off; nd += 1; }
+      if (d != NOSLOT) {
+        dval[d * N + r] = va[j];
+      } else {
+        ci[w] = ci[j]; va[w] = va[j]; w += 1;       // compact in place: w <= j
+      }
+    }
+  }
+  rem_rp[N] = w;
+  var d: u16 = 0;
+  while (d < nd) : (d += 1) {
+    var lo: i16 = 0;
+    if (doff[d] < 0) { lo = -doff[d]; }
+    var hi: i16 = @as(i16, N);
+    if (doff[d] > 0) { hi = @as(i16, N) - doff[d]; }
+    if (hi < lo) { hi = lo; }
+    dlo[d] = @as(u16, lo);
+    dlen[d] = @as(u16, hi - lo);
+  }
+  have_dia = true;
+}
+fn spmv_dia_compact() void {
+  if (!have_dia) { build_dia_compact(); }
+  @fmovs(y_all, 0.0);
+  var d: u16 = 0;
+  while (d < nd) : (d += 1) {
+    const s0: u16 = dlo[d];
+    const len: u16 = dlen[d];
+    var vd = @set_dsd_length(dv_all, len);
+    vd = @increment_dsd_offset(vd, @as(i16, d * N + s0), f32);
+    var xd = @set_dsd_length(xv_all, len);
+    xd = @increment_dsd_offset(xd, @as(i16, s0) + doff[d], f32);
+    var ys = @set_dsd_length(y_all, len);
+    ys = @increment_dsd_offset(ys, @as(i16, s0), f32);
+    const td = @set_dsd_length(tr_all, len);
+    @fmuls(td, vd, xd);
+    @fadds(ys, ys, td);                     // memory destination: accumulates correctly
+  }
+  var r: u16 = 0;
+  while (r < N) : (r += 1) {                // only the compacted remainder
+    var acc: f32 = 0.0;
+    var j: u16 = rem_rp[r];
+    const e: u16 = rem_rp[r + 1];
+    while (j < e) : (j += 1) { acc += va[j] * xv[@as(u16, ci[j])]; }
+    yv[r] += acc;
+  }
+}
+// BLOCK vectorise_along_structure END
+
+fn reset_state() void {                     // outside the timed window; the host re-sends the CSR arrays
+  have_csc = false; have_dense = false; have_bsr = false;
+  var d: u16 = 0;
+  while (d < nd) : (d += 1) { slot[@as(u16, doff[d] + @as(i16, N))] = NOSLOT; }
+  nd = 0; have_dia = false;
+}
+
+fn run_method(m: u32) void {
+  if (m == 0) { spmv_csr(); }
+  else if (m == 1) { spmv_csc(); }
+  else if (m == 2) { spmv_dense(); }
+  else if (m == 3) { spmv_bsr(); }
+  else { spmv_dia_compact(); }
+}
+
+fn compute() void {
+  reset_state();
+  const m: u32 = ctl[0];
+  const k: u32 = ctl[1];
+  timestamp.enable_tsc();
+  timestamp.get_timestamp(&tsc_a);
+  var it: u32 = 0;
+  while (it < k) : (it += 1) { run_method(m); }
+  timestamp.get_timestamp(&tsc_b);
+  timestamp.disable_tsc();
+  var lo_: u16 = tsc_a[0]; var hi_: u16 = tsc_a[1];
+  tbuf[0] = @bitcast(f32, (@as(u32, hi_) << @as(u16, 16)) | @as(u32, lo_));
+  lo_ = tsc_a[2]; hi_ = tsc_b[0];
+  tbuf[1] = @bitcast(f32, (@as(u32, hi_) << @as(u16, 16)) | @as(u32, lo_));
+  lo_ = tsc_b[1]; hi_ = tsc_b[2];
+  tbuf[2] = @bitcast(f32, (@as(u32, hi_) << @as(u16, 16)) | @as(u32, lo_));
+  @activate(EXIT);
+}
+
+task f_exit() void { sys_mod.unblock_cmd_stream(); }
+
+comptime {
+  @comptime_assert(N % 4 == 0);
+  @bind_local_task(f_exit, EXIT);
+  @export_symbol(ptr_rp, "rp"); @export_symbol(ptr_ci, "ci"); @export_symbol(ptr_va, "va");
+  @export_symbol(ptr_xv, "xv"); @export_symbol(ptr_yv, "yv"); @export_symbol(ptr_ctl, "ctl");
+  @export_symbol(ptr_tbuf, "tbuf");
+  @export_symbol(compute);
+}

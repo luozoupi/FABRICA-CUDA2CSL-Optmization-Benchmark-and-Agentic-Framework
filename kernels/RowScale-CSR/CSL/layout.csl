@@ -1,0 +1,32 @@
+// RowScale-CSR layout. Single PE holds the whole sparse matrix (CSR, zero-padded to the
+// caps) and the vectors; pe.csl is what the agent translates, this layout is the
+// launch/interface contract. SDK 2.10-native (no comptime_struct); compiles on 1.4 too.
+
+param nrows: u16;        // matrix rows (square matrices: also the column count)
+param max_nnz: u16;      // capacity of the value / index arrays
+param iters: u16;        // repeat count for the timed window
+
+const memcpy = @import_module("<memcpy/get_params>", .{
+  .width = 1,
+  .height = 1,
+});
+
+layout {
+  @set_rectangle(1, 1);
+
+  const memcpy_params = memcpy.get_params(0);
+  @set_tile_code(0, 0, "pe.csl", .{
+    .memcpy_params = memcpy_params,
+    .nrows = nrows,
+    .max_nnz = max_nnz,
+    .iters = iters,
+  });
+
+  // Host-visible symbols (sparse matrix + vectors + timer + entrypoint).
+  @export_name("row_ptr", [*]u32, true);   // [nrows+1] CSR row pointers (row_ptr[nrows] = nnz)
+  @export_name("val", [*]f32, true);   // [max_nnz] nonzero values (zero-padded)
+  @export_name("d", [*]f32, true);   // [nrows] row scale factors
+  @export_name("c_val", [*]f32, true);   // [max_nnz] scaled values, same pattern as A
+  @export_name("maxmin_time", [*]f32, true);
+  @export_name("compute", fn()void);
+}

@@ -1,0 +1,26 @@
+{
+  "command": [
+    "/usr/local/cuda/bin/nvcc",
+    "-O3",
+    "-arch=sm_120",
+    "-std=c++17",
+    "--default-stream",
+    "per-thread",
+    "-lineinfo",
+    "--ptxas-options=-v",
+    "/home/USER/sparse-crossarch-20260922/gpu.cu",
+    "-lcusparse",
+    "-o",
+    "/home/USER/sparse-crossarch-20260922/gpu-bench"
+  ],
+  "returncode": 0,
+  "ge_commit": "f62f51169eb26c0d4411f6d9744eb585854410e1",
+  "extraction": "Exact text from first template<typename T> through before int main; kernel bodies and spmmWrapper unchanged",
+  "hashes": {
+    "gpu.cu": "1576284d877e1da3366829e956fd43f0313d1823bc0383630cef85935697f276",
+    "ge_kernels.cuh": "2886218471ba852c0030ddf4dab8ea60e185deb0fc105f959a81e6a60d8e1511",
+    "vendor/ge-spmm/spmm_test.cu": "d91d62fe42f8e787f09c5e6e0bb921420ae4afe01e64e5119af1e04aa0136384",
+    "vendor/ge-spmm/LICENSE": "75a4c32215557d9fdcf50a649f27f15e3b3c322d0a9bc81d0eb7617451e007a1",
+    "gpu-bench": "41f366d16de87fb05ed1379bf3d61dfb5e69d5c5c792e1de4092a6df01ce13b2"
+  }
+}

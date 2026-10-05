@@ -1,0 +1,91 @@
+# xkernel-bench spec -- see kernels/SPEC_SCHEMA.md for format.
+kernel_id: "SpGEMM-Masked-Dot"
+group: "sparse"
+difficulty: 3
+
+tasks:
+  - "Masked sparse-times-sparse matrix product C<M> = A'*B with B := A and the structural mask
+     M := pattern(A): for every stored position p of A (row i = row_idx[p], owning column j),
+     C(i,j) = A(:,i) . A(:,j) is the dot product of two sorted sparse columns (two-pointer merge);
+     an entry whose columns share no row is a zombie (c_row[p] = ~i) and zombies are counted.
+     A is stored by column (CSC). entrypoint = compute."
+
+inputs:
+  - {name: "col_ptr", shape: "[n+1]", dtype: "u32"}
+  - {name: "row_idx", shape: "[max_nnz]", dtype: "u32"}
+  - {name: "val", shape: "[max_nnz]", dtype: "f32"}
+
+outputs:
+  - {name: "c_val", shape: "[max_nnz]", dtype: "f32",
+     tolerance_abs: 1.0e-6, tolerance_rel: 1.0e-5,
+     description: "C(i,j) at mask position p, 0 when the columns share no row; verified against float64 numpy on the first nnz entries + SUCCESS"}
+  - {name: "c_row", shape: "[max_nnz]", dtype: "u32",
+     tolerance_abs: 0, tolerance_rel: 0,
+     description: "row i, or the zombie code ~i (GraphBLAS GB_ZOMBIE); exact"}
+  - {name: "nzombies", shape: "[1]", dtype: "u32",
+     tolerance_abs: 0, tolerance_rel: 0,
+     description: "number of zombies; exact"}
+
+sizes:
+  - name: small
+    role: correctness
+    params: {n: 256, max_nnz: 1536, iters: 1, structure_id: 0}
+    commands_script: "commands_wse3.sh"
+    wse3_reference: {cycles_send: 260903, time_send_us: 306.9447}   # SDK 2.10 simulator, 2026-09-16
+  - name: n144
+    role: workload
+    structure_class: "hb_n144"               # can_144 (train); arc130, bcspwr03, ash85 -- mean row length 9.0
+    params: {n: 144, max_nnz: 1536, iters: 1, structure_id: 1}
+    commands_script: "commands_wse3_n144.sh"
+    wse3_reference: {cycles_send: 845529, time_send_us: 994.74}   # SDK 2.10 simulator, 2026-09-21, held-out passed
+
+task_class: "real-translation"
+split: "test"
+
+metric:
+  class: cycles
+  reason: "agent-written merge-based masked SpGEMM; on-device TSC window; not library-delegated"
+
+eval:
+  train_seed: 7
+  heldout_seeds: [101, 202, 303]
+  seed_env: "XKERNEL_EVAL_SEED"
+
+# Structure-aware inputs (v2 sparse study): hb_n256 class (dwt_234 train; gre_216a, fs_183_1,
+# west0167 held-out), all n <= 234 and nnz <= 1069 within the caps.
+structure:
+  format: csc
+  class: "hb_n256"
+  manifest: "CSL/data/manifest.json"
+  partition: {scheme: none}
+  caps: {n: 256, max_nnz: 1536}
+  readout: true
+
+build_command: "bash commands_wse3.sh"
+verify: "embedded in run.py -- float64 numpy reference of A'A at the mask positions (rtol=1e-5, atol=1e-6), exact row codes and zombie count + SUCCESS"
+
+hidden_from_optimize_only:
+  - "CSL/pe.csl"
+
+frozen_functions:
+  - "compute"
+frozen_params:
+  - "n"
+  - "max_nnz"
+  - "iters"
+
+# Provenance: CUDA source concretized from GraphBLAS CUDA/mxm/template/GB_cuda_jit_AxB_dot3_phase3_vsvs.cuh;
+# see CUDA/kernel.cu header. Reference authored 2026-09-16 (v2 sparse study, S suite).
+optimization_angles:
+  - "dsd_offset_chaining"
+  - "fmac_bulk"
+  - "stride_optimization"
+  - "comptime_hoist"
+
+tags:
+  - "single_pe"
+  - "sparse"
+  - "csc"
+  - "spgemm"
+  - "masked"
+  - "merge"

@@ -1,0 +1,185 @@
+[
+  {
+    "path": "/home/USER/spgemm-followup-20260924/development-failures/host-copy-order/general/tile4/result.json",
+    "result": {
+      "case": "tile4",
+      "group": "general",
+      "queue_wait_s": 8.898998203221709e-06,
+      "phases": [
+        {
+          "phase": "compile",
+          "command": [
+            "/home/USER/cs_sdk/cslc",
+            "layout.csl",
+            "--arch=wse3",
+            "--fabric-dims=8,3",
+            "--fabric-offsets=4,1",
+            "--memcpy",
+            "--channels=1",
+            "--width-west-buf=0",
+            "--width-east-buf=0",
+            "--out-routes",
+            "-o",
+            "out"
+          ],
+          "returncode": 0,
+          "wall_s": 3.27050926299853
+        },
+        {
+          "phase": "run",
+          "command": [
+            "/home/USER/cs_sdk/cs_python",
+            "host.py"
+          ],
+          "returncode": 1,
+          "wall_s": 1.8174762269991334
+        }
+      ],
+      "status": "run_failed",
+      "trace_enabled": false,
+      "hashes": {
+        "pe.csl": "d20c870bb52911516057b3972d06d17d2725d0b58d2494e5cc693028da83b691",
+        "case.json": "e16be7308ff504521217565b6049d3891612f7b3d1304341fcbe5da0a95602e9",
+        "layout.csl": "e704accecebe9e2cf86b7e5895e300a96ac401c78f060552fc487284643c39c2",
+        "inputs.py": "38ca49cab7d4cae285ab234420d6f0ac5c3a2477f599a2643892af0de541f6fc",
+        "host.py": "b8b363a1c967776be1354db9254c8c9b8413573c86564aef27550caa542b8535",
+        "sim_stats.json": "c9432910c97a3aba895e9e5349b44b43363d83a7a0c9be2b4c0a8cd3857fbc80",
+        "simconfig.json": "ac8861b1a0ab97042fb33484d83a4d3ef124877e9bef550a89a5efe1f6da2be3",
+        "out/out.json": "b67e94695ca5a56ae9ae1a4a78bc93d3cae5825997109038dd11891f3cab5bb1",
+        "out/bin/out_rpc.json": "36f79f3d742819ca133bb177ae96924cace4b721138874eb2710d97104b583a6",
+        "out/bin/out_0_0.elf": "8117b32838822eb1c13d8ccb23378f62fd532452088667e67b64d6c0f61357a9",
+        "out/west/out.json": "248ecbf17b2090e46e426ee7b905c25f2b9770e8f6a382868cd2e07ab91e7a3a",
+        "out/generated/default.elf": "1a4776e4e8ea2809c518b2e36632ed454f65a1b85b80172c13c8a616b46dafd1",
+        "out/generated/MEMCPY_XY_ROUTES.elf": "145cfdf2650e18ccdc7a3c92f7692e103dd9a03c2762a8f8e36727d7b9924b92",
+        "out/generated/coord.elf": "a8c0c8e70d82ceb0019009b65eb6883ffcbf91dc55b537bcc188343a08542a66",
+        "out/east/out.json": "46ea180801c589023f5daf7351fb473475b50f302d72cf40f86e4ce5f7d320b7",
+        "out/east/bin/out_1_0.elf": "ceaec0d944a6aab27e238890a6ba939b432fba4788be63c70b1012d9ea37be24",
+        "out/east/bin/out_0_0.elf": "f3a6926e08cfc09b009267b1704734e9a4c9c69e7a3f1a2e84dfeb9ba683443a",
+        "out/west/bin/out_1_0.elf": "f3e14e207bf62c669bdb5269208ffa2d9f342d433b7245c35bf3e194299f88cd",
+        "out/west/bin/out_2_0.elf": "603bac3d102d82db359a235d75d1432d914c2ebf234089bd6974cb6a5aa89d44",
+        "out/west/bin/out_0_0.elf": "3a73914d0f4e7dff0a8cdd28dddc9477f5d9aba57296ebf254e1e8e432d33271"
+      }
+    },
+    "run_log": "\u001b[34m[INFO]\u001b[0m === Calling container-hosted python ===\n\u001b[34m[INFO]\u001b[0m Using SIF: /home/USER/cs_sdk/sdk-cbcore-2.10.1-sdk-202606181328-8faf87a26e.sif\nTraceback (most recent call last):\n  File \"/home/USER/spgemm-followup-20260924/general/tile4/host.py\", line 64, in <module>\n    if __name__=='__main__':main()\n                            ^^^^^^\n  File \"/home/USER/spgemm-followup-20260924/general/tile4/host.py\", line 53, in main\n    for rep in range(cfg['repetitions']+1):samples.append(check(A,B,256,rep))\n                                                          ^^^^^^^^^^^^^^^^^^\n  File \"/home/USER/spgemm-followup-20260924/general/tile4/host.py\", line 38, in check\n    words=list(map(int,get('time_words',6,'u16')));start=words[0]|words[1]<<16|words[2]<<32;end=words[3]|words[4]<<16|words[5]<<32\n                       ^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/USER/spgemm-followup-20260924/general/tile4/host.py\", line 25, in get\n    a=np.zeros(n,np.uint32);r.memcpy_d2h(r.get_id(name),a,0,0,1,1,n,streaming=False,data_type=MemcpyDataType.MEMCPY_16BIT if kind=='u16' else MemcpyDataType.MEMCPY_32BIT,order=MemcpyOrder.ROW_MAJOR,nonblock=False)\n                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nTypeError: memcpy_d2h(): incompatible function arguments. The following argument types are supported:\n    1. (self: cerebras.sdk.runtime.sdkruntimepybind.SdkRuntime, arg0: numpy.ndarray, arg1: int, arg2: int, arg3: int, arg4: int, arg5: int, arg6: int, **kwargs) -> cerebras::SdkRuntime::Task\n\nInvoked with: <cerebras.sdk.runtime.sdkruntimepybind.SdkRuntime object at 0x7f155375c6b0>, 13, array([0, 0, 0, 0, 0, 0], dtype=uint32), 0, 0, 1, 1, 6; kwargs: streaming=False, data_type=<MemcpyDataType.MEMCPY_16BIT: 1>, order=<MemcpyOrder.ROW_MAJOR: 0>, nonblock=False\n"
+  },
+  {
+    "path": "/home/USER/spgemm-followup-20260924/development-failures/host-copy-order/general/full_row/result.json",
+    "result": {
+      "case": "full_row",
+      "group": "general",
+      "queue_wait_s": 385.05235831600294,
+      "phases": [
+        {
+          "phase": "compile",
+          "command": [
+            "/home/USER/cs_sdk/cslc",
+            "layout.csl",
+            "--arch=wse3",
+            "--fabric-dims=8,3",
+            "--fabric-offsets=4,1",
+            "--memcpy",
+            "--channels=1",
+            "--width-west-buf=0",
+            "--width-east-buf=0",
+            "--out-routes",
+            "-o",
+            "out"
+          ],
+          "returncode": 0,
+          "wall_s": 3.421070297001279
+        },
+        {
+          "phase": "run",
+          "command": [
+            "/home/USER/cs_sdk/cs_python",
+            "host.py"
+          ],
+          "returncode": 1,
+          "wall_s": 1.9679448820024845
+        }
+      ],
+      "status": "run_failed",
+      "trace_enabled": false,
+      "hashes": {
+        "pe.csl": "df75cd1920cada5bcc52b91387f41b7da6d08d86ffb5a24d7a6af2c9db693bfb",
+        "case.json": "f9f26e5a2a5cfaee0240c47e0b0f3c99fe8a8b5da38ddf38793f712da243e62f",
+        "layout.csl": "e704accecebe9e2cf86b7e5895e300a96ac401c78f060552fc487284643c39c2",
+        "inputs.py": "38ca49cab7d4cae285ab234420d6f0ac5c3a2477f599a2643892af0de541f6fc",
+        "host.py": "b8b363a1c967776be1354db9254c8c9b8413573c86564aef27550caa542b8535",
+        "sim_stats.json": "485640eb0176f5078f613d1f636ba193e0143c8c73d27ea033bc679197d9bc19",
+        "simconfig.json": "ac8861b1a0ab97042fb33484d83a4d3ef124877e9bef550a89a5efe1f6da2be3",
+        "out/out.json": "b67e94695ca5a56ae9ae1a4a78bc93d3cae5825997109038dd11891f3cab5bb1",
+        "out/bin/out_rpc.json": "36f79f3d742819ca133bb177ae96924cace4b721138874eb2710d97104b583a6",
+        "out/bin/out_0_0.elf": "cc86c2d432b6b9e4c1bd386bf892d24aa3cb85206b12e6c8def925bc341d5e06",
+        "out/west/out.json": "248ecbf17b2090e46e426ee7b905c25f2b9770e8f6a382868cd2e07ab91e7a3a",
+        "out/generated/default.elf": "1a4776e4e8ea2809c518b2e36632ed454f65a1b85b80172c13c8a616b46dafd1",
+        "out/generated/MEMCPY_XY_ROUTES.elf": "145cfdf2650e18ccdc7a3c92f7692e103dd9a03c2762a8f8e36727d7b9924b92",
+        "out/generated/coord.elf": "a8c0c8e70d82ceb0019009b65eb6883ffcbf91dc55b537bcc188343a08542a66",
+        "out/east/out.json": "46ea180801c589023f5daf7351fb473475b50f302d72cf40f86e4ce5f7d320b7",
+        "out/east/bin/out_1_0.elf": "ceaec0d944a6aab27e238890a6ba939b432fba4788be63c70b1012d9ea37be24",
+        "out/east/bin/out_0_0.elf": "f3a6926e08cfc09b009267b1704734e9a4c9c69e7a3f1a2e84dfeb9ba683443a",
+        "out/west/bin/out_1_0.elf": "f3e14e207bf62c669bdb5269208ffa2d9f342d433b7245c35bf3e194299f88cd",
+        "out/west/bin/out_2_0.elf": "603bac3d102d82db359a235d75d1432d914c2ebf234089bd6974cb6a5aa89d44",
+        "out/west/bin/out_0_0.elf": "3a73914d0f4e7dff0a8cdd28dddc9477f5d9aba57296ebf254e1e8e432d33271"
+      }
+    },
+    "run_log": "\u001b[34m[INFO]\u001b[0m === Calling container-hosted python ===\n\u001b[34m[INFO]\u001b[0m Using SIF: /home/USER/cs_sdk/sdk-cbcore-2.10.1-sdk-202606181328-8faf87a26e.sif\nTraceback (most recent call last):\n  File \"/home/USER/spgemm-followup-20260924/general/full_row/host.py\", line 64, in <module>\n    if __name__=='__main__':main()\n                            ^^^^^^\n  File \"/home/USER/spgemm-followup-20260924/general/full_row/host.py\", line 53, in main\n    for rep in range(cfg['repetitions']+1):samples.append(check(A,B,256,rep))\n                                                          ^^^^^^^^^^^^^^^^^^\n  File \"/home/USER/spgemm-followup-20260924/general/full_row/host.py\", line 38, in check\n    words=list(map(int,get('time_words',6,'u16')));start=words[0]|words[1]<<16|words[2]<<32;end=words[3]|words[4]<<16|words[5]<<32\n                       ^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/USER/spgemm-followup-20260924/general/full_row/host.py\", line 25, in get\n    a=np.zeros(n,np.uint32);r.memcpy_d2h(r.get_id(name),a,0,0,1,1,n,streaming=False,data_type=MemcpyDataType.MEMCPY_16BIT if kind=='u16' else MemcpyDataType.MEMCPY_32BIT,order=MemcpyOrder.ROW_MAJOR,nonblock=False)\n                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nTypeError: memcpy_d2h(): incompatible function arguments. The following argument types are supported:\n    1. (self: cerebras.sdk.runtime.sdkruntimepybind.SdkRuntime, arg0: numpy.ndarray, arg1: int, arg2: int, arg3: int, arg4: int, arg5: int, arg6: int, **kwargs) -> cerebras::SdkRuntime::Task\n\nInvoked with: <cerebras.sdk.runtime.sdkruntimepybind.SdkRuntime object at 0x7f117cfc39f0>, 13, array([0, 0, 0, 0, 0, 0], dtype=uint32), 0, 0, 1, 1, 6; kwargs: streaming=False, data_type=<MemcpyDataType.MEMCPY_16BIT: 1>, order=<MemcpyOrder.ROW_MAJOR: 0>, nonblock=False\n"
+  },
+  {
+    "path": "/home/USER/spgemm-followup-20260924/development-failures/tile4-watchdog/tile4/result.json",
+    "result": {
+      "case": "tile4",
+      "group": "general",
+      "queue_wait_s": 9.67000232776627e-06,
+      "phases": [
+        {
+          "phase": "run",
+          "command": [
+            "/home/USER/cs_sdk/cs_python",
+            "host.py"
+          ],
+          "returncode": 124,
+          "wall_s": 430.0061241219955
+        }
+      ],
+      "status": "run_failed",
+      "trace_enabled": false,
+      "hashes": {
+        "pe.csl": "d20c870bb52911516057b3972d06d17d2725d0b58d2494e5cc693028da83b691",
+        "case.json": "e13586b0b9439c9554c8bddaa9d7065bef5d6bb4efb366d0794e3c2429bec838",
+        "layout.csl": "e704accecebe9e2cf86b7e5895e300a96ac401c78f060552fc487284643c39c2",
+        "inputs.py": "38ca49cab7d4cae285ab234420d6f0ac5c3a2477f599a2643892af0de541f6fc",
+        "host.py": "e40b13b4b7fdc78d533e278964a145a40b5dfb370a9738eb13943d0e92557692",
+        "simconfig.json": "ac8861b1a0ab97042fb33484d83a4d3ef124877e9bef550a89a5efe1f6da2be3",
+        "out/out.json": "b67e94695ca5a56ae9ae1a4a78bc93d3cae5825997109038dd11891f3cab5bb1",
+        "wio_flows_tmpdir.xMBIyV/wio_flows.json": "a24e679b55988ee05e201deb7943b2fc52c44aed8383ecd65d408ae2df4e1ec1",
+        "out/bin/out_rpc.json": "36f79f3d742819ca133bb177ae96924cace4b721138874eb2710d97104b583a6",
+        "out/bin/out_0_0.elf": "8117b32838822eb1c13d8ccb23378f62fd532452088667e67b64d6c0f61357a9",
+        "out/west/out.json": "248ecbf17b2090e46e426ee7b905c25f2b9770e8f6a382868cd2e07ab91e7a3a",
+        "out/generated/default.elf": "1a4776e4e8ea2809c518b2e36632ed454f65a1b85b80172c13c8a616b46dafd1",
+        "out/generated/MEMCPY_XY_ROUTES.elf": "145cfdf2650e18ccdc7a3c92f7692e103dd9a03c2762a8f8e36727d7b9924b92",
+        "out/generated/coord.elf": "a8c0c8e70d82ceb0019009b65eb6883ffcbf91dc55b537bcc188343a08542a66",
+        "out/east/out.json": "46ea180801c589023f5daf7351fb473475b50f302d72cf40f86e4ce5f7d320b7",
+        "out/east/bin/out_1_0.elf": "ceaec0d944a6aab27e238890a6ba939b432fba4788be63c70b1012d9ea37be24",
+        "out/east/bin/out_0_0.elf": "f3a6926e08cfc09b009267b1704734e9a4c9c69e7a3f1a2e84dfeb9ba683443a",
+        "out/west/bin/out_1_0.elf": "f3e14e207bf62c669bdb5269208ffa2d9f342d433b7245c35bf3e194299f88cd",
+        "out/west/bin/out_2_0.elf": "603bac3d102d82db359a235d75d1432d914c2ebf234089bd6974cb6a5aa89d44",
+        "out/west/bin/out_0_0.elf": "3a73914d0f4e7dff0a8cdd28dddc9477f5d9aba57296ebf254e1e8e432d33271"
+      }
+    },
+    "run_log": "\u001b[34m[INFO]\u001b[0m === Calling container-hosted python ===\n\u001b[34m[INFO]\u001b[0m Using SIF: /home/USER/cs_sdk/sdk-cbcore-2.10.1-sdk-202606181328-8faf87a26e.sif\n"
+  },
+  {
+    "path": "/home/USER/spgemm-followup-20260924/ir/development-failures/separate_updates-v1/collection-failure.json",
+    "kind": "IR artifact collection",
+    "diagnostic": {
+      "reason": "IR tool names programs by ELF basename when the shadow output is outside the compiler cwd; routing and application out_0_0 entries collide. Application IR could not be identified. Measured ELF unchanged; reject this capture.",
+      "metadata_elf_paths": [
+        "/home/USER/spgemm-followup-20260924/ir/separate_updates-shadow/west/bin/out_0_0.elf",
+        "/home/USER/spgemm-followup-20260924/ir/separate_updates-shadow/west/bin/out_1_0.elf"
+      ],
+      "measured_elf_sha256": "32e8bd9218187b36d32a40f36bed52bef9a04631338d4bcb34c2edb2b04e0e7b",
+      "shadow_elf_sha256": "32e8bd9218187b36d32a40f36bed52bef9a04631338d4bcb34c2edb2b04e0e7b"
+    }
+  }
+]

@@ -1,0 +1,38 @@
+[
+  {
+    "label": "reference",
+    "status": "pass",
+    "cycles": 260903,
+    "runs": [
+      260903,
+      260903,
+      260903
+    ],
+    "heldout_passed": true,
+    "heldout_reason": "passed all 3 held-out seeds",
+    "instrs": 142,
+    "branches": 11,
+    "branch_per_fp_mul": 11.0,
+    "dsd_ops": 0,
+    "failure": null,
+    "elapsed_s": 192.4
+  },
+  {
+    "label": "branchless",
+    "status": "pass",
+    "cycles": 577853,
+    "runs": [
+      577853,
+      577853,
+      577853
+    ],
+    "heldout_passed": true,
+    "heldout_reason": "passed all 3 held-out seeds",
+    "instrs": 179,
+    "branches": 11,
+    "branch_per_fp_mul": 5.5,
+    "dsd_ops": 0,
+    "failure": null,
+    "elapsed_s": 314.3
+  }
+]

@@ -1,0 +1,6 @@
+withheld
+
+the single factor changed relative to `base`:
+var n: u16 = @as(u16, k[0]);
+  var i: u16 = 1;
+  while (i < n) : (i += 1) { c[i] = c[i - 1] + b[i]; }

@@ -1,0 +1,20 @@
+// ILP microbench layout: one PE, four dependency depths, identical work.
+param iters: u16;
+
+const memcpy = @import_module("<memcpy/get_params>", .{
+  .width = 1,
+  .height = 1,
+});
+
+layout {
+  @set_rectangle(1, 1);
+  const memcpy_params = memcpy.get_params(0);
+  @set_tile_code(0, 0, "pe.csl", .{
+    .memcpy_params = memcpy_params,
+    .iters = iters,
+  });
+  @export_name("coef", [*]f32, true);
+  @export_name("sink", [*]f32, true);
+  @export_name("maxmin_time", [*]f32, true);
+  @export_name("compute", fn()void);
+}

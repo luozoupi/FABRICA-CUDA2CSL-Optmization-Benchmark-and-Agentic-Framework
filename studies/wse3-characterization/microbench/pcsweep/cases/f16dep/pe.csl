@@ -1,0 +1,45 @@
+param memcpy_params;
+const EXIT: local_task_id = @get_local_task_id(9);
+const sys_mod = @import_module("<memcpy/memcpy>", memcpy_params);
+
+var a = @zeros([8]i16); var b = @zeros([8]i16); var g = @zeros([8]i16);
+var c = @zeros([80]i16); var d = @zeros([8]i16);
+var af = @zeros([8]f16); var bf = @zeros([8]f16); var gf = @zeros([8]f16); var cf = @zeros([16]f16);
+var mark = @zeros([16]i16);
+var p_a: [*]i16 = &a; var p_b: [*]i16 = &b; var p_g: [*]i16 = &g; var p_c: [*]i16 = &c; var p_d: [*]i16 = &d;
+var p_af: [*]f16 = &af; var p_bf: [*]f16 = &bf; var p_gf: [*]f16 = &gf; var p_cf: [*]f16 = &cf; var p_mark: [*]i16 = &mark;
+
+const ad  = @get_dsd(mem1d_dsd, .{ .tensor_access = |i|{8} -> a[i] });
+const bd  = @get_dsd(mem1d_dsd, .{ .tensor_access = |i|{8} -> b[i] });
+const afd = @get_dsd(mem1d_dsd, .{ .tensor_access = |i|{8} -> af[i] });
+
+fn compute() void {
+  mark[0] = 0x6000;
+  cf[0] = af[0] * bf[0] + gf[0];
+  mark[1] = 0x6001;
+  cf[1] = af[1] * bf[1] + gf[1];
+  mark[2] = 0x6002;
+  cf[2] = af[2] * bf[2] + gf[2];
+  mark[3] = 0x6003;
+  cf[3] = af[3] * bf[3] + gf[3];
+  mark[4] = 0x6004;
+  cf[4] = af[4] * bf[4] + gf[4];
+  mark[5] = 0x6005;
+  cf[5] = af[5] * bf[5] + gf[5];
+  mark[6] = 0x6006;
+  cf[6] = af[6] * bf[6] + gf[6];
+  mark[7] = 0x6007;
+  cf[7] = af[7] * bf[7] + gf[7];
+
+  mark[8] = 0x6008;
+  @activate(EXIT);
+}
+
+task f_exit() void { sys_mod.unblock_cmd_stream(); }
+
+comptime {
+  @bind_local_task(f_exit, EXIT);
+  @export_symbol(p_a, "a"); @export_symbol(p_b, "b"); @export_symbol(p_g, "g"); @export_symbol(p_c, "c"); @export_symbol(p_d, "d");
+  @export_symbol(p_af, "af"); @export_symbol(p_bf, "bf"); @export_symbol(p_gf, "gf"); @export_symbol(p_cf, "cf"); @export_symbol(p_mark, "mark");
+  @export_symbol(compute);
+}

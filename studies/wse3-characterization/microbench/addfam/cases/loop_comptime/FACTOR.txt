@@ -1,0 +1,4 @@
+control
+
+the single factor changed relative to `base`:
+for (@range(u16, 16)) |i| { c[i] = a[i] + b[i]; }

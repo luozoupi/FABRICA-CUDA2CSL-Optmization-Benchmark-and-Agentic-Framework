@@ -1,0 +1,8 @@
+{
+  "repository": "https://github.com/hgyhungry/ge-spmm",
+  "commit": "f62f51169eb26c0d4411f6d9744eb585854410e1",
+  "sha256": {
+    "spmm_test.cu": "d91d62fe42f8e787f09c5e6e0bb921420ae4afe01e64e5119af1e04aa0136384",
+    "LICENSE": "75a4c32215557d9fdcf50a649f27f15e3b3c322d0a9bc81d0eb7617451e007a1"
+  }
+}

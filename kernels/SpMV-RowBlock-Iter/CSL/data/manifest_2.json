@@ -1,0 +1,40 @@
+{
+ "schema": 1,
+ "class": "hb_power_n2048",
+ "train_seed": 7,
+ "values": "seeded_uniform",
+ "matrices": [
+  {
+   "id": "HB/bcspwr07",
+   "file": "bcspwr07.mtx",
+   "sha256": "1b9135b1d72017ec01df1f409ab2149058f0f70790874f48f5cc4941be5d567a",
+   "n": 1612,
+   "m": 1612,
+   "nnz": 5824
+  },
+  {
+   "id": "HB/bcspwr06",
+   "file": "bcspwr06.mtx",
+   "sha256": "55fd815ee0c1fbfa35749201a8a133b8ea105cac994966bde146680400eac1cf",
+   "n": 1454,
+   "m": 1454,
+   "nnz": 5300
+  },
+  {
+   "id": "HB/bcspwr08",
+   "file": "bcspwr08.mtx",
+   "sha256": "b2d2f25ec7ca3b85b987941e4ad553766ce0eba73525b1747a07ed30c58bcd92",
+   "n": 1624,
+   "m": 1624,
+   "nnz": 6050
+  },
+  {
+   "id": "HB/bcspwr09",
+   "file": "bcspwr09.mtx",
+   "sha256": "c396a96af9aab55af84522dd1b8d95ecb87c9c4b014f3597bc4f55067930b1ea",
+   "n": 1723,
+   "m": 1723,
+   "nnz": 6511
+  }
+ ]
+}

@@ -1,0 +1,38 @@
+{
+"wio_flows_config": {
+    "wio_flows": [
+        {
+            "flow-id": 0,
+            "dir": "INGRESS",
+            "fabric_color": 5,
+            "txrx_mode": "4:4",
+            "x_coord": 0,
+            "y_coord": 0
+        },
+        {
+            "flow-id": 1,
+            "dir": "INGRESS",
+            "fabric_color": 0,
+            "txrx_mode": "4:4",
+            "x_coord": 0,
+            "y_coord": 1
+        },
+        {
+            "flow-id": 2,
+            "dir": "EGRESS",
+            "fabric_color": 5,
+            "txrx_mode": "4:4",
+            "x_coord": 15,
+            "y_coord": 1
+        },
+        {
+            "flow-id": 3,
+            "dir": "INGRESS",
+            "fabric_color": 0,
+            "txrx_mode": "4:4",
+            "x_coord": 15,
+            "y_coord": 0
+        }
+    ]
+}
+}

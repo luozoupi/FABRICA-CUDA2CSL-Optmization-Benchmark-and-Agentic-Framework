@@ -1,0 +1,15 @@
+{
+  "created_utc": "2026-09-25T17:19:30.194365+00:00",
+  "reason": "The tool interruption ended the supervisor and its watchdog. The SDK child completed later without a supervisor result, after exceeding the registered 2400-second limit. Retained separately, excluded from primary timing and completion results. No exit status or outer-process wall duration is reconstructed.",
+  "archived_attempt": "/home/USER/spgemm-scaling-20260924/interrupted-attempts/strong-m256-k256-n256-p1-d3-full-attempt1",
+  "archive_result_sha256": "7093170424bd1c17a7a006eba3e0b196f291b4f11ec4e9d3b73ae003c8fe5697",
+  "recovery_case": "strong-m256-k256-n256-p1-d3-full",
+  "case_sha256": "ce4e3cb87d0a5199a51e4b98042d331500a8353c56eb8457f4f8883d0fe18ed1",
+  "policy": "Repeat this one interrupted case with exactly the frozen sources, inputs, repetitions and 2400-second watchdog; resume the six not-yet-started cases. Preserve the extra interrupted attempt in separate attempt accounting. The previously registered timeout policy still applies; no unsupervised measurement enters primary tables.",
+  "driver": "Run the unchanged registered run.py from a detached supervisor so a chat interruption does not remove its watchdog.",
+  "prior_primary_counts": {
+    "pass_cases": 21,
+    "pending_cases": 7
+  },
+  "additional_interrupted_attempts": 1
+}

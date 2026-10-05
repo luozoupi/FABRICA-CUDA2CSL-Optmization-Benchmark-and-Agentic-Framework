@@ -1,0 +1,17 @@
+{
+  "created_utc": "2026-09-25T17:20:41.191415+00:00",
+  "checks": [
+    {
+      "requested_width": 420,
+      "actual_viewport_width": 500,
+      "record_selections_checked": 112,
+      "status": "pass"
+    },
+    {
+      "requested_width": 1440,
+      "actual_viewport_width": 1440,
+      "record_selections_checked": 112,
+      "status": "pass"
+    }
+  ]
+}

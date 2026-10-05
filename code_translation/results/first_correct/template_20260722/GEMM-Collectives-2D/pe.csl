@@ -1,0 +1,216 @@
+// Copyright 2025 Cerebras Systems.
+//
+// GEMM via SUMMA on 2D PE grid: C = A * B
+// Each PE owns Mt x Kt of A, Kt x Nt of B, Mt x Nt of C (column-major local).
+
+param memcpy_params: comptime_struct;
+// === SLOT: EXTRA_PARAMS ===
+param c2d_params: comptime_struct;
+param Mt: u16;  // rows of C tile / rows of A tile
+param Kt: u16;  // cols of A tile / rows of B tile
+param Nt: u16;  // cols of C tile / cols of B tile
+
+const EXIT: local_task_id = @get_local_task_id(12);
+const x_task_id: local_task_id = @get_local_task_id(14);
+const y_task_id: local_task_id = @get_local_task_id(15);
+
+const sys_mod = @import_module("<memcpy/memcpy>", memcpy_params);
+
+// === SLOT: EXTRA_IMPORTS ===
+const layout_mod = @import_module("<layout>");
+
+// Two collectives_2d instances: one for x (row) dim, one for y (col) dim.
+// c2d_params exposes fields .x and .y (per compiler note).
+const mpi_x = @import_module("<collectives_2d/pe>", @concat_structs(
+  .{ .dim_params = c2d_params.x }, .{
+    .queues        = [2]u16{2, 3},
+    .dest_dsr_ids  = [1]u16{1},
+    .src0_dsr_ids  = [1]u16{1},
+    .src1_dsr_ids  = [1]u16{2},
+  }));
+const mpi_y = @import_module("<collectives_2d/pe>", @concat_structs(
+  .{ .dim_params = c2d_params.y }, .{
+    .queues        = [2]u16{4, 5},
+    .dest_dsr_ids  = [1]u16{3},
+    .src0_dsr_ids  = [1]u16{3},
+    .src1_dsr_ids  = [1]u16{4},
+  }));
+
+const timestamp = @import_module("<time>");
+var tsc_start_buf = @zeros([timestamp.tsc_size_words]u16);
+var tsc_end_buf   = @zeros([timestamp.tsc_size_words]u16);
+var time_buf_u16  = @zeros([6]u16);
+var ptr_time_buf_u16: [*]u16 = &time_buf_u16;
+
+// === SLOT: DATA_BUFFERS ===
+// Local tiles (column-major local per run.py cliff distribution).
+var A_tile = @zeros([Mt*Kt]f32);
+var B_tile = @zeros([Kt*Nt]f32);
+var C_tile = @zeros([Mt*Nt]f32);
+
+// SUMMA broadcast buffers.
+var A_bcast = @zeros([Mt*Kt]f32);
+var B_bcast = @zeros([Kt*Nt]f32);
+
+var ptr_A: [*]f32 = &A_tile;
+var ptr_B: [*]f32 = &B_tile;
+var ptr_C: [*]f32 = &C_tile;
+
+// === SLOT: KERNEL_FUNCTION ===
+// Number of PEs per dimension (square P x P grid); field is NUM_PES.
+const P: u16 = c2d_params.x.NUM_PES;
+
+var px: u16 = 0;   // my column coord (x)
+var py: u16 = 0;   // my row coord (y)
+var step: u16 = 0; // current SUMMA step (0..P-1)
+
+// Module-scope DSDs for the local GEMM. Bases are patched at runtime with
+// @set_dsd_base_addr since affine tensor_access cannot use runtime offsets.
+// Each describes a length-Mt column (stride 1); base is set per column.
+var c_col_dsd = @get_dsd(mem1d_dsd, .{ .tensor_access = |i|{Mt} -> C_tile[i] });
+var a_col_dsd = @get_dsd(mem1d_dsd, .{ .tensor_access = |i|{Mt} -> A_bcast[i] });
+
+// Local rank-Kt update: C[m,n] += sum_k A_bcast[m,k] * B_bcast[k,n].
+// A_bcast is Mt-by-Kt column-major; B_bcast is Kt-by-Nt column-major;
+// C_tile is Mt-by-Nt column-major.
+fn local_gemm() void {
+  var n: u16 = 0;
+  while (n < Nt) : (n += 1) {
+    const c_off: u32 = @as(u32, n) * @as(u32, Mt);
+    // Point c_col_dsd at column n of C_tile.
+    c_col_dsd = @set_dsd_base_addr(c_col_dsd, @ptrcast([*]f32, &C_tile[c_off]));
+    var k: u16 = 0;
+    while (k < Kt) : (k += 1) {
+      const a_off: u32 = @as(u32, k) * @as(u32, Mt);
+      // Point a_col_dsd at column k of A_bcast.
+      a_col_dsd = @set_dsd_base_addr(a_col_dsd, @ptrcast([*]f32, &A_bcast[a_off]));
+      const bkn: f32 = B_bcast[@as(u32, n) * @as(u32, Kt) + @as(u32, k)];
+      @fmacs(c_col_dsd, c_col_dsd, a_col_dsd, bkn);
+    }
+  }
+}
+
+fn finish() void {
+  timestamp.get_timestamp(&tsc_end_buf);
+  timestamp.disable_tsc();
+  @activate(EXIT);
+}
+
+fn do_step() void {
+  if (step == P) {
+    finish();
+    return;
+  }
+  // If this PE is the x-root (column == step), stage its A tile for broadcast.
+  if (px == step) {
+    var src = @get_dsd(mem1d_dsd, .{ .tensor_access = |i|{Mt*Kt} -> A_tile[i] });
+    var dst = @get_dsd(mem1d_dsd, .{ .tensor_access = |i|{Mt*Kt} -> A_bcast[i] });
+    @fmovs(dst, src);
+  }
+  // Broadcast A along x (rows), root column = step.
+  mpi_x.broadcast(step, @ptrcast([*]u32, &A_bcast), Mt*Kt, x_task_id);
+}
+
+task x_done() void {
+  // If this PE is the y-root (row == step), stage its B tile for broadcast.
+  if (py == step) {
+    var src = @get_dsd(mem1d_dsd, .{ .tensor_access = |i|{Kt*Nt} -> B_tile[i] });
+    var dst = @get_dsd(mem1d_dsd, .{ .tensor_access = |i|{Kt*Nt} -> B_bcast[i] });
+    @fmovs(dst, src);
+  }
+  // Broadcast B along y (columns), root row = step.
+  mpi_y.broadcast(step, @ptrcast([*]u32, &B_bcast), Kt*Nt, y_task_id);
+}
+
+task y_done() void {
+  local_gemm();
+  step += 1;
+  do_step();
+}
+
+fn compute() void {
+    timestamp.enable_tsc();
+    timestamp.get_timestamp(&tsc_start_buf);
+
+    // === SLOT: KERNEL_CALL ===
+    px = layout_mod.get_x_coord();
+    py = layout_mod.get_y_coord();
+    step = 0;
+
+    // Zero C accumulator (beta = 0).
+    var c_all = @get_dsd(mem1d_dsd, .{ .tensor_access = |i|{Mt*Nt} -> C_tile[i] });
+    @fmovs(c_all, 0.0);
+
+    mpi_x.init();
+    mpi_y.init();
+
+    do_step();
+    // Timing/teardown continue asynchronously; f_exit records timestamps.
+    return;
+}
+
+task f_exit() void {
+    f_toc_dev();
+    sys_mod.unblock_cmd_stream();
+}
+
+// Host-callable entrypoints required by run.py / layout.csl.
+fn main() void {
+  f_tic_dev();
+    compute();
+}
+
+fn f_enable_timer() void {
+    timestamp.enable_tsc();
+    sys_mod.unblock_cmd_stream();
+}
+
+// Device-internal timing window (protocol device_internal_v2): start stamp at
+// entry-point start, end stamp immediately before the host is unblocked.
+var tsc_window_open: bool = false;
+fn f_tic_dev() void {
+  if (!tsc_window_open) {
+    tsc_window_open = true;
+    timestamp.get_timestamp(&tsc_start_buf);
+  }
+}
+fn f_toc_dev() void {
+  timestamp.get_timestamp(&tsc_end_buf);
+}
+
+fn f_tic() void {
+    timestamp.get_timestamp(&tsc_start_buf);
+    sys_mod.unblock_cmd_stream();
+}
+
+fn f_toc() void {
+    timestamp.get_timestamp(&tsc_end_buf);
+    sys_mod.unblock_cmd_stream();
+}
+
+fn f_memcpy_timestamps() void {
+    var i: u16 = 0;
+    while (i < 3) : (i += 1) {
+        time_buf_u16[i]     = tsc_start_buf[i];
+        time_buf_u16[3 + i] = tsc_end_buf[i];
+    }
+    sys_mod.unblock_cmd_stream();
+}
+
+comptime {
+    @bind_local_task(f_exit, EXIT);
+    @bind_local_task(x_done, x_task_id);
+    @bind_local_task(y_done, y_task_id);
+
+    // === SLOT: EXPORT_SYMBOLS ===
+    @export_symbol(ptr_A, "A");
+    @export_symbol(ptr_B, "B");
+    @export_symbol(ptr_C, "C");
+    @export_symbol(ptr_time_buf_u16, "time_buf_u16");
+
+    @export_symbol(main);
+    @export_symbol(f_tic);
+    @export_symbol(f_toc);
+    @export_symbol(f_memcpy_timestamps);
+    @export_symbol(f_enable_timer);
+}

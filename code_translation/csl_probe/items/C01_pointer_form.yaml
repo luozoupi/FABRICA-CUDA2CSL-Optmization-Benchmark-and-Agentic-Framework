@@ -1,0 +1,47 @@
+id: C01_pointer_form
+group: C_repair
+defect_family: pointer to array written as &arr[0] (a *T, not [*]T)
+prompt: "This Cerebras CSL file (SDK 2.10, WSE-3, one PE) does not compile. The layout is fixed and correct. Fix\n\
+  `pe.csl` with the SMALLEST change that makes it compile and keeps its behaviour (y[i] = a*x[i] + y[i],\nthen y\
+  \ doubled). Reply with ONLY the complete corrected pe.csl in one ```csl fenced block.\n\nCompiler output:\n```\n\
+  ./pe.csl:13:21: error: expected type '[*]f32', got: '*f32'\nvar ptr_y: [*]f32 = &y_array[0];\n               \
+  \     ^\n./layout.csl:9:3: error: semantic error in module imported here\n  @set_tile_code(0, 0, \"pe.csl\", .{\
+  \ .memcpy_params = memcpy_params, .n = n });\n  ^\n```\n\nFixed layout.csl:\n```csl\n// FIXED layout (do not change):\
+  \ one PE; the host writes x and a, reads y.\nparam n: u16;\n\nconst memcpy = @import_module(\"<memcpy/get_params>\"\
+  , .{ .width = 1, .height = 1 });\n\nlayout {\n  @set_rectangle(1, 1);\n  const memcpy_params = memcpy.get_params(0);\n\
+  \  @set_tile_code(0, 0, \"pe.csl\", .{ .memcpy_params = memcpy_params, .n = n });\n  @export_name(\"x\", [*]f32,\
+  \ true);\n  @export_name(\"a\", [*]f32, true);\n  @export_name(\"y\", [*]f32, true);\n  @export_name(\"compute\"\
+  , fn()void);\n}\n```\n\npe.csl:\n```csl\n// toy: y[i] = a[0] * x[i] + y[i], then one bulk scale of y by 2 through\
+  \ a DSD\nparam memcpy_params;\nparam n: u16;\n\nconst DONE: local_task_id = @get_local_task_id(13);\nconst memcpy_mod\
+  \ = @import_module(\"<memcpy/memcpy>\", memcpy_params);\n\nvar x_array = @zeros([n]f32);\nvar a_array = @zeros([1]f32);\n\
+  var y_array = @zeros([n]f32);\nvar ptr_x: [*]f32 = &x_array;\nvar ptr_a: [*]f32 = &a_array;\nvar ptr_y: [*]f32\
+  \ = &y_array[0];\n\nconst y_dsd = @get_dsd(mem1d_dsd, .{ .tensor_access = |i|{n} -> y_array[i] });\n\nfn compute()\
+  \ void {\n  const a: f32 = a_array[0];\n  var i: u16 = 0;\n  while (i < n) : (i += 1) {\n    y_array[i] = a *\
+  \ x_array[i] + y_array[i];\n  }\n  @fmuls(y_dsd, y_dsd, 2.0);\n  @activate(DONE);\n}\n\ntask f_done() void {\n\
+  \  memcpy_mod.unblock_cmd_stream();\n}\n\ncomptime {\n  @bind_local_task(f_done, DONE);\n  @export_symbol(ptr_x,\
+  \ \"x\");\n  @export_symbol(ptr_a, \"a\");\n  @export_symbol(ptr_y, \"y\");\n  @export_symbol(compute);\n}\n```"
+fixed_layout: "// FIXED layout (do not change): one PE; the host writes x and a, reads y.\nparam n: u16;\n\nconst\
+  \ memcpy = @import_module(\"<memcpy/get_params>\", .{ .width = 1, .height = 1 });\n\nlayout {\n  @set_rectangle(1,\
+  \ 1);\n  const memcpy_params = memcpy.get_params(0);\n  @set_tile_code(0, 0, \"pe.csl\", .{ .memcpy_params = memcpy_params,\
+  \ .n = n });\n  @export_name(\"x\", [*]f32, true);\n  @export_name(\"a\", [*]f32, true);\n  @export_name(\"y\"\
+  , [*]f32, true);\n  @export_name(\"compute\", fn()void);\n}\n"
+defective_pe: "// toy: y[i] = a[0] * x[i] + y[i], then one bulk scale of y by 2 through a DSD\nparam memcpy_params;\n\
+  param n: u16;\n\nconst DONE: local_task_id = @get_local_task_id(13);\nconst memcpy_mod = @import_module(\"<memcpy/memcpy>\"\
+  , memcpy_params);\n\nvar x_array = @zeros([n]f32);\nvar a_array = @zeros([1]f32);\nvar y_array = @zeros([n]f32);\n\
+  var ptr_x: [*]f32 = &x_array;\nvar ptr_a: [*]f32 = &a_array;\nvar ptr_y: [*]f32 = &y_array[0];\n\nconst y_dsd\
+  \ = @get_dsd(mem1d_dsd, .{ .tensor_access = |i|{n} -> y_array[i] });\n\nfn compute() void {\n  const a: f32 =\
+  \ a_array[0];\n  var i: u16 = 0;\n  while (i < n) : (i += 1) {\n    y_array[i] = a * x_array[i] + y_array[i];\n\
+  \  }\n  @fmuls(y_dsd, y_dsd, 2.0);\n  @activate(DONE);\n}\n\ntask f_done() void {\n  memcpy_mod.unblock_cmd_stream();\n\
+  }\n\ncomptime {\n  @bind_local_task(f_done, DONE);\n  @export_symbol(ptr_x, \"x\");\n  @export_symbol(ptr_a, \"\
+  a\");\n  @export_symbol(ptr_y, \"y\");\n  @export_symbol(compute);\n}\n"
+compiler_stderr: "./pe.csl:13:21: error: expected type '[*]f32', got: '*f32'\nvar ptr_y: [*]f32 = &y_array[0];\n\
+  \                    ^\n./layout.csl:9:3: error: semantic error in module imported here\n  @set_tile_code(0, 0,\
+  \ \"pe.csl\", .{ .memcpy_params = memcpy_params, .n = n });\n  ^"
+compile_params:
+  n: 64
+cslc_args: --arch=wse3 --fabric-dims=8,3 --fabric-offsets=4,1 --memcpy --channels=1 --width-west-buf=0 --width-east-buf=0
+expected:
+  compiles: true
+  max_changed_lines: 6
+scoring: compiles and at most 6 changed lines vs the defective file
+source_citation: synthetic defect in a probe-only toy program; family from error_gotcha_retrieval / error_family

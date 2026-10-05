@@ -1,0 +1,284 @@
+// RowParallel-Softmax compute file (pe.csl)
+// 2-PE distributed numerically-stable softmax.
+// Phases: (1) local max, (2) allreduce(max) + local exp, (3) allreduce(sum),
+//         (4) local normalize. Reductions use scalar fabric wavelets on the
+//         four pre-routed colors (8..11) from layout.csl.
+//
+// Deviation note: DESIGN.md mentions collectives_2d, but with P=2 and scalar
+// payloads a direct one-hop send/recv on the layout's pre-wired colors is
+// simpler and lower-latency (as the DESIGN's own section 5 acknowledges).
+
+param memcpy_params: comptime_struct;
+param n_per_pe: u16;
+param px: i16;
+param width: i16;
+param C_MAX_REDUCE: color;
+param C_MAX_BCAST: color;
+param C_SUM_REDUCE: color;
+param C_SUM_BCAST: color;
+
+const N: i16 = @as(i16, n_per_pe);
+
+const FLT_MAX: f32 = 3.402823466e38;
+
+const sys_mod = @import_module("<memcpy/memcpy>", memcpy_params);
+const timestamp = @import_module("<time>");
+const math_mod = @import_module("<math>");
+
+// -------------------------------------------------------------------------
+// Host-visible buffers
+// -------------------------------------------------------------------------
+var x = @zeros([n_per_pe]f32);
+var out = @zeros([n_per_pe]f32);
+var maxmin_time = @zeros([3]f32);
+
+var ptr_x: [*]f32 = &x;
+var ptr_out: [*]f32 = &out;
+var ptr_maxmin_time: [*]f32 = &maxmin_time;
+
+// Timestamp buffers
+var tscStartBuffer = @zeros([timestamp.tsc_size_words]u16);
+var tscEndBuffer   = @zeros([timestamp.tsc_size_words]u16);
+
+// -------------------------------------------------------------------------
+// Scalars
+// -------------------------------------------------------------------------
+var local_max: f32 = -FLT_MAX;
+var global_max: f32 = -FLT_MAX;
+var local_sum: f32 = 0.0;
+var global_sum: f32 = 0.0;
+
+// staging for one-word receives
+var recv_scalar = @zeros([1]f32);
+
+// -------------------------------------------------------------------------
+// Queues / microthreads for fabric scalar transfers
+// -------------------------------------------------------------------------
+const max_red_iq: input_queue  = @get_input_queue(2);
+const max_red_oq: output_queue = @get_output_queue(2);
+const max_bc_iq:  input_queue  = @get_input_queue(3);
+const max_bc_oq:  output_queue = @get_output_queue(3);
+const sum_red_iq: input_queue  = @get_input_queue(4);
+const sum_red_oq: output_queue = @get_output_queue(4);
+const sum_bc_iq:  input_queue  = @get_input_queue(5);
+const sum_bc_oq:  output_queue = @get_output_queue(5);
+
+const ut_send = @get_ut_id(0);
+
+// -------------------------------------------------------------------------
+// Task IDs
+// -------------------------------------------------------------------------
+const start_task:      local_task_id = @get_local_task_id(8);
+const max_recv_task:   local_task_id = @get_local_task_id(9);
+const exp_task:        local_task_id = @get_local_task_id(10);
+const sum_recv_task:   local_task_id = @get_local_task_id(11);
+const div_task:        local_task_id = @get_local_task_id(12);
+const finish_task:     local_task_id = @get_local_task_id(13);
+
+// -------------------------------------------------------------------------
+// DSDs over local buffers
+// -------------------------------------------------------------------------
+const x_dsd = @get_dsd(mem1d_dsd, .{ .tensor_access = |i|{n_per_pe} -> x[i] });
+const out_dsd = @get_dsd(mem1d_dsd, .{ .tensor_access = |i|{n_per_pe} -> out[i] });
+
+// Fabric DSDs (scalar, extent 1) for reductions/broadcasts.
+// MAX_REDUCE: PE1 tx west, PE0 rx from east.
+const max_red_out = @get_dsd(fabout_dsd, .{
+  .extent = 1, .fabric_color = C_MAX_REDUCE, .output_queue = max_red_oq
+});
+const max_red_in = @get_dsd(fabin_dsd, .{
+  .extent = 1, .fabric_color = C_MAX_REDUCE, .input_queue = max_red_iq
+});
+
+// MAX_BCAST: PE0 tx east, PE1 rx from west.
+const max_bc_out = @get_dsd(fabout_dsd, .{
+  .extent = 1, .fabric_color = C_MAX_BCAST, .output_queue = max_bc_oq
+});
+const max_bc_in = @get_dsd(fabin_dsd, .{
+  .extent = 1, .fabric_color = C_MAX_BCAST, .input_queue = max_bc_iq
+});
+
+// SUM_REDUCE
+const sum_red_out = @get_dsd(fabout_dsd, .{
+  .extent = 1, .fabric_color = C_SUM_REDUCE, .output_queue = sum_red_oq
+});
+const sum_red_in = @get_dsd(fabin_dsd, .{
+  .extent = 1, .fabric_color = C_SUM_REDUCE, .input_queue = sum_red_iq
+});
+
+// SUM_BCAST
+const sum_bc_out = @get_dsd(fabout_dsd, .{
+  .extent = 1, .fabric_color = C_SUM_BCAST, .output_queue = sum_bc_oq
+});
+const sum_bc_in = @get_dsd(fabin_dsd, .{
+  .extent = 1, .fabric_color = C_SUM_BCAST, .input_queue = sum_bc_iq
+});
+
+// scalar staging DSDs
+var scal_buf = @zeros([1]f32);
+const scal_dsd = @get_dsd(mem1d_dsd, .{ .tensor_access = |i|{1} -> scal_buf[i] });
+const recv_dsd = @get_dsd(mem1d_dsd, .{ .tensor_access = |i|{1} -> recv_scalar[i] });
+
+// -------------------------------------------------------------------------
+// Local compute helpers
+// -------------------------------------------------------------------------
+fn math_exp(v: f32) f32 {
+  return math_mod.exp(v);
+}
+
+fn compute_local_max() void {
+  local_max = -FLT_MAX;
+  for (@range(i16, N)) |i| {
+    const v = x[i];
+    if (v > local_max) { local_max = v; }
+  }
+}
+
+fn compute_exp_and_localsum() void {
+  local_sum = 0.0;
+  for (@range(i16, N)) |i| {
+    const e = math_exp(x[i] - global_max);
+    out[i] = e;
+    local_sum += e;
+  }
+}
+
+fn normalize() void {
+  const inv = 1.0 / global_sum;
+  for (@range(i16, N)) |i| {
+    out[i] = out[i] * inv;
+  }
+}
+
+// -------------------------------------------------------------------------
+// Entrypoint
+// -------------------------------------------------------------------------
+fn compute() void {
+  timestamp.enable_tsc();
+  timestamp.get_timestamp(&tscStartBuffer);
+  @activate(start_task);
+}
+
+// Phase 1: local max, then reduce.
+task start_task_fn() void {
+  compute_local_max();
+
+  if (px == 1) {
+    // PE1: send local max west, then wait for global max bcast on max_bc_in.
+    scal_buf[0] = local_max;
+    @fmovs(max_red_out, scal_dsd, .{ .async = true, .ut_id = ut_send });
+    @fmovs(recv_dsd, max_bc_in, .{ .async = true, .activate = max_recv_task });
+  } else {
+    // PE0: receive PE1's local max from east, combine, broadcast east.
+    @fmovs(recv_dsd, max_red_in, .{ .async = true, .activate = max_recv_task });
+  }
+}
+
+// Handles arrival of a max-related scalar.
+task max_recv_fn() void {
+  if (px == 0) {
+    // symmetric combine: correct whether the true max is on PE0 or PE1
+    global_max = if (recv_scalar[0] > local_max) recv_scalar[0] else local_max;
+    scal_buf[0] = global_max;
+    @fmovs(max_bc_out, scal_dsd, .{ .async = true, .ut_id = ut_send,
+                                    .activate = exp_task });
+  } else {
+    // PE1: recv_scalar holds global_max from west.
+    global_max = recv_scalar[0];
+    @activate(exp_task);
+  }
+}
+
+// Phase 3: local exp + local sum, then reduce sum.
+task exp_fn() void {
+  compute_exp_and_localsum();
+
+  if (px == 1) {
+    scal_buf[0] = local_sum;
+    @fmovs(sum_red_out, scal_dsd, .{ .async = true, .ut_id = ut_send });
+    @fmovs(recv_dsd, sum_bc_in, .{ .async = true, .activate = sum_recv_task });
+  } else {
+    @fmovs(recv_dsd, sum_red_in, .{ .async = true, .activate = sum_recv_task });
+  }
+}
+
+// Handles arrival of a sum-related scalar.
+task sum_recv_fn() void {
+  if (px == 0) {
+    global_sum = local_sum + recv_scalar[0];
+    scal_buf[0] = global_sum;
+    @fmovs(sum_bc_out, scal_dsd, .{ .async = true, .ut_id = ut_send,
+                                    .activate = div_task });
+  } else {
+    global_sum = recv_scalar[0];
+    @activate(div_task);
+  }
+}
+
+// Phase 5: normalize.
+task div_fn() void {
+  normalize();
+  @activate(finish_task);
+}
+
+task finish_fn() void {
+  // Record end timestamp and pack start/end (3 u16 each) into maxmin_time's
+  // 3 f32 words. Host decodes 3 f32 -> 6 u16: words[0:3]=start, words[3:6]=end.
+  timestamp.get_timestamp(&tscEndBuffer);
+  const p16: [*]u16 = @ptrcast([*]u16, &maxmin_time);
+  p16[0] = tscStartBuffer[0];
+  p16[1] = tscStartBuffer[1];
+  p16[2] = tscStartBuffer[2];
+  p16[3] = tscEndBuffer[0];
+  p16[4] = tscEndBuffer[1];
+  p16[5] = tscEndBuffer[2];
+
+  sys_mod.unblock_cmd_stream();
+}
+
+// -------------------------------------------------------------------------
+// tic / toc (canonical bodies)
+// -------------------------------------------------------------------------
+fn f_tic() void {
+  timestamp.get_timestamp(&tscStartBuffer);
+  sys_mod.unblock_cmd_stream();
+}
+fn f_toc() void {
+  timestamp.get_timestamp(&tscEndBuffer);
+  sys_mod.unblock_cmd_stream();
+}
+
+// -------------------------------------------------------------------------
+// Comptime: queue init, task binding, symbol export
+// -------------------------------------------------------------------------
+comptime {
+  if (@is_arch("wse3")) {
+    if (px == 1) {
+      @initialize_queue(max_red_oq, .{ .color = C_MAX_REDUCE });
+      @initialize_queue(max_bc_iq,  .{ .color = C_MAX_BCAST });
+      @initialize_queue(sum_red_oq, .{ .color = C_SUM_REDUCE });
+      @initialize_queue(sum_bc_iq,  .{ .color = C_SUM_BCAST });
+    } else {
+      @initialize_queue(max_red_iq, .{ .color = C_MAX_REDUCE });
+      @initialize_queue(max_bc_oq,  .{ .color = C_MAX_BCAST });
+      @initialize_queue(sum_red_iq, .{ .color = C_SUM_REDUCE });
+      @initialize_queue(sum_bc_oq,  .{ .color = C_SUM_BCAST });
+    }
+  }
+}
+
+comptime {
+  @bind_local_task(start_task_fn, start_task);
+  @bind_local_task(max_recv_fn,   max_recv_task);
+  @bind_local_task(exp_fn,        exp_task);
+  @bind_local_task(sum_recv_fn,   sum_recv_task);
+  @bind_local_task(div_fn,        div_task);
+  @bind_local_task(finish_fn,     finish_task);
+}
+
+comptime {
+  @export_symbol(ptr_x, "x");
+  @export_symbol(ptr_out, "out");
+  @export_symbol(ptr_maxmin_time, "maxmin_time");
+  @export_symbol(compute, "compute");
+}

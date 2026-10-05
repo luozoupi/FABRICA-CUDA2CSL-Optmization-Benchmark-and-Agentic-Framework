@@ -1,0 +1,4 @@
+constantness
+
+the single factor changed relative to `base`:
+c[0] = 3 + 7;

@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
 """Ingest the Cerebras CSL tutorials corpus into a JSONL knowledge base.
 
-Walks ~/csl-examples/tutorials/, chunks each tutorial's README and
+Walks /home/USER/csl-examples/tutorials/, chunks each tutorial's README and
 CSL source files deterministically, and emits a JSONL corpus that
 CerebrasKnowledgeBase (knowledge/cerebras_docs.py) can load.
 
 Idempotent: chunk_ids are hash-stable, the list is sorted before write, so
 re-running produces byte-identical output. The Cerebras-authored benchmark
-implementations (~/csl-examples/benchmarks/) are EXPLICITLY EXCLUDED
+implementations (/home/USER/csl-examples/benchmarks/) are EXPLICITLY EXCLUDED
 to avoid teaching the agent answers to its own test set.
 
 Each chunk gets one of three section labels for per-agent dispatch:
@@ -43,7 +43,7 @@ from knowledge.cerebras_docs import KnowledgeChunk, infer_topic_tags
 # Configuration
 # ---------------------------------------------------------------------------
 
-DEFAULT_ROOT = Path.home() / "csl-examples" / "tutorials"
+DEFAULT_ROOT = Path("/home/USER/csl-examples/tutorials")
 DEFAULT_OUT = _THIS_DIR / "data" / "cerebras_tutorials.jsonl"
 DEFAULT_MANIFEST = _THIS_DIR / "data" / "tutorials_manifest.json"
 

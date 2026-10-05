@@ -1,0 +1,81 @@
+{
+  "id": "descriptor-n64",
+  "M": 32,
+  "K": 64,
+  "N": 64,
+  "capacity": 1024,
+  "variant": "descriptor",
+  "inputs": [
+    {
+      "id": "32x64-uniform2-n64",
+      "family": "uniform2",
+      "input_hashes": {
+        "col_idx.bin": "00fd07e471de330d1028d894f84cbd0bbb3d3750c8125b9a6325cead29bebcd6",
+        "expected.bin": "e82dfd098813252e61cf8ada39bfed1daa05384f93c196600ea5834b32de4612",
+        "row_ptr.bin": "b56d9c68a813e26243280fabb22e1b7462a097213d99d0cd5088f5f29cafa04d",
+        "B.bin": "5c87191d34b65ff84dc974efa170831d468205dc473e7e649050aa7c14b8ab5b",
+        "values.bin": "5c19b15b965d037b7da841602c34b19eeaa7ffbc8602e52a4fe8b84ff83dec2e"
+      }
+    },
+    {
+      "id": "32x64-uniform8-n64",
+      "family": "uniform8",
+      "input_hashes": {
+        "col_idx.bin": "cf3d832fff10be2c1499ee99d9a71d7ee16ce8963dec7a508a4ad99597f0af0e",
+        "expected.bin": "3e99713f17dd7eccf417a0541b4df888a06b86a363a6c2e25942dfea618cf8aa",
+        "row_ptr.bin": "bbaf4b51f7ac63c32f48216edfa5f6d875c10322c5e4654d265577d98caaa82d",
+        "B.bin": "5c87191d34b65ff84dc974efa170831d468205dc473e7e649050aa7c14b8ab5b",
+        "values.bin": "0da4a8d7776e3bebad8d94a54c7c10a34be308c128049254832a40de3d9bfc82"
+      }
+    },
+    {
+      "id": "32x64-uniform32-n64",
+      "family": "uniform32",
+      "input_hashes": {
+        "col_idx.bin": "d5d44d308092f44b8dc9835a80c76ed3eb995f93e95c2ea3353dd091b4a2a7ba",
+        "expected.bin": "6f4913496c74d5bca5ce4325f1237509a57f77acbd47d7dfc044fa9049e45ba7",
+        "row_ptr.bin": "0259c76ad780c85b154c2f6455a39c393b2de6255146b5a6f78d35d714338ee2",
+        "B.bin": "5c87191d34b65ff84dc974efa170831d468205dc473e7e649050aa7c14b8ab5b",
+        "values.bin": "cdb4e426023956791a1d88ccc0e95d267ca6a2bab0fa822be60afb37f7bc9ccc"
+      }
+    },
+    {
+      "id": "32x64-banded8-n64",
+      "family": "banded8",
+      "input_hashes": {
+        "col_idx.bin": "cb770dc92e12e50c95f340799188dec51c85986c421432bc7b625f933cd54c04",
+        "expected.bin": "bf34c043fc94244193cbef921024f1aac59e762051dc047b4bf1e1bb851d2d7c",
+        "row_ptr.bin": "bbaf4b51f7ac63c32f48216edfa5f6d875c10322c5e4654d265577d98caaa82d",
+        "B.bin": "5c87191d34b65ff84dc974efa170831d468205dc473e7e649050aa7c14b8ab5b",
+        "values.bin": "4b9379391a0f9be047e17f391ac0bd12b22dd64a7dc17bf1ba0e3c876bd32db7"
+      }
+    },
+    {
+      "id": "32x64-block8-n64",
+      "family": "block8",
+      "input_hashes": {
+        "col_idx.bin": "99edfb8e177e3356000c3483262adb33260fb2d3b8ee51745f8f338d21ee6e90",
+        "expected.bin": "0046d54e11ba990c4252584b9c864fcafc0668d717b2dc05d7879a3af8347529",
+        "row_ptr.bin": "bbaf4b51f7ac63c32f48216edfa5f6d875c10322c5e4654d265577d98caaa82d",
+        "B.bin": "5c87191d34b65ff84dc974efa170831d468205dc473e7e649050aa7c14b8ab5b",
+        "values.bin": "f40480dcd3069d5d58fff629060398ba6924f54f89f5f3b6a33dbb4a7646f00f"
+      }
+    },
+    {
+      "id": "32x64-skew8-n64",
+      "family": "skew8",
+      "input_hashes": {
+        "col_idx.bin": "c650d505f0404e2145d9187f1904265461dfda07412e44cf1ca588ad9dee149a",
+        "expected.bin": "ba787061b4fda9cf0960dfe72919d00a0fe42af6ffd53aa979c29c0ebb94808d",
+        "row_ptr.bin": "82327906b0edd8b6075e17dae7634c2a6d0f6f8763b0e522c18590c717411f9f",
+        "B.bin": "5c87191d34b65ff84dc974efa170831d468205dc473e7e649050aa7c14b8ab5b",
+        "values.bin": "beff77f58a1d944563117c35408ac435215c957391ef2b19a14426e12fca2663"
+      }
+    }
+  ],
+  "source_hashes": {
+    "pe.csl": "64bb89f542ecc33bbca80d073e6b386f9314d62f2c096b369187508351cb1cbd",
+    "layout.csl": "33f30692f28910ce81e48bafac4132ece5492c195cc6f7a65da943e5099e38d8",
+    "host.py": "1db7c71e9e24552bfba177da91266f247ae676e23f6a141f16af8e74b2b95e35"
+  }
+}

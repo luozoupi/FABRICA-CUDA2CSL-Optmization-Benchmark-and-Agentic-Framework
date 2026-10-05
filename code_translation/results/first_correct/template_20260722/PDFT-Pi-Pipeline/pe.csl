@@ -1,0 +1,112 @@
+param memcpy_params: comptime_struct;
+// === SLOT: EXTRA_PARAMS ===
+param ngrid: u16;
+param ncas: u16;
+
+const EXIT: local_task_id = @get_local_task_id(9);
+const sys_mod = @import_module("<memcpy/memcpy>", memcpy_params);
+
+// === SLOT: EXTRA_IMPORTS ===
+// (no extra imports needed)
+
+const timestamp = @import_module("<time>");
+var tsc_start_buf = @zeros([timestamp.tsc_size_words]u16);
+var tsc_end_buf   = @zeros([timestamp.tsc_size_words]u16);
+var timer_buf = @zeros([3]f32);
+var ptr_timer_buf: [*]f32 = &timer_buf;
+
+// === SLOT: DATA_BUFFERS ===
+const ncas2: u16 = ncas * ncas;
+
+// Inputs (replicated per PE)
+var mo_grid = @zeros([ngrid * ncas]f32);      // [ngrid][ncas]
+var cascm2  = @zeros([ncas2 * ncas2]f32);     // [ncas2][ncas2]
+// Output
+var Pi      = @zeros([ngrid]f32);             // [ngrid]
+
+// Per-grid-point scratch (fused pipeline)
+var gridkern = @zeros([ncas2]f32);
+var buf      = @zeros([ncas2]f32);
+
+var ptr_mo_grid: [*]f32 = &mo_grid;
+var ptr_cascm2:  [*]f32 = &cascm2;
+var ptr_Pi:      [*]f32 = &Pi;
+
+// === SLOT: KERNEL_FUNCTION ===
+fn pdft_pipeline() void {
+    var g: u16 = 0;
+    while (g < ngrid) : (g += 1) {
+        const mo_base: u16 = g * ncas;
+
+        // ---- Stage 1: gridkern[j*ncas+k] = mo[j] * mo[k] (outer product) ----
+        var j: u16 = 0;
+        while (j < ncas) : (j += 1) {
+            const mj: f32 = mo_grid[mo_base + j];
+            var k: u16 = 0;
+            while (k < ncas) : (k += 1) {
+                gridkern[j * ncas + k] = mj * mo_grid[mo_base + k];
+            }
+        }
+
+        // ---- Stage 2: buf[b] = sum_a gridkern[a] * cascm2[a*ncas2 + b] ----
+        var b: u16 = 0;
+        while (b < ncas2) : (b += 1) {
+            buf[b] = 0.0;
+        }
+        var a: u16 = 0;
+        while (a < ncas2) : (a += 1) {
+            const gka: f32 = gridkern[a];
+            const w_base: u16 = a * ncas2;
+            b = 0;
+            while (b < ncas2) : (b += 1) {
+                buf[b] += gka * cascm2[w_base + b];
+            }
+        }
+
+        // ---- Stage 3: Pi[g] = sum_b gridkern[b] * buf[b] ----
+        var s: f32 = 0.0;
+        b = 0;
+        while (b < ncas2) : (b += 1) {
+            s += gridkern[b] * buf[b];
+        }
+        Pi[g] = s;
+    }
+}
+
+fn compute() void {
+    timestamp.enable_tsc();
+    timestamp.get_timestamp(&tsc_start_buf);
+
+    // === SLOT: KERNEL_CALL ===
+    pdft_pipeline();
+
+    timestamp.get_timestamp(&tsc_end_buf);
+    timestamp.disable_tsc();
+
+    var lo_: u16 = 0;
+    var hi_: u16 = 0;
+    lo_ = tsc_start_buf[0]; hi_ = tsc_start_buf[1];
+    timer_buf[0] = @bitcast(f32, (@as(u32, hi_) << @as(u16, 16)) | @as(u32, lo_));
+    lo_ = tsc_start_buf[2]; hi_ = tsc_end_buf[0];
+    timer_buf[1] = @bitcast(f32, (@as(u32, hi_) << @as(u16, 16)) | @as(u32, lo_));
+    lo_ = tsc_end_buf[1]; hi_ = tsc_end_buf[2];
+    timer_buf[2] = @bitcast(f32, (@as(u32, hi_) << @as(u16, 16)) | @as(u32, lo_));
+
+    @activate(EXIT);
+}
+
+task f_exit() void {
+    sys_mod.unblock_cmd_stream();
+}
+
+comptime {
+    @bind_local_task(f_exit, EXIT);
+
+    // === SLOT: EXPORT_SYMBOLS ===
+    @export_symbol(ptr_mo_grid, "mo_grid");
+    @export_symbol(ptr_cascm2, "cascm2");
+    @export_symbol(ptr_Pi, "Pi");
+
+    @export_symbol(ptr_timer_buf, "maxmin_time");
+    @export_symbol(compute);
+}

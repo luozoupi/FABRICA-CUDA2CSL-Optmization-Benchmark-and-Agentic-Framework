@@ -1,19 +1,74 @@
-# FABRICA knowledge corpus
+# xkernel Knowledge Base
 
-`data/` contains the version-aware SDK release-note, tutorial, skill, and diagnostic
-corpora consumed by `code_translation/csl_knowledge_base.py`. These JSONL files are
-runtime inputs, not generated benchmark logs. Their manifests preserve provenance.
+This folder stores local, version-aware documentation knowledge for the
+CUDA->CSL translation and optimization agents.
 
-`explored/**/ingest/` preserves promoted experience chunks and general optimization
-rules. Raw run ledgers are omitted. The framework keeps exploration knowledge
-separate from benchmark translation prompts; see [the knowledge boundaries](../code_translation/FIREWALL.md).
-Optional corpus paths now resolve relative to this checkout.
+## Current Corpus
 
-```bash
-python knowledge/cerebras_docs.py --target-sdk 1.4.0 "WSE-3 DSD queues memcpy"
+- Cerebras SDK cumulative release notes
+- Source: `https://sdk.cerebras.net/sdk-release-notes/sdk-rel-notes-cumulative`
+- Preferred source format:
+  `https://sdk.cerebras.net/_sources/sdk-release-notes/sdk-rel-notes-cumulative.rst.txt`
+
+The processed corpus is written to:
+
+```text
+knowledge/data/cerebras_sdk_docs.jsonl
+knowledge/data/manifest.json
+knowledge/raw/sdk-rel-notes-cumulative.rst.txt
 ```
 
-The crawler and ingestion scripts can refresh source material when needed; inspect
-`--help` and provide local upstream source paths explicitly. Changing a corpus changes
-the evaluation context. Local paths in retained provenance were made portable during
-source packaging; source URLs and original source-content hashes were retained.
+`knowledge/data/*.jsonl` (about 1 MB) **is tracked in git** so that every
+checkout retrieves from the same corpus the published sweeps used. Provenance:
+`cerebras_sdk_docs.jsonl` is chunked from the public SDK release notes;
+`cerebras_tutorials*.jsonl` from the Apache-2.0 `csl-examples` repository;
+`cerebras_skills.jsonl` from the CSL standard-library documentation;
+`cerebras_debug_techniques.jsonl` is hand-written. Refresh only when the target
+SDK changes, and commit the regenerated files together with their manifests.
+
+## Refresh
+
+Run through the outbound proxy of your site if one is required (ALCF example):
+
+```bash
+export HTTPS_PROXY=http://proxy.alcf.anl.gov:3128
+export HTTP_PROXY=http://proxy.alcf.anl.gov:3128
+export https_proxy=http://proxy.alcf.anl.gov:3128
+export http_proxy=http://proxy.alcf.anl.gov:3128
+
+source xkernel_env.sh && xk_python knowledge/crawl_cerebras_docs.py
+```
+
+## Query
+
+```bash
+source xkernel_env.sh && xk_python knowledge/cerebras_docs.py \
+    --target-sdk 1.4.0 \
+    "WSE-3 DSD queues memcpy deprecations"
+```
+
+Use `--include-future` to retrieve newer release-note entries, for example SDK
+2.10 migration notes. Without it, retrieval filters out chunks newer than the
+target SDK so agents do not use features unsupported by the local SDK.
+
+## Agent Interface
+
+`code_translation/csl_knowledge_base.py` loads this corpus automatically when
+`knowledge/data/cerebras_sdk_docs.jsonl` exists. It injects a small compatibility
+context into CUDA->CSL translation and optimization prompts.
+
+Relevant environment variables:
+
+```text
+XKERNEL_TARGET_SDK=1.4.0
+XKERNEL_TARGET_ARCH=wse3
+```
+
+`cuda2csl.py` also exposes:
+
+```bash
+--target-sdk 1.4.0
+--arch wse3
+```
+
+Keep `--target-sdk 1.4.0` unless `XKERNEL_SDK_ROOT` points at a different SDK release.

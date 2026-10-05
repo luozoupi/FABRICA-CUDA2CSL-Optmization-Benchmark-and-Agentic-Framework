@@ -1,0 +1,25 @@
+id: D12_memcpy_width
+group: D_api
+prompt: 'Answer this Cerebras CSL / WSE-3 question with the single letter of the correct option, then one sentence
+  of justification.
+
+
+  The host wants to read a `[6]u16` timestamp buffer from a PE with memcpy_d2h. What is required?
+
+
+  A) nothing special; any width works with MEMCPY_32BIT
+
+  B) use data_type MEMCPY_16BIT (memcpy moves 16- or 32-bit elements, matched to the symbol type)
+
+  C) 16-bit arrays cannot be copied
+
+  D) declare the buffer as f32 on the PE'
+choices:
+- A) nothing special; any width works with MEMCPY_32BIT
+- B) use data_type MEMCPY_16BIT (memcpy moves 16- or 32-bit elements, matched to the symbol type)
+- C) 16-bit arrays cannot be copied
+- D) declare the buffer as f32 on the PE
+expected:
+  choice: B
+scoring: first standalone letter A-D in the reply equals the key
+source_citation: knowledge/explored SpMM failure 'should be 32 bit'; GEMV Collectives 2D run.py

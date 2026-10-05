@@ -1,0 +1,6 @@
+result use
+
+the single factor changed relative to `base`:
+var t: i16 = a[0] + b[0];
+  c[0] = t;
+  c[1] = t + b[1];

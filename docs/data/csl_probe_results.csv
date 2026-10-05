@@ -1,0 +1,193 @@
+model,id,group,score,detail
+gpt-5.6-luna,A01_saxpy,A_syntax,0,./pe.csl:7:28: error: Unexpected character at this location
+gpt-5.6-luna,A02_sum_reduce,A_syntax,0,./pe.csl:12:1: error: Unexpected character at this location
+gpt-5.6-luna,A03_row_sums,A_syntax,0,./pe.csl:15:8: error: Unexpected character at this location
+gpt-5.6-luna,A04_csr_spmv,A_syntax,0,./pe.csl:15:1: error: Unexpected character at this location
+gpt-5.6-luna,A05_relu,A_syntax,0,./pe.csl:8:28: error: Unexpected character at this location
+gpt-5.6-luna,A06_prefix_sum,A_syntax,0,./pe.csl:10:1: error: Unexpected character at this location
+gpt-5.6-luna,A07_max_reduce,A_syntax,0,./pe.csl:10:1: error: Unexpected character at this location
+gpt-5.6-luna,A08_dot,A_syntax,0,./pe.csl:11:1: error: Unexpected character at this location
+gpt-5.6-luna,A09_strided_copy,A_syntax,0,./pe.csl:10:1: error: Unexpected character at this location
+gpt-5.6-luna,A10_gather,A_syntax,0,./pe.csl:12:1: error: Unexpected character at this location
+gpt-5.6-luna,A11_scatter_add,A_syntax,0,./pe.csl:13:1: error: Unexpected character at this location
+gpt-5.6-luna,A12_task_chain,A_syntax,0,./pe.csl:15:1: error: Unexpected character at this location
+gpt-5.6-luna,B01_strided_fmovs,B_semantics,1,"want=[1.0, 3.0, 5.0, 7.0] got=[1.0, 3.0, 5.0, 7.0] via=first_line"
+gpt-5.6-luna,B02_increment_offset,B_semantics,1,"want=[50.0, 60.0, 70.0] got=[50.0, 60.0, 70.0] via=first_line"
+gpt-5.6-luna,B03_set_length,B_semantics,1,want=[3.0] got=[3.0] via=first_line
+gpt-5.6-luna,B04_u16_wrap,B_semantics,1,"want=[0.0, 3.0] got=[0.0, 3.0] via=first_line"
+gpt-5.6-luna,B05_i16_compare,B_semantics,1,want=[6.0] got=[6.0] via=first_line
+gpt-5.6-luna,B06_map_callback,B_semantics,0,"want=[1.0, 4.0, 9.0, 16.0] got=[0.0, 0.0, 0.0, 0.0] via=first_line"
+gpt-5.6-luna,B07_activation_order,B_semantics,1,"want=[1.0, 2.0] got=[1.0, 2.0] via=first_line"
+gpt-5.6-luna,B08_fmach_h,B_semantics,0,"want=[3.0, 5.0, 7.0, 9.0] got=[3.0, 5.0, 9.0, 17.0] via=first_line"
+gpt-5.6-luna,B09_fadds_register_documented,B_semantics,1,want=[15.0] got=[15.0] via=first_line
+gpt-5.6-luna,B10_fmacs_scalar,B_semantics,1,"want=[12.0, 14.0, 16.0] got=[12.0, 14.0, 16.0] via=first_line"
+gpt-5.6-luna,B11_range_count,B_semantics,1,want=[8.0] got=[8.0] via=first_line
+gpt-5.6-luna,B12_hazard_reality,B_semantics,1,got=B key=B
+gpt-5.6-luna,C01_pointer_form,C_repair,1,compiled; changed_lines=1
+gpt-5.6-luna,C02_export_mutability,C_repair,1,compiled; changed_lines=1
+gpt-5.6-luna,C03_undeclared_identifier,C_repair,1,compiled; changed_lines=1
+gpt-5.6-luna,C04_missing_semicolon,C_repair,1,compiled; changed_lines=1
+gpt-5.6-luna,C05_reserved_queue,C_repair,1,compiled; changed_lines=6
+gpt-5.6-luna,C06_task_id_band,C_repair,1,compiled; changed_lines=1
+gpt-5.6-luna,C07_misspelled_builtin,C_repair,1,compiled; changed_lines=1
+gpt-5.6-luna,C08_dsd_arity,C_repair,1,compiled; changed_lines=1
+gpt-5.6-luna,C09_bad_import,C_repair,1,compiled; changed_lines=1
+gpt-5.6-luna,C10_tensor_access_missing,C_repair,0,./pe.csl:15:48: error: unknown builtin @sizeof
+gpt-5.6-luna,C11_type_mismatch,C_repair,1,compiled; changed_lines=1
+gpt-5.6-luna,C12_comptime_struct_removed,C_repair,0,./pe.csl:2:22: error: use of undeclared identifier
+gpt-5.6-luna,D01_local_task_ids,D_api,1,got=B key=B
+gpt-5.6-luna,D02_memcpy_queues,D_api,1,got=C key=C
+gpt-5.6-luna,D03_data_task_binding,D_api,1,got=B key=B
+gpt-5.6-luna,D04_color_range,D_api,1,got=C key=C
+gpt-5.6-luna,D05_rx_directions,D_api,0,got=B key=A
+gpt-5.6-luna,D06_export_mutability,D_api,1,got=A key=A
+gpt-5.6-luna,D07_fadds_forms,D_api,1,got=B key=B
+gpt-5.6-luna,D08_tensor_access,D_api,1,got=A key=A
+gpt-5.6-luna,D09_increment_dsd_offset,D_api,1,got=B key=B
+gpt-5.6-luna,D10_comptime_struct,D_api,0,got=A key=B
+gpt-5.6-luna,D11_microthreads,D_api,1,got=B key=B
+gpt-5.6-luna,D12_memcpy_width,D_api,1,got=B key=B
+claude-opus-4-8,A01_saxpy,A_syntax,0,./layout.csl:13:16: error: name already exported
+claude-opus-4-8,A02_sum_reduce,A_syntax,1,compiled
+claude-opus-4-8,A03_row_sums,A_syntax,0,/cb/toolchains/cslang/rel-sdk-2.10.0/202604012315-1813-1394a6ea/csl-libs/memcpy/memcpy.csl:35:1: error: only 'var' and 'extern const' variables may be uninitialized
+claude-opus-4-8,A04_csr_spmv,A_syntax,1,compiled
+claude-opus-4-8,A05_relu,A_syntax,1,compiled
+claude-opus-4-8,A06_prefix_sum,A_syntax,1,compiled
+claude-opus-4-8,A07_max_reduce,A_syntax,1,compiled
+claude-opus-4-8,A08_dot,A_syntax,1,compiled
+claude-opus-4-8,A09_strided_copy,A_syntax,1,compiled
+claude-opus-4-8,A10_gather,A_syntax,1,compiled
+claude-opus-4-8,A11_scatter_add,A_syntax,1,compiled
+claude-opus-4-8,A12_task_chain,A_syntax,1,compiled
+claude-opus-4-8,B01_strided_fmovs,B_semantics,1,"want=[1.0, 3.0, 5.0, 7.0] got=[1.0, 3.0, 5.0, 7.0] via=first_line"
+claude-opus-4-8,B02_increment_offset,B_semantics,1,"want=[50.0, 60.0, 70.0] got=[50.0, 60.0, 70.0] via=first_line"
+claude-opus-4-8,B03_set_length,B_semantics,1,want=[3.0] got=[3.0] via=first_line
+claude-opus-4-8,B04_u16_wrap,B_semantics,1,"want=[0.0, 3.0] got=[0.0, 3.0] via=first_line"
+claude-opus-4-8,B05_i16_compare,B_semantics,1,want=[6.0] got=[6.0] via=first_line
+claude-opus-4-8,B06_map_callback,B_semantics,1,"want=[1.0, 4.0, 9.0, 16.0] got=[1.0, 4.0, 9.0, 16.0] via=first_line"
+claude-opus-4-8,B07_activation_order,B_semantics,1,"want=[1.0, 2.0] got=[1.0, 2.0] via=first_line"
+claude-opus-4-8,B08_fmach_h,B_semantics,1,"want=[3.0, 5.0, 7.0, 9.0] got=[3.0, 5.0, 7.0, 9.0] via=first_line"
+claude-opus-4-8,B09_fadds_register_documented,B_semantics,1,want=[15.0] got=[15.0] via=first_line
+claude-opus-4-8,B10_fmacs_scalar,B_semantics,1,"want=[12.0, 14.0, 16.0] got=[12.0, 14.0, 16.0] via=first_line"
+claude-opus-4-8,B11_range_count,B_semantics,1,want=[8.0] got=[8.0] via=first_line
+claude-opus-4-8,B12_hazard_reality,B_semantics,1,got=B key=B
+claude-opus-4-8,C01_pointer_form,C_repair,1,compiled; changed_lines=1
+claude-opus-4-8,C02_export_mutability,C_repair,1,compiled; changed_lines=1
+claude-opus-4-8,C03_undeclared_identifier,C_repair,1,compiled; changed_lines=1
+claude-opus-4-8,C04_missing_semicolon,C_repair,1,compiled; changed_lines=1
+claude-opus-4-8,C05_reserved_queue,C_repair,1,compiled; changed_lines=6
+claude-opus-4-8,C06_task_id_band,C_repair,1,compiled; changed_lines=1
+claude-opus-4-8,C07_misspelled_builtin,C_repair,1,compiled; changed_lines=1
+claude-opus-4-8,C08_dsd_arity,C_repair,1,compiled; changed_lines=1
+claude-opus-4-8,C09_bad_import,C_repair,1,compiled; changed_lines=1
+claude-opus-4-8,C10_tensor_access_missing,C_repair,0,./pe.csl:15:59: error: struct has unrecognized field: base
+claude-opus-4-8,C11_type_mismatch,C_repair,1,compiled; changed_lines=1
+claude-opus-4-8,C12_comptime_struct_removed,C_repair,0,./pe.csl:2:22: error: use of undeclared identifier
+claude-opus-4-8,D01_local_task_ids,D_api,1,got=B key=B
+claude-opus-4-8,D02_memcpy_queues,D_api,1,got=C key=C
+claude-opus-4-8,D03_data_task_binding,D_api,1,got=B key=B
+claude-opus-4-8,D04_color_range,D_api,1,got=C key=C
+claude-opus-4-8,D05_rx_directions,D_api,1,got=A key=A
+claude-opus-4-8,D06_export_mutability,D_api,1,got=A key=A
+claude-opus-4-8,D07_fadds_forms,D_api,1,got=B key=B
+claude-opus-4-8,D08_tensor_access,D_api,1,got=A key=A
+claude-opus-4-8,D09_increment_dsd_offset,D_api,1,got=B key=B
+claude-opus-4-8,D10_comptime_struct,D_api,0,got=A key=B
+claude-opus-4-8,D11_microthreads,D_api,1,got=B key=B
+claude-opus-4-8,D12_memcpy_width,D_api,1,got=B key=B
+claude-haiku-4-5-20251001,A01_saxpy,A_syntax,0,./pe.csl:15:1: error: Unexpected character at this location
+claude-haiku-4-5-20251001,A02_sum_reduce,A_syntax,0,./pe.csl:7:26: error: Unexpected character at this location
+claude-haiku-4-5-20251001,A03_row_sums,A_syntax,0,./pe.csl:15:1: error: Unexpected character at this location
+claude-haiku-4-5-20251001,A04_csr_spmv,A_syntax,0,./pe.csl:18:1: error: Unexpected character at this location
+claude-haiku-4-5-20251001,A05_relu,A_syntax,0,./pe.csl:7:26: error: Unexpected character at this location
+claude-haiku-4-5-20251001,A06_prefix_sum,A_syntax,0,./pe.csl:6:26: error: Unexpected character at this location
+claude-haiku-4-5-20251001,A07_max_reduce,A_syntax,0,./pe.csl:16:1: error: Unexpected character at this location
+claude-haiku-4-5-20251001,A08_dot,A_syntax,0,./pe.csl:8:26: error: Unexpected character at this location
+claude-haiku-4-5-20251001,A09_strided_copy,A_syntax,0,./pe.csl:7:24: error: Unexpected character at this location
+claude-haiku-4-5-20251001,A10_gather,A_syntax,0,./pe.csl:15:1: error: Unexpected character at this location
+claude-haiku-4-5-20251001,A11_scatter_add,A_syntax,0,./pe.csl:13:1: error: Unexpected character at this location
+claude-haiku-4-5-20251001,A12_task_chain,A_syntax,0,./pe.csl:10:1: error: Unexpected character at this location
+claude-haiku-4-5-20251001,B01_strided_fmovs,B_semantics,1,"want=[1.0, 3.0, 5.0, 7.0] got=[1.0, 3.0, 5.0, 7.0] via=first_line"
+claude-haiku-4-5-20251001,B02_increment_offset,B_semantics,1,"want=[50.0, 60.0, 70.0] got=[50.0, 60.0, 70.0] via=first_line"
+claude-haiku-4-5-20251001,B03_set_length,B_semantics,1,want=[3.0] got=[3.0] via=first_line
+claude-haiku-4-5-20251001,B04_u16_wrap,B_semantics,1,"want=[0.0, 3.0] got=[0.0, 3.0] via=first_line"
+claude-haiku-4-5-20251001,B05_i16_compare,B_semantics,1,want=[6.0] got=[6.0] via=first_line
+claude-haiku-4-5-20251001,B06_map_callback,B_semantics,1,"want=[1.0, 4.0, 9.0, 16.0] got=[1.0, 4.0, 9.0, 16.0] via=first_line"
+claude-haiku-4-5-20251001,B07_activation_order,B_semantics,1,"want=[1.0, 2.0] got=[1.0, 2.0] via=first_line"
+claude-haiku-4-5-20251001,B08_fmach_h,B_semantics,1,"want=[3.0, 5.0, 7.0, 9.0] got=[3.0, 5.0, 7.0, 9.0] via=first_line"
+claude-haiku-4-5-20251001,B09_fadds_register_documented,B_semantics,1,want=[15.0] got=[15.0] via=first_line
+claude-haiku-4-5-20251001,B10_fmacs_scalar,B_semantics,0,"want=[12.0, 14.0, 16.0] got=[120.0, 120.0, 120.0] via=first_line"
+claude-haiku-4-5-20251001,B11_range_count,B_semantics,0,want=[8.0] got=[6.0] via=first_line
+claude-haiku-4-5-20251001,B12_hazard_reality,B_semantics,1,got=B key=B
+claude-haiku-4-5-20251001,C01_pointer_form,C_repair,0,"./pe.csl:11:21: error: expected type '[*]f32', got: '*f32'"
+claude-haiku-4-5-20251001,C02_export_mutability,C_repair,1,compiled; changed_lines=1
+claude-haiku-4-5-20251001,C03_undeclared_identifier,C_repair,1,compiled; changed_lines=1
+claude-haiku-4-5-20251001,C04_missing_semicolon,C_repair,1,compiled; changed_lines=1
+claude-haiku-4-5-20251001,C05_reserved_queue,C_repair,1,compiled; changed_lines=6
+claude-haiku-4-5-20251001,C06_task_id_band,C_repair,1,compiled; changed_lines=1
+claude-haiku-4-5-20251001,C07_misspelled_builtin,C_repair,1,compiled; changed_lines=1
+claude-haiku-4-5-20251001,C08_dsd_arity,C_repair,1,compiled; changed_lines=1
+claude-haiku-4-5-20251001,C09_bad_import,C_repair,1,compiled; changed_lines=1
+claude-haiku-4-5-20251001,C10_tensor_access_missing,C_repair,0,./pe.csl:15:57: error: only comptime-known variables can be used in comptime expressions
+claude-haiku-4-5-20251001,C11_type_mismatch,C_repair,1,compiled; changed_lines=1
+claude-haiku-4-5-20251001,C12_comptime_struct_removed,C_repair,1,compiled; changed_lines=1
+claude-haiku-4-5-20251001,D01_local_task_ids,D_api,1,got=B key=B
+claude-haiku-4-5-20251001,D02_memcpy_queues,D_api,1,got=C key=C
+claude-haiku-4-5-20251001,D03_data_task_binding,D_api,1,got=B key=B
+claude-haiku-4-5-20251001,D04_color_range,D_api,1,got=C key=C
+claude-haiku-4-5-20251001,D05_rx_directions,D_api,0,got=B key=A
+claude-haiku-4-5-20251001,D06_export_mutability,D_api,1,got=A key=A
+claude-haiku-4-5-20251001,D07_fadds_forms,D_api,1,got=B key=B
+claude-haiku-4-5-20251001,D08_tensor_access,D_api,0,got=C key=A
+claude-haiku-4-5-20251001,D09_increment_dsd_offset,D_api,1,got=B key=B
+claude-haiku-4-5-20251001,D10_comptime_struct,D_api,1,got=B key=B
+claude-haiku-4-5-20251001,D11_microthreads,D_api,1,got=B key=B
+claude-haiku-4-5-20251001,D12_memcpy_width,D_api,1,got=B key=B
+gpt-4.1,A01_saxpy,A_syntax,0,./pe.csl:4:1: error: Unexpected character at this location
+gpt-4.1,A02_sum_reduce,A_syntax,0,./pe.csl:1:1: error: Unexpected character at this location
+gpt-4.1,A03_row_sums,A_syntax,0,./pe.csl:1:1: error: Unexpected character at this location
+gpt-4.1,A04_csr_spmv,A_syntax,0,./pe.csl:1:1: error: Unexpected character at this location
+gpt-4.1,A05_relu,A_syntax,0,./pe.csl:1:1: error: Unexpected character at this location
+gpt-4.1,A06_prefix_sum,A_syntax,0,./pe.csl:1:1: error: Unexpected character at this location
+gpt-4.1,A07_max_reduce,A_syntax,0,./pe.csl:1:1: error: Unexpected character at this location
+gpt-4.1,A08_dot,A_syntax,0,./pe.csl:1:1: error: Unexpected character at this location
+gpt-4.1,A09_strided_copy,A_syntax,0,./pe.csl:1:1: error: Unexpected character at this location
+gpt-4.1,A10_gather,A_syntax,0,./pe.csl:1:1: error: Unexpected character at this location
+gpt-4.1,A11_scatter_add,A_syntax,0,./pe.csl:6:1: error: Unexpected character at this location
+gpt-4.1,A12_task_chain,A_syntax,0,./pe.csl:6:1: error: Unexpected character at this location
+gpt-4.1,B01_strided_fmovs,B_semantics,1,"want=[1.0, 3.0, 5.0, 7.0] got=[1.0, 3.0, 5.0, 7.0] via=first_line"
+gpt-4.1,B02_increment_offset,B_semantics,1,"want=[50.0, 60.0, 70.0] got=[50.0, 60.0, 70.0] via=first_line"
+gpt-4.1,B03_set_length,B_semantics,1,want=[3.0] got=[3.0] via=first_line
+gpt-4.1,B04_u16_wrap,B_semantics,1,"want=[0.0, 3.0] got=[0.0, 3.0] via=first_line"
+gpt-4.1,B05_i16_compare,B_semantics,1,want=[6.0] got=[6.0] via=first_line
+gpt-4.1,B06_map_callback,B_semantics,1,"want=[1.0, 4.0, 9.0, 16.0] got=[1.0, 4.0, 9.0, 16.0] via=first_line"
+gpt-4.1,B07_activation_order,B_semantics,1,"want=[1.0, 2.0] got=[1.0, 2.0] via=first_line"
+gpt-4.1,B08_fmach_h,B_semantics,1,"want=[3.0, 5.0, 7.0, 9.0] got=[3.0, 5.0, 7.0, 9.0] via=first_line"
+gpt-4.1,B09_fadds_register_documented,B_semantics,1,want=[15.0] got=[15.0] via=first_line
+gpt-4.1,B10_fmacs_scalar,B_semantics,0,"want=[12.0, 14.0, 16.0] got=[21.0, 14.0, 16.0] via=first_line"
+gpt-4.1,B11_range_count,B_semantics,1,want=[8.0] got=[8.0] via=first_line
+gpt-4.1,B12_hazard_reality,B_semantics,1,got=B key=B
+gpt-4.1,C01_pointer_form,C_repair,1,compiled; changed_lines=1
+gpt-4.1,C02_export_mutability,C_repair,1,compiled; changed_lines=1
+gpt-4.1,C03_undeclared_identifier,C_repair,1,compiled; changed_lines=1
+gpt-4.1,C04_missing_semicolon,C_repair,1,compiled; changed_lines=1
+gpt-4.1,C05_reserved_queue,C_repair,1,compiled; changed_lines=1
+gpt-4.1,C06_task_id_band,C_repair,1,compiled; changed_lines=1
+gpt-4.1,C07_misspelled_builtin,C_repair,0,./pe.csl:23:3: error: unknown builtin @scale
+gpt-4.1,C08_dsd_arity,C_repair,0,./pe.csl:23:3: error: operand types do not match expectations
+gpt-4.1,C09_bad_import,C_repair,0,./pe.csl:28:13: error: module does not contain the requested symbol
+gpt-4.1,C10_tensor_access_missing,C_repair,0,./pe.csl:24:54: error: struct has unrecognized field: base
+gpt-4.1,C11_type_mismatch,C_repair,1,compiled; changed_lines=1
+gpt-4.1,C12_comptime_struct_removed,C_repair,0,"./layout.csl:9:54: error: expected type 'type', got: 'struct {first_pe:bool, last_pe:bool, MEMCPYH2D_1:i16, MEMCPYH2D_2:i16, MEMCPYH2D_3:i16, MEMCPYH2D_4:i16, MEMCPYD2H_1:i16, MEMCPYD2H_2:i16, MEMCPYD"
+gpt-4.1,D01_local_task_ids,D_api,1,got=B key=B
+gpt-4.1,D02_memcpy_queues,D_api,1,got=C key=C
+gpt-4.1,D03_data_task_binding,D_api,1,got=B key=B
+gpt-4.1,D04_color_range,D_api,1,got=C key=C
+gpt-4.1,D05_rx_directions,D_api,0,got=C key=A
+gpt-4.1,D06_export_mutability,D_api,1,got=A key=A
+gpt-4.1,D07_fadds_forms,D_api,1,got=B key=B
+gpt-4.1,D08_tensor_access,D_api,0,got=C key=A
+gpt-4.1,D09_increment_dsd_offset,D_api,1,got=B key=B
+gpt-4.1,D10_comptime_struct,D_api,1,got=B key=B
+gpt-4.1,D11_microthreads,D_api,1,got=B key=B
+gpt-4.1,D12_memcpy_width,D_api,1,got=B key=B

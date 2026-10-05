@@ -1,0 +1,22 @@
+{
+  "created_utc": "2026-09-24T20:52:39.016458+00:00",
+  "reason": "Correct reversed SDK memcpy_d2h arguments in new host harness; both original runs failed before any result validation. No CSL, ELF, input, numerical contract, or selection change.",
+  "archived_original": "/home/USER/spgemm-followup-20260924/development-failures/host-copy-order",
+  "original_registration_sha256": "6243628d5f9345eb8e26651ebbef35cf145691ce11ea3b4fd311e008d89dd219",
+  "changes": [
+    {
+      "case": "full_row",
+      "original_host_sha256": "b8b363a1c967776be1354db9254c8c9b8413573c86564aef27550caa542b8535",
+      "corrected_host_sha256": "e40b13b4b7fdc78d533e278964a145a40b5dfb370a9738eb13943d0e92557692",
+      "original_result_sha256": "a8a23cb859845f538c7836c23ecd383c6a0345134beb0d4cc60d58ed5be8ad24",
+      "unchanged_elf_sha256": "cc86c2d432b6b9e4c1bd386bf892d24aa3cb85206b12e6c8def925bc341d5e06"
+    },
+    {
+      "case": "tile4",
+      "original_host_sha256": "b8b363a1c967776be1354db9254c8c9b8413573c86564aef27550caa542b8535",
+      "corrected_host_sha256": "e40b13b4b7fdc78d533e278964a145a40b5dfb370a9738eb13943d0e92557692",
+      "original_result_sha256": "40e3b338a99cbdeda4388ed2319c68629b28329ba1e0deab4a03bd763fe9db33",
+      "unchanged_elf_sha256": "8117b32838822eb1c13d8ccb23378f62fd532452088667e67b64d6c0f61357a9"
+    }
+  ]
+}

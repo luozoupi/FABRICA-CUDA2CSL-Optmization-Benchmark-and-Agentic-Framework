@@ -1,0 +1,1236 @@
+[
+  {
+    "kind": "strong",
+    "kernel": "SpMV-RowBlock",
+    "application_pes": 1,
+    "params": {
+      "P": 1,
+      "nrows_pe": 1024,
+      "ncols": 1024,
+      "max_nnz_pe": 8621,
+      "iters": 1,
+      "structure_id": 0
+    },
+    "global_rows": 1024,
+    "global_output_width": 1,
+    "source_sha256": "e224447a94eb55658258572891f537565a3aa7af84947b009f1a833d45f3edb4",
+    "status": "fail",
+    "failure_reason": "command_failed",
+    "failure_category": null,
+    "cycles": null,
+    "samples": [],
+    "success_marker": false,
+    "heldout_passed": false,
+    "heldout_seed_echoes": [],
+    "timing_scope": "existing reference device window; cross-PE clock audit required",
+    "framework_scaffold": "equal-row strip and vector broadcast",
+    "elapsed_ms": 3352.072,
+    "diagnostic_steps": [
+      {
+        "step": "compile",
+        "status": "fail",
+        "returncode": 1
+      }
+    ]
+  },
+  {
+    "kind": "strong",
+    "kernel": "SpMV-RowBlock",
+    "application_pes": 4,
+    "params": {
+      "P": 4,
+      "nrows_pe": 256,
+      "ncols": 1024,
+      "max_nnz_pe": 2299,
+      "iters": 1,
+      "structure_id": 0
+    },
+    "global_rows": 1024,
+    "global_output_width": 1,
+    "source_sha256": "e224447a94eb55658258572891f537565a3aa7af84947b009f1a833d45f3edb4",
+    "status": "pass",
+    "failure_reason": null,
+    "failure_category": null,
+    "cycles": 37330,
+    "samples": [
+      37330,
+      37330,
+      37330
+    ],
+    "success_marker": true,
+    "heldout_passed": true,
+    "heldout_seed_echoes": [
+      {
+        "seed": 101,
+        "echo": 101
+      },
+      {
+        "seed": 202,
+        "echo": 202
+      },
+      {
+        "seed": 303,
+        "echo": 303
+      }
+    ],
+    "timing_scope": "existing reference device window; cross-PE clock audit required",
+    "framework_scaffold": "equal-row strip and vector broadcast",
+    "elapsed_ms": 24733.332,
+    "diagnostic_steps": [
+      {
+        "step": "compile",
+        "status": "pass",
+        "returncode": 0
+      },
+      {
+        "step": "run",
+        "status": "pass",
+        "returncode": 0
+      },
+      {
+        "step": "run",
+        "status": "pass",
+        "returncode": 0
+      },
+      {
+        "step": "run",
+        "status": "pass",
+        "returncode": 0
+      }
+    ]
+  },
+  {
+    "kind": "strong",
+    "kernel": "SpMV-RowBlock",
+    "application_pes": 16,
+    "params": {
+      "P": 16,
+      "nrows_pe": 64,
+      "ncols": 1024,
+      "max_nnz_pe": 761,
+      "iters": 1,
+      "structure_id": 0
+    },
+    "global_rows": 1024,
+    "global_output_width": 1,
+    "source_sha256": "e224447a94eb55658258572891f537565a3aa7af84947b009f1a833d45f3edb4",
+    "status": "pass",
+    "failure_reason": null,
+    "failure_category": null,
+    "cycles": 12718,
+    "samples": [
+      12718,
+      12718,
+      12718
+    ],
+    "success_marker": true,
+    "heldout_passed": true,
+    "heldout_seed_echoes": [
+      {
+        "seed": 101,
+        "echo": 101
+      },
+      {
+        "seed": 202,
+        "echo": 202
+      },
+      {
+        "seed": 303,
+        "echo": 303
+      }
+    ],
+    "timing_scope": "existing reference device window; cross-PE clock audit required",
+    "framework_scaffold": "equal-row strip and vector broadcast",
+    "elapsed_ms": 23077.44,
+    "diagnostic_steps": [
+      {
+        "step": "compile",
+        "status": "pass",
+        "returncode": 0
+      },
+      {
+        "step": "run",
+        "status": "pass",
+        "returncode": 0
+      },
+      {
+        "step": "run",
+        "status": "pass",
+        "returncode": 0
+      },
+      {
+        "step": "run",
+        "status": "pass",
+        "returncode": 0
+      }
+    ]
+  },
+  {
+    "kind": "strong",
+    "kernel": "SpMV-RowBlock",
+    "application_pes": 64,
+    "params": {
+      "P": 64,
+      "nrows_pe": 16,
+      "ncols": 1024,
+      "max_nnz_pe": 276,
+      "iters": 1,
+      "structure_id": 0
+    },
+    "global_rows": 1024,
+    "global_output_width": 1,
+    "source_sha256": "e224447a94eb55658258572891f537565a3aa7af84947b009f1a833d45f3edb4",
+    "status": "pass",
+    "failure_reason": null,
+    "failure_category": null,
+    "cycles": 4178,
+    "samples": [
+      4178,
+      4178,
+      4178
+    ],
+    "success_marker": true,
+    "heldout_passed": true,
+    "heldout_seed_echoes": [
+      {
+        "seed": 101,
+        "echo": 101
+      },
+      {
+        "seed": 202,
+        "echo": 202
+      },
+      {
+        "seed": 303,
+        "echo": 303
+      }
+    ],
+    "timing_scope": "existing reference device window; cross-PE clock audit required",
+    "framework_scaffold": "equal-row strip and vector broadcast",
+    "elapsed_ms": 29542.069,
+    "diagnostic_steps": [
+      {
+        "step": "compile",
+        "status": "pass",
+        "returncode": 0
+      },
+      {
+        "step": "run",
+        "status": "pass",
+        "returncode": 0
+      },
+      {
+        "step": "run",
+        "status": "pass",
+        "returncode": 0
+      },
+      {
+        "step": "run",
+        "status": "pass",
+        "returncode": 0
+      }
+    ]
+  },
+  {
+    "kind": "strong",
+    "kernel": "SpMV-RowBlock",
+    "application_pes": 256,
+    "params": {
+      "P": 256,
+      "nrows_pe": 4,
+      "ncols": 1024,
+      "max_nnz_pe": 91,
+      "iters": 1,
+      "structure_id": 0
+    },
+    "global_rows": 1024,
+    "global_output_width": 1,
+    "source_sha256": "e224447a94eb55658258572891f537565a3aa7af84947b009f1a833d45f3edb4",
+    "status": "pass",
+    "failure_reason": null,
+    "failure_category": null,
+    "cycles": 1873,
+    "samples": [
+      1873,
+      1873,
+      1873
+    ],
+    "success_marker": true,
+    "heldout_passed": true,
+    "heldout_seed_echoes": [
+      {
+        "seed": 101,
+        "echo": 101
+      },
+      {
+        "seed": 202,
+        "echo": 202
+      },
+      {
+        "seed": 303,
+        "echo": 303
+      }
+    ],
+    "timing_scope": "existing reference device window; cross-PE clock audit required",
+    "framework_scaffold": "equal-row strip and vector broadcast",
+    "elapsed_ms": 72347.562,
+    "diagnostic_steps": [
+      {
+        "step": "compile",
+        "status": "pass",
+        "returncode": 0
+      },
+      {
+        "step": "run",
+        "status": "pass",
+        "returncode": 0
+      },
+      {
+        "step": "run",
+        "status": "pass",
+        "returncode": 0
+      },
+      {
+        "step": "run",
+        "status": "pass",
+        "returncode": 0
+      }
+    ]
+  },
+  {
+    "kind": "strong",
+    "kernel": "SpMM-CSR-Dense",
+    "application_pes": 1,
+    "params": {
+      "P": 1,
+      "Mt": 256,
+      "K": 256,
+      "Nt": 16,
+      "max_nnz_pe": 2916,
+      "iters": 1,
+      "structure_id": 0
+    },
+    "global_rows": 256,
+    "global_output_width": 16,
+    "source_sha256": "dc574a2019f58fc68287a5cd7e1aa075db2d4711901dcd0b95a8afd17f2fb3db",
+    "status": "fail",
+    "failure_reason": "command_failed",
+    "failure_category": null,
+    "cycles": null,
+    "samples": [],
+    "success_marker": false,
+    "heldout_passed": false,
+    "heldout_seed_echoes": [],
+    "timing_scope": "existing reference device window; cross-PE clock audit required",
+    "framework_scaffold": "row/column tiles, host-preloaded replicated operands; no device communication",
+    "elapsed_ms": 3141.903,
+    "diagnostic_steps": [
+      {
+        "step": "compile",
+        "status": "fail",
+        "returncode": 1
+      }
+    ]
+  },
+  {
+    "kind": "strong",
+    "kernel": "SpMM-CSR-Dense",
+    "application_pes": 4,
+    "params": {
+      "P": 2,
+      "Mt": 128,
+      "K": 256,
+      "Nt": 8,
+      "max_nnz_pe": 1462,
+      "iters": 1,
+      "structure_id": 0
+    },
+    "global_rows": 256,
+    "global_output_width": 16,
+    "source_sha256": "dc574a2019f58fc68287a5cd7e1aa075db2d4711901dcd0b95a8afd17f2fb3db",
+    "status": "pass",
+    "failure_reason": null,
+    "failure_category": null,
+    "cycles": 106606,
+    "samples": [
+      106606,
+      106606,
+      106606
+    ],
+    "success_marker": true,
+    "heldout_passed": true,
+    "heldout_seed_echoes": [
+      {
+        "seed": 101,
+        "echo": 101
+      },
+      {
+        "seed": 202,
+        "echo": 202
+      },
+      {
+        "seed": 303,
+        "echo": 303
+      }
+    ],
+    "timing_scope": "existing reference device window; cross-PE clock audit required",
+    "framework_scaffold": "row/column tiles, host-preloaded replicated operands; no device communication",
+    "elapsed_ms": 58830.068,
+    "diagnostic_steps": [
+      {
+        "step": "compile",
+        "status": "pass",
+        "returncode": 0
+      },
+      {
+        "step": "run",
+        "status": "pass",
+        "returncode": 0
+      },
+      {
+        "step": "run",
+        "status": "pass",
+        "returncode": 0
+      },
+      {
+        "step": "run",
+        "status": "pass",
+        "returncode": 0
+      }
+    ]
+  },
+  {
+    "kind": "strong",
+    "kernel": "SpMM-CSR-Dense",
+    "application_pes": 16,
+    "params": {
+      "P": 4,
+      "Mt": 64,
+      "K": 256,
+      "Nt": 4,
+      "max_nnz_pe": 809,
+      "iters": 1,
+      "structure_id": 0
+    },
+    "global_rows": 256,
+    "global_output_width": 16,
+    "source_sha256": "dc574a2019f58fc68287a5cd7e1aa075db2d4711901dcd0b95a8afd17f2fb3db",
+    "status": "pass",
+    "failure_reason": null,
+    "failure_category": null,
+    "cycles": 29570,
+    "samples": [
+      29570,
+      29570,
+      29570
+    ],
+    "success_marker": true,
+    "heldout_passed": true,
+    "heldout_seed_echoes": [
+      {
+        "seed": 101,
+        "echo": 101
+      },
+      {
+        "seed": 202,
+        "echo": 202
+      },
+      {
+        "seed": 303,
+        "echo": 303
+      }
+    ],
+    "timing_scope": "existing reference device window; cross-PE clock audit required",
+    "framework_scaffold": "row/column tiles, host-preloaded replicated operands; no device communication",
+    "elapsed_ms": 44642.526,
+    "diagnostic_steps": [
+      {
+        "step": "compile",
+        "status": "pass",
+        "returncode": 0
+      },
+      {
+        "step": "run",
+        "status": "pass",
+        "returncode": 0
+      },
+      {
+        "step": "run",
+        "status": "pass",
+        "returncode": 0
+      },
+      {
+        "step": "run",
+        "status": "pass",
+        "returncode": 0
+      }
+    ]
+  },
+  {
+    "kind": "strong",
+    "kernel": "SpMM-CSR-Dense",
+    "application_pes": 64,
+    "params": {
+      "P": 8,
+      "Mt": 32,
+      "K": 256,
+      "Nt": 2,
+      "max_nnz_pe": 536,
+      "iters": 1,
+      "structure_id": 0
+    },
+    "global_rows": 256,
+    "global_output_width": 16,
+    "source_sha256": "dc574a2019f58fc68287a5cd7e1aa075db2d4711901dcd0b95a8afd17f2fb3db",
+    "status": "pass",
+    "failure_reason": null,
+    "failure_category": null,
+    "cycles": 6837,
+    "samples": [
+      6837,
+      6837,
+      6837
+    ],
+    "success_marker": true,
+    "heldout_passed": true,
+    "heldout_seed_echoes": [
+      {
+        "seed": 101,
+        "echo": 101
+      },
+      {
+        "seed": 202,
+        "echo": 202
+      },
+      {
+        "seed": 303,
+        "echo": 303
+      }
+    ],
+    "timing_scope": "existing reference device window; cross-PE clock audit required",
+    "framework_scaffold": "row/column tiles, host-preloaded replicated operands; no device communication",
+    "elapsed_ms": 54008.703,
+    "diagnostic_steps": [
+      {
+        "step": "compile",
+        "status": "pass",
+        "returncode": 0
+      },
+      {
+        "step": "run",
+        "status": "pass",
+        "returncode": 0
+      },
+      {
+        "step": "run",
+        "status": "pass",
+        "returncode": 0
+      },
+      {
+        "step": "run",
+        "status": "pass",
+        "returncode": 0
+      }
+    ]
+  },
+  {
+    "kind": "strong",
+    "kernel": "SpMM-CSR-Dense",
+    "application_pes": 256,
+    "params": {
+      "P": 16,
+      "Mt": 16,
+      "K": 256,
+      "Nt": 1,
+      "max_nnz_pe": 388,
+      "iters": 1,
+      "structure_id": 0
+    },
+    "global_rows": 256,
+    "global_output_width": 16,
+    "source_sha256": "dc574a2019f58fc68287a5cd7e1aa075db2d4711901dcd0b95a8afd17f2fb3db",
+    "status": "pass",
+    "failure_reason": null,
+    "failure_category": null,
+    "cycles": 2493,
+    "samples": [
+      2493,
+      2493,
+      2493
+    ],
+    "success_marker": true,
+    "heldout_passed": true,
+    "heldout_seed_echoes": [
+      {
+        "seed": 101,
+        "echo": 101
+      },
+      {
+        "seed": 202,
+        "echo": 202
+      },
+      {
+        "seed": 303,
+        "echo": 303
+      }
+    ],
+    "timing_scope": "existing reference device window; cross-PE clock audit required",
+    "framework_scaffold": "row/column tiles, host-preloaded replicated operands; no device communication",
+    "elapsed_ms": 170699.314,
+    "diagnostic_steps": [
+      {
+        "step": "compile",
+        "status": "pass",
+        "returncode": 0
+      },
+      {
+        "step": "run",
+        "status": "pass",
+        "returncode": 0
+      },
+      {
+        "step": "run",
+        "status": "pass",
+        "returncode": 0
+      },
+      {
+        "step": "run",
+        "status": "pass",
+        "returncode": 0
+      }
+    ]
+  },
+  {
+    "kind": "weak",
+    "kernel": "SpMV-RowBlock",
+    "application_pes": 1,
+    "params": {
+      "P": 1,
+      "nrows_pe": 32,
+      "ncols": 32,
+      "max_nnz_pe": 128,
+      "iters": 1,
+      "structure_id": 0
+    },
+    "global_rows": 32,
+    "global_output_width": 1,
+    "source_sha256": "e224447a94eb55658258572891f537565a3aa7af84947b009f1a833d45f3edb4",
+    "status": "pass",
+    "failure_reason": null,
+    "failure_category": null,
+    "cycles": 4513,
+    "samples": [
+      4513,
+      4513,
+      4513
+    ],
+    "success_marker": true,
+    "heldout_passed": true,
+    "heldout_seed_echoes": [
+      {
+        "seed": 101,
+        "echo": 101
+      },
+      {
+        "seed": 202,
+        "echo": 202
+      },
+      {
+        "seed": 303,
+        "echo": 303
+      }
+    ],
+    "timing_scope": "existing reference device window; cross-PE clock audit required",
+    "framework_scaffold": "equal-row strip and vector broadcast",
+    "elapsed_ms": 8292.784,
+    "diagnostic_steps": [
+      {
+        "step": "compile",
+        "status": "pass",
+        "returncode": 0
+      },
+      {
+        "step": "run",
+        "status": "pass",
+        "returncode": 0
+      },
+      {
+        "step": "run",
+        "status": "pass",
+        "returncode": 0
+      },
+      {
+        "step": "run",
+        "status": "pass",
+        "returncode": 0
+      }
+    ]
+  },
+  {
+    "kind": "weak",
+    "kernel": "SpMV-RowBlock",
+    "application_pes": 4,
+    "params": {
+      "P": 4,
+      "nrows_pe": 32,
+      "ncols": 128,
+      "max_nnz_pe": 128,
+      "iters": 1,
+      "structure_id": 0
+    },
+    "global_rows": 128,
+    "global_output_width": 1,
+    "source_sha256": "e224447a94eb55658258572891f537565a3aa7af84947b009f1a833d45f3edb4",
+    "status": "pass",
+    "failure_reason": null,
+    "failure_category": null,
+    "cycles": 4658,
+    "samples": [
+      4658,
+      4658,
+      4658
+    ],
+    "success_marker": true,
+    "heldout_passed": true,
+    "heldout_seed_echoes": [
+      {
+        "seed": 101,
+        "echo": 101
+      },
+      {
+        "seed": 202,
+        "echo": 202
+      },
+      {
+        "seed": 303,
+        "echo": 303
+      }
+    ],
+    "timing_scope": "existing reference device window; cross-PE clock audit required",
+    "framework_scaffold": "equal-row strip and vector broadcast",
+    "elapsed_ms": 9537.272,
+    "diagnostic_steps": [
+      {
+        "step": "compile",
+        "status": "pass",
+        "returncode": 0
+      },
+      {
+        "step": "run",
+        "status": "pass",
+        "returncode": 0
+      },
+      {
+        "step": "run",
+        "status": "pass",
+        "returncode": 0
+      },
+      {
+        "step": "run",
+        "status": "pass",
+        "returncode": 0
+      }
+    ]
+  },
+  {
+    "kind": "weak",
+    "kernel": "SpMV-RowBlock",
+    "application_pes": 16,
+    "params": {
+      "P": 16,
+      "nrows_pe": 32,
+      "ncols": 512,
+      "max_nnz_pe": 128,
+      "iters": 1,
+      "structure_id": 0
+    },
+    "global_rows": 512,
+    "global_output_width": 1,
+    "source_sha256": "e224447a94eb55658258572891f537565a3aa7af84947b009f1a833d45f3edb4",
+    "status": "pass",
+    "failure_reason": null,
+    "failure_category": null,
+    "cycles": 5064,
+    "samples": [
+      5064,
+      5064,
+      5064
+    ],
+    "success_marker": true,
+    "heldout_passed": true,
+    "heldout_seed_echoes": [
+      {
+        "seed": 101,
+        "echo": 101
+      },
+      {
+        "seed": 202,
+        "echo": 202
+      },
+      {
+        "seed": 303,
+        "echo": 303
+      }
+    ],
+    "timing_scope": "existing reference device window; cross-PE clock audit required",
+    "framework_scaffold": "equal-row strip and vector broadcast",
+    "elapsed_ms": 11656.909,
+    "diagnostic_steps": [
+      {
+        "step": "compile",
+        "status": "pass",
+        "returncode": 0
+      },
+      {
+        "step": "run",
+        "status": "pass",
+        "returncode": 0
+      },
+      {
+        "step": "run",
+        "status": "pass",
+        "returncode": 0
+      },
+      {
+        "step": "run",
+        "status": "pass",
+        "returncode": 0
+      }
+    ]
+  },
+  {
+    "kind": "weak",
+    "kernel": "SpMV-RowBlock",
+    "application_pes": 64,
+    "params": {
+      "P": 64,
+      "nrows_pe": 32,
+      "ncols": 2048,
+      "max_nnz_pe": 128,
+      "iters": 1,
+      "structure_id": 0
+    },
+    "global_rows": 2048,
+    "global_output_width": 1,
+    "source_sha256": "e224447a94eb55658258572891f537565a3aa7af84947b009f1a833d45f3edb4",
+    "status": "pass",
+    "failure_reason": null,
+    "failure_category": null,
+    "cycles": 6689,
+    "samples": [
+      6689,
+      6689,
+      6689
+    ],
+    "success_marker": true,
+    "heldout_passed": true,
+    "heldout_seed_echoes": [
+      {
+        "seed": 101,
+        "echo": 101
+      },
+      {
+        "seed": 202,
+        "echo": 202
+      },
+      {
+        "seed": 303,
+        "echo": 303
+      }
+    ],
+    "timing_scope": "existing reference device window; cross-PE clock audit required",
+    "framework_scaffold": "equal-row strip and vector broadcast",
+    "elapsed_ms": 27853.105,
+    "diagnostic_steps": [
+      {
+        "step": "compile",
+        "status": "pass",
+        "returncode": 0
+      },
+      {
+        "step": "run",
+        "status": "pass",
+        "returncode": 0
+      },
+      {
+        "step": "run",
+        "status": "pass",
+        "returncode": 0
+      },
+      {
+        "step": "run",
+        "status": "pass",
+        "returncode": 0
+      }
+    ]
+  },
+  {
+    "kind": "weak",
+    "kernel": "SpMV-RowBlock",
+    "application_pes": 256,
+    "params": {
+      "P": 256,
+      "nrows_pe": 32,
+      "ncols": 8192,
+      "max_nnz_pe": 128,
+      "iters": 1,
+      "structure_id": 0
+    },
+    "global_rows": 8192,
+    "global_output_width": 1,
+    "source_sha256": "e224447a94eb55658258572891f537565a3aa7af84947b009f1a833d45f3edb4",
+    "status": "pass",
+    "failure_reason": null,
+    "failure_category": null,
+    "cycles": 13093,
+    "samples": [
+      13093,
+      13093,
+      13093
+    ],
+    "success_marker": true,
+    "heldout_passed": true,
+    "heldout_seed_echoes": [
+      {
+        "seed": 101,
+        "echo": 101
+      },
+      {
+        "seed": 202,
+        "echo": 202
+      },
+      {
+        "seed": 303,
+        "echo": 303
+      }
+    ],
+    "timing_scope": "existing reference device window; cross-PE clock audit required",
+    "framework_scaffold": "equal-row strip and vector broadcast",
+    "elapsed_ms": 114025.374,
+    "diagnostic_steps": [
+      {
+        "step": "compile",
+        "status": "pass",
+        "returncode": 0
+      },
+      {
+        "step": "run",
+        "status": "pass",
+        "returncode": 0
+      },
+      {
+        "step": "run",
+        "status": "pass",
+        "returncode": 0
+      },
+      {
+        "step": "run",
+        "status": "pass",
+        "returncode": 0
+      }
+    ]
+  },
+  {
+    "kind": "weak",
+    "kernel": "SpMM-CSR-Dense",
+    "application_pes": 1,
+    "params": {
+      "P": 1,
+      "Mt": 128,
+      "K": 256,
+      "Nt": 8,
+      "max_nnz_pe": 512,
+      "iters": 1,
+      "structure_id": 0
+    },
+    "global_rows": 128,
+    "global_output_width": 8,
+    "source_sha256": "dc574a2019f58fc68287a5cd7e1aa075db2d4711901dcd0b95a8afd17f2fb3db",
+    "status": "pass",
+    "failure_reason": null,
+    "failure_category": null,
+    "cycles": 111520,
+    "samples": [
+      111520,
+      111520,
+      111520
+    ],
+    "success_marker": true,
+    "heldout_passed": true,
+    "heldout_seed_echoes": [
+      {
+        "seed": 101,
+        "echo": 101
+      },
+      {
+        "seed": 202,
+        "echo": 202
+      },
+      {
+        "seed": 303,
+        "echo": 303
+      }
+    ],
+    "timing_scope": "existing reference device window; cross-PE clock audit required",
+    "framework_scaffold": "row/column tiles, host-preloaded replicated operands; no device communication",
+    "elapsed_ms": 28617.232,
+    "diagnostic_steps": [
+      {
+        "step": "compile",
+        "status": "pass",
+        "returncode": 0
+      },
+      {
+        "step": "run",
+        "status": "pass",
+        "returncode": 0
+      },
+      {
+        "step": "run",
+        "status": "pass",
+        "returncode": 0
+      },
+      {
+        "step": "run",
+        "status": "pass",
+        "returncode": 0
+      }
+    ]
+  },
+  {
+    "kind": "weak",
+    "kernel": "SpMM-CSR-Dense",
+    "application_pes": 4,
+    "params": {
+      "P": 2,
+      "Mt": 128,
+      "K": 256,
+      "Nt": 8,
+      "max_nnz_pe": 512,
+      "iters": 1,
+      "structure_id": 0
+    },
+    "global_rows": 256,
+    "global_output_width": 16,
+    "source_sha256": "dc574a2019f58fc68287a5cd7e1aa075db2d4711901dcd0b95a8afd17f2fb3db",
+    "status": "pass",
+    "failure_reason": null,
+    "failure_category": null,
+    "cycles": 111520,
+    "samples": [
+      111520,
+      111520,
+      111520
+    ],
+    "success_marker": true,
+    "heldout_passed": true,
+    "heldout_seed_echoes": [
+      {
+        "seed": 101,
+        "echo": 101
+      },
+      {
+        "seed": 202,
+        "echo": 202
+      },
+      {
+        "seed": 303,
+        "echo": 303
+      }
+    ],
+    "timing_scope": "existing reference device window; cross-PE clock audit required",
+    "framework_scaffold": "row/column tiles, host-preloaded replicated operands; no device communication",
+    "elapsed_ms": 57113.224,
+    "diagnostic_steps": [
+      {
+        "step": "compile",
+        "status": "pass",
+        "returncode": 0
+      },
+      {
+        "step": "run",
+        "status": "pass",
+        "returncode": 0
+      },
+      {
+        "step": "run",
+        "status": "pass",
+        "returncode": 0
+      },
+      {
+        "step": "run",
+        "status": "pass",
+        "returncode": 0
+      }
+    ]
+  },
+  {
+    "kind": "weak",
+    "kernel": "SpMM-CSR-Dense",
+    "application_pes": 16,
+    "params": {
+      "P": 4,
+      "Mt": 128,
+      "K": 256,
+      "Nt": 8,
+      "max_nnz_pe": 512,
+      "iters": 1,
+      "structure_id": 0
+    },
+    "global_rows": 512,
+    "global_output_width": 32,
+    "source_sha256": "dc574a2019f58fc68287a5cd7e1aa075db2d4711901dcd0b95a8afd17f2fb3db",
+    "status": "pass",
+    "failure_reason": null,
+    "failure_category": null,
+    "cycles": 111520,
+    "samples": [
+      111520,
+      111520,
+      111520
+    ],
+    "success_marker": true,
+    "heldout_passed": true,
+    "heldout_seed_echoes": [
+      {
+        "seed": 101,
+        "echo": 101
+      },
+      {
+        "seed": 202,
+        "echo": 202
+      },
+      {
+        "seed": 303,
+        "echo": 303
+      }
+    ],
+    "timing_scope": "existing reference device window; cross-PE clock audit required",
+    "framework_scaffold": "row/column tiles, host-preloaded replicated operands; no device communication",
+    "elapsed_ms": 107992.613,
+    "diagnostic_steps": [
+      {
+        "step": "compile",
+        "status": "pass",
+        "returncode": 0
+      },
+      {
+        "step": "run",
+        "status": "pass",
+        "returncode": 0
+      },
+      {
+        "step": "run",
+        "status": "pass",
+        "returncode": 0
+      },
+      {
+        "step": "run",
+        "status": "pass",
+        "returncode": 0
+      }
+    ]
+  },
+  {
+    "kind": "weak",
+    "kernel": "SpMM-CSR-Dense",
+    "application_pes": 64,
+    "params": {
+      "P": 8,
+      "Mt": 128,
+      "K": 256,
+      "Nt": 8,
+      "max_nnz_pe": 512,
+      "iters": 1,
+      "structure_id": 0
+    },
+    "global_rows": 1024,
+    "global_output_width": 64,
+    "source_sha256": "dc574a2019f58fc68287a5cd7e1aa075db2d4711901dcd0b95a8afd17f2fb3db",
+    "status": "pass",
+    "failure_reason": null,
+    "failure_category": null,
+    "cycles": 111520,
+    "samples": [
+      111520,
+      111520,
+      111520
+    ],
+    "success_marker": true,
+    "heldout_passed": true,
+    "heldout_seed_echoes": [
+      {
+        "seed": 101,
+        "echo": 101
+      },
+      {
+        "seed": 202,
+        "echo": 202
+      },
+      {
+        "seed": 303,
+        "echo": 303
+      }
+    ],
+    "timing_scope": "existing reference device window; cross-PE clock audit required",
+    "framework_scaffold": "row/column tiles, host-preloaded replicated operands; no device communication",
+    "elapsed_ms": 237521.843,
+    "diagnostic_steps": [
+      {
+        "step": "compile",
+        "status": "pass",
+        "returncode": 0
+      },
+      {
+        "step": "run",
+        "status": "pass",
+        "returncode": 0
+      },
+      {
+        "step": "run",
+        "status": "pass",
+        "returncode": 0
+      },
+      {
+        "step": "run",
+        "status": "pass",
+        "returncode": 0
+      }
+    ]
+  },
+  {
+    "kind": "weak",
+    "kernel": "SpMM-CSR-Dense",
+    "application_pes": 256,
+    "params": {
+      "P": 16,
+      "Mt": 128,
+      "K": 256,
+      "Nt": 8,
+      "max_nnz_pe": 512,
+      "iters": 1,
+      "structure_id": 0
+    },
+    "global_rows": 2048,
+    "global_output_width": 128,
+    "source_sha256": "dc574a2019f58fc68287a5cd7e1aa075db2d4711901dcd0b95a8afd17f2fb3db",
+    "status": "fail",
+    "failure_reason": "missing_success_marker",
+    "failure_category": "missing_success_marker",
+    "cycles": null,
+    "samples": [],
+    "success_marker": false,
+    "heldout_passed": false,
+    "heldout_seed_echoes": [],
+    "timing_scope": "existing reference device window; cross-PE clock audit required",
+    "framework_scaffold": "row/column tiles, host-preloaded replicated operands; no device communication",
+    "elapsed_ms": 300056.89,
+    "diagnostic_steps": [
+      {
+        "step": "compile",
+        "status": "pass",
+        "returncode": 0
+      }
+    ]
+  }
+]

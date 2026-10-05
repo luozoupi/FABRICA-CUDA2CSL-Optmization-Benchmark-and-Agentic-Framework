@@ -1,0 +1,2 @@
+uuid, name, driver_version, pstate, temperature.gpu, clocks.current.sm [MHz], clocks.current.memory [MHz], power.draw [W], memory.used [MiB], utilization.gpu [%]
+GPU-59d9fb29-5c21-cf4b-24db-eacc66ea2cae, NVIDIA RTX PRO 6000 Blackwell Server Edition, 595.58.03, P8, 28, 180 MHz, 405 MHz, 32.45 W, 0 MiB, 0 %

@@ -1,0 +1,65 @@
+{
+  "id": "masked-nested",
+  "op": "masked",
+  "variant": "nested",
+  "M": 16,
+  "K": 16,
+  "N": 16,
+  "layout": "row-major",
+  "debug": false,
+  "application_pes": 1,
+  "patterns": [
+    "empty",
+    "diagonal",
+    "banded5",
+    "uniform5",
+    "blocks4",
+    "long_rows",
+    "random15",
+    "random45",
+    "dense"
+  ],
+  "repetitions": 3,
+  "buffers": {
+    "A": [
+      "f32",
+      256
+    ],
+    "B": [
+      "f32",
+      256
+    ],
+    "C": [
+      "f32",
+      256
+    ],
+    "row_ptr": [
+      "u32",
+      17
+    ],
+    "col_idx": [
+      "u32",
+      256
+    ],
+    "values": [
+      "f32",
+      256
+    ],
+    "present": [
+      "u16",
+      256
+    ],
+    "time_words": [
+      "u16",
+      6
+    ]
+  },
+  "source_hashes": {
+    "pe.csl": "aa7613c3eda4303d0c5a627011dcc12cd024c86985462cee675b21c6cb421a47",
+    "layout.csl": "f38893acbc18a506eed3e6b466963b9e03ef40b9e681416bfb0a240ad6624a7e",
+    "host.py": "485ad8e3b07112f8a1ec0b06ba63954ff6ee5eee8e68ae7d21171c8574e738de",
+    "inputs.py": "38ca49cab7d4cae285ab234420d6f0ac5c3a2477f599a2643892af0de541f6fc"
+  },
+  "phase": "final",
+  "selection_decision_sha256": "c4de3c7deec312a7e46078502615a577dd321b21e6c1cd316ee2c11ebc76c44a"
+}

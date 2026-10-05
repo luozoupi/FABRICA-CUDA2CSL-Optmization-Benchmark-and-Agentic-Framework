@@ -1,0 +1,47 @@
+set,kernel,prof_pass,prof_n,unprof_pass,unprof_n,prof_median,unprof_median,verdict_strict,verdict_inclusive
+Original 28,7pt-Stencil,10,10,10,10,2295.0,2290.0,Same,Same
+Original 28,BiCGSTAB,6,10,6,10,65710.0,62723.5,Worse,Worse
+Original 28,CG,7,10,8,10,11252.0,10947.0,Same,Same
+Original 28,Cholesky,2,10,0,10,414848.5,,NoData,Better
+Original 28,DFT-1PE,3,10,1,10,12921.0,12921.0,NoData,Better
+Original 28,FFT-1D-2D,2,10,1,10,454.0,900.0,NoData,Better
+Original 28,GEMM,3,10,0,10,47847.0,,NoData,Better
+Original 28,GEMM-Collectives-2D,1,10,0,10,47948.0,,NoData,Better
+Original 28,GEMV,0,10,0,10,,,NoData,NoData
+Original 28,GEMV-Checkerboard,1,10,0,10,4512.0,,NoData,Better
+Original 28,GEMV-Collectives-2D,0,10,0,10,,,NoData,NoData
+Original 28,GEMV-RowPart,3,10,1,10,138.0,144.0,NoData,Better
+Original 28,Game-of-Life,0,10,4,10,,2970.0,NoData,Worse
+Original 28,Histogram,1,10,1,10,,,NoData,NoData
+Original 28,Histogram-1PE,1,10,5,10,5652.0,5643.0,NoData,Worse
+Original 28,Histogram-Inline,2,10,1,10,1428.5,189197549555998.0,NoData,Better
+Original 28,Jacobi-2D-5pt,5,10,7,10,680.0,943.0,Better,Better
+Original 28,Laplacian2D-Halo,7,10,7,10,1108.0,1326.0,Better,Better
+Original 28,Mandelbrot,0,10,1,10,,28675.0,NoData,Worse
+Original 28,PDFT-Pi-Pipeline,7,10,3,10,11108.0,13692.0,Better,Better
+Original 28,Power-Method,5,10,7,10,31407.0,31320.0,Same,Same
+Original 28,Preconditioned-CG,5,10,6,10,14267.0,14000.5,Same,Same
+Original 28,Residual,2,10,2,10,548.0,516.0,Worse,Worse
+Original 28,Single-Tile-Matvec,1,10,0,10,1353.0,,NoData,Better
+Original 28,SpMV-CSR,5,10,6,10,6927.0,6927.0,Same,Same
+Original 28,Stencil7pt-1PE,7,10,7,10,18826.0,8769.0,Worse,Worse
+Original 28,Tensor-Transpose-021,0,10,0,10,,,NoData,NoData
+Original 28,Wide-Multiplication,5,10,6,10,9405.0,7384.5,Worse,Worse
+New single-PE 14,Cross-Entropy-Loss-1PE,4,5,3,5,24457.5,29796.0,Better,Better
+New single-PE 14,Dot-Product-1PE,2,5,3,5,6163.5,1491.0,Worse,Worse
+New single-PE 14,GELU-1PE,1,5,0,5,50306.0,,NoData,Better
+New single-PE 14,L2-Norm-1PE,2,5,5,5,9417.0,2280.0,Worse,Worse
+New single-PE 14,MSE-Loss-1PE,5,5,5,5,8983.0,8985.5,Same,Same
+New single-PE 14,Max-Reduction-1PE,4,5,4,5,4257.0,6222.5,Better,Better
+New single-PE 14,Prefix-Sum-1PE,2,5,4,5,7056.5,7056.5,Same,Same
+New single-PE 14,RMSNorm-1PE,5,5,4,5,5325.0,5325.0,Same,Same
+New single-PE 14,ReLU-1PE,1,5,1,5,144.0,272.0,NoData,NoData
+New single-PE 14,SAXPY-1PE,2,5,2,5,1039.0,1039.0,Same,Same
+New single-PE 14,SiLU-1PE,5,5,4,5,94743.0,103450.0,Better,Better
+New single-PE 14,Sigmoid-1PE,3,5,4,5,96281.0,94557.5,Same,Same
+New single-PE 14,Softmax-1PE,3,5,2,5,32641.0,25294.0,Worse,Worse
+New single-PE 14,Sum-Reduction-1PE,5,5,2,5,404.0,2440.5,Better,Better
+New multi-PE 4,ParBroadcast-Scale,2,5,0,5,143.0,,NoData,Better
+New multi-PE 4,ParDot-Product,5,5,4,5,2635.0,1448.0,Worse,Worse
+New multi-PE 4,ParReduce-Sum,5,5,5,5,1991.0,1988.0,Same,Same
+New multi-PE 4,RowParallel-Softmax,0,5,0,5,,,NoData,NoData

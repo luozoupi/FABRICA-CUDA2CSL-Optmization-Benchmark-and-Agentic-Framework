@@ -1,0 +1,33 @@
+id: B07_activation_order
+group: B_semantics
+prompt: 'Read this Cerebras CSL fragment (SDK 2.10, one PE) and answer the question. Assume every builtin behaves
+  as the SDK documents it. Reply with the answer first (two numbers), then one sentence of justification.
+
+
+  ```csl
+
+  const T1: local_task_id = @get_local_task_id(9);
+
+  const T2: local_task_id = @get_local_task_id(10);
+
+  var log = @zeros([2]u16); var k: u16 = 0;
+
+  task t1() void { log[k] = 1; k += 1; @activate(T2); }
+
+  task t2() void { log[k] = 2; k += 1; }
+
+  fn compute() void { @activate(T1); }
+
+  comptime { @bind_local_task(t1, T1); @bind_local_task(t2, T2); }
+
+  ```
+
+
+  Question: After compute() and both tasks have run, what does log contain? Give the two values in order.'
+expected:
+  values:
+  - 1
+  - 2
+scoring: trailing numbers within 1e-3 relative of the key, or the letter for choice items
+ground_truth: numpy/documented semantics; simulator confirmation of the numeric items pending (make_ground_truth.sh)
+source_citation: 'SDK builtins/DSD reference; B12: studies/wse3-characterization/FINDINGS.md section 10n (spmv_blk_dsdred)'

@@ -1,0 +1,23 @@
+{
+ "M": 32,
+ "N": 32,
+ "K": 32,
+ "macs": 32768,
+ "variants": [
+  "ikj",
+  "kij",
+  "jki",
+  "kji",
+  "ijk",
+  "jik",
+  "ikj_map",
+  "ijk_scalar",
+  "ijk_bt",
+  "ikj_map_blk",
+  "ijk_tree",
+  "kij_map",
+  "outer_tile4",
+  "outer_tile4b",
+  "outer_tile4c"
+ ]
+}

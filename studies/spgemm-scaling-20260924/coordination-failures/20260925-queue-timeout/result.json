@@ -1,0 +1,19 @@
+{
+  "status": "queue_timeout_before_launch",
+  "case": "strong-m256-k256-n256-p1-d3-full",
+  "phase_launched": false,
+  "queue_limit_seconds": 600,
+  "measured_wait_seconds": null,
+  "phases": [],
+  "reason": "Prior detached supervisor ended after the registered runner raised its shared-lock queue timeout. No new compiler or simulator phase started; numerical results did not change.",
+  "prior_state": {
+    "pid": 3882769,
+    "started_utc": "2026-09-25T17:19:30.252969+00:00",
+    "status": "supervisor_failed",
+    "command": [
+      "python3",
+      "run.py"
+    ],
+    "error": "CalledProcessError(1, ['python3', 'run.py'])"
+  }
+}

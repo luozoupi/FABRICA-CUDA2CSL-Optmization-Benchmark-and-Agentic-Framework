@@ -1,0 +1,130 @@
+[
+  {
+    "label": "spgemm_n144_reference",
+    "kernel": "SpGEMM-Masked-Dot",
+    "script": "commands_wse3_n144.sh",
+    "program": "<repo>/kernels/SpGEMM-Masked-Dot/CSL/pe.csl",
+    "status": "pass",
+    "cycles": 845529,
+    "runs": [
+      845529,
+      845529,
+      845529
+    ],
+    "heldout_passed": true,
+    "failure": null,
+    "elapsed_s": 298.7
+  },
+  {
+    "label": "spgemm_n144_accumulator",
+    "kernel": "SpGEMM-Masked-Dot",
+    "script": "commands_wse3_n144.sh",
+    "program": "<repo>/kernels/_sparse_expert/SpGEMM-Masked-Dot/pe_dense_accumulator.csl",
+    "status": "pass",
+    "cycles": 590279,
+    "runs": [
+      590279,
+      590279,
+      590279
+    ],
+    "heldout_passed": true,
+    "failure": null,
+    "elapsed_s": 220.8
+  },
+  {
+    "label": "spgemm_n144_first_correct",
+    "kernel": "SpGEMM-Masked-Dot",
+    "script": "commands_wse3_n144.sh",
+    "program": "<repo>/code_translation/results/first_correct/sparse_20260920/SpGEMM-Masked-Dot/pe.csl",
+    "status": "pass",
+    "cycles": 1133885,
+    "runs": [
+      1133885,
+      1133885,
+      1133885
+    ],
+    "heldout_passed": true,
+    "failure": null,
+    "elapsed_s": 364.3
+  },
+  {
+    "label": "spgemm_n144_luna_o1_best",
+    "kernel": "SpGEMM-Masked-Dot",
+    "script": "commands_wse3_n144.sh",
+    "program": "<repo>/code_translation/results/mg_sparse_luna2_20260921_055733/SpGEMM-Masked-Dot/O1/seed_1/run_20260921_071959/SpGEMM-Masked-Dot/pe.csl",
+    "status": "pass",
+    "cycles": 601662,
+    "runs": [
+      601662,
+      601662,
+      601662
+    ],
+    "heldout_passed": true,
+    "failure": null,
+    "elapsed_s": 193.3
+  },
+  {
+    "label": "spmm_n16_reference",
+    "kernel": "SpMM-CSR-Dense",
+    "script": "commands_wse3_n16.sh",
+    "program": "<repo>/kernels/SpMM-CSR-Dense/CSL/pe.csl",
+    "status": "pass",
+    "cycles": 289574,
+    "runs": [
+      289574,
+      289574,
+      289574
+    ],
+    "heldout_passed": true,
+    "failure": null,
+    "elapsed_s": 285.8
+  },
+  {
+    "label": "spmm_n16_first_correct",
+    "kernel": "SpMM-CSR-Dense",
+    "script": "commands_wse3_n16.sh",
+    "program": "<repo>/code_translation/results/first_correct/sparse_20260920/SpMM-CSR-Dense/pe.csl",
+    "status": "pass",
+    "cycles": 38857,
+    "runs": [
+      38857,
+      38857,
+      38857
+    ],
+    "heldout_passed": true,
+    "failure": null,
+    "elapsed_s": 159.9
+  },
+  {
+    "label": "spmm_n16_w1_best",
+    "kernel": "SpMM-CSR-Dense",
+    "script": "commands_wse3_n16.sh",
+    "program": "<repo>/code_translation/results/sparse_w1_sa_20260916_071312/SpMM-CSR-Dense/T1/seed_4/run_20260916_100211/SpMM-CSR-Dense/pe.csl",
+    "status": "pass",
+    "cycles": 37454,
+    "runs": [
+      37454,
+      37454,
+      37454
+    ],
+    "heldout_passed": true,
+    "failure": null,
+    "elapsed_s": 167.4
+  },
+  {
+    "label": "spmm_small_w1_best",
+    "kernel": "SpMM-CSR-Dense",
+    "script": "commands_wse3.sh",
+    "program": "<repo>/code_translation/results/sparse_w1_sa_20260916_071312/SpMM-CSR-Dense/T1/seed_4/run_20260916_100211/SpMM-CSR-Dense/pe.csl",
+    "status": "pass",
+    "cycles": 29807,
+    "runs": [
+      29807,
+      29807,
+      29807
+    ],
+    "heldout_passed": true,
+    "failure": null,
+    "elapsed_s": 107.8
+  }
+]

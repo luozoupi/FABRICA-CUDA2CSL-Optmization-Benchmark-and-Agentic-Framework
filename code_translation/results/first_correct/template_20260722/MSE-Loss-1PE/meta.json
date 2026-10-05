@@ -1,0 +1,55 @@
+{
+  "kernel": "MSE-Loss-1PE",
+  "run_dir": "code_translation/results/full_template_sweep_20260722_192305/MSE-Loss-1PE/run_20260723_063749",
+  "status": "extracted",
+  "n_attempts": 12,
+  "model": "claude-opus-4-8",
+  "target_relpath": "pe.csl",
+  "reference_dir": "/home/USER/xkernel/kernels/MSE-Loss-1PE/CSL",
+  "fc_attempt_index": 2,
+  "fc_cycles_send": 8983,
+  "fc_cycles_send_runs": [
+    8983
+  ],
+  "fc_code_lines": 82,
+  "fc_heldout_eval": {
+    "passed": true,
+    "failing_seed": null,
+    "per_seed": [
+      {
+        "seed": 101,
+        "steps": [
+          {
+            "command": "cs_python run.py --name out",
+            "ok": true,
+            "returncode": 0
+          }
+        ]
+      },
+      {
+        "seed": 202,
+        "steps": [
+          {
+            "command": "cs_python run.py --name out",
+            "ok": true,
+            "returncode": 0
+          }
+        ]
+      },
+      {
+        "seed": 303,
+        "steps": [
+          {
+            "command": "cs_python run.py --name out",
+            "ok": true,
+            "returncode": 0
+          }
+        ]
+      }
+    ],
+    "reason": "passed all 3 held-out seeds"
+  },
+  "translated_path": "/home/USER/xkernel/code_translation/sandbox/cuda2csl/mse-loss-1pe_9th_y5q2/pe.csl",
+  "source": "sandbox",
+  "dest": "code_translation/results/first_correct/template_20260722/MSE-Loss-1PE/pe.csl"
+}

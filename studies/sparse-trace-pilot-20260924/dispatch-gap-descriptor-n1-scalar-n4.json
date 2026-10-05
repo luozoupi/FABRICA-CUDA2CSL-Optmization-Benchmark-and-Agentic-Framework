@@ -1,0 +1,4466 @@
+{
+  "analyzer_sha256": "a1e82151a7bb7dcfc30e04406dd9c0224055d79f6f5a8d361212850c42126ed3",
+  "results": [
+    {
+      "case": "descriptor-n1",
+      "windows": [
+        {
+          "family": "uniform8",
+          "cycles": 11429,
+          "dispatches": 8633,
+          "pc_gaps": {
+            "322": {
+              "count": 1,
+              "cycle_sum": 1,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 1
+              },
+              "assembly": "ld16 r5 = [0x7b30]",
+              "source": "(result.*)[i] = @get_config(base_words + i);"
+            },
+            "324": {
+              "count": 1,
+              "cycle_sum": 1,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 1
+              },
+              "assembly": "st16 [0x17ac] = r5",
+              "source": "(result.*)[i] = @get_config(base_words + i);"
+            },
+            "326": {
+              "count": 1,
+              "cycle_sum": 1,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 1
+              },
+              "assembly": "ld16 r5 = [0x7b31]",
+              "source": "(result.*)[i] = @get_config(base_words + i);"
+            },
+            "328": {
+              "count": 1,
+              "cycle_sum": 1,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 1
+              },
+              "assembly": "st16 [0x17ae] = r5",
+              "source": "(result.*)[i] = @get_config(base_words + i);"
+            },
+            "330": {
+              "count": 1,
+              "cycle_sum": 1,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 1
+              },
+              "assembly": "ld16 r5 = [0x7b32]",
+              "source": "(result.*)[i] = @get_config(base_words + i);"
+            },
+            "332": {
+              "count": 1,
+              "cycle_sum": 1,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 1
+              },
+              "assembly": "st16 [0x17b0] = r5",
+              "source": "(result.*)[i] = @get_config(base_words + i);"
+            },
+            "334": {
+              "count": 1,
+              "cycle_sum": 1,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 1
+              },
+              "assembly": "lddwds dds1 = [0x0]",
+              "source": "@fmovs(all_c,@as(f32,0.0));"
+            },
+            "336": {
+              "count": 1,
+              "cycle_sum": 3,
+              "min": 3,
+              "max": 3,
+              "histogram": {
+                "3": 1
+              },
+              "assembly": "fmov16.nf r1 = r0",
+              "source": "@fmovs(all_c,@as(f32,0.0));"
+            },
+            "338": {
+              "count": 1,
+              "cycle_sum": 8,
+              "min": 8,
+              "max": 8,
+              "histogram": {
+                "8": 1
+              },
+              "assembly": "fmov32.nf [dds1] = d0",
+              "source": "@fmovs(all_c,@as(f32,0.0));"
+            },
+            "340": {
+              "count": 1,
+              "cycle_sum": 1,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 1
+              },
+              "assembly": "movri r5 = 0xd48",
+              "source": "@fmovs(all_c,@as(f32,0.0));"
+            },
+            "342": {
+              "count": 1,
+              "cycle_sum": 1,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 1
+              },
+              "assembly": "st16 sp[0x5] = r5",
+              "source": "@fmovs(all_c,@as(f32,0.0));"
+            },
+            "344": {
+              "count": 1,
+              "cycle_sum": 1,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 1
+              },
+              "assembly": "movri r5 = 0x1766",
+              "source": "@fmovs(all_c,@as(f32,0.0));"
+            },
+            "346": {
+              "count": 1,
+              "cycle_sum": 1,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 1
+              },
+              "assembly": "st16 sp[0x3] = r5",
+              "source": "@fmovs(all_c,@as(f32,0.0));"
+            },
+            "348": {
+              "count": 1,
+              "cycle_sum": 1,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 1
+              },
+              "assembly": "movri r9 = 0xdcc",
+              "source": "@fmovs(all_c,@as(f32,0.0));"
+            },
+            "350": {
+              "count": 1,
+              "cycle_sum": 1,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 1
+              },
+              "assembly": "movri r14 = 0x16e6",
+              "source": "@fmovs(all_c,@as(f32,0.0));"
+            },
+            "352": {
+              "count": 1,
+              "cycle_sum": 1,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 1
+              },
+              "assembly": "movri r15 = 0x1dcc",
+              "source": "@fmovs(all_c,@as(f32,0.0));"
+            },
+            "354": {
+              "count": 1,
+              "cycle_sum": 1,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 1
+              },
+              "assembly": "movri r2 = 0x1",
+              "source": "@fmovs(all_c,@as(f32,0.0));"
+            },
+            "356": {
+              "count": 1,
+              "cycle_sum": 1,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 1
+              },
+              "assembly": "movri r3 = 0x8f",
+              "source": "@fmovs(all_c,@as(f32,0.0));"
+            },
+            "358": {
+              "count": 1,
+              "cycle_sum": 1,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 1
+              },
+              "assembly": "movri r4 = 0x10",
+              "source": "@fmovs(all_c,@as(f32,0.0));"
+            },
+            "360": {
+              "count": 1,
+              "cycle_sum": 1,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 1
+              },
+              "assembly": "movri r5 = 0x1e",
+              "source": "@fmovs(all_c,@as(f32,0.0));"
+            },
+            "362": {
+              "count": 1,
+              "cycle_sum": 1,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 1
+              },
+              "assembly": "st16 sp[0x4] = r5",
+              "source": "var i:u16=0;while(i<32):(i+=1){"
+            },
+            "374": {
+              "count": 32,
+              "cycle_sum": 32,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 32
+              },
+              "assembly": "fmov16.nf r5 = r0",
+              "source": "rpc_server(&(sys_mod.stack_u32));"
+            },
+            "376": {
+              "count": 32,
+              "cycle_sum": 32,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 32
+              },
+              "assembly": "add16.nf r0 = r5, 0x1",
+              "source": "const end:u16=@as(u16,row_ptr[i+1]);"
+            },
+            "378": {
+              "count": 32,
+              "cycle_sum": 32,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 32
+              },
+              "assembly": "st32 sp[0x6] = d0",
+              "source": "const end:u16=@as(u16,row_ptr[i+1]);"
+            },
+            "380": {
+              "count": 32,
+              "cycle_sum": 32,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 32
+              },
+              "assembly": "sll16.nf r8 = r0, 0x2",
+              "source": "const end:u16=@as(u16,row_ptr[i+1]);"
+            },
+            "382": {
+              "count": 32,
+              "cycle_sum": 32,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 32
+              },
+              "assembly": "ld16 r1 = sp[0x5]",
+              "source": "const end:u16=@as(u16,row_ptr[i+1]);"
+            },
+            "384": {
+              "count": 32,
+              "cycle_sum": 32,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 32
+              },
+              "assembly": "add16.nf r8 = r8, r1",
+              "source": "const end:u16=@as(u16,row_ptr[i+1]);"
+            },
+            "386": {
+              "count": 32,
+              "cycle_sum": 32,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 32
+              },
+              "assembly": "sll16.nf r0 = r5, 0x2",
+              "source": "var p:u16=@as(u16,row_ptr[i]);"
+            },
+            "388": {
+              "count": 32,
+              "cycle_sum": 32,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 32
+              },
+              "assembly": "add16.nf r0 = r0, r1",
+              "source": "var p:u16=@as(u16,row_ptr[i]);"
+            },
+            "390": {
+              "count": 32,
+              "cycle_sum": 96,
+              "min": 3,
+              "max": 3,
+              "histogram": {
+                "3": 32
+              },
+              "assembly": "slr16.nf r6 = r0, 0x1",
+              "source": "var p:u16=@as(u16,row_ptr[i]);"
+            },
+            "392": {
+              "count": 32,
+              "cycle_sum": 32,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 32
+              },
+              "assembly": "imov32.nf d10 = [r6]",
+              "source": "var p:u16=@as(u16,row_ptr[i]);"
+            },
+            "394": {
+              "count": 32,
+              "cycle_sum": 96,
+              "min": 3,
+              "max": 3,
+              "histogram": {
+                "3": 32
+              },
+              "assembly": "slr16.nf r6 = r8, 0x1",
+              "source": "const end:u16=@as(u16,row_ptr[i+1]);"
+            },
+            "396": {
+              "count": 32,
+              "cycle_sum": 32,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 32
+              },
+              "assembly": "imov32.nf d12 = [r6]",
+              "source": "const end:u16=@as(u16,row_ptr[i+1]);"
+            },
+            "398": {
+              "count": 32,
+              "cycle_sum": 32,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 32
+              },
+              "assembly": "lteu16.and cflag0 = r12, r10",
+              "source": "while(p<end):(p+=1){"
+            },
+            "400": {
+              "count": 32,
+              "cycle_sum": 96,
+              "min": 3,
+              "max": 3,
+              "histogram": {
+                "3": 32
+              },
+              "assembly": "cflag0 ? jmp 0x16e",
+              "source": "while(p<end):(p+=1){"
+            },
+            "402": {
+              "count": 32,
+              "cycle_sum": 32,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 32
+              },
+              "assembly": "sll16.nf r8 = r5, 0x1",
+              "source": "rpc_server(&(sys_mod.stack_u32));"
+            },
+            "404": {
+              "count": 32,
+              "cycle_sum": 32,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 32
+              },
+              "assembly": "ld16 r0 = sp[0x3]",
+              "source": "rpc_server(&(sys_mod.stack_u32));"
+            },
+            "406": {
+              "count": 32,
+              "cycle_sum": 32,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 32
+              },
+              "assembly": "add16.nf r8 = r8, r0",
+              "source": "rpc_server(&(sys_mod.stack_u32));"
+            },
+            "408": {
+              "count": 256,
+              "cycle_sum": 256,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 256
+              },
+              "assembly": "sll16.nf r0 = r10, 0x2",
+              "source": "const k:u16=@as(u16,col_idx[p]);"
+            },
+            "410": {
+              "count": 256,
+              "cycle_sum": 256,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 256
+              },
+              "assembly": "add16.nf r1 = r0, r9",
+              "source": "const k:u16=@as(u16,col_idx[p]);"
+            },
+            "412": {
+              "count": 256,
+              "cycle_sum": 768,
+              "min": 3,
+              "max": 3,
+              "histogram": {
+                "3": 256
+              },
+              "assembly": "slr16.nf r6 = r1, 0x1",
+              "source": "const k:u16=@as(u16,col_idx[p]);"
+            },
+            "414": {
+              "count": 256,
+              "cycle_sum": 256,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 256
+              },
+              "assembly": "imov32.nf d6 = [r6]",
+              "source": "const k:u16=@as(u16,col_idx[p]);"
+            },
+            "416": {
+              "count": 256,
+              "cycle_sum": 256,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 256
+              },
+              "assembly": "sll16.nf r1 = r6, 0x1",
+              "source": "bd=@increment_dsd_offset(bd,@as(i16,k*N),f32);"
+            },
+            "418": {
+              "count": 256,
+              "cycle_sum": 256,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 256
+              },
+              "assembly": "add16.nf r6 = r1, r14",
+              "source": "bd=@increment_dsd_offset(bd,@as(i16,k*N),f32);"
+            },
+            "420": {
+              "count": 256,
+              "cycle_sum": 256,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 256
+              },
+              "assembly": "add16.nf r0 = r0, r15",
+              "source": "@fmacs(cd,cd,bd,values[p]);"
+            },
+            "422": {
+              "count": 256,
+              "cycle_sum": 768,
+              "min": 3,
+              "max": 3,
+              "histogram": {
+                "3": 256
+              },
+              "assembly": "slr16.nf r7 = r0, 0x1",
+              "source": "@fmacs(cd,cd,bd,values[p]);"
+            },
+            "424": {
+              "count": 256,
+              "cycle_sum": 256,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 256
+              },
+              "assembly": "fmov32.nf d0 = [r7]",
+              "source": "@fmacs(cd,cd,bd,values[p]);"
+            },
+            "426": {
+              "count": 256,
+              "cycle_sum": 256,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 256
+              },
+              "assembly": "st16 [0x7e84] = r2",
+              "source": "@fmacs(cd,cd,bd,values[p]);"
+            },
+            "428": {
+              "count": 256,
+              "cycle_sum": 256,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 256
+              },
+              "assembly": "st16 [0x7e85] = r6",
+              "source": "@fmacs(cd,cd,bd,values[p]);"
+            },
+            "430": {
+              "count": 256,
+              "cycle_sum": 256,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 256
+              },
+              "assembly": "st16 [0x7e86] = r3",
+              "source": "@fmacs(cd,cd,bd,values[p]);"
+            },
+            "432": {
+              "count": 256,
+              "cycle_sum": 256,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 256
+              },
+              "assembly": "st16 [0x7e87] = r4",
+              "source": "@fmacs(cd,cd,bd,values[p]);"
+            },
+            "434": {
+              "count": 256,
+              "cycle_sum": 256,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 256
+              },
+              "assembly": "nop 0x0",
+              "source": "@fmacs(cd,cd,bd,values[p]);"
+            },
+            "436": {
+              "count": 256,
+              "cycle_sum": 256,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 256
+              },
+              "assembly": "nop 0x0",
+              "source": "@fmacs(cd,cd,bd,values[p]);"
+            },
+            "438": {
+              "count": 256,
+              "cycle_sum": 256,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 256
+              },
+              "assembly": "st16 [0x7ec4] = r2",
+              "source": "@fmacs(cd,cd,bd,values[p]);"
+            },
+            "440": {
+              "count": 256,
+              "cycle_sum": 256,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 256
+              },
+              "assembly": "st16 [0x7ec5] = r8",
+              "source": "@fmacs(cd,cd,bd,values[p]);"
+            },
+            "442": {
+              "count": 256,
+              "cycle_sum": 256,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 256
+              },
+              "assembly": "st16 [0x7ec6] = r3",
+              "source": "@fmacs(cd,cd,bd,values[p]);"
+            },
+            "444": {
+              "count": 256,
+              "cycle_sum": 256,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 256
+              },
+              "assembly": "st16 [0x7ec7] = r4",
+              "source": "@fmacs(cd,cd,bd,values[p]);"
+            },
+            "446": {
+              "count": 256,
+              "cycle_sum": 256,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 256
+              },
+              "assembly": "nop 0x0",
+              "source": "@fmacs(cd,cd,bd,values[p]);"
+            },
+            "448": {
+              "count": 256,
+              "cycle_sum": 256,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 256
+              },
+              "assembly": "nop 0x0",
+              "source": "@fmacs(cd,cd,bd,values[p]);"
+            },
+            "450": {
+              "count": 256,
+              "cycle_sum": 256,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 256
+              },
+              "assembly": "st16 [0x7e44] = r2",
+              "source": "@fmacs(cd,cd,bd,values[p]);"
+            },
+            "452": {
+              "count": 256,
+              "cycle_sum": 256,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 256
+              },
+              "assembly": "st16 [0x7e45] = r8",
+              "source": "@fmacs(cd,cd,bd,values[p]);"
+            },
+            "454": {
+              "count": 256,
+              "cycle_sum": 256,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 256
+              },
+              "assembly": "st16 [0x7e46] = r3",
+              "source": "@fmacs(cd,cd,bd,values[p]);"
+            },
+            "456": {
+              "count": 256,
+              "cycle_sum": 256,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 256
+              },
+              "assembly": "st16 [0x7e47] = r4",
+              "source": "@fmacs(cd,cd,bd,values[p]);"
+            },
+            "458": {
+              "count": 256,
+              "cycle_sum": 256,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 256
+              },
+              "assembly": "nop 0x0",
+              "source": "@fmacs(cd,cd,bd,values[p]);"
+            },
+            "460": {
+              "count": 256,
+              "cycle_sum": 512,
+              "min": 2,
+              "max": 2,
+              "histogram": {
+                "2": 256
+              },
+              "assembly": "nop 0x0",
+              "source": "@fmacs(cd,cd,bd,values[p]);"
+            },
+            "462": {
+              "count": 256,
+              "cycle_sum": 256,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 256
+              },
+              "assembly": "fmacs [dds1] = [s0ds1], [s1ds1], d0",
+              "source": "@fmacs(cd,cd,bd,values[p]);"
+            },
+            "464": {
+              "count": 256,
+              "cycle_sum": 320,
+              "min": 1,
+              "max": 2,
+              "histogram": {
+                "1": 192,
+                "2": 64
+              },
+              "assembly": "add16.nf r10 = r10, 0x1",
+              "source": "while(p<end):(p+=1){"
+            },
+            "466": {
+              "count": 256,
+              "cycle_sum": 256,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 256
+              },
+              "assembly": "ltu16.and cflag0 = r10, r12",
+              "source": "while(p<end):(p+=1){"
+            },
+            "468": {
+              "count": 256,
+              "cycle_sum": 1440,
+              "min": 3,
+              "max": 6,
+              "histogram": {
+                "3": 32,
+                "6": 224
+              },
+              "assembly": "cflag0 ? jmp 0x198",
+              "source": "while(p<end):(p+=1){"
+            },
+            "366": {
+              "count": 32,
+              "cycle_sum": 32,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 32
+              },
+              "assembly": "ld16 r8 = sp[0x4]",
+              "source": "var i:u16=0;while(i<32):(i+=1){"
+            },
+            "368": {
+              "count": 32,
+              "cycle_sum": 32,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 32
+              },
+              "assembly": "ltu16.and cflag0 = r8, r5",
+              "source": "var i:u16=0;while(i<32):(i+=1){"
+            },
+            "370": {
+              "count": 32,
+              "cycle_sum": 32,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 32
+              },
+              "assembly": "ld16rp d0 = sp[0x6]",
+              "source": "var i:u16=0;while(i<32):(i+=1){"
+            },
+            "372": {
+              "count": 32,
+              "cycle_sum": 99,
+              "min": 3,
+              "max": 6,
+              "histogram": {
+                "3": 31,
+                "6": 1
+              },
+              "assembly": "cflag0 ? jmp 0x1f0",
+              "source": "var i:u16=0;while(i<32):(i+=1){"
+            },
+            "496": {
+              "count": 1,
+              "cycle_sum": 1,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 1
+              },
+              "assembly": "nop 0x0",
+              "source": "(result.*)[i] = @get_config(base_words + i);"
+            },
+            "498": {
+              "count": 1,
+              "cycle_sum": 1,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 1
+              },
+              "assembly": "nop 0x0",
+              "source": "(result.*)[i] = @get_config(base_words + i);"
+            },
+            "500": {
+              "count": 1,
+              "cycle_sum": 1,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 1
+              },
+              "assembly": "nop 0x0",
+              "source": "(result.*)[i] = @get_config(base_words + i);"
+            },
+            "502": {
+              "count": 1,
+              "cycle_sum": 1,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 1
+              },
+              "assembly": "nop 0x0",
+              "source": "(result.*)[i] = @get_config(base_words + i);"
+            }
+          },
+          "branches": [
+            {
+              "pc": 400,
+              "outcome": "fallthrough",
+              "count": 32,
+              "cycle_sum": 96,
+              "histogram": {
+                "3": 32
+              },
+              "assembly": "cflag0 ? jmp 0x16e"
+            },
+            {
+              "pc": 468,
+              "outcome": "target",
+              "count": 224,
+              "cycle_sum": 1344,
+              "histogram": {
+                "6": 224
+              },
+              "assembly": "cflag0 ? jmp 0x198"
+            },
+            {
+              "pc": 468,
+              "outcome": "fallthrough_via_static_jump",
+              "count": 32,
+              "cycle_sum": 96,
+              "histogram": {
+                "3": 32
+              },
+              "assembly": "cflag0 ? jmp 0x198"
+            },
+            {
+              "pc": 372,
+              "outcome": "fallthrough",
+              "count": 31,
+              "cycle_sum": 93,
+              "histogram": {
+                "3": 31
+              },
+              "assembly": "cflag0 ? jmp 0x1f0"
+            },
+            {
+              "pc": 372,
+              "outcome": "target",
+              "count": 1,
+              "cycle_sum": 6,
+              "histogram": {
+                "6": 1
+              },
+              "assembly": "cflag0 ? jmp 0x1f0"
+            }
+          ]
+        },
+        {
+          "family": "skew8",
+          "cycles": 11513,
+          "dispatches": 8549,
+          "pc_gaps": {
+            "322": {
+              "count": 1,
+              "cycle_sum": 1,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 1
+              },
+              "assembly": "ld16 r5 = [0x7b30]",
+              "source": "(result.*)[i] = @get_config(base_words + i);"
+            },
+            "324": {
+              "count": 1,
+              "cycle_sum": 1,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 1
+              },
+              "assembly": "st16 [0x17ac] = r5",
+              "source": "(result.*)[i] = @get_config(base_words + i);"
+            },
+            "326": {
+              "count": 1,
+              "cycle_sum": 1,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 1
+              },
+              "assembly": "ld16 r5 = [0x7b31]",
+              "source": "(result.*)[i] = @get_config(base_words + i);"
+            },
+            "328": {
+              "count": 1,
+              "cycle_sum": 1,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 1
+              },
+              "assembly": "st16 [0x17ae] = r5",
+              "source": "(result.*)[i] = @get_config(base_words + i);"
+            },
+            "330": {
+              "count": 1,
+              "cycle_sum": 1,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 1
+              },
+              "assembly": "ld16 r5 = [0x7b32]",
+              "source": "(result.*)[i] = @get_config(base_words + i);"
+            },
+            "332": {
+              "count": 1,
+              "cycle_sum": 1,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 1
+              },
+              "assembly": "st16 [0x17b0] = r5",
+              "source": "(result.*)[i] = @get_config(base_words + i);"
+            },
+            "334": {
+              "count": 1,
+              "cycle_sum": 1,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 1
+              },
+              "assembly": "lddwds dds1 = [0x0]",
+              "source": "@fmovs(all_c,@as(f32,0.0));"
+            },
+            "336": {
+              "count": 1,
+              "cycle_sum": 3,
+              "min": 3,
+              "max": 3,
+              "histogram": {
+                "3": 1
+              },
+              "assembly": "fmov16.nf r1 = r0",
+              "source": "@fmovs(all_c,@as(f32,0.0));"
+            },
+            "338": {
+              "count": 1,
+              "cycle_sum": 8,
+              "min": 8,
+              "max": 8,
+              "histogram": {
+                "8": 1
+              },
+              "assembly": "fmov32.nf [dds1] = d0",
+              "source": "@fmovs(all_c,@as(f32,0.0));"
+            },
+            "340": {
+              "count": 1,
+              "cycle_sum": 1,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 1
+              },
+              "assembly": "movri r5 = 0xd48",
+              "source": "@fmovs(all_c,@as(f32,0.0));"
+            },
+            "342": {
+              "count": 1,
+              "cycle_sum": 1,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 1
+              },
+              "assembly": "st16 sp[0x5] = r5",
+              "source": "@fmovs(all_c,@as(f32,0.0));"
+            },
+            "344": {
+              "count": 1,
+              "cycle_sum": 1,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 1
+              },
+              "assembly": "movri r5 = 0x1766",
+              "source": "@fmovs(all_c,@as(f32,0.0));"
+            },
+            "346": {
+              "count": 1,
+              "cycle_sum": 1,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 1
+              },
+              "assembly": "st16 sp[0x3] = r5",
+              "source": "@fmovs(all_c,@as(f32,0.0));"
+            },
+            "348": {
+              "count": 1,
+              "cycle_sum": 1,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 1
+              },
+              "assembly": "movri r9 = 0xdcc",
+              "source": "@fmovs(all_c,@as(f32,0.0));"
+            },
+            "350": {
+              "count": 1,
+              "cycle_sum": 1,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 1
+              },
+              "assembly": "movri r14 = 0x16e6",
+              "source": "@fmovs(all_c,@as(f32,0.0));"
+            },
+            "352": {
+              "count": 1,
+              "cycle_sum": 1,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 1
+              },
+              "assembly": "movri r15 = 0x1dcc",
+              "source": "@fmovs(all_c,@as(f32,0.0));"
+            },
+            "354": {
+              "count": 1,
+              "cycle_sum": 1,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 1
+              },
+              "assembly": "movri r2 = 0x1",
+              "source": "@fmovs(all_c,@as(f32,0.0));"
+            },
+            "356": {
+              "count": 1,
+              "cycle_sum": 1,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 1
+              },
+              "assembly": "movri r3 = 0x8f",
+              "source": "@fmovs(all_c,@as(f32,0.0));"
+            },
+            "358": {
+              "count": 1,
+              "cycle_sum": 1,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 1
+              },
+              "assembly": "movri r4 = 0x10",
+              "source": "@fmovs(all_c,@as(f32,0.0));"
+            },
+            "360": {
+              "count": 1,
+              "cycle_sum": 1,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 1
+              },
+              "assembly": "movri r5 = 0x1e",
+              "source": "@fmovs(all_c,@as(f32,0.0));"
+            },
+            "362": {
+              "count": 1,
+              "cycle_sum": 1,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 1
+              },
+              "assembly": "st16 sp[0x4] = r5",
+              "source": "var i:u16=0;while(i<32):(i+=1){"
+            },
+            "374": {
+              "count": 32,
+              "cycle_sum": 32,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 32
+              },
+              "assembly": "fmov16.nf r5 = r0",
+              "source": "rpc_server(&(sys_mod.stack_u32));"
+            },
+            "376": {
+              "count": 32,
+              "cycle_sum": 32,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 32
+              },
+              "assembly": "add16.nf r0 = r5, 0x1",
+              "source": "const end:u16=@as(u16,row_ptr[i+1]);"
+            },
+            "378": {
+              "count": 32,
+              "cycle_sum": 32,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 32
+              },
+              "assembly": "st32 sp[0x6] = d0",
+              "source": "const end:u16=@as(u16,row_ptr[i+1]);"
+            },
+            "380": {
+              "count": 32,
+              "cycle_sum": 32,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 32
+              },
+              "assembly": "sll16.nf r8 = r0, 0x2",
+              "source": "const end:u16=@as(u16,row_ptr[i+1]);"
+            },
+            "382": {
+              "count": 32,
+              "cycle_sum": 32,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 32
+              },
+              "assembly": "ld16 r1 = sp[0x5]",
+              "source": "const end:u16=@as(u16,row_ptr[i+1]);"
+            },
+            "384": {
+              "count": 32,
+              "cycle_sum": 32,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 32
+              },
+              "assembly": "add16.nf r8 = r8, r1",
+              "source": "const end:u16=@as(u16,row_ptr[i+1]);"
+            },
+            "386": {
+              "count": 32,
+              "cycle_sum": 32,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 32
+              },
+              "assembly": "sll16.nf r0 = r5, 0x2",
+              "source": "var p:u16=@as(u16,row_ptr[i]);"
+            },
+            "388": {
+              "count": 32,
+              "cycle_sum": 32,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 32
+              },
+              "assembly": "add16.nf r0 = r0, r1",
+              "source": "var p:u16=@as(u16,row_ptr[i]);"
+            },
+            "390": {
+              "count": 32,
+              "cycle_sum": 96,
+              "min": 3,
+              "max": 3,
+              "histogram": {
+                "3": 32
+              },
+              "assembly": "slr16.nf r6 = r0, 0x1",
+              "source": "var p:u16=@as(u16,row_ptr[i]);"
+            },
+            "392": {
+              "count": 32,
+              "cycle_sum": 32,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 32
+              },
+              "assembly": "imov32.nf d10 = [r6]",
+              "source": "var p:u16=@as(u16,row_ptr[i]);"
+            },
+            "394": {
+              "count": 32,
+              "cycle_sum": 96,
+              "min": 3,
+              "max": 3,
+              "histogram": {
+                "3": 32
+              },
+              "assembly": "slr16.nf r6 = r8, 0x1",
+              "source": "const end:u16=@as(u16,row_ptr[i+1]);"
+            },
+            "396": {
+              "count": 32,
+              "cycle_sum": 32,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 32
+              },
+              "assembly": "imov32.nf d12 = [r6]",
+              "source": "const end:u16=@as(u16,row_ptr[i+1]);"
+            },
+            "398": {
+              "count": 32,
+              "cycle_sum": 32,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 32
+              },
+              "assembly": "lteu16.and cflag0 = r12, r10",
+              "source": "while(p<end):(p+=1){"
+            },
+            "400": {
+              "count": 32,
+              "cycle_sum": 180,
+              "min": 3,
+              "max": 6,
+              "histogram": {
+                "3": 4,
+                "6": 28
+              },
+              "assembly": "cflag0 ? jmp 0x16e",
+              "source": "while(p<end):(p+=1){"
+            },
+            "402": {
+              "count": 4,
+              "cycle_sum": 4,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 4
+              },
+              "assembly": "sll16.nf r8 = r5, 0x1",
+              "source": "rpc_server(&(sys_mod.stack_u32));"
+            },
+            "404": {
+              "count": 4,
+              "cycle_sum": 4,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 4
+              },
+              "assembly": "ld16 r0 = sp[0x3]",
+              "source": "rpc_server(&(sys_mod.stack_u32));"
+            },
+            "406": {
+              "count": 4,
+              "cycle_sum": 4,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 4
+              },
+              "assembly": "add16.nf r8 = r8, r0",
+              "source": "rpc_server(&(sys_mod.stack_u32));"
+            },
+            "408": {
+              "count": 256,
+              "cycle_sum": 256,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 256
+              },
+              "assembly": "sll16.nf r0 = r10, 0x2",
+              "source": "const k:u16=@as(u16,col_idx[p]);"
+            },
+            "410": {
+              "count": 256,
+              "cycle_sum": 256,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 256
+              },
+              "assembly": "add16.nf r1 = r0, r9",
+              "source": "const k:u16=@as(u16,col_idx[p]);"
+            },
+            "412": {
+              "count": 256,
+              "cycle_sum": 768,
+              "min": 3,
+              "max": 3,
+              "histogram": {
+                "3": 256
+              },
+              "assembly": "slr16.nf r6 = r1, 0x1",
+              "source": "const k:u16=@as(u16,col_idx[p]);"
+            },
+            "414": {
+              "count": 256,
+              "cycle_sum": 256,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 256
+              },
+              "assembly": "imov32.nf d6 = [r6]",
+              "source": "const k:u16=@as(u16,col_idx[p]);"
+            },
+            "416": {
+              "count": 256,
+              "cycle_sum": 256,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 256
+              },
+              "assembly": "sll16.nf r1 = r6, 0x1",
+              "source": "bd=@increment_dsd_offset(bd,@as(i16,k*N),f32);"
+            },
+            "418": {
+              "count": 256,
+              "cycle_sum": 256,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 256
+              },
+              "assembly": "add16.nf r6 = r1, r14",
+              "source": "bd=@increment_dsd_offset(bd,@as(i16,k*N),f32);"
+            },
+            "420": {
+              "count": 256,
+              "cycle_sum": 256,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 256
+              },
+              "assembly": "add16.nf r0 = r0, r15",
+              "source": "@fmacs(cd,cd,bd,values[p]);"
+            },
+            "422": {
+              "count": 256,
+              "cycle_sum": 768,
+              "min": 3,
+              "max": 3,
+              "histogram": {
+                "3": 256
+              },
+              "assembly": "slr16.nf r7 = r0, 0x1",
+              "source": "@fmacs(cd,cd,bd,values[p]);"
+            },
+            "424": {
+              "count": 256,
+              "cycle_sum": 256,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 256
+              },
+              "assembly": "fmov32.nf d0 = [r7]",
+              "source": "@fmacs(cd,cd,bd,values[p]);"
+            },
+            "426": {
+              "count": 256,
+              "cycle_sum": 256,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 256
+              },
+              "assembly": "st16 [0x7e84] = r2",
+              "source": "@fmacs(cd,cd,bd,values[p]);"
+            },
+            "428": {
+              "count": 256,
+              "cycle_sum": 256,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 256
+              },
+              "assembly": "st16 [0x7e85] = r6",
+              "source": "@fmacs(cd,cd,bd,values[p]);"
+            },
+            "430": {
+              "count": 256,
+              "cycle_sum": 256,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 256
+              },
+              "assembly": "st16 [0x7e86] = r3",
+              "source": "@fmacs(cd,cd,bd,values[p]);"
+            },
+            "432": {
+              "count": 256,
+              "cycle_sum": 256,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 256
+              },
+              "assembly": "st16 [0x7e87] = r4",
+              "source": "@fmacs(cd,cd,bd,values[p]);"
+            },
+            "434": {
+              "count": 256,
+              "cycle_sum": 256,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 256
+              },
+              "assembly": "nop 0x0",
+              "source": "@fmacs(cd,cd,bd,values[p]);"
+            },
+            "436": {
+              "count": 256,
+              "cycle_sum": 256,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 256
+              },
+              "assembly": "nop 0x0",
+              "source": "@fmacs(cd,cd,bd,values[p]);"
+            },
+            "438": {
+              "count": 256,
+              "cycle_sum": 256,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 256
+              },
+              "assembly": "st16 [0x7ec4] = r2",
+              "source": "@fmacs(cd,cd,bd,values[p]);"
+            },
+            "440": {
+              "count": 256,
+              "cycle_sum": 256,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 256
+              },
+              "assembly": "st16 [0x7ec5] = r8",
+              "source": "@fmacs(cd,cd,bd,values[p]);"
+            },
+            "442": {
+              "count": 256,
+              "cycle_sum": 256,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 256
+              },
+              "assembly": "st16 [0x7ec6] = r3",
+              "source": "@fmacs(cd,cd,bd,values[p]);"
+            },
+            "444": {
+              "count": 256,
+              "cycle_sum": 256,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 256
+              },
+              "assembly": "st16 [0x7ec7] = r4",
+              "source": "@fmacs(cd,cd,bd,values[p]);"
+            },
+            "446": {
+              "count": 256,
+              "cycle_sum": 256,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 256
+              },
+              "assembly": "nop 0x0",
+              "source": "@fmacs(cd,cd,bd,values[p]);"
+            },
+            "448": {
+              "count": 256,
+              "cycle_sum": 256,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 256
+              },
+              "assembly": "nop 0x0",
+              "source": "@fmacs(cd,cd,bd,values[p]);"
+            },
+            "450": {
+              "count": 256,
+              "cycle_sum": 256,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 256
+              },
+              "assembly": "st16 [0x7e44] = r2",
+              "source": "@fmacs(cd,cd,bd,values[p]);"
+            },
+            "452": {
+              "count": 256,
+              "cycle_sum": 256,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 256
+              },
+              "assembly": "st16 [0x7e45] = r8",
+              "source": "@fmacs(cd,cd,bd,values[p]);"
+            },
+            "454": {
+              "count": 256,
+              "cycle_sum": 256,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 256
+              },
+              "assembly": "st16 [0x7e46] = r3",
+              "source": "@fmacs(cd,cd,bd,values[p]);"
+            },
+            "456": {
+              "count": 256,
+              "cycle_sum": 256,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 256
+              },
+              "assembly": "st16 [0x7e47] = r4",
+              "source": "@fmacs(cd,cd,bd,values[p]);"
+            },
+            "458": {
+              "count": 256,
+              "cycle_sum": 256,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 256
+              },
+              "assembly": "nop 0x0",
+              "source": "@fmacs(cd,cd,bd,values[p]);"
+            },
+            "460": {
+              "count": 256,
+              "cycle_sum": 512,
+              "min": 2,
+              "max": 2,
+              "histogram": {
+                "2": 256
+              },
+              "assembly": "nop 0x0",
+              "source": "@fmacs(cd,cd,bd,values[p]);"
+            },
+            "462": {
+              "count": 256,
+              "cycle_sum": 256,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 256
+              },
+              "assembly": "fmacs [dds1] = [s0ds1], [s1ds1], d0",
+              "source": "@fmacs(cd,cd,bd,values[p]);"
+            },
+            "464": {
+              "count": 256,
+              "cycle_sum": 320,
+              "min": 1,
+              "max": 2,
+              "histogram": {
+                "1": 192,
+                "2": 64
+              },
+              "assembly": "add16.nf r10 = r10, 0x1",
+              "source": "while(p<end):(p+=1){"
+            },
+            "466": {
+              "count": 256,
+              "cycle_sum": 256,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 256
+              },
+              "assembly": "ltu16.and cflag0 = r10, r12",
+              "source": "while(p<end):(p+=1){"
+            },
+            "468": {
+              "count": 256,
+              "cycle_sum": 1524,
+              "min": 3,
+              "max": 6,
+              "histogram": {
+                "3": 4,
+                "6": 252
+              },
+              "assembly": "cflag0 ? jmp 0x198",
+              "source": "while(p<end):(p+=1){"
+            },
+            "366": {
+              "count": 32,
+              "cycle_sum": 32,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 32
+              },
+              "assembly": "ld16 r8 = sp[0x4]",
+              "source": "var i:u16=0;while(i<32):(i+=1){"
+            },
+            "368": {
+              "count": 32,
+              "cycle_sum": 32,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 32
+              },
+              "assembly": "ltu16.and cflag0 = r8, r5",
+              "source": "var i:u16=0;while(i<32):(i+=1){"
+            },
+            "370": {
+              "count": 32,
+              "cycle_sum": 32,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 32
+              },
+              "assembly": "ld16rp d0 = sp[0x6]",
+              "source": "var i:u16=0;while(i<32):(i+=1){"
+            },
+            "372": {
+              "count": 32,
+              "cycle_sum": 99,
+              "min": 3,
+              "max": 6,
+              "histogram": {
+                "3": 31,
+                "6": 1
+              },
+              "assembly": "cflag0 ? jmp 0x1f0",
+              "source": "var i:u16=0;while(i<32):(i+=1){"
+            },
+            "496": {
+              "count": 1,
+              "cycle_sum": 1,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 1
+              },
+              "assembly": "nop 0x0",
+              "source": "(result.*)[i] = @get_config(base_words + i);"
+            },
+            "498": {
+              "count": 1,
+              "cycle_sum": 1,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 1
+              },
+              "assembly": "nop 0x0",
+              "source": "(result.*)[i] = @get_config(base_words + i);"
+            },
+            "500": {
+              "count": 1,
+              "cycle_sum": 1,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 1
+              },
+              "assembly": "nop 0x0",
+              "source": "(result.*)[i] = @get_config(base_words + i);"
+            },
+            "502": {
+              "count": 1,
+              "cycle_sum": 1,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 1
+              },
+              "assembly": "nop 0x0",
+              "source": "(result.*)[i] = @get_config(base_words + i);"
+            }
+          },
+          "branches": [
+            {
+              "pc": 400,
+              "outcome": "fallthrough",
+              "count": 4,
+              "cycle_sum": 12,
+              "histogram": {
+                "3": 4
+              },
+              "assembly": "cflag0 ? jmp 0x16e"
+            },
+            {
+              "pc": 468,
+              "outcome": "target",
+              "count": 252,
+              "cycle_sum": 1512,
+              "histogram": {
+                "6": 252
+              },
+              "assembly": "cflag0 ? jmp 0x198"
+            },
+            {
+              "pc": 468,
+              "outcome": "fallthrough_via_static_jump",
+              "count": 4,
+              "cycle_sum": 12,
+              "histogram": {
+                "3": 4
+              },
+              "assembly": "cflag0 ? jmp 0x198"
+            },
+            {
+              "pc": 372,
+              "outcome": "fallthrough",
+              "count": 31,
+              "cycle_sum": 93,
+              "histogram": {
+                "3": 31
+              },
+              "assembly": "cflag0 ? jmp 0x1f0"
+            },
+            {
+              "pc": 400,
+              "outcome": "target",
+              "count": 28,
+              "cycle_sum": 168,
+              "histogram": {
+                "6": 28
+              },
+              "assembly": "cflag0 ? jmp 0x16e"
+            },
+            {
+              "pc": 372,
+              "outcome": "target",
+              "count": 1,
+              "cycle_sum": 6,
+              "histogram": {
+                "6": 1
+              },
+              "assembly": "cflag0 ? jmp 0x1f0"
+            }
+          ]
+        }
+      ],
+      "validation_sha256": "8a891dde644810d2da4256cf25a9206db963c91105be21b5b52e06cc50fec6b1"
+    },
+    {
+      "case": "scalar-n4",
+      "windows": [
+        {
+          "family": "uniform8",
+          "cycles": 18044,
+          "dispatches": 12280,
+          "pc_gaps": {
+            "322": {
+              "count": 1,
+              "cycle_sum": 1,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 1
+              },
+              "assembly": "ld16 r5 = [0x7b30]",
+              "source": "(result.*)[i] = @get_config(base_words + i);"
+            },
+            "324": {
+              "count": 1,
+              "cycle_sum": 1,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 1
+              },
+              "assembly": "st16 [0x1a34] = r5",
+              "source": "(result.*)[i] = @get_config(base_words + i);"
+            },
+            "326": {
+              "count": 1,
+              "cycle_sum": 1,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 1
+              },
+              "assembly": "ld16 r5 = [0x7b31]",
+              "source": "(result.*)[i] = @get_config(base_words + i);"
+            },
+            "328": {
+              "count": 1,
+              "cycle_sum": 1,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 1
+              },
+              "assembly": "st16 [0x1a36] = r5",
+              "source": "(result.*)[i] = @get_config(base_words + i);"
+            },
+            "330": {
+              "count": 1,
+              "cycle_sum": 1,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 1
+              },
+              "assembly": "ld16 r5 = [0x7b32]",
+              "source": "(result.*)[i] = @get_config(base_words + i);"
+            },
+            "332": {
+              "count": 1,
+              "cycle_sum": 1,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 1
+              },
+              "assembly": "st16 [0x1a38] = r5",
+              "source": "(result.*)[i] = @get_config(base_words + i);"
+            },
+            "334": {
+              "count": 1,
+              "cycle_sum": 1,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 1
+              },
+              "assembly": "lddwds dds1 = [0x0]",
+              "source": "@fmovs(all_c,@as(f32,0.0));"
+            },
+            "336": {
+              "count": 1,
+              "cycle_sum": 3,
+              "min": 3,
+              "max": 3,
+              "histogram": {
+                "3": 1
+              },
+              "assembly": "fmov16.nf r1 = r0",
+              "source": "@fmovs(all_c,@as(f32,0.0));"
+            },
+            "338": {
+              "count": 1,
+              "cycle_sum": 32,
+              "min": 32,
+              "max": 32,
+              "histogram": {
+                "32": 1
+              },
+              "assembly": "fmov32.nf [dds1] = d0",
+              "source": "@fmovs(all_c,@as(f32,0.0));"
+            },
+            "340": {
+              "count": 1,
+              "cycle_sum": 1,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 1
+              },
+              "assembly": "ld16rp d2 = [0x6ec]",
+              "source": "var p:u16=@as(u16,row_ptr[i]);"
+            },
+            "342": {
+              "count": 1,
+              "cycle_sum": 1,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 1
+              },
+              "assembly": "movri r5 = 0xdd8",
+              "source": "var p:u16=@as(u16,row_ptr[i]);"
+            },
+            "344": {
+              "count": 1,
+              "cycle_sum": 1,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 1
+              },
+              "assembly": "movri r8 = 0x325c",
+              "source": "var p:u16=@as(u16,row_ptr[i]);"
+            },
+            "346": {
+              "count": 1,
+              "cycle_sum": 1,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 1
+              },
+              "assembly": "st16 sp[0x3] = r8",
+              "source": "var p:u16=@as(u16,row_ptr[i]);"
+            },
+            "348": {
+              "count": 1,
+              "cycle_sum": 1,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 1
+              },
+              "assembly": "movri r8 = 0x3260",
+              "source": "var p:u16=@as(u16,row_ptr[i]);"
+            },
+            "350": {
+              "count": 1,
+              "cycle_sum": 1,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 1
+              },
+              "assembly": "st16 sp[0x2] = r8",
+              "source": "var p:u16=@as(u16,row_ptr[i]);"
+            },
+            "352": {
+              "count": 1,
+              "cycle_sum": 1,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 1
+              },
+              "assembly": "movri r8 = 0x3264",
+              "source": "var p:u16=@as(u16,row_ptr[i]);"
+            },
+            "354": {
+              "count": 1,
+              "cycle_sum": 1,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 1
+              },
+              "assembly": "st16 sp[0x1] = r8",
+              "source": "var p:u16=@as(u16,row_ptr[i]);"
+            },
+            "356": {
+              "count": 1,
+              "cycle_sum": 1,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 1
+              },
+              "assembly": "movri r8 = 0x3268",
+              "source": "var p:u16=@as(u16,row_ptr[i]);"
+            },
+            "358": {
+              "count": 1,
+              "cycle_sum": 1,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 1
+              },
+              "assembly": "st16 sp[0x0] = r8",
+              "source": "var i:u16=0;while(i<32):(i+=1){"
+            },
+            "360": {
+              "count": 1,
+              "cycle_sum": 1,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 1
+              },
+              "assembly": "st16 sp[0x4] = r5",
+              "source": "var i:u16=0;while(i<32):(i+=1){"
+            },
+            "370": {
+              "count": 32,
+              "cycle_sum": 32,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 32
+              },
+              "assembly": "fmov16.nf r9 = r0",
+              "source": "rpc_server(&(sys_mod.stack_u32));"
+            },
+            "372": {
+              "count": 32,
+              "cycle_sum": 32,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 32
+              },
+              "assembly": "fmov16.nf r6 = r2",
+              "source": "rpc_server(&(sys_mod.stack_u32));"
+            },
+            "374": {
+              "count": 32,
+              "cycle_sum": 32,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 32
+              },
+              "assembly": "add16.nf r0 = r9, 0x1",
+              "source": "const end:u16=@as(u16,row_ptr[i+1]);"
+            },
+            "376": {
+              "count": 32,
+              "cycle_sum": 32,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 32
+              },
+              "assembly": "sll16.nf r8 = r0, 0x2",
+              "source": "const end:u16=@as(u16,row_ptr[i+1]);"
+            },
+            "378": {
+              "count": 32,
+              "cycle_sum": 32,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 32
+              },
+              "assembly": "add16.nf r8 = r8, r5",
+              "source": "const end:u16=@as(u16,row_ptr[i+1]);"
+            },
+            "380": {
+              "count": 32,
+              "cycle_sum": 96,
+              "min": 3,
+              "max": 3,
+              "histogram": {
+                "3": 32
+              },
+              "assembly": "slr16.nf r7 = r8, 0x1",
+              "source": "const end:u16=@as(u16,row_ptr[i+1]);"
+            },
+            "382": {
+              "count": 32,
+              "cycle_sum": 32,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 32
+              },
+              "assembly": "imov32.nf d2 = [r7]",
+              "source": "const end:u16=@as(u16,row_ptr[i+1]);"
+            },
+            "384": {
+              "count": 32,
+              "cycle_sum": 32,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 32
+              },
+              "assembly": "lteu16.and cflag0 = r2, r6",
+              "source": "while(p<end):(p+=1){"
+            },
+            "386": {
+              "count": 32,
+              "cycle_sum": 96,
+              "min": 3,
+              "max": 3,
+              "histogram": {
+                "3": 32
+              },
+              "assembly": "cflag0 ? jmp 0x16c",
+              "source": "while(p<end):(p+=1){"
+            },
+            "388": {
+              "count": 32,
+              "cycle_sum": 32,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 32
+              },
+              "assembly": "st32 sp[0xa] = d0",
+              "source": "<no source>"
+            },
+            "390": {
+              "count": 32,
+              "cycle_sum": 32,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 32
+              },
+              "assembly": "st16 sp[0x9] = r9",
+              "source": "<no source>"
+            },
+            "392": {
+              "count": 32,
+              "cycle_sum": 32,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 32
+              },
+              "assembly": "sll16.nf r8 = r9, 0x4",
+              "source": "var j:u16=0;while(j<N):(j+=1){C[i*N+j]+=values[p]*B[k*N+j];}"
+            },
+            "394": {
+              "count": 32,
+              "cycle_sum": 32,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 32
+              },
+              "assembly": "ld16 r5 = sp[0x3]",
+              "source": "var j:u16=0;while(j<N):(j+=1){C[i*N+j]+=values[p]*B[k*N+j];}"
+            },
+            "396": {
+              "count": 32,
+              "cycle_sum": 32,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 32
+              },
+              "assembly": "add16.nf r14 = r8, r5",
+              "source": "var j:u16=0;while(j<N):(j+=1){C[i*N+j]+=values[p]*B[k*N+j];}"
+            },
+            "398": {
+              "count": 32,
+              "cycle_sum": 32,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 32
+              },
+              "assembly": "ld16 r5 = sp[0x2]",
+              "source": "rpc_server(&(sys_mod.stack_u32));"
+            },
+            "400": {
+              "count": 32,
+              "cycle_sum": 32,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 32
+              },
+              "assembly": "add16.nf r9 = r8, r5",
+              "source": "rpc_server(&(sys_mod.stack_u32));"
+            },
+            "402": {
+              "count": 32,
+              "cycle_sum": 32,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 32
+              },
+              "assembly": "ld16 r5 = sp[0x1]",
+              "source": "rpc_server(&(sys_mod.stack_u32));"
+            },
+            "404": {
+              "count": 32,
+              "cycle_sum": 32,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 32
+              },
+              "assembly": "add16.nf r15 = r8, r5",
+              "source": "rpc_server(&(sys_mod.stack_u32));"
+            },
+            "406": {
+              "count": 32,
+              "cycle_sum": 32,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 32
+              },
+              "assembly": "ld16 r5 = sp[0x0]",
+              "source": "rpc_server(&(sys_mod.stack_u32));"
+            },
+            "408": {
+              "count": 32,
+              "cycle_sum": 32,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 32
+              },
+              "assembly": "add16.nf r8 = r8, r5",
+              "source": "rpc_server(&(sys_mod.stack_u32));"
+            },
+            "410": {
+              "count": 32,
+              "cycle_sum": 32,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 32
+              },
+              "assembly": "slr16.nf r7 = r8, 0x1",
+              "source": "rpc_server(&(sys_mod.stack_u32));"
+            },
+            "412": {
+              "count": 32,
+              "cycle_sum": 64,
+              "min": 2,
+              "max": 2,
+              "histogram": {
+                "2": 32
+              },
+              "assembly": "st16 sp[0x8] = r7",
+              "source": "rpc_server(&(sys_mod.stack_u32));"
+            },
+            "414": {
+              "count": 32,
+              "cycle_sum": 32,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 32
+              },
+              "assembly": "fmov32.nf d10 = [r7]",
+              "source": "rpc_server(&(sys_mod.stack_u32));"
+            },
+            "416": {
+              "count": 32,
+              "cycle_sum": 32,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 32
+              },
+              "assembly": "slr16.nf r7 = r15, 0x1",
+              "source": "rpc_server(&(sys_mod.stack_u32));"
+            },
+            "418": {
+              "count": 32,
+              "cycle_sum": 64,
+              "min": 2,
+              "max": 2,
+              "histogram": {
+                "2": 32
+              },
+              "assembly": "st16 sp[0x7] = r7",
+              "source": "rpc_server(&(sys_mod.stack_u32));"
+            },
+            "420": {
+              "count": 32,
+              "cycle_sum": 32,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 32
+              },
+              "assembly": "fmov32.nf d12 = [r7]",
+              "source": "rpc_server(&(sys_mod.stack_u32));"
+            },
+            "422": {
+              "count": 32,
+              "cycle_sum": 32,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 32
+              },
+              "assembly": "slr16.nf r7 = r9, 0x1",
+              "source": "rpc_server(&(sys_mod.stack_u32));"
+            },
+            "424": {
+              "count": 32,
+              "cycle_sum": 64,
+              "min": 2,
+              "max": 2,
+              "histogram": {
+                "2": 32
+              },
+              "assembly": "st16 sp[0x6] = r7",
+              "source": "rpc_server(&(sys_mod.stack_u32));"
+            },
+            "426": {
+              "count": 32,
+              "cycle_sum": 32,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 32
+              },
+              "assembly": "fmov32.nf d8 = [r7]",
+              "source": "rpc_server(&(sys_mod.stack_u32));"
+            },
+            "428": {
+              "count": 32,
+              "cycle_sum": 32,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 32
+              },
+              "assembly": "slr16.nf r7 = r14, 0x1",
+              "source": "rpc_server(&(sys_mod.stack_u32));"
+            },
+            "430": {
+              "count": 32,
+              "cycle_sum": 64,
+              "min": 2,
+              "max": 2,
+              "histogram": {
+                "2": 32
+              },
+              "assembly": "st16 sp[0x5] = r7",
+              "source": "rpc_server(&(sys_mod.stack_u32));"
+            },
+            "432": {
+              "count": 32,
+              "cycle_sum": 32,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 32
+              },
+              "assembly": "fmov32.nf d14 = [r7]",
+              "source": "rpc_server(&(sys_mod.stack_u32));"
+            },
+            "434": {
+              "count": 32,
+              "cycle_sum": 32,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 32
+              },
+              "assembly": "st32 sp[0xc] = d2",
+              "source": "rpc_server(&(sys_mod.stack_u32));"
+            },
+            "436": {
+              "count": 256,
+              "cycle_sum": 256,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 256
+              },
+              "assembly": "sll16.nf r0 = r6, 0x2",
+              "source": "const k:u16=@as(u16,col_idx[p]);"
+            },
+            "438": {
+              "count": 256,
+              "cycle_sum": 256,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 256
+              },
+              "assembly": "movri r1 = 0xe5c",
+              "source": "const k:u16=@as(u16,col_idx[p]);"
+            },
+            "440": {
+              "count": 256,
+              "cycle_sum": 256,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 256
+              },
+              "assembly": "add16.nf r1 = r0, r1",
+              "source": "const k:u16=@as(u16,col_idx[p]);"
+            },
+            "442": {
+              "count": 256,
+              "cycle_sum": 256,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 256
+              },
+              "assembly": "movri r5 = 0x1e5c",
+              "source": "rpc_server(&(sys_mod.stack_u32));"
+            },
+            "444": {
+              "count": 256,
+              "cycle_sum": 256,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 256
+              },
+              "assembly": "add16.nf r5 = r0, r5",
+              "source": "rpc_server(&(sys_mod.stack_u32));"
+            },
+            "446": {
+              "count": 256,
+              "cycle_sum": 768,
+              "min": 3,
+              "max": 3,
+              "histogram": {
+                "3": 256
+              },
+              "assembly": "slr16.nf r7 = r1, 0x1",
+              "source": "const k:u16=@as(u16,col_idx[p]);"
+            },
+            "448": {
+              "count": 256,
+              "cycle_sum": 256,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 256
+              },
+              "assembly": "imov32.nf d0 = [r7]",
+              "source": "const k:u16=@as(u16,col_idx[p]);"
+            },
+            "450": {
+              "count": 256,
+              "cycle_sum": 256,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 256
+              },
+              "assembly": "sll16.nf r0 = r0, 0x4",
+              "source": "var j:u16=0;while(j<N):(j+=1){C[i*N+j]+=values[p]*B[k*N+j];}"
+            },
+            "452": {
+              "count": 256,
+              "cycle_sum": 256,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 256
+              },
+              "assembly": "movri r1 = 0x2e5c",
+              "source": "var j:u16=0;while(j<N):(j+=1){C[i*N+j]+=values[p]*B[k*N+j];}"
+            },
+            "454": {
+              "count": 256,
+              "cycle_sum": 256,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 256
+              },
+              "assembly": "add16.nf r1 = r0, r1",
+              "source": "var j:u16=0;while(j<N):(j+=1){C[i*N+j]+=values[p]*B[k*N+j];}"
+            },
+            "456": {
+              "count": 256,
+              "cycle_sum": 256,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 256
+              },
+              "assembly": "st16 sp[0xf] = r1",
+              "source": "var j:u16=0;while(j<N):(j+=1){C[i*N+j]+=values[p]*B[k*N+j];}"
+            },
+            "458": {
+              "count": 256,
+              "cycle_sum": 256,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 256
+              },
+              "assembly": "movri r1 = 0x2e64",
+              "source": "var j:u16=0;while(j<N):(j+=1){C[i*N+j]+=values[p]*B[k*N+j];}"
+            },
+            "460": {
+              "count": 256,
+              "cycle_sum": 256,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 256
+              },
+              "assembly": "add16.nf r4 = r0, r1",
+              "source": "var j:u16=0;while(j<N):(j+=1){C[i*N+j]+=values[p]*B[k*N+j];}"
+            },
+            "462": {
+              "count": 256,
+              "cycle_sum": 256,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 256
+              },
+              "assembly": "movri r1 = 0x2e68",
+              "source": "var j:u16=0;while(j<N):(j+=1){C[i*N+j]+=values[p]*B[k*N+j];}"
+            },
+            "464": {
+              "count": 256,
+              "cycle_sum": 256,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 256
+              },
+              "assembly": "add16.nf r2 = r0, r1",
+              "source": "var j:u16=0;while(j<N):(j+=1){C[i*N+j]+=values[p]*B[k*N+j];}"
+            },
+            "466": {
+              "count": 256,
+              "cycle_sum": 256,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 256
+              },
+              "assembly": "movri r1 = 0x2e60",
+              "source": "var j:u16=0;while(j<N):(j+=1){C[i*N+j]+=values[p]*B[k*N+j];}"
+            },
+            "468": {
+              "count": 256,
+              "cycle_sum": 256,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 256
+              },
+              "assembly": "add16.nf r0 = r0, r1",
+              "source": "var j:u16=0;while(j<N):(j+=1){C[i*N+j]+=values[p]*B[k*N+j];}"
+            },
+            "470": {
+              "count": 256,
+              "cycle_sum": 256,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 256
+              },
+              "assembly": "st16 sp[0xe] = r0",
+              "source": "rpc_server(&(sys_mod.stack_u32));"
+            },
+            "472": {
+              "count": 256,
+              "cycle_sum": 768,
+              "min": 3,
+              "max": 3,
+              "histogram": {
+                "3": 256
+              },
+              "assembly": "slr16.nf r7 = r5, 0x1",
+              "source": "rpc_server(&(sys_mod.stack_u32));"
+            },
+            "474": {
+              "count": 256,
+              "cycle_sum": 256,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 256
+              },
+              "assembly": "fmov32.nf d0 = [r7]",
+              "source": "rpc_server(&(sys_mod.stack_u32));"
+            },
+            "476": {
+              "count": 256,
+              "cycle_sum": 768,
+              "min": 3,
+              "max": 3,
+              "histogram": {
+                "3": 256
+              },
+              "assembly": "slr16.nf r7 = r2, 0x1",
+              "source": "var j:u16=0;while(j<N):(j+=1){C[i*N+j]+=values[p]*B[k*N+j];}"
+            },
+            "478": {
+              "count": 256,
+              "cycle_sum": 256,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 256
+              },
+              "assembly": "fmov32.nf d2 = [r7]",
+              "source": "var j:u16=0;while(j<N):(j+=1){C[i*N+j]+=values[p]*B[k*N+j];}"
+            },
+            "480": {
+              "count": 256,
+              "cycle_sum": 256,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 256
+              },
+              "assembly": "fmuls d2 = d0, d2",
+              "source": "var j:u16=0;while(j<N):(j+=1){C[i*N+j]+=values[p]*B[k*N+j];}"
+            },
+            "482": {
+              "count": 256,
+              "cycle_sum": 256,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 256
+              },
+              "assembly": "fadds d10 = d10, d2",
+              "source": "var j:u16=0;while(j<N):(j+=1){C[i*N+j]+=values[p]*B[k*N+j];}"
+            },
+            "484": {
+              "count": 256,
+              "cycle_sum": 1024,
+              "min": 4,
+              "max": 4,
+              "histogram": {
+                "4": 256
+              },
+              "assembly": "slr16.nf r7 = r4, 0x1",
+              "source": "var j:u16=0;while(j<N):(j+=1){C[i*N+j]+=values[p]*B[k*N+j];}"
+            },
+            "486": {
+              "count": 256,
+              "cycle_sum": 256,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 256
+              },
+              "assembly": "fmov32.nf d2 = [r7]",
+              "source": "var j:u16=0;while(j<N):(j+=1){C[i*N+j]+=values[p]*B[k*N+j];}"
+            },
+            "488": {
+              "count": 256,
+              "cycle_sum": 256,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 256
+              },
+              "assembly": "fmuls d2 = d0, d2",
+              "source": "var j:u16=0;while(j<N):(j+=1){C[i*N+j]+=values[p]*B[k*N+j];}"
+            },
+            "490": {
+              "count": 256,
+              "cycle_sum": 256,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 256
+              },
+              "assembly": "fadds d12 = d12, d2",
+              "source": "var j:u16=0;while(j<N):(j+=1){C[i*N+j]+=values[p]*B[k*N+j];}"
+            },
+            "492": {
+              "count": 256,
+              "cycle_sum": 256,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 256
+              },
+              "assembly": "ld16 r5 = sp[0xf]",
+              "source": "var j:u16=0;while(j<N):(j+=1){C[i*N+j]+=values[p]*B[k*N+j];}"
+            },
+            "494": {
+              "count": 256,
+              "cycle_sum": 1024,
+              "min": 4,
+              "max": 4,
+              "histogram": {
+                "4": 256
+              },
+              "assembly": "slr16.nf r7 = r5, 0x1",
+              "source": "var j:u16=0;while(j<N):(j+=1){C[i*N+j]+=values[p]*B[k*N+j];}"
+            },
+            "496": {
+              "count": 256,
+              "cycle_sum": 256,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 256
+              },
+              "assembly": "fmov32.nf d2 = [r7]",
+              "source": "var j:u16=0;while(j<N):(j+=1){C[i*N+j]+=values[p]*B[k*N+j];}"
+            },
+            "498": {
+              "count": 256,
+              "cycle_sum": 256,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 256
+              },
+              "assembly": "fmuls d2 = d0, d2",
+              "source": "var j:u16=0;while(j<N):(j+=1){C[i*N+j]+=values[p]*B[k*N+j];}"
+            },
+            "500": {
+              "count": 256,
+              "cycle_sum": 256,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 256
+              },
+              "assembly": "ld16 r5 = sp[0xe]",
+              "source": "var j:u16=0;while(j<N):(j+=1){C[i*N+j]+=values[p]*B[k*N+j];}"
+            },
+            "502": {
+              "count": 256,
+              "cycle_sum": 768,
+              "min": 3,
+              "max": 3,
+              "histogram": {
+                "3": 256
+              },
+              "assembly": "slr16.nf r7 = r5, 0x1",
+              "source": "var j:u16=0;while(j<N):(j+=1){C[i*N+j]+=values[p]*B[k*N+j];}"
+            },
+            "504": {
+              "count": 256,
+              "cycle_sum": 256,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 256
+              },
+              "assembly": "fmov32.nf d4 = [r7]",
+              "source": "var j:u16=0;while(j<N):(j+=1){C[i*N+j]+=values[p]*B[k*N+j];}"
+            },
+            "506": {
+              "count": 256,
+              "cycle_sum": 256,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 256
+              },
+              "assembly": "fmuls d0 = d0, d4",
+              "source": "var j:u16=0;while(j<N):(j+=1){C[i*N+j]+=values[p]*B[k*N+j];}"
+            },
+            "508": {
+              "count": 256,
+              "cycle_sum": 256,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 256
+              },
+              "assembly": "fadds d8 = d8, d0",
+              "source": "var j:u16=0;while(j<N):(j+=1){C[i*N+j]+=values[p]*B[k*N+j];}"
+            },
+            "510": {
+              "count": 256,
+              "cycle_sum": 256,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 256
+              },
+              "assembly": "fadds d14 = d14, d2",
+              "source": "var j:u16=0;while(j<N):(j+=1){C[i*N+j]+=values[p]*B[k*N+j];}"
+            },
+            "512": {
+              "count": 256,
+              "cycle_sum": 512,
+              "min": 2,
+              "max": 2,
+              "histogram": {
+                "2": 256
+              },
+              "assembly": "ld16rp d2 = sp[0xc]",
+              "source": "var j:u16=0;while(j<N):(j+=1){C[i*N+j]+=values[p]*B[k*N+j];}"
+            },
+            "514": {
+              "count": 256,
+              "cycle_sum": 256,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 256
+              },
+              "assembly": "add16.nf r6 = r6, 0x1",
+              "source": "while(p<end):(p+=1){"
+            },
+            "516": {
+              "count": 256,
+              "cycle_sum": 256,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 256
+              },
+              "assembly": "ltu16.and cflag0 = r6, r2",
+              "source": "while(p<end):(p+=1){"
+            },
+            "518": {
+              "count": 256,
+              "cycle_sum": 1440,
+              "min": 3,
+              "max": 6,
+              "histogram": {
+                "3": 32,
+                "6": 224
+              },
+              "assembly": "cflag0 ? jmp 0x1b4",
+              "source": "while(p<end):(p+=1){"
+            },
+            "520": {
+              "count": 32,
+              "cycle_sum": 32,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 32
+              },
+              "assembly": "ld16 r6 = sp[0x5]",
+              "source": "<no source>"
+            },
+            "522": {
+              "count": 32,
+              "cycle_sum": 32,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 32
+              },
+              "assembly": "fmov32.nf [r6] = d14",
+              "source": "<no source>"
+            },
+            "524": {
+              "count": 32,
+              "cycle_sum": 128,
+              "min": 4,
+              "max": 4,
+              "histogram": {
+                "4": 32
+              },
+              "assembly": "ld16 r6 = sp[0x6]",
+              "source": "<no source>"
+            },
+            "526": {
+              "count": 32,
+              "cycle_sum": 32,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 32
+              },
+              "assembly": "fmov32.nf [r6] = d8",
+              "source": "<no source>"
+            },
+            "528": {
+              "count": 32,
+              "cycle_sum": 128,
+              "min": 4,
+              "max": 4,
+              "histogram": {
+                "4": 32
+              },
+              "assembly": "ld16 r6 = sp[0x7]",
+              "source": "<no source>"
+            },
+            "530": {
+              "count": 32,
+              "cycle_sum": 32,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 32
+              },
+              "assembly": "fmov32.nf [r6] = d12",
+              "source": "<no source>"
+            },
+            "532": {
+              "count": 32,
+              "cycle_sum": 128,
+              "min": 4,
+              "max": 4,
+              "histogram": {
+                "4": 32
+              },
+              "assembly": "ld16 r6 = sp[0x8]",
+              "source": "<no source>"
+            },
+            "534": {
+              "count": 32,
+              "cycle_sum": 32,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 32
+              },
+              "assembly": "fmov32.nf [r6] = d10",
+              "source": "<no source>"
+            },
+            "536": {
+              "count": 32,
+              "cycle_sum": 128,
+              "min": 4,
+              "max": 4,
+              "histogram": {
+                "4": 32
+              },
+              "assembly": "ld16rp d0 = sp[0xa]",
+              "source": "<no source>"
+            },
+            "538": {
+              "count": 32,
+              "cycle_sum": 32,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 32
+              },
+              "assembly": "ld16 r5 = sp[0x4]",
+              "source": "<no source>"
+            },
+            "540": {
+              "count": 32,
+              "cycle_sum": 32,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 32
+              },
+              "assembly": "ld16 r9 = sp[0x9]",
+              "source": "<no source>"
+            },
+            "364": {
+              "count": 32,
+              "cycle_sum": 32,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 32
+              },
+              "assembly": "movri r8 = 0x1e",
+              "source": "<no source>"
+            },
+            "366": {
+              "count": 32,
+              "cycle_sum": 32,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 32
+              },
+              "assembly": "ltu16.and cflag0 = r8, r9",
+              "source": "var i:u16=0;while(i<32):(i+=1){"
+            },
+            "368": {
+              "count": 32,
+              "cycle_sum": 99,
+              "min": 3,
+              "max": 6,
+              "histogram": {
+                "3": 31,
+                "6": 1
+              },
+              "assembly": "cflag0 ? jmp 0x238",
+              "source": "var i:u16=0;while(i<32):(i+=1){"
+            },
+            "568": {
+              "count": 1,
+              "cycle_sum": 1,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 1
+              },
+              "assembly": "nop 0x0",
+              "source": "(result.*)[i] = @get_config(base_words + i);"
+            },
+            "570": {
+              "count": 1,
+              "cycle_sum": 1,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 1
+              },
+              "assembly": "nop 0x0",
+              "source": "(result.*)[i] = @get_config(base_words + i);"
+            },
+            "572": {
+              "count": 1,
+              "cycle_sum": 1,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 1
+              },
+              "assembly": "nop 0x0",
+              "source": "(result.*)[i] = @get_config(base_words + i);"
+            },
+            "574": {
+              "count": 1,
+              "cycle_sum": 1,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 1
+              },
+              "assembly": "nop 0x0",
+              "source": "(result.*)[i] = @get_config(base_words + i);"
+            }
+          },
+          "branches": [
+            {
+              "pc": 386,
+              "outcome": "fallthrough",
+              "count": 32,
+              "cycle_sum": 96,
+              "histogram": {
+                "3": 32
+              },
+              "assembly": "cflag0 ? jmp 0x16c"
+            },
+            {
+              "pc": 518,
+              "outcome": "target",
+              "count": 224,
+              "cycle_sum": 1344,
+              "histogram": {
+                "6": 224
+              },
+              "assembly": "cflag0 ? jmp 0x1b4"
+            },
+            {
+              "pc": 518,
+              "outcome": "fallthrough",
+              "count": 32,
+              "cycle_sum": 96,
+              "histogram": {
+                "3": 32
+              },
+              "assembly": "cflag0 ? jmp 0x1b4"
+            },
+            {
+              "pc": 368,
+              "outcome": "fallthrough",
+              "count": 31,
+              "cycle_sum": 93,
+              "histogram": {
+                "3": 31
+              },
+              "assembly": "cflag0 ? jmp 0x238"
+            },
+            {
+              "pc": 368,
+              "outcome": "target",
+              "count": 1,
+              "cycle_sum": 6,
+              "histogram": {
+                "6": 1
+              },
+              "assembly": "cflag0 ? jmp 0x238"
+            }
+          ]
+        },
+        {
+          "family": "skew8",
+          "cycles": 16784,
+          "dispatches": 11300,
+          "pc_gaps": {
+            "322": {
+              "count": 1,
+              "cycle_sum": 1,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 1
+              },
+              "assembly": "ld16 r5 = [0x7b30]",
+              "source": "(result.*)[i] = @get_config(base_words + i);"
+            },
+            "324": {
+              "count": 1,
+              "cycle_sum": 1,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 1
+              },
+              "assembly": "st16 [0x1a34] = r5",
+              "source": "(result.*)[i] = @get_config(base_words + i);"
+            },
+            "326": {
+              "count": 1,
+              "cycle_sum": 1,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 1
+              },
+              "assembly": "ld16 r5 = [0x7b31]",
+              "source": "(result.*)[i] = @get_config(base_words + i);"
+            },
+            "328": {
+              "count": 1,
+              "cycle_sum": 1,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 1
+              },
+              "assembly": "st16 [0x1a36] = r5",
+              "source": "(result.*)[i] = @get_config(base_words + i);"
+            },
+            "330": {
+              "count": 1,
+              "cycle_sum": 1,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 1
+              },
+              "assembly": "ld16 r5 = [0x7b32]",
+              "source": "(result.*)[i] = @get_config(base_words + i);"
+            },
+            "332": {
+              "count": 1,
+              "cycle_sum": 1,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 1
+              },
+              "assembly": "st16 [0x1a38] = r5",
+              "source": "(result.*)[i] = @get_config(base_words + i);"
+            },
+            "334": {
+              "count": 1,
+              "cycle_sum": 1,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 1
+              },
+              "assembly": "lddwds dds1 = [0x0]",
+              "source": "@fmovs(all_c,@as(f32,0.0));"
+            },
+            "336": {
+              "count": 1,
+              "cycle_sum": 3,
+              "min": 3,
+              "max": 3,
+              "histogram": {
+                "3": 1
+              },
+              "assembly": "fmov16.nf r1 = r0",
+              "source": "@fmovs(all_c,@as(f32,0.0));"
+            },
+            "338": {
+              "count": 1,
+              "cycle_sum": 32,
+              "min": 32,
+              "max": 32,
+              "histogram": {
+                "32": 1
+              },
+              "assembly": "fmov32.nf [dds1] = d0",
+              "source": "@fmovs(all_c,@as(f32,0.0));"
+            },
+            "340": {
+              "count": 1,
+              "cycle_sum": 1,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 1
+              },
+              "assembly": "ld16rp d2 = [0x6ec]",
+              "source": "var p:u16=@as(u16,row_ptr[i]);"
+            },
+            "342": {
+              "count": 1,
+              "cycle_sum": 1,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 1
+              },
+              "assembly": "movri r5 = 0xdd8",
+              "source": "var p:u16=@as(u16,row_ptr[i]);"
+            },
+            "344": {
+              "count": 1,
+              "cycle_sum": 1,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 1
+              },
+              "assembly": "movri r8 = 0x325c",
+              "source": "var p:u16=@as(u16,row_ptr[i]);"
+            },
+            "346": {
+              "count": 1,
+              "cycle_sum": 1,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 1
+              },
+              "assembly": "st16 sp[0x3] = r8",
+              "source": "var p:u16=@as(u16,row_ptr[i]);"
+            },
+            "348": {
+              "count": 1,
+              "cycle_sum": 1,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 1
+              },
+              "assembly": "movri r8 = 0x3260",
+              "source": "var p:u16=@as(u16,row_ptr[i]);"
+            },
+            "350": {
+              "count": 1,
+              "cycle_sum": 1,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 1
+              },
+              "assembly": "st16 sp[0x2] = r8",
+              "source": "var p:u16=@as(u16,row_ptr[i]);"
+            },
+            "352": {
+              "count": 1,
+              "cycle_sum": 1,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 1
+              },
+              "assembly": "movri r8 = 0x3264",
+              "source": "var p:u16=@as(u16,row_ptr[i]);"
+            },
+            "354": {
+              "count": 1,
+              "cycle_sum": 1,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 1
+              },
+              "assembly": "st16 sp[0x1] = r8",
+              "source": "var p:u16=@as(u16,row_ptr[i]);"
+            },
+            "356": {
+              "count": 1,
+              "cycle_sum": 1,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 1
+              },
+              "assembly": "movri r8 = 0x3268",
+              "source": "var p:u16=@as(u16,row_ptr[i]);"
+            },
+            "358": {
+              "count": 1,
+              "cycle_sum": 1,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 1
+              },
+              "assembly": "st16 sp[0x0] = r8",
+              "source": "var i:u16=0;while(i<32):(i+=1){"
+            },
+            "360": {
+              "count": 1,
+              "cycle_sum": 1,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 1
+              },
+              "assembly": "st16 sp[0x4] = r5",
+              "source": "var i:u16=0;while(i<32):(i+=1){"
+            },
+            "370": {
+              "count": 32,
+              "cycle_sum": 32,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 32
+              },
+              "assembly": "fmov16.nf r9 = r0",
+              "source": "rpc_server(&(sys_mod.stack_u32));"
+            },
+            "372": {
+              "count": 32,
+              "cycle_sum": 32,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 32
+              },
+              "assembly": "fmov16.nf r6 = r2",
+              "source": "rpc_server(&(sys_mod.stack_u32));"
+            },
+            "374": {
+              "count": 32,
+              "cycle_sum": 32,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 32
+              },
+              "assembly": "add16.nf r0 = r9, 0x1",
+              "source": "const end:u16=@as(u16,row_ptr[i+1]);"
+            },
+            "376": {
+              "count": 32,
+              "cycle_sum": 32,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 32
+              },
+              "assembly": "sll16.nf r8 = r0, 0x2",
+              "source": "const end:u16=@as(u16,row_ptr[i+1]);"
+            },
+            "378": {
+              "count": 32,
+              "cycle_sum": 32,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 32
+              },
+              "assembly": "add16.nf r8 = r8, r5",
+              "source": "const end:u16=@as(u16,row_ptr[i+1]);"
+            },
+            "380": {
+              "count": 32,
+              "cycle_sum": 96,
+              "min": 3,
+              "max": 3,
+              "histogram": {
+                "3": 32
+              },
+              "assembly": "slr16.nf r7 = r8, 0x1",
+              "source": "const end:u16=@as(u16,row_ptr[i+1]);"
+            },
+            "382": {
+              "count": 32,
+              "cycle_sum": 32,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 32
+              },
+              "assembly": "imov32.nf d2 = [r7]",
+              "source": "const end:u16=@as(u16,row_ptr[i+1]);"
+            },
+            "384": {
+              "count": 32,
+              "cycle_sum": 32,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 32
+              },
+              "assembly": "lteu16.and cflag0 = r2, r6",
+              "source": "while(p<end):(p+=1){"
+            },
+            "386": {
+              "count": 32,
+              "cycle_sum": 180,
+              "min": 3,
+              "max": 6,
+              "histogram": {
+                "3": 4,
+                "6": 28
+              },
+              "assembly": "cflag0 ? jmp 0x16c",
+              "source": "while(p<end):(p+=1){"
+            },
+            "388": {
+              "count": 4,
+              "cycle_sum": 4,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 4
+              },
+              "assembly": "st32 sp[0xa] = d0",
+              "source": "<no source>"
+            },
+            "390": {
+              "count": 4,
+              "cycle_sum": 4,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 4
+              },
+              "assembly": "st16 sp[0x9] = r9",
+              "source": "<no source>"
+            },
+            "392": {
+              "count": 4,
+              "cycle_sum": 4,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 4
+              },
+              "assembly": "sll16.nf r8 = r9, 0x4",
+              "source": "var j:u16=0;while(j<N):(j+=1){C[i*N+j]+=values[p]*B[k*N+j];}"
+            },
+            "394": {
+              "count": 4,
+              "cycle_sum": 4,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 4
+              },
+              "assembly": "ld16 r5 = sp[0x3]",
+              "source": "var j:u16=0;while(j<N):(j+=1){C[i*N+j]+=values[p]*B[k*N+j];}"
+            },
+            "396": {
+              "count": 4,
+              "cycle_sum": 4,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 4
+              },
+              "assembly": "add16.nf r14 = r8, r5",
+              "source": "var j:u16=0;while(j<N):(j+=1){C[i*N+j]+=values[p]*B[k*N+j];}"
+            },
+            "398": {
+              "count": 4,
+              "cycle_sum": 4,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 4
+              },
+              "assembly": "ld16 r5 = sp[0x2]",
+              "source": "rpc_server(&(sys_mod.stack_u32));"
+            },
+            "400": {
+              "count": 4,
+              "cycle_sum": 4,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 4
+              },
+              "assembly": "add16.nf r9 = r8, r5",
+              "source": "rpc_server(&(sys_mod.stack_u32));"
+            },
+            "402": {
+              "count": 4,
+              "cycle_sum": 4,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 4
+              },
+              "assembly": "ld16 r5 = sp[0x1]",
+              "source": "rpc_server(&(sys_mod.stack_u32));"
+            },
+            "404": {
+              "count": 4,
+              "cycle_sum": 4,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 4
+              },
+              "assembly": "add16.nf r15 = r8, r5",
+              "source": "rpc_server(&(sys_mod.stack_u32));"
+            },
+            "406": {
+              "count": 4,
+              "cycle_sum": 4,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 4
+              },
+              "assembly": "ld16 r5 = sp[0x0]",
+              "source": "rpc_server(&(sys_mod.stack_u32));"
+            },
+            "408": {
+              "count": 4,
+              "cycle_sum": 4,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 4
+              },
+              "assembly": "add16.nf r8 = r8, r5",
+              "source": "rpc_server(&(sys_mod.stack_u32));"
+            },
+            "410": {
+              "count": 4,
+              "cycle_sum": 4,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 4
+              },
+              "assembly": "slr16.nf r7 = r8, 0x1",
+              "source": "rpc_server(&(sys_mod.stack_u32));"
+            },
+            "412": {
+              "count": 4,
+              "cycle_sum": 8,
+              "min": 2,
+              "max": 2,
+              "histogram": {
+                "2": 4
+              },
+              "assembly": "st16 sp[0x8] = r7",
+              "source": "rpc_server(&(sys_mod.stack_u32));"
+            },
+            "414": {
+              "count": 4,
+              "cycle_sum": 4,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 4
+              },
+              "assembly": "fmov32.nf d10 = [r7]",
+              "source": "rpc_server(&(sys_mod.stack_u32));"
+            },
+            "416": {
+              "count": 4,
+              "cycle_sum": 4,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 4
+              },
+              "assembly": "slr16.nf r7 = r15, 0x1",
+              "source": "rpc_server(&(sys_mod.stack_u32));"
+            },
+            "418": {
+              "count": 4,
+              "cycle_sum": 8,
+              "min": 2,
+              "max": 2,
+              "histogram": {
+                "2": 4
+              },
+              "assembly": "st16 sp[0x7] = r7",
+              "source": "rpc_server(&(sys_mod.stack_u32));"
+            },
+            "420": {
+              "count": 4,
+              "cycle_sum": 4,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 4
+              },
+              "assembly": "fmov32.nf d12 = [r7]",
+              "source": "rpc_server(&(sys_mod.stack_u32));"
+            },
+            "422": {
+              "count": 4,
+              "cycle_sum": 4,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 4
+              },
+              "assembly": "slr16.nf r7 = r9, 0x1",
+              "source": "rpc_server(&(sys_mod.stack_u32));"
+            },
+            "424": {
+              "count": 4,
+              "cycle_sum": 8,
+              "min": 2,
+              "max": 2,
+              "histogram": {
+                "2": 4
+              },
+              "assembly": "st16 sp[0x6] = r7",
+              "source": "rpc_server(&(sys_mod.stack_u32));"
+            },
+            "426": {
+              "count": 4,
+              "cycle_sum": 4,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 4
+              },
+              "assembly": "fmov32.nf d8 = [r7]",
+              "source": "rpc_server(&(sys_mod.stack_u32));"
+            },
+            "428": {
+              "count": 4,
+              "cycle_sum": 4,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 4
+              },
+              "assembly": "slr16.nf r7 = r14, 0x1",
+              "source": "rpc_server(&(sys_mod.stack_u32));"
+            },
+            "430": {
+              "count": 4,
+              "cycle_sum": 8,
+              "min": 2,
+              "max": 2,
+              "histogram": {
+                "2": 4
+              },
+              "assembly": "st16 sp[0x5] = r7",
+              "source": "rpc_server(&(sys_mod.stack_u32));"
+            },
+            "432": {
+              "count": 4,
+              "cycle_sum": 4,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 4
+              },
+              "assembly": "fmov32.nf d14 = [r7]",
+              "source": "rpc_server(&(sys_mod.stack_u32));"
+            },
+            "434": {
+              "count": 4,
+              "cycle_sum": 4,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 4
+              },
+              "assembly": "st32 sp[0xc] = d2",
+              "source": "rpc_server(&(sys_mod.stack_u32));"
+            },
+            "436": {
+              "count": 256,
+              "cycle_sum": 256,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 256
+              },
+              "assembly": "sll16.nf r0 = r6, 0x2",
+              "source": "const k:u16=@as(u16,col_idx[p]);"
+            },
+            "438": {
+              "count": 256,
+              "cycle_sum": 256,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 256
+              },
+              "assembly": "movri r1 = 0xe5c",
+              "source": "const k:u16=@as(u16,col_idx[p]);"
+            },
+            "440": {
+              "count": 256,
+              "cycle_sum": 256,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 256
+              },
+              "assembly": "add16.nf r1 = r0, r1",
+              "source": "const k:u16=@as(u16,col_idx[p]);"
+            },
+            "442": {
+              "count": 256,
+              "cycle_sum": 256,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 256
+              },
+              "assembly": "movri r5 = 0x1e5c",
+              "source": "rpc_server(&(sys_mod.stack_u32));"
+            },
+            "444": {
+              "count": 256,
+              "cycle_sum": 256,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 256
+              },
+              "assembly": "add16.nf r5 = r0, r5",
+              "source": "rpc_server(&(sys_mod.stack_u32));"
+            },
+            "446": {
+              "count": 256,
+              "cycle_sum": 768,
+              "min": 3,
+              "max": 3,
+              "histogram": {
+                "3": 256
+              },
+              "assembly": "slr16.nf r7 = r1, 0x1",
+              "source": "const k:u16=@as(u16,col_idx[p]);"
+            },
+            "448": {
+              "count": 256,
+              "cycle_sum": 256,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 256
+              },
+              "assembly": "imov32.nf d0 = [r7]",
+              "source": "const k:u16=@as(u16,col_idx[p]);"
+            },
+            "450": {
+              "count": 256,
+              "cycle_sum": 256,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 256
+              },
+              "assembly": "sll16.nf r0 = r0, 0x4",
+              "source": "var j:u16=0;while(j<N):(j+=1){C[i*N+j]+=values[p]*B[k*N+j];}"
+            },
+            "452": {
+              "count": 256,
+              "cycle_sum": 256,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 256
+              },
+              "assembly": "movri r1 = 0x2e5c",
+              "source": "var j:u16=0;while(j<N):(j+=1){C[i*N+j]+=values[p]*B[k*N+j];}"
+            },
+            "454": {
+              "count": 256,
+              "cycle_sum": 256,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 256
+              },
+              "assembly": "add16.nf r1 = r0, r1",
+              "source": "var j:u16=0;while(j<N):(j+=1){C[i*N+j]+=values[p]*B[k*N+j];}"
+            },
+            "456": {
+              "count": 256,
+              "cycle_sum": 256,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 256
+              },
+              "assembly": "st16 sp[0xf] = r1",
+              "source": "var j:u16=0;while(j<N):(j+=1){C[i*N+j]+=values[p]*B[k*N+j];}"
+            },
+            "458": {
+              "count": 256,
+              "cycle_sum": 256,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 256
+              },
+              "assembly": "movri r1 = 0x2e64",
+              "source": "var j:u16=0;while(j<N):(j+=1){C[i*N+j]+=values[p]*B[k*N+j];}"
+            },
+            "460": {
+              "count": 256,
+              "cycle_sum": 256,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 256
+              },
+              "assembly": "add16.nf r4 = r0, r1",
+              "source": "var j:u16=0;while(j<N):(j+=1){C[i*N+j]+=values[p]*B[k*N+j];}"
+            },
+            "462": {
+              "count": 256,
+              "cycle_sum": 256,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 256
+              },
+              "assembly": "movri r1 = 0x2e68",
+              "source": "var j:u16=0;while(j<N):(j+=1){C[i*N+j]+=values[p]*B[k*N+j];}"
+            },
+            "464": {
+              "count": 256,
+              "cycle_sum": 256,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 256
+              },
+              "assembly": "add16.nf r2 = r0, r1",
+              "source": "var j:u16=0;while(j<N):(j+=1){C[i*N+j]+=values[p]*B[k*N+j];}"
+            },
+            "466": {
+              "count": 256,
+              "cycle_sum": 256,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 256
+              },
+              "assembly": "movri r1 = 0x2e60",
+              "source": "var j:u16=0;while(j<N):(j+=1){C[i*N+j]+=values[p]*B[k*N+j];}"
+            },
+            "468": {
+              "count": 256,
+              "cycle_sum": 256,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 256
+              },
+              "assembly": "add16.nf r0 = r0, r1",
+              "source": "var j:u16=0;while(j<N):(j+=1){C[i*N+j]+=values[p]*B[k*N+j];}"
+            },
+            "470": {
+              "count": 256,
+              "cycle_sum": 256,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 256
+              },
+              "assembly": "st16 sp[0xe] = r0",
+              "source": "rpc_server(&(sys_mod.stack_u32));"
+            },
+            "472": {
+              "count": 256,
+              "cycle_sum": 768,
+              "min": 3,
+              "max": 3,
+              "histogram": {
+                "3": 256
+              },
+              "assembly": "slr16.nf r7 = r5, 0x1",
+              "source": "rpc_server(&(sys_mod.stack_u32));"
+            },
+            "474": {
+              "count": 256,
+              "cycle_sum": 256,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 256
+              },
+              "assembly": "fmov32.nf d0 = [r7]",
+              "source": "rpc_server(&(sys_mod.stack_u32));"
+            },
+            "476": {
+              "count": 256,
+              "cycle_sum": 768,
+              "min": 3,
+              "max": 3,
+              "histogram": {
+                "3": 256
+              },
+              "assembly": "slr16.nf r7 = r2, 0x1",
+              "source": "var j:u16=0;while(j<N):(j+=1){C[i*N+j]+=values[p]*B[k*N+j];}"
+            },
+            "478": {
+              "count": 256,
+              "cycle_sum": 256,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 256
+              },
+              "assembly": "fmov32.nf d2 = [r7]",
+              "source": "var j:u16=0;while(j<N):(j+=1){C[i*N+j]+=values[p]*B[k*N+j];}"
+            },
+            "480": {
+              "count": 256,
+              "cycle_sum": 256,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 256
+              },
+              "assembly": "fmuls d2 = d0, d2",
+              "source": "var j:u16=0;while(j<N):(j+=1){C[i*N+j]+=values[p]*B[k*N+j];}"
+            },
+            "482": {
+              "count": 256,
+              "cycle_sum": 256,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 256
+              },
+              "assembly": "fadds d10 = d10, d2",
+              "source": "var j:u16=0;while(j<N):(j+=1){C[i*N+j]+=values[p]*B[k*N+j];}"
+            },
+            "484": {
+              "count": 256,
+              "cycle_sum": 1024,
+              "min": 4,
+              "max": 4,
+              "histogram": {
+                "4": 256
+              },
+              "assembly": "slr16.nf r7 = r4, 0x1",
+              "source": "var j:u16=0;while(j<N):(j+=1){C[i*N+j]+=values[p]*B[k*N+j];}"
+            },
+            "486": {
+              "count": 256,
+              "cycle_sum": 256,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 256
+              },
+              "assembly": "fmov32.nf d2 = [r7]",
+              "source": "var j:u16=0;while(j<N):(j+=1){C[i*N+j]+=values[p]*B[k*N+j];}"
+            },
+            "488": {
+              "count": 256,
+              "cycle_sum": 256,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 256
+              },
+              "assembly": "fmuls d2 = d0, d2",
+              "source": "var j:u16=0;while(j<N):(j+=1){C[i*N+j]+=values[p]*B[k*N+j];}"
+            },
+            "490": {
+              "count": 256,
+              "cycle_sum": 256,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 256
+              },
+              "assembly": "fadds d12 = d12, d2",
+              "source": "var j:u16=0;while(j<N):(j+=1){C[i*N+j]+=values[p]*B[k*N+j];}"
+            },
+            "492": {
+              "count": 256,
+              "cycle_sum": 256,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 256
+              },
+              "assembly": "ld16 r5 = sp[0xf]",
+              "source": "var j:u16=0;while(j<N):(j+=1){C[i*N+j]+=values[p]*B[k*N+j];}"
+            },
+            "494": {
+              "count": 256,
+              "cycle_sum": 1024,
+              "min": 4,
+              "max": 4,
+              "histogram": {
+                "4": 256
+              },
+              "assembly": "slr16.nf r7 = r5, 0x1",
+              "source": "var j:u16=0;while(j<N):(j+=1){C[i*N+j]+=values[p]*B[k*N+j];}"
+            },
+            "496": {
+              "count": 256,
+              "cycle_sum": 256,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 256
+              },
+              "assembly": "fmov32.nf d2 = [r7]",
+              "source": "var j:u16=0;while(j<N):(j+=1){C[i*N+j]+=values[p]*B[k*N+j];}"
+            },
+            "498": {
+              "count": 256,
+              "cycle_sum": 256,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 256
+              },
+              "assembly": "fmuls d2 = d0, d2",
+              "source": "var j:u16=0;while(j<N):(j+=1){C[i*N+j]+=values[p]*B[k*N+j];}"
+            },
+            "500": {
+              "count": 256,
+              "cycle_sum": 256,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 256
+              },
+              "assembly": "ld16 r5 = sp[0xe]",
+              "source": "var j:u16=0;while(j<N):(j+=1){C[i*N+j]+=values[p]*B[k*N+j];}"
+            },
+            "502": {
+              "count": 256,
+              "cycle_sum": 768,
+              "min": 3,
+              "max": 3,
+              "histogram": {
+                "3": 256
+              },
+              "assembly": "slr16.nf r7 = r5, 0x1",
+              "source": "var j:u16=0;while(j<N):(j+=1){C[i*N+j]+=values[p]*B[k*N+j];}"
+            },
+            "504": {
+              "count": 256,
+              "cycle_sum": 256,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 256
+              },
+              "assembly": "fmov32.nf d4 = [r7]",
+              "source": "var j:u16=0;while(j<N):(j+=1){C[i*N+j]+=values[p]*B[k*N+j];}"
+            },
+            "506": {
+              "count": 256,
+              "cycle_sum": 256,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 256
+              },
+              "assembly": "fmuls d0 = d0, d4",
+              "source": "var j:u16=0;while(j<N):(j+=1){C[i*N+j]+=values[p]*B[k*N+j];}"
+            },
+            "508": {
+              "count": 256,
+              "cycle_sum": 256,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 256
+              },
+              "assembly": "fadds d8 = d8, d0",
+              "source": "var j:u16=0;while(j<N):(j+=1){C[i*N+j]+=values[p]*B[k*N+j];}"
+            },
+            "510": {
+              "count": 256,
+              "cycle_sum": 256,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 256
+              },
+              "assembly": "fadds d14 = d14, d2",
+              "source": "var j:u16=0;while(j<N):(j+=1){C[i*N+j]+=values[p]*B[k*N+j];}"
+            },
+            "512": {
+              "count": 256,
+              "cycle_sum": 512,
+              "min": 2,
+              "max": 2,
+              "histogram": {
+                "2": 256
+              },
+              "assembly": "ld16rp d2 = sp[0xc]",
+              "source": "var j:u16=0;while(j<N):(j+=1){C[i*N+j]+=values[p]*B[k*N+j];}"
+            },
+            "514": {
+              "count": 256,
+              "cycle_sum": 256,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 256
+              },
+              "assembly": "add16.nf r6 = r6, 0x1",
+              "source": "while(p<end):(p+=1){"
+            },
+            "516": {
+              "count": 256,
+              "cycle_sum": 256,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 256
+              },
+              "assembly": "ltu16.and cflag0 = r6, r2",
+              "source": "while(p<end):(p+=1){"
+            },
+            "518": {
+              "count": 256,
+              "cycle_sum": 1524,
+              "min": 3,
+              "max": 6,
+              "histogram": {
+                "3": 4,
+                "6": 252
+              },
+              "assembly": "cflag0 ? jmp 0x1b4",
+              "source": "while(p<end):(p+=1){"
+            },
+            "520": {
+              "count": 4,
+              "cycle_sum": 4,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 4
+              },
+              "assembly": "ld16 r6 = sp[0x5]",
+              "source": "<no source>"
+            },
+            "522": {
+              "count": 4,
+              "cycle_sum": 4,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 4
+              },
+              "assembly": "fmov32.nf [r6] = d14",
+              "source": "<no source>"
+            },
+            "524": {
+              "count": 4,
+              "cycle_sum": 16,
+              "min": 4,
+              "max": 4,
+              "histogram": {
+                "4": 4
+              },
+              "assembly": "ld16 r6 = sp[0x6]",
+              "source": "<no source>"
+            },
+            "526": {
+              "count": 4,
+              "cycle_sum": 4,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 4
+              },
+              "assembly": "fmov32.nf [r6] = d8",
+              "source": "<no source>"
+            },
+            "528": {
+              "count": 4,
+              "cycle_sum": 16,
+              "min": 4,
+              "max": 4,
+              "histogram": {
+                "4": 4
+              },
+              "assembly": "ld16 r6 = sp[0x7]",
+              "source": "<no source>"
+            },
+            "530": {
+              "count": 4,
+              "cycle_sum": 4,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 4
+              },
+              "assembly": "fmov32.nf [r6] = d12",
+              "source": "<no source>"
+            },
+            "532": {
+              "count": 4,
+              "cycle_sum": 16,
+              "min": 4,
+              "max": 4,
+              "histogram": {
+                "4": 4
+              },
+              "assembly": "ld16 r6 = sp[0x8]",
+              "source": "<no source>"
+            },
+            "534": {
+              "count": 4,
+              "cycle_sum": 4,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 4
+              },
+              "assembly": "fmov32.nf [r6] = d10",
+              "source": "<no source>"
+            },
+            "536": {
+              "count": 4,
+              "cycle_sum": 16,
+              "min": 4,
+              "max": 4,
+              "histogram": {
+                "4": 4
+              },
+              "assembly": "ld16rp d0 = sp[0xa]",
+              "source": "<no source>"
+            },
+            "538": {
+              "count": 4,
+              "cycle_sum": 4,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 4
+              },
+              "assembly": "ld16 r5 = sp[0x4]",
+              "source": "<no source>"
+            },
+            "540": {
+              "count": 4,
+              "cycle_sum": 4,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 4
+              },
+              "assembly": "ld16 r9 = sp[0x9]",
+              "source": "<no source>"
+            },
+            "364": {
+              "count": 32,
+              "cycle_sum": 32,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 32
+              },
+              "assembly": "movri r8 = 0x1e",
+              "source": "<no source>"
+            },
+            "366": {
+              "count": 32,
+              "cycle_sum": 32,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 32
+              },
+              "assembly": "ltu16.and cflag0 = r8, r9",
+              "source": "var i:u16=0;while(i<32):(i+=1){"
+            },
+            "368": {
+              "count": 32,
+              "cycle_sum": 99,
+              "min": 3,
+              "max": 6,
+              "histogram": {
+                "3": 31,
+                "6": 1
+              },
+              "assembly": "cflag0 ? jmp 0x238",
+              "source": "var i:u16=0;while(i<32):(i+=1){"
+            },
+            "568": {
+              "count": 1,
+              "cycle_sum": 1,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 1
+              },
+              "assembly": "nop 0x0",
+              "source": "(result.*)[i] = @get_config(base_words + i);"
+            },
+            "570": {
+              "count": 1,
+              "cycle_sum": 1,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 1
+              },
+              "assembly": "nop 0x0",
+              "source": "(result.*)[i] = @get_config(base_words + i);"
+            },
+            "572": {
+              "count": 1,
+              "cycle_sum": 1,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 1
+              },
+              "assembly": "nop 0x0",
+              "source": "(result.*)[i] = @get_config(base_words + i);"
+            },
+            "574": {
+              "count": 1,
+              "cycle_sum": 1,
+              "min": 1,
+              "max": 1,
+              "histogram": {
+                "1": 1
+              },
+              "assembly": "nop 0x0",
+              "source": "(result.*)[i] = @get_config(base_words + i);"
+            }
+          },
+          "branches": [
+            {
+              "pc": 386,
+              "outcome": "fallthrough",
+              "count": 4,
+              "cycle_sum": 12,
+              "histogram": {
+                "3": 4
+              },
+              "assembly": "cflag0 ? jmp 0x16c"
+            },
+            {
+              "pc": 518,
+              "outcome": "target",
+              "count": 252,
+              "cycle_sum": 1512,
+              "histogram": {
+                "6": 252
+              },
+              "assembly": "cflag0 ? jmp 0x1b4"
+            },
+            {
+              "pc": 518,
+              "outcome": "fallthrough",
+              "count": 4,
+              "cycle_sum": 12,
+              "histogram": {
+                "3": 4
+              },
+              "assembly": "cflag0 ? jmp 0x1b4"
+            },
+            {
+              "pc": 368,
+              "outcome": "fallthrough",
+              "count": 31,
+              "cycle_sum": 93,
+              "histogram": {
+                "3": 31
+              },
+              "assembly": "cflag0 ? jmp 0x238"
+            },
+            {
+              "pc": 386,
+              "outcome": "target",
+              "count": 28,
+              "cycle_sum": 168,
+              "histogram": {
+                "6": 28
+              },
+              "assembly": "cflag0 ? jmp 0x16c"
+            },
+            {
+              "pc": 368,
+              "outcome": "target",
+              "count": 1,
+              "cycle_sum": 6,
+              "histogram": {
+                "6": 1
+              },
+              "assembly": "cflag0 ? jmp 0x238"
+            }
+          ]
+        }
+      ],
+      "validation_sha256": "0f768c96ddf50bf8b084b18b73afe96fa7559990796b915a61bc9a21ef4cf205"
+    }
+  ],
+  "scope": "Intervals from each dispatch to the next, including the ending timestamp anchor. These partition elapsed simulator cycles but are not instruction execution latency or hardware stall counters."
+}

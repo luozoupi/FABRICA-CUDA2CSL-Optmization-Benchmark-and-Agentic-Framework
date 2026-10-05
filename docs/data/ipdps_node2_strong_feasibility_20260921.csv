@@ -1,0 +1,11 @@
+kernel,application_pes,status,reason,source_sha256,evidence
+SpMV-RowBlock,1,fail,PE memory capacity,e224447a94eb55658258572891f537565a3aa7af84947b009f1a833d45f3edb4,/home/USER/ipdps-results/strong-scaling-20260921-v1/SpMV-RowBlock/1/compile/result.json
+SpMV-RowBlock,4,pass,,e224447a94eb55658258572891f537565a3aa7af84947b009f1a833d45f3edb4,/home/USER/ipdps-results/strong-scaling-20260921-v1/SpMV-RowBlock/4/compile/result.json
+SpMV-RowBlock,16,pass,,e224447a94eb55658258572891f537565a3aa7af84947b009f1a833d45f3edb4,/home/USER/ipdps-results/strong-scaling-20260921-v1/SpMV-RowBlock/16/compile/result.json
+SpMV-RowBlock,64,pass,,e224447a94eb55658258572891f537565a3aa7af84947b009f1a833d45f3edb4,/home/USER/ipdps-results/strong-scaling-20260921-v1/SpMV-RowBlock/64/compile/result.json
+SpMV-RowBlock,256,pass,,e224447a94eb55658258572891f537565a3aa7af84947b009f1a833d45f3edb4,/home/USER/ipdps-results/strong-scaling-20260921-v1/SpMV-RowBlock/256/compile/result.json
+SpMM-CSR-Dense,1,fail,PE memory capacity,dc574a2019f58fc68287a5cd7e1aa075db2d4711901dcd0b95a8afd17f2fb3db,/home/USER/ipdps-results/strong-scaling-20260921-v1/SpMM-CSR-Dense/1/compile/result.json
+SpMM-CSR-Dense,4,pass,,dc574a2019f58fc68287a5cd7e1aa075db2d4711901dcd0b95a8afd17f2fb3db,/home/USER/ipdps-results/strong-scaling-20260921-v1/SpMM-CSR-Dense/4/compile/result.json
+SpMM-CSR-Dense,16,pass,,dc574a2019f58fc68287a5cd7e1aa075db2d4711901dcd0b95a8afd17f2fb3db,/home/USER/ipdps-results/strong-scaling-20260921-v1/SpMM-CSR-Dense/16/compile/result.json
+SpMM-CSR-Dense,64,pass,,dc574a2019f58fc68287a5cd7e1aa075db2d4711901dcd0b95a8afd17f2fb3db,/home/USER/ipdps-results/strong-scaling-20260921-v1/SpMM-CSR-Dense/64/compile/result.json
+SpMM-CSR-Dense,256,pass,,dc574a2019f58fc68287a5cd7e1aa075db2d4711901dcd0b95a8afd17f2fb3db,/home/USER/ipdps-results/strong-scaling-20260921-v1/SpMM-CSR-Dense/256/compile/result.json

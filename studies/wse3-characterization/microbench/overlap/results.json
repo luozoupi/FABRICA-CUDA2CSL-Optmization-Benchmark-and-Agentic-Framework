@@ -1,0 +1,19 @@
+{
+ "L": 2048,
+ "S": 256,
+ "checks": {
+  "icA all elements": true,
+  "icC all elements": true,
+  "accB": [
+   30618,
+   30618,
+   true
+  ],
+  "accC": [
+   15507,
+   15507,
+   true
+  ]
+ },
+ "ok": true
+}

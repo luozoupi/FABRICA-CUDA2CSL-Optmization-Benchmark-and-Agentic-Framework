@@ -1,0 +1,10 @@
+// One-PE fallback: SDK 2.10.1 collectives_2d has duplicate switch cases for NUM_PES=1.
+// Preserve the callback protocol; there is no fabric transfer or reduction across PEs.
+const pe_id: u16 = 0;
+fn init() void {}
+fn broadcast(root: u16, buf: [*]u32, count: u16, callback: local_task_id) void { @activate(callback); }
+fn reduce_fadds(root: u16, send_buf: [*]f32, recv_buf: [*]f32, count: u16, callback: local_task_id) void {
+ var i: u16=0;
+ while (i<count) : (i+=1) { recv_buf[i]=send_buf[i]; }
+ @activate(callback);
+}

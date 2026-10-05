@@ -1,0 +1,83 @@
+# xkernel-bench spec -- see kernels/SPEC_SCHEMA.md for format.
+kernel_id: "RowScale-CSR"
+group: "sparse"
+difficulty: 1
+
+tasks:
+  - "Row scaling of a sparse matrix in CSR: c_val[j] = d[row(j)] * val[j] for every stored nonzero j, i.e. C = D*A with D the diagonal matrix of the vector d. Output keeps A's pattern (row_ptr/col_idx unchanged). entrypoint = compute."
+
+inputs:
+  - {name: "row_ptr", shape: "[nrows+1]", dtype: "u32"}
+  - {name: "val", shape: "[max_nnz]", dtype: "f32"}
+  - {name: "d", shape: "[nrows]", dtype: "f32"}
+
+outputs:
+  - {name: "c_val", shape: "[max_nnz]", dtype: "f32",
+     tolerance_abs: 0.0, tolerance_rel: 1.0e-6,
+     description: "c_val[j] = d[row(j)]*val[j]; verified in run.py against numpy (f32 product) on the first nnz entries + SUCCESS"}
+
+sizes:
+  - name: small
+    role: correctness
+    params: {nrows: 512, max_nnz: 2304, iters: 1}
+    commands_script: "commands_wse3.sh"
+    wse3_reference: {cycles_send: 45868, time_send_us: 53.9624}   # SDK 2.10 simulator, 2026-09-16
+
+task_class: "real-translation"
+split: "test"             # hand-written sparse compute; no library dependence -> held-out test
+
+# Metric: cycles over the on-device TSC window of the frozen compute() wrapper; single PE,
+# fixed trip counts per matrix -> deterministic cycle number on the train matrix.
+metric:
+  class: cycles
+  reason: "agent-written CSR kernel (rowscale); on-device TSC window; not library-delegated"
+
+# Input-level train/test split with REAL matrices: run.py loads data/manifest.json and maps
+# XKERNEL_EVAL_SEED to a matrix index (train seed -> the train matrix, held-out seeds ->
+# the other matrices of the class; sparse_inputs.seed_to_index) and draws the numeric
+# values from the seed. Held-out seeds are harness-only.
+eval:
+  train_seed: 7
+  heldout_seeds: [101, 202, 303]
+  seed_env: "XKERNEL_EVAL_SEED"
+
+# Structure-aware inputs (v2 sparse study). caps == max over the manifest after partition
+# (checked by test_sparse_suite.py); readout: the train matrix's structure readout is
+# appended to the task summary when XKERNEL_STRUCTURE_READOUT=1.
+structure:
+  format: csr
+  class: "hb_n512"
+  manifest: "CSL/data/manifest.json"
+  partition: {scheme: none}
+  caps: {nrows: 512, max_nnz: 2304}
+  readout: true
+
+build_command: "bash commands_wse3.sh"
+verify: "embedded in run.py -- numpy reference recomputed from the loaded matrix (rtol=1e-6, atol=0) + SUCCESS"
+
+hidden_from_optimize_only:
+  - "CSL/pe.csl"
+
+# Contract: compute() is the frozen timing wrapper (contract_check + XKERNEL_SPLICE_FROZEN);
+# the capacity params cannot be shrunk by the agent.
+frozen_functions:
+  - "compute"
+frozen_params:
+  - "nrows"
+  - "max_nnz"
+  - "iters"
+
+# Provenance: CUDA source concretized from CUDA/mxm/template/GB_jit_kernel_cuda_colscale.cu; see CUDA/kernel.cu header.
+# Reference authored 2026-09-16 as a textbook scalar translation (v2 sparse study, S suite).
+optimization_angles:
+  - "dsd_offset_chaining"
+  - "fmac_bulk"
+  - "stride_optimization"
+  - "comptime_hoist"
+
+tags:
+  - "single_pe"
+  - "sparse"
+  - "csr"
+  - "ewise"
+  - "row_scale"

@@ -1,0 +1,14 @@
+{
+  "id": "perf-masked-merge-16x16x16-r",
+  "debug": false,
+  "status": "pass",
+  "observations_sha256": "ae87dfeca3fa379738966085cb771584f0adfbb2ad9935924500a40500064110",
+  "source_hashes": {
+    "pe.csl": "54b4dae2e63ec6c3960294d15b0f53352f61a7059ff1a3c8cf6bb561b6556470",
+    "layout.csl": "f38893acbc18a506eed3e6b466963b9e03ef40b9e681416bfb0a240ad6624a7e",
+    "host.py": "962b98260d76bc1bc572440b4c73e21619ebe02e260263b8963a7fa1bfd71e53"
+  },
+  "elf_hashes": {
+    "out/bin/out_0_0.elf": "fab4d378b090ff7563eddb50c2566147a723404c42e67c86646f1f17d2ebdf70"
+  }
+}

@@ -1,0 +1,6 @@
+==WARNING== Note: Running with uncontrolled GPU caches. Profiling results may be inconsistent.
+==WARNING== Note: Running with unmodified GPU clocks. If not controlled otherwise, profiling results may be inconsistent.
+==PROF== Connected to process 192370 (/home/USER/sparse-crossarch-20260922/gpu-bench)
+==PROF== Profiling "spmm_test2" - 0 (1/1): 0%....50%....100% - 1 pass
+==PROF== Disconnected from process 192370
+==PROF== Report: /home/USER/sparse-crossarch-20260922/profiling-traffic/262144x262144-uniform8-n128-ge_merge2/report.ncu-rep

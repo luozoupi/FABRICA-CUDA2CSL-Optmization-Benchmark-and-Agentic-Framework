@@ -22,6 +22,7 @@ from profile_csl import build_profile_report, format_profile_for_prompt
 from prompt_cuda2csl import (
     CSL_OPTIMIZATION_STEPS,
     MODEL_CSL_OPT_STEPS,
+    SPARSE_CSL_OPT_STEPS,
     DEFAULT_CSL_OPT_STEPS,
     Instruction_system_csl_optimization,
     Instruction_system_cuda_to_csl,
@@ -125,6 +126,98 @@ _LAYER_PATTERNS: List[Tuple[str, str]] = [
 _LAYER_RES = [(re.compile(p, re.I), label) for p, label in _LAYER_PATTERNS]
 
 
+
+def fabric_readout(result: Optional[Dict[str, object]]) -> Optional[Dict[str, object]]:
+    """Per-PE view of a multi-PE run (wafer-level feedback, 2026-09-30). Parses the host program's
+    `per-PE windows (cycles)` and `row blocks: nnz per PE` lines from the run transcript and reports
+    the slowest PE, the PEs that hold no rows (their time is the broadcast of x alone) and the
+    nonzero imbalance. Returns None when the run printed no per-PE windows."""
+    if not isinstance(result, dict):
+        return None
+    out = "\n".join(str(t.get("stdout") or "") for t in (result.get("transcript") or []) if isinstance(t, dict))
+    mw = re.search(r"per-PE windows \(cycles\): \[([^\]]*)\]", out)
+    if not mw:
+        return None
+    win = [int(x) for x in mw.group(1).split(",") if x.strip()]
+    mz = re.search(r"row blocks: nnz per PE \[([^\]]*)\]", out)
+    nnz = [int(x) for x in mz.group(1).split(",") if x.strip()] if mz else []
+    if not win or (nnz and len(nnz) != len(win)):
+        return None
+    slow = max(range(len(win)), key=win.__getitem__)
+    med = sorted(win)[len(win) // 2]
+    idle = [t for t, z in zip(win, nnz) if z == 0] if nnz else []
+    busy_nnz = [z for z in nnz if z > 0]
+    imb = (max(busy_nnz) / (sum(busy_nnz) / len(busy_nnz))) if busy_nnz else 1.0
+    floor = min(idle) if idle else None
+    text = f"Per-PE timing on the fabric ({len(win)} PEs): slowest PE {slow} at {win[slow]:,} cycles, median {med:,}"
+    if idle:
+        text += f"; {len(idle)} PEs hold no rows and still take {floor:,} cycles (the broadcast of x alone)"
+    if busy_nnz:
+        text += (f"; nonzeros per PE max {max(busy_nnz)}, mean {sum(busy_nnz) / len(busy_nnz):.1f} "
+                 f"(imbalance {imb:.2f}), the slowest PE holds {nnz[slow]}")
+    keys = []
+    if imb > 1.2:
+        keys.append("struct_pe_imbalance")
+    return {"text": text + ".", "keys": keys, "imbalance": round(imb, 3), "broadcast_floor": floor,
+            "slowest_pe": slow, "slowest_cycles": win[slow]}
+
+
+ROW_ORDER_HOOK_NOTE = (
+    "Wafer-level mapping (host program): the rows are split into consecutive blocks of nrows_pe rows, one "
+    "block per PE, and the slowest PE sets the time. Besides the CSL file you may emit a second fenced block "
+    "tagged ```python:row_order.py that defines `row_order(row_nnz, P, nrows_pe)` and returns a permutation "
+    "of range(len(row_nnz)); the host reorders the rows with it before the split and restores the order of "
+    "y afterwards (host-side, outside the timed window, like the split itself). Plain Python only. Omit the "
+    "block to keep the current mapping.")
+
+# Harness correction #4 (1 Oct 2026): the hook note above sits inside the profiler-feedback section, but
+# the optimizer template ends with "do not change ... the host-runner protocol" and "put all content inside
+# the ```csl block", and the row-partition strategy calls itself "a co-design edit, not a compute-file edit".
+# In the first nine wafer-aware runs (64 PEs) no reply mentioned row_order at all. These two notes resolve
+# the contradiction; both apply only when the hook is enabled.
+ROW_ORDER_OUTPUT_NOTE = (
+    "\n\nException to the output rules above (wafer-level mapping hook enabled): besides the ```csl fence you "
+    "may return ONE more fenced block tagged ```python:row_order.py, as described under 'Wafer-level mapping' "
+    "in the profiler feedback. It is host-side preprocessing that permutes the rows before the host's "
+    "equal-block split; it does not change the host-runner protocol, the layout, the timed window or the "
+    "verification, so rules 1-4 still hold. Use it when the per-PE timing shows that the slowest PE is slow "
+    "because it holds more nonzeros than the others.\n")
+ROW_ORDER_ANGLE_NOTE = (
+    " With the wafer-level mapping hook enabled, implement this strategy as the ```python:row_order.py block: "
+    "return the CSL file unchanged in its ```csl fence and add a row_order(row_nnz, P, nrows_pe) that assigns "
+    "the rows so that the nonzeros per block of nrows_pe rows are as equal as possible.")
+
+
+def _sparse_blocks_module():
+    """The verified building blocks selected by XKERNEL_SPARSE_BLOCKS (1, 2 or 3)."""
+    import importlib
+    return importlib.import_module({"2": "sparse_blocks_v2", "3": "sparse_blocks_v3"}.get(
+        os.environ.get("XKERNEL_SPARSE_BLOCKS", ""), "sparse_blocks"))
+
+
+def translation_window_problem(src: str, reference_dir: str) -> Optional[str]:
+    """Return a description of a malformed timing window in a translated program, or None.
+
+    Applies only to tasks whose spec declares ``timing_protocol: device_internal_v2`` (the
+    multi-PE tasks). The rule follows the candidate's own style: f_tic_dev()/f_toc_dev()
+    programs must satisfy the device-internal window, f_tic()/f_toc() programs the template
+    window; a program with neither has no device-side window at all."""
+    try:
+        import yaml
+        spec_path = Path(reference_dir).resolve().parent / "spec.yaml"
+        spec = yaml.safe_load(spec_path.read_text()) if spec_path.exists() else {}
+    except Exception:
+        return None
+    if str((spec or {}).get("timing_protocol") or "") != "device_internal_v2":
+        return None
+    from timing_protocol import (uses_protocol, check_device_window_contract,
+                                 uses_template_protocol, check_template_window_contract)
+    if uses_protocol(src):
+        return check_device_window_contract(src)
+    if uses_template_protocol(src):
+        return check_template_window_contract(src)
+    return "no device-side timing window (neither f_tic_dev()/f_toc_dev() nor f_tic()/f_toc())"
+
 class LayerClearanceTracker:
     """Track which compile-error families appear/disappear across attempts."""
 
@@ -168,7 +261,7 @@ DEFAULT_MODEL = os.getenv("OPENAI_MODEL", "gpt-4.1")
 DEFAULT_WORK_ROOT = str(Path(__file__).resolve().parent / "sandbox" / "cuda2csl")
 DEFAULT_OUTPUT = str(Path(__file__).resolve().parent / "results" / "cuda2csl")
 LEGACY_CEREBRAS_VENV = "~/R_2.9.0/venv_cerebras_pt"
-DEFAULT_AGENT_ENV = "fabrica-agent"
+DEFAULT_AGENT_ENV = "xkernel-agent"
 
 ALCF_ENDPOINTS = {
     "metis": {
@@ -227,6 +320,16 @@ KERNEL_REGISTRY = {
     #     PE, TSC-timed -> metric: cycles. Validated on WSE-3 (y=A@x, 6927 cyc). See
     #     docs/HANDWRITTEN_KERNELS.md. ---
     "SpMV-CSR":            _k("SpMV-CSR",             "pe.csl"),
+    "SpMV-CSR-Block":      {**_k("SpMV-CSR-Block",    "pe.csl"),   # block-sparse class, storage-format study (2026-10-04);
+                            "commands_script": "commands_wse3_it10.sh"},   # its only size is it10
+    # v2 sparse study (S suite): GraphBLAS-derived, SDK 2.10-native references
+    "RowScale-CSR":        _k("RowScale-CSR",         "pe.csl"),
+    "ColScale-CSR":        _k("ColScale-CSR",         "pe.csl"),
+    "RowReduce-CSR":       _k("RowReduce-CSR",        "pe.csl"),
+    "SpGEMM-Masked-Dot":   _k("SpGEMM-Masked-Dot",    "pe.csl"),
+    "SpMV-RowBlock":       _k("SpMV-RowBlock",        "pe.csl"),
+    "SpMV-RowBlock-Iter":  _k("SpMV-RowBlock-Iter",   "pe.csl"),   # ten products with a recurrence on x (2026-09-28)
+    "SpMM-CSR-Dense":      _k("SpMM-CSR-Dense",       "pe.csl"),
     # --- Histogram-1PE: HAND-WRITTEN-COMPUTE variant (authored 2026-06-24). The
     #     real-translation counterpart to the <kernels/tally>-delegated Histogram: the
     #     agent writes the explicit per-element binning (divide/modulo + indexed
@@ -621,11 +724,39 @@ def build_env_report(api_key_file: str,
                      base_url: Optional[str] = None,
                      model: Optional[str] = None,
                      alcf_endpoint: Optional[str] = None,
-                     shell_setup: Optional[str] = None) -> Dict[str, object]:
+                     shell_setup: Optional[str] = None,
+                     skip_sdk_probes: bool = False) -> Dict[str, object]:
+    if skip_sdk_probes:
+        skipped_probe = {
+            "status": "skipped",
+            "blocked_reason": None,
+            "returncode": None,
+            "stdout": "",
+            "stderr": "",
+            "elapsed_ms": 0,
+        }
+        legacy_report: Dict[str, object] = {
+            "status": "skipped",
+            "reason": "--generate-only does not require a Cerebras runtime.",
+        }
+        sdk_state: Dict[str, object] = {
+            "status": "skipped",
+            "reason": "--generate-only does not compile or simulate CSL.",
+            "sdk_root": expand_path(sdk_root),
+            "cslc_wrapper_exists": os.path.exists(os.path.join(expand_path(sdk_root), "cslc")),
+            "cs_python_wrapper_exists": os.path.exists(os.path.join(expand_path(sdk_root), "cs_python")),
+            "shell_setup_applied": False,
+            "cslc_launch": dict(skipped_probe),
+            "cs_python_launch": dict(skipped_probe),
+        }
+    else:
+        legacy_report = legacy_venv_report(LEGACY_CEREBRAS_VENV)
+        sdk_state = sdk_report(sdk_root, shell_setup=shell_setup)
+
     report = {
         "agent_python": agent_env_report(api_key_file, api_key_command=api_key_command),
-        "legacy_cerebras_venv": legacy_venv_report(LEGACY_CEREBRAS_VENV),
-        "sdk": sdk_report(sdk_root, shell_setup=shell_setup),
+        "legacy_cerebras_venv": legacy_report,
+        "sdk": sdk_state,
         "shell_setup": shell_setup,
         "llm": {
             "base_url": base_url,
@@ -635,8 +766,7 @@ def build_env_report(api_key_file: str,
         },
     }
     agent_ready = bool(report["agent_python"]["ready"])  # type: ignore[index]
-    sdk_state = report["sdk"]  # type: ignore[assignment]
-    sdk_ready = (
+    sdk_ready = skip_sdk_probes or (
         sdk_state["cslc_launch"]["status"] == "ready"  # type: ignore[index]
         and sdk_state["cs_python_launch"]["status"] == "ready"  # type: ignore[index]
     )
@@ -854,7 +984,8 @@ def _compress_run_py(run_text: str, max_chars: int) -> str:
 def build_reference_contract(reference_dir: str,
                              target_relpath: str,
                              commands_script: str,
-                             max_chars: Optional[int] = None) -> Tuple[str, str, str]:
+                             max_chars: Optional[int] = None,
+                             allow_sdk_container: bool = True) -> Tuple[str, str, str]:
     """Return (contract, reference_compute, layout_text).
 
     `contract` is the run.py + command-script bundle the agent sees as the
@@ -935,7 +1066,12 @@ run.py:
         # from the active build-script name (commands_wse3.sh -> wse3), which the
         # agent already sees; default wse3.
         _arch = "wse2" if "wse2" in (commands_script or "") else "wse3"
-        lib_block = library_signatures_block(reference_dir, layout_text, arch=_arch)
+        lib_block = library_signatures_block(
+            reference_dir,
+            layout_text,
+            arch=_arch,
+            allow_sdk_container=allow_sdk_container,
+        )
         if lib_block:
             contract = contract + "\n\n" + lib_block
     except Exception as exc:  # never let signature extraction break a run
@@ -985,6 +1121,13 @@ def _profiling_context_from_profile(profile: Dict[str, object]) -> Dict[str, obj
             if mr.get(key) is not None:
                 ctx[f"model_{key}"] = mr.get(key)
         ctx["model_keys"] = list(mr.get("model_keys") or [])
+    irr = arts.get("ir_readout")
+    if isinstance(irr, dict):
+        ctx["ir_keys"] = list(irr.get("ir_keys") or [])
+        ctx["ir_hazards"] = len(irr.get("hazards") or [])
+    st = arts.get("structure_readout")
+    if isinstance(st, dict):
+        ctx["structure_keys"] = list(st.get("keys") or [])
     return ctx
 
 
@@ -1028,6 +1171,14 @@ class CUDA2CSLOrchestrator:
         self.model_guided = os.environ.get("XKERNEL_MODEL_GUIDED", "0") == "1"
         self.model_angles = os.environ.get(
             "XKERNEL_MODEL_ANGLES", "1" if self.model_guided else "0") == "1"
+        # Sparse angles (v2 sparse study): structure- and hardware-aware transformations for
+        # CSR/CSC kernels, keyed on struct_*/ir_*/model_* readouts. Off by default.
+        self.sparse_angles = os.environ.get("XKERNEL_SPARSE_ANGLES", "0") == "1"
+        # Verified building blocks for three sparse strategies (sparse_blocks/, 2026-10-03): compiled and
+        # numerically checked CSL plus its measured verdict, in the candidate prompt and the selector list.
+        # XKERNEL_SPARSE_BLOCKS=1: version 1 (sparse_blocks/); =2: version 2 (sparse_blocks_v2/, 2026-10-03);
+        # =3: version 3, storage formats (sparse_blocks_v3/, 2026-10-04).
+        self.sparse_blocks = os.environ.get("XKERNEL_SPARSE_BLOCKS", "0") in ("1", "2", "3")
         # Candidate retention for hardware-in-the-loop replay (O2) and the
         # fidelity study: keep the code + simulator result of EVERY benchmarked
         # optimizer candidate (accepted or not) and write them under
@@ -1071,6 +1222,12 @@ class CUDA2CSLOrchestrator:
         self.target_sdk = target_sdk
         self.profile_feedback_enabled = profile_feedback_enabled
         self.keep_profile_bundles = keep_profile_bundles
+        # Timing-window gate for TRANSLATION (harness correction #3, 30 Sep 2026): a candidate of a
+        # device_internal_v2 task passes only if its own timing window is well formed, i.e. the timer
+        # starts at the first statement of every launched entry point, so communication is timed as in
+        # the reference. Off by default (today's behaviour); optimize() switches it off because the
+        # optimizer has its own contract check against the start program.
+        self._translate_window_gate = os.environ.get("XKERNEL_TRANSLATE_WINDOW_CHECK", "0").strip() == "1"
         self.messages: List[Dict[str, str]] = []
         self.history: List[Dict[str, str]] = []
         self.current_code: Optional[str] = None
@@ -1080,7 +1237,7 @@ class CUDA2CSLOrchestrator:
         self.profile_log: List[Dict[str, object]] = []
         self.latest_profiler_feedback: str = "(profiler feedback not collected)"
         self._client = None
-        self._exp_store = ExperienceStore()
+        self._exp_store = ExperienceStore(os.environ["XKERNEL_EXPERIENCE_STORE"]) if os.environ.get("XKERNEL_EXPERIENCE_STORE") else ExperienceStore()
         self._last_benchmark: Optional[Dict] = None  # tracks baseline_ms for experience recording
         # Canary line from the reference compute CSL. Set once per kernel by
         # _set_compute_canary(); _llm_call asserts no outgoing message contains
@@ -1241,6 +1398,35 @@ class CUDA2CSLOrchestrator:
             has_bulk_op = bool(re.search(r"@fmac[sh]|@fadd[sh]|@fmov[sh]|@map\b", body))
             if has_scalar_write and not has_bulk_op:
                 _bump("scalar_loops_over_arrays")
+
+        # Sparse study (gate XKERNEL_SPARSE_ANGLES=1; adds keys only): the CSR idiom is a
+        # `while` loop whose body loads an index from one array and subscripts another array
+        # with it (x[col_idx[j]]), which the `for`-block walker above never sees, and whose
+        # indices are u32 on a 16-bit machine (3.5 scale-and-narrow shift pairs per nonzero).
+        if os.environ.get("XKERNEL_SPARSE_ANGLES", "0") == "1":
+            n_gather, n_u32_idx = 0, 0
+            for wm in re.finditer(r"\bwhile\s*\(", nocomment):
+                b0 = nocomment.find("{", wm.end())
+                if b0 < 0:
+                    continue
+                depth, k = 0, b0
+                while k < len(nocomment):
+                    if nocomment[k] == "{":
+                        depth += 1
+                    elif nocomment[k] == "}":
+                        depth -= 1
+                        if depth == 0:
+                            break
+                    k += 1
+                body = nocomment[b0:k]
+                for im in re.finditer(r"\b(?:const|var)\s+([A-Za-z_]\w*)\s*:\s*[iu](?:16|32)\s*=\s*[A-Za-z_]\w*\[[^\]]+\]\s*;", body):
+                    if re.search(rf"\b[A-Za-z_]\w*\[\s*{re.escape(im.group(1))}\s*\]", body[im.end():]):
+                        n_gather += 1
+                n_u32_idx += len(re.findall(r"\b(?:const|var)\s+[A-Za-z_]\w*\s*:\s*u32\s*=", body))
+            if n_gather:
+                _bump("scalar_gather_loop", n_gather)
+            if n_u32_idx >= 2:
+                _bump("u32_index_arith", n_u32_idx)
 
         # polling_async — while-loops over a flag
         n_busy_wait = len(re.findall(r"\bwhile\s*\(\s*!\s*[A-Za-z_]", nocomment))
@@ -1858,15 +2044,75 @@ class CUDA2CSLOrchestrator:
             self._agent_extra_files = {"layout.csl": layout_body}
         return code
 
+    def _apply_hazard_policy(self, result: Dict[str, object], reference_dir: str) -> None:
+        """f32 DSD-reduction hazard (FINDINGS section 10n): a candidate whose disassembly shows
+        `fadds dN = dM, [...]` with N != M and whose IR shows the accumulator pattern returns the
+        last element instead of the sum -- silently wrong, and FASTER than the correct form, so a
+        verify pass on the train input is not evidence. XKERNEL_IR_HAZARD_POLICY:
+        heldout (default) -> re-run the held-out inputs now and demote on failure;
+        reject -> demote unconditionally; warn -> annotate only. Applied in every arm."""
+        irr = result.get("ir_readout") if isinstance(result.get("ir_readout"), dict) else None
+        if not irr or result.get("status") != "pass":
+            return
+        hazards = [h for h in (irr.get("hazards") or []) if h.get("severity") == "error"]
+        if not hazards:
+            return
+        policy = os.environ.get("XKERNEL_IR_HAZARD_POLICY", "heldout").strip().lower() or "heldout"
+        result["hazard_flag"] = {"n": len(hazards), "policy": policy,
+                                 "pcs": [h.get("pc") for h in hazards], "instructions": [h.get("instruction") for h in hazards]}
+        logging.warning("[hazard] %d f32 DSD-reduction hazard(s) in a passing candidate (policy=%s): %s",
+                        len(hazards), policy, [h.get("instruction") for h in hazards])
+        if policy == "warn":
+            return
+        if policy == "reject":
+            result["status"] = "fail"
+            result["failure_reason"] = "ir_f32_reduction_hazard"
+            return
+        ho = result.get("heldout_eval") if isinstance(result.get("heldout_eval"), dict) else None
+        if ho and ho.get("passed"):
+            return                                     # the held-out inputs already vouched for it
+        try:
+            from benchmark_csl import evaluate_heldout, _heldout_eval_for_reference
+            spec_ho = _heldout_eval_for_reference(reference_dir)
+            staged = str(result.get("staged_bundle") or "")
+            if spec_ho and spec_ho.get("heldout_seeds") and staged and os.path.isdir(staged):
+                ho = evaluate_heldout(staged, str(result.get("commands_script") or "commands_wse3.sh"),
+                                      list(spec_ho["heldout_seeds"]), self.sdk_root,
+                                      seed_env=str(spec_ho.get("seed_env") or "XKERNEL_EVAL_SEED"),
+                                      shell_setup=self.shell_setup)
+                result["heldout_eval"] = ho
+                result["hazard_forced_heldout"] = True
+                if not ho.get("passed"):
+                    result["status"] = "fail"
+                    result["failure_reason"] = "ir_f32_reduction_hazard_heldout_fail"
+            else:
+                result["hazard_forced_heldout"] = False    # no held-out contract: recorded, not demoted
+        except Exception as exc:
+            logging.warning("[hazard] forced held-out re-run failed to execute: %s", exc)
+
     def _benchmark_current_code(self,
                                 kernel_name: str,
                                 current_code: str,
                                 reference_dir: str,
                                 target_relpath: str,
-                                num_runs: int = 1,
+                                num_runs: Optional[int] = None,
                                 heldout_eval: Optional[bool] = None,
-                                compile_only: bool = False) -> Dict[str, object]:
+                                compile_only: bool = False,
+                                ir_scope: str = "full") -> Dict[str, object]:
+        if num_runs is None:
+            num_runs = self.num_runs
         stage_root = tempfile.mkdtemp(prefix=f"{kernel_name.lower()}_", dir=self.work_root)
+        # IR/disassembly capture (v2 sparse study): XKERNEL_IR_CAPTURE=disasm|best|all. The
+        # candidate loop downgrades `best` to `disasm` (IR only for the baseline and accepted
+        # winners); `all` captures IR for every passing candidate (hazard census).
+        _ir_mode = None
+        try:
+            import ir_capture as _irc
+            _env_mode = _irc.mode_from_env()
+            if _env_mode != "0":
+                _ir_mode = _env_mode if (ir_scope == "full" or _env_mode == "all") else "disasm"
+        except ImportError:
+            pass
         translated_path = os.path.join(stage_root, target_relpath)
         ensure_directory(os.path.dirname(translated_path))
         with open(translated_path, "w", encoding="utf-8") as fh:
@@ -1892,7 +2138,22 @@ class CUDA2CSLOrchestrator:
             # ~3x cost; final confirmation runs it).
             heldout_eval=heldout_eval,
             compile_only=compile_only,
+            ir_capture_mode=_ir_mode,
         )
+        if (getattr(self, "_translate_window_gate", False) and not compile_only
+                and result.get("status") == "pass"):
+            _win = translation_window_problem(current_code, reference_dir)
+            if _win:
+                result["status"] = "fail"
+                result["failure_reason"] = "timing_window_violation"
+                result["timing_window_problem"] = _win
+                result.setdefault("transcript", []).append({
+                    "step": "timing_window_check", "status": "fail", "returncode": 1, "stdout": "",
+                    "stderr": ("timing window check failed: " + _win + ". The measured window must start at the "
+                               "first statement of the launched entry point (main) and end right before the host "
+                               "is unblocked, so that all communication, e.g. the broadcast of x, is timed."),
+                })
+                logging.warning("[cuda2csl] translation candidate demoted: timing window: %s", _win)
         if self.profile_feedback_enabled:
             profile = build_profile_report(
                 benchmark=result,
@@ -1908,6 +2169,10 @@ class CUDA2CSLOrchestrator:
             # not of the last candidate it happened to benchmark.
             result["model_readout"] = (profile.get("artifacts") or {}).get("model_readout")
             result["profiling_context"] = _profiling_context_from_profile(profile)
+            _arts = profile.get("artifacts") or {}
+            result["ir_readout"] = _arts.get("ir_readout")
+            result["structure_readout"] = _arts.get("structure_readout")
+            self._apply_hazard_policy(result, reference_dir)
             staged_bundle = result.get("staged_bundle")
             if (
                 not self.keep_profile_bundles
@@ -1941,7 +2206,8 @@ class CUDA2CSLOrchestrator:
                   reference_contract: str,
                   reference_compute_file: str,  # accepted for API compat; NOT shown to translator
                   task_summary: str = "",
-                  layout_text: str = "") -> Tuple[str, Dict[str, object]]:
+                  layout_text: str = "",
+                  generate_only: bool = False) -> Tuple[str, Dict[str, object]]:
         # Reset per-kernel debugger state so the cap and repeat detection
         # apply within one kernel only (not across the batch).
         self.debugger_fires_used = 0
@@ -2024,9 +2290,16 @@ class CUDA2CSLOrchestrator:
                 tpl_block = _format_template_prompt(tpl_name, tpl_text)
                 logging.info("[cuda2csl] template-gen: using %s template", tpl_name)
                 self._active_template_name = tpl_name
+                # v2 arm T1: the sparse mapping block also reaches the template-completion route
+                # (the pilot showed for_implementer's copy never gets here). Gate off -> unchanged prompt.
+                _tpl_task_summary = task_summary or "(no spec.yaml task description available; infer from CUDA)"
+                _tpl_sparse = csl_knowledge_base.sparse_mapping_block(
+                    "\n".join([target_relpath, cuda_code, self.cuda_analysis or ""]), kernel_group=self.kernel_group)
+                if _tpl_sparse:
+                    _tpl_task_summary = _tpl_task_summary + "\n\n" + _tpl_sparse
                 prompt = q_translate_from_template.format(
                     csl_template=tpl_block,
-                    task_summary=task_summary or "(no spec.yaml task description available; infer from CUDA)",
+                    task_summary=_tpl_task_summary,
                     cuda_analysis=self.cuda_analysis,
                     cuda_code=cuda_code,
                     builtin_whitelist=builtin_whitelist_block(),
@@ -2090,30 +2363,40 @@ class CUDA2CSLOrchestrator:
             _MIN_CANDIDATE_LINES = 20
             best_idx = 0
             best_compiles = False
-            for idx, (cand_code, _) in enumerate(candidates):
-                n_lines = cand_code.count("\n") + 1
-                if n_lines < _MIN_CANDIDATE_LINES:
-                    logging.info("[cuda2csl] best-of-N candidate %d/%d: skipped (%d lines < %d min)",
-                                 idx + 1, len(candidates), n_lines, _MIN_CANDIDATE_LINES)
-                    continue
-                self.current_code = cand_code
-                dry = self._benchmark_current_code(
-                    kernel_name=kernel_name,
-                    current_code=cand_code,
-                    reference_dir=reference_dir,
-                    target_relpath=target_relpath,
-                    compile_only=True,
-                )
-                s = dry.get("status", "fail")
-                logging.info("[cuda2csl] best-of-N candidate %d/%d compile: %s",
-                             idx + 1, len(candidates), s)
-                if s in ("pass", "blocked"):
-                    best_idx = idx
-                    best_compiles = True
-                    break
-            if not best_compiles:
+            if generate_only:
+                # An offline generation run must never touch cslc. Without a
+                # compiler signal, prefer the most complete-looking candidate
+                # by line count and leave correctness explicitly unverified.
                 best_idx = max(range(len(candidates)),
                                key=lambda i: candidates[i][0].count("\n"))
+                logging.info(
+                    "[cuda2csl] generate-only best-of-N: selected the longest "
+                    "candidate without compiling")
+            else:
+                for idx, (cand_code, _) in enumerate(candidates):
+                    n_lines = cand_code.count("\n") + 1
+                    if n_lines < _MIN_CANDIDATE_LINES:
+                        logging.info("[cuda2csl] best-of-N candidate %d/%d: skipped (%d lines < %d min)",
+                                     idx + 1, len(candidates), n_lines, _MIN_CANDIDATE_LINES)
+                        continue
+                    self.current_code = cand_code
+                    dry = self._benchmark_current_code(
+                        kernel_name=kernel_name,
+                        current_code=cand_code,
+                        reference_dir=reference_dir,
+                        target_relpath=target_relpath,
+                        compile_only=True,
+                    )
+                    s = dry.get("status", "fail")
+                    logging.info("[cuda2csl] best-of-N candidate %d/%d compile: %s",
+                                 idx + 1, len(candidates), s)
+                    if s in ("pass", "blocked"):
+                        best_idx = idx
+                        best_compiles = True
+                        break
+                if not best_compiles:
+                    best_idx = max(range(len(candidates)),
+                                   key=lambda i: candidates[i][0].count("\n"))
             code, winning_msgs = candidates[best_idx]
             self.messages = winning_msgs
             self.current_code = code
@@ -2155,6 +2438,24 @@ class CUDA2CSLOrchestrator:
                     f"after {MAX_INITIAL_TRANSLATE_RETRIES} retries."
                 )
             self.current_code = code
+
+        if generate_only:
+            generated_result: Dict[str, object] = {
+                "status": "unverified",
+                "failure_reason": "generate_only: SDK compile and simulation were not run",
+                "compile_time_ms": None,
+                "run_time_ms": None,
+                "cycles_send": None,
+                "success_marker": False,
+                "transcript": [],
+                "generated_only": True,
+                "verification_required": True,
+            }
+            self.run_log.append(dict(generated_result))
+            logging.info(
+                "[cuda2csl] generate-only: wrote the initial CSL candidate; "
+                "SDK verification is still required")
+            return self.current_code, generated_result
 
         # Effective attempt cap: reviewer-active loops use reviewer_max_attempts
         # (default 10) because an architect re-spin "uses" an attempt without
@@ -2215,6 +2516,12 @@ class CUDA2CSLOrchestrator:
                 last_result = benchmark
                 status = benchmark.get("status")
             if status in ("pass", "blocked"):
+                return self.current_code, benchmark
+
+            # The terminal artifact must be the program actually tested. Asking
+            # for another repair after the budget is exhausted would return an
+            # untested program paired with the preceding program's failure.
+            if attempt >= effective_limit:
                 return self.current_code, benchmark
 
             # Update layer-clearance tracker with this attempt's stderr.
@@ -2608,7 +2915,9 @@ class CUDA2CSLOrchestrator:
                 denied[name] = "precision_contract"
             elif meta.get("hardware_validated") and not hw_angles:
                 denied[name] = "hardware_only"
-            elif meta.get("codesign_only") and not codesign:
+            elif (meta.get("codesign_only") and not codesign
+                  and not (name == "nnz_balanced_row_partition"
+                           and os.environ.get("XKERNEL_FABRIC_HOOKS", "0") == "1")):
                 denied[name] = "codesign_only"
             else:
                 kept.append(name)
@@ -2698,6 +3007,11 @@ class CUDA2CSLOrchestrator:
                 detected = (bottleneck_signature or {}).get("bottlenecks", {}) or {}
                 hits = [b for b in applicable if b in detected]
                 line += f"   ⚙ BOTTLENECK MATCH (score={score}): {', '.join(hits)}"
+            if getattr(self, "sparse_blocks", False):
+                sparse_blocks = _sparse_blocks_module()
+                note = sparse_blocks.selector_note(name)
+                if note:
+                    line += f"   ▣ {note}"
             whitelist_lines.append(line)
         whitelist_block = "\n".join(whitelist_lines)
         if proven_lookup:
@@ -2766,6 +3080,26 @@ class CUDA2CSLOrchestrator:
                 "names a model_* key, and do not propose width or precision changes the readout "
                 "reports as already spent.\n" + str(model_text)
             )
+        ir_text = (bottleneck_signature or {}).get("ir_readout_text")
+        if ir_text:
+            bottleneck_block += (
+                "\n\nCompiled code of the current best (LLVM IR of the PE program and the disassembly of "
+                "the measured ELF, evidence class compiled): prefer angles whose ⚙ match names an ir_* key; "
+                "a reported reduction hazard must be repaired before anything else.\n" + str(ir_text)[:500]
+            )
+        st_text = (bottleneck_signature or {}).get("structure_readout_text")
+        if st_text:
+            bottleneck_block += (
+                "\n\nInput structure (measured on the train matrix; held-out inputs are other matrices of "
+                "the same class): prefer angles whose ⚙ match names a struct_* key.\n" + str(st_text)[:400]
+            )
+
+        fab_text = (bottleneck_signature or {}).get("fabric_readout_text")
+        if fab_text:
+            bottleneck_block += (
+                "\n\nWafer-level mapping of the current best (per-PE times from the simulator; the host "
+                "maps rows to PEs and the slowest PE sets the time):\n" + str(fab_text)[:400]
+            )
 
         # Per-fn cycle block — present only if per_fn_cycles is non-empty.
         # When B1/B2 land this will tell the selector which f_* is hot.
@@ -2803,7 +3137,10 @@ class CUDA2CSLOrchestrator:
         if recent_attempts:
             tried_lines = []
             for r in recent_attempts[-6:]:  # last 6 attempts
-                outcome = "ACCEPTED" if r.get("selected") else f"rejected({r.get('rejected_reason', 'unknown')[:30]})"
+                _reason = str(r.get("rejected_reason", "unknown"))
+                outcome = ("ACCEPTED" if r.get("selected")
+                           else f"rejected({_reason})" if _reason.startswith("compiled_noop")
+                           else f"rejected({_reason[:30]})")
                 tried_lines.append(f"  - attempt {r.get('attempt')}: {r.get('angle')} → {outcome}")
             tried_block = (
                 "Recent attempts this run (avoid repeating losing angles):\n"
@@ -2865,6 +3202,24 @@ class CUDA2CSLOrchestrator:
             return _round_robin_fallback(f"unknown_angle: {picked}")
         return (picked, reason)
 
+    @staticmethod
+    def _compiled_noop(base_result: Optional[Dict[str, object]], bench: Dict[str, object]) -> bool:
+        """True when a PASSING candidate compiled to the same target-file instruction stream as
+        the program it started from (same instruction count and mnemonic histogram from the
+        uniform disassembly capture) and measured the same cycles: the source rewrite was folded
+        by the compiler. 2026-09-28: 43 of the 198 compiled candidates in the paired sparse root
+        were such no-ops; the model saw only `rejected(cycles N >= best N)`."""
+        if not base_result or bench.get("status") != "pass":
+            return False
+        bd = ((base_result.get("ir_readout") or {}) if isinstance(base_result.get("ir_readout"), dict) else {}).get("disasm") or {}
+        cd = ((bench.get("ir_readout") or {}) if isinstance(bench.get("ir_readout"), dict) else {}).get("disasm") or {}
+        if not bd or not cd:
+            return False
+        same_cycles = isinstance(bench.get("cycles_send"), int) and bench.get("cycles_send") == base_result.get("cycles_send")
+        same_text = (bd.get("records_target") == cd.get("records_target")
+                     and (bd.get("mnemonics") or {}) == (cd.get("mnemonics") or {}))
+        return bool(same_cycles and same_text)
+
     def optimize(self,
                  kernel_name: str,
                  reference_dir: str,
@@ -2890,6 +3245,7 @@ class CUDA2CSLOrchestrator:
         and the profile feedback are visible.
         """
         _OPTIMIZE_PATIENCE = 5  # stop after this many consecutive no-improvements past min_attempts
+        self._translate_window_gate = False  # the optimizer checks candidates against the start program
         # Arm the compute-leak guard in case optimize() is entered without
         # translate() running first (the --optimize-only / W2 path). Cheap
         # if already armed; idempotent.
@@ -2900,6 +3256,10 @@ class CUDA2CSLOrchestrator:
                 "status": baseline_result.get("status"),
                 "run_time_ms": baseline_result.get("run_time_ms"),
                 "cycles_send": baseline_result.get("cycles_send"),
+                # Compiled-code and input-structure view of the START program (v2 sparse study)
+                "ir_keys": list(((baseline_result.get("ir_readout") or {}) if isinstance(baseline_result.get("ir_readout"), dict) else {}).get("ir_keys") or []),
+                "ir_hazards": [h.get("instruction") for h in (((baseline_result.get("ir_readout") or {}) if isinstance(baseline_result.get("ir_readout"), dict) else {}).get("hazards") or [])],
+                "structure_keys": list(((baseline_result.get("structure_readout") or {}) if isinstance(baseline_result.get("structure_readout"), dict) else {}).get("keys") or []),
                 # Silicon-model view of the START program (present when
                 # XKERNEL_MODEL_GUIDED=1): class, matcher keys, predicted device
                 # cycles. The paper groups paired results by this class.
@@ -2932,8 +3292,53 @@ class CUDA2CSLOrchestrator:
 
         best_code = self.current_code
         best_result = baseline_result
+        # Wafer-level mapping hook (XKERNEL_FABRIC_HOOKS=1, 2026-09-30): host-side files that travel with
+        # the program, for kernels whose spec lists the hook under `fabric_hooks` (row_order.py).
+        _ks = kernel_spec if isinstance(kernel_spec, dict) else (load_kernel_spec(reference_dir) or {})
+        fabric_hooks = (os.environ.get("XKERNEL_FABRIC_HOOKS", "0") == "1"
+                        and "row_order" in list((_ks or {}).get("fabric_hooks") or []))
+        best_extra: Dict[str, str] = dict(getattr(self, "_agent_extra_files", None) or {})
         best_cycles = baseline_cycles
         consecutive_no_improvement = 0
+        # The frozen-function contract (the splice and the validator in the
+        # candidate loop) is checked against the program the optimizer STARTS
+        # from, not against the kernel's hidden reference. The start program is
+        # what the agent is given, and a first-correct program from the template
+        # route carries the scaffold's own timing helpers (f_tic/f_toc called on
+        # device) rather than the reference's f_tic_dev/f_toc_dev. Checking
+        # against the reference rejected every variant of every multi-PE sparse
+        # task (20-21 Sep 2026: 75 candidates, none benchmarked), and the splice
+        # pulled the reference's f_tic body -- with the reference's buffer names
+        # -- into each candidate, so even the identity edit failed to compile.
+        contract_reference_src = best_code
+
+        def _fabric_note(base_result: Optional[Dict[str, object]]) -> str:
+            """Hook description, per-PE readout of the base program and its current row_order.py."""
+            if not fabric_hooks:
+                return ""
+            fr = fabric_readout(base_result)
+            note = "\n\n" + ROW_ORDER_HOOK_NOTE
+            if fr:
+                note += "\n" + str(fr["text"])
+            if best_extra.get("row_order.py"):
+                note += "\nCurrent row_order.py:\n```python\n" + best_extra["row_order.py"] + "\n```"
+            return note
+
+        def _noop_note() -> str:
+            """Compiled-identity feedback for the implementer (arm O1N): the attempts of this run
+            whose rewrite compiled to the same instruction stream as their base. Empty unless
+            XKERNEL_NOOP_FEEDBACK=1 or no such attempt exists."""
+            if os.environ.get("XKERNEL_NOOP_FEEDBACK", "0") != "1":
+                return ""
+            noops = [st for st in summary.get("steps", []) if st.get("compiled_noop")]
+            if not noops:
+                return ""
+            listed = ", ".join(f"attempt {st.get('attempt')} ({st.get('angle')})" for st in noops)
+            return (f"\n\nCOMPILED-IDENTITY FEEDBACK: {listed} compiled to the SAME instruction stream as the "
+                    f"program it started from (same instruction count and mnemonic histogram) and the same "
+                    f"cycles -- the compiler folded the rewrite. Moving code at the source level changes "
+                    f"nothing unless the emitted loop changes: change what is executed per nonzero (the "
+                    f"descriptor operands, the cursor updates, the index width), not where a statement sits.")
         if self.keep_candidates:
             _bmr = baseline_result.get("model_readout") if isinstance(baseline_result.get("model_readout"), dict) else {}
             self.retained_candidates.append({
@@ -2971,9 +3376,13 @@ class CUDA2CSLOrchestrator:
         # reject variants that game the cycle metric by editing timing
         # functions or shadowing host-supplied params.
         frozen_fns, frozen_params = spec_frozen_lists(kernel_spec)
+        # (The NVIDIA node reached the same conclusion independently on RowScale, as an
+        # opt-in XKERNEL_FREEZE_MEASURED_BASELINE; here it is unconditional: the contract
+        # reference is always the start program, see contract_reference_src above.)
         summary["contract"] = {
             "frozen_functions": list(frozen_fns),
             "frozen_params":    list(frozen_params),
+            "reference": "start_program",
         }
 
         # A2: per-kernel optimization_angles in spec.yaml override the
@@ -2996,6 +3405,31 @@ class CUDA2CSLOrchestrator:
                 if _model_angle not in angle_order:
                     angle_order.append(_model_angle)
             angle_source += " + model angles"
+        if self.sparse_angles:
+            for _sparse_angle in SPARSE_CSL_OPT_STEPS:
+                if _sparse_angle not in angle_order:
+                    angle_order.append(_sparse_angle)
+            angle_source += " + sparse angles"
+        # A pre-registered arm may REPLACE the whitelist by name (2026-09-28: arm O2, the staged
+        # second-order angles from an already-optimised start). Applied before the gates.
+        _wl = [a.strip() for a in os.environ.get("XKERNEL_ANGLE_WHITELIST", "").split(",") if a.strip()]
+        if _wl:
+            unknown = [a for a in _wl if a not in CSL_OPTIMIZATION_STEPS]
+            if unknown:
+                logging.warning("[optimize] XKERNEL_ANGLE_WHITELIST names unknown angles: %s", unknown)
+            angle_order = [a for a in _wl if a in CSL_OPTIMIZATION_STEPS]
+            angle_source = f"env whitelist ({len(angle_order)} angles)"
+        # Catalogue angles admitted by name for a pre-registered arm without changing the
+        # default lists (2026-09-26: `cursor_path_split`, arm O1X). Unknown names are logged
+        # and ignored so a typo cannot silently become an empty treatment.
+        _extra = [a.strip() for a in os.environ.get("XKERNEL_SPARSE_ANGLES_EXTRA", "").split(",") if a.strip()]
+        if _extra:
+            for _extra_angle in _extra:
+                if _extra_angle not in CSL_OPTIMIZATION_STEPS:
+                    logging.warning("[optimize] XKERNEL_SPARSE_ANGLES_EXTRA names an unknown angle: %s", _extra_angle)
+                elif _extra_angle not in angle_order:
+                    angle_order.append(_extra_angle)
+            angle_source += f" + extra angles {[a for a in _extra if a in CSL_OPTIMIZATION_STEPS]}"
         angle_order, angles_denied = self._filter_angles(angle_order, kernel_spec)
         summary["angles_denied"] = angles_denied
         summary["angle_source"] = angle_source
@@ -3062,6 +3496,23 @@ class CUDA2CSLOrchestrator:
                 for _key in model_readout.get("model_keys") or []:
                     bottleneck_sig["bottlenecks"][_key] = 1
                 bottleneck_sig["model_readout_text"] = model_readout.get("readout_text")
+            # Compiled-code and input-structure keys (v2 sparse study), each behind its gate.
+            _irr = (best_result or {}).get("ir_readout")
+            if os.environ.get("XKERNEL_IR_READOUT", "0") == "1" and isinstance(_irr, dict):
+                for _key in _irr.get("ir_keys") or []:
+                    bottleneck_sig["bottlenecks"][_key] = 1
+                bottleneck_sig["ir_readout_text"] = _irr.get("readout_text")
+            _st = (best_result or {}).get("structure_readout")
+            if os.environ.get("XKERNEL_STRUCTURE_READOUT", "0") == "1" and isinstance(_st, dict):
+                for _key in _st.get("keys") or []:
+                    bottleneck_sig["bottlenecks"][_key] = 1
+                bottleneck_sig["structure_readout_text"] = _st.get("readout_text")
+            if fabric_hooks:
+                _fr = fabric_readout(best_result)
+                if _fr:
+                    for _key in _fr["keys"]:
+                        bottleneck_sig["bottlenecks"][_key] = 1
+                    bottleneck_sig["fabric_readout_text"] = _fr["text"]
             if bottleneck_sig.get("bottlenecks"):
                 logging.info("[optimize] attempt %d profiler: %s",
                              attempt, dict(bottleneck_sig["bottlenecks"]))
@@ -3198,9 +3649,15 @@ class CUDA2CSLOrchestrator:
             def _build_prompt_for_angle(angle_name: str) -> List[Dict[str, str]]:
                 ang_meta = angle_metadata(angle_name)
                 ang_desc = ang_meta["description"]
+                if fabric_hooks and angle_name == "nnz_balanced_row_partition":
+                    ang_desc += ROW_ORDER_ANGLE_NOTE
+                opt_desc = ang_desc
+                if getattr(self, "sparse_blocks", False):
+                    sparse_blocks = _sparse_blocks_module()
+                    opt_desc += sparse_blocks.block_text(angle_name)
                 prompt = q_optimize_csl_compute.format(
                     optimization_name=angle_name,
-                    optimization_description=ang_desc,
+                    optimization_description=opt_desc,
                     frozen_callout_block=default_frozen_callout_block(
                         getattr(self, "kernel_spec", None)
                     ),
@@ -3217,12 +3674,15 @@ class CUDA2CSLOrchestrator:
                     current_cycles=attempt_base_cycles,
                     benchmark_summary=benchmark_summary_text(attempt_base_result),
                     profiler_feedback=(
-                        ((attempt_base_result or {}).get("profile_feedback")
-                         or self.latest_profiler_feedback)
-                        if self.profile_feedback_enabled
-                        else "(profile feedback disabled; using benchmark summary only)"
+                        (((attempt_base_result or {}).get("profile_feedback")
+                          or self.latest_profiler_feedback)
+                         if self.profile_feedback_enabled
+                         else "(profile feedback disabled; using benchmark summary only)")
+                        + _noop_note() + _fabric_note(attempt_base_result)
                     ),
                 )
+                if fabric_hooks:
+                    prompt += ROW_ORDER_OUTPUT_NOTE
                 return [
                     {"role": "system", "content": Instruction_system_csl_optimization},
                     {"role": "user", "content": prompt},
@@ -3274,9 +3734,23 @@ class CUDA2CSLOrchestrator:
                 # the behavior is A/B-comparable. Default ON.
                 if os.environ.get("XKERNEL_SPLICE_FROZEN", "1") == "1":
                     candidate, _spliced = splice_frozen_functions(
-                        candidate, reference_compute_file, frozen_fns)
+                        candidate, contract_reference_src, frozen_fns)
                     if _spliced:
                         cand_record["frozen_spliced"] = _spliced
+                cand_extra = dict(best_extra)
+                if fabric_hooks:
+                    for _k, _v in (extract_multi_file_blocks(reply, "python") or {}).items():
+                        if os.path.basename(_k) == "row_order.py" and _v.strip():
+                            cand_extra["row_order.py"] = _v
+                            cand_record["row_order_py"] = True
+                    # Record-only (30 Sep 2026): did the reply try to use the hook? Separates "the model
+                    # ignored the mapping hook" from "it wrote a block the extractor did not accept".
+                    cand_record["reply_mentions_row_order"] = "row_order" in (reply or "")
+                    cand_record["reply_python_fences"] = len(re.findall(r"```\s*python", reply or ""))
+                    if cand_record["reply_mentions_row_order"] and not cand_record.get("row_order_py"):
+                        cand_record["reply_row_order_excerpt"] = (reply or "")[
+                            max(0, (reply or "").find("row_order") - 200):][:1200]
+                self._agent_extra_files = cand_extra or None
                 bench = self._benchmark_current_code(
                     kernel_name=kernel_name,
                     current_code=candidate,
@@ -3286,10 +3760,11 @@ class CUDA2CSLOrchestrator:
                     # W2 inner loop: rank by cycles only; skip held-out per-candidate
                     # (final confirmation below re-benchmarks the winner with it on).
                     heldout_eval=False,
-                )
+                
+                    ir_scope="candidate",)
                 violation = validate_contract(
                     variant_src=candidate,
-                    reference_src=reference_compute_file,
+                    reference_src=contract_reference_src,
                     frozen_functions=frozen_fns,
                     frozen_params=frozen_params,
                 )
@@ -3299,8 +3774,10 @@ class CUDA2CSLOrchestrator:
                     "cycles_send": bench.get("cycles_send"),
                     "cycles_send_runs": bench.get("cycles_send_runs"),
                     "contract_violation": violation,
+                    "compiled_noop": self._compiled_noop(attempt_base_result, bench),
                     "_candidate": candidate,  # internal, stripped before summary
                     "_benchmark": bench,
+                    "_extra": cand_extra,
                 })
                 candidate_records.append(cand_record)
                 if self.keep_candidates:
@@ -3312,6 +3789,9 @@ class CUDA2CSLOrchestrator:
                         "cycles_send": bench.get("cycles_send"), "cycles_send_runs": bench.get("cycles_send_runs"),
                         "contract_violation": violation, "base_label": attempt_base_label,
                         "base_cycles": attempt_base_cycles, "code": candidate,
+                        **{k: cand_record[k] for k in ("row_order_py", "reply_mentions_row_order",
+                                                       "reply_python_fences", "reply_row_order_excerpt")
+                           if k in cand_record},
                     })
 
             # Pick the survivor: contract-passing AND status=pass AND
@@ -3403,6 +3883,7 @@ class CUDA2CSLOrchestrator:
                 if (cand_cycles < best_cycles
                         and os.environ.get("XKERNEL_HELDOUT_EVAL", "1") != "0"
                         and resolve_eval(load_kernel_spec(reference_dir))):
+                    self._agent_extra_files = winner.get("_extra") or None
                     confirm = self._benchmark_current_code(
                         kernel_name=kernel_name, current_code=candidate,
                         reference_dir=reference_dir, target_relpath=target_relpath,
@@ -3441,6 +3922,7 @@ class CUDA2CSLOrchestrator:
                     best_code = candidate
                     best_result = benchmark
                     best_cycles = cand_cycles
+                    best_extra = dict(winner.get("_extra") or {})
                     summary["selected_variant"] = f"attempt_{attempt}_{step_name}_cand{winner['cand_idx']}"
                     step_record["selected"] = True
                     step_record["cycles_delta"] = cand_cycles - step_record["best_cycles_before"]
@@ -3462,6 +3944,14 @@ class CUDA2CSLOrchestrator:
                         f"cycles {cand_cycles} >= best {best_cycles} "
                         f"(best survivor of {n_candidates})"
                     )
+                    if winner.get("compiled_noop"):
+                        step_record["compiled_noop"] = True
+                        if os.environ.get("XKERNEL_NOOP_FEEDBACK", "0") == "1":
+                            step_record["rejected_reason"] = (
+                                f"compiled_noop: the rewrite compiled to the SAME instruction stream as the "
+                                f"current program (same instruction count and histogram) and the same "
+                                f"{cand_cycles} cycles -- the compiler folded it; a source-level move that "
+                                f"leaves the emitted loop unchanged cannot change the cycles")
                     step_record["selector_reason"] = step_reason
                     logging.info("[optimize] attempt %d/%d (%s) best-of-%d: rejected (%s). best stays at %d cycles.",
                                  attempt, max_attempts, step_name, n_candidates,
@@ -3518,6 +4008,9 @@ class CUDA2CSLOrchestrator:
                 logging.info("[optimize] %s", summary["terminated_reason"])
                 break
 
+        self._agent_extra_files = best_extra or None
+        if best_extra:
+            summary["extra_files"] = dict(best_extra)
         self.current_code = best_code
         summary["final_status"] = best_result.get("status")
         summary["final_run_time_ms"] = best_result.get("run_time_ms")
@@ -3691,6 +4184,10 @@ def write_final_artifacts(kernel_output_dir: str,
     ensure_directory(os.path.dirname(translated_path))
     with open(translated_path, "w", encoding="utf-8") as fh:
         fh.write(translated_code)
+    for _name, _body in (((optimization_summary or {}).get("extra_files") or {}).items()
+                         if isinstance(optimization_summary, dict) else []):
+        with open(os.path.join(os.path.dirname(translated_path), os.path.basename(_name)), "w", encoding="utf-8") as fh:
+            fh.write(str(_body))
 
     save_json(metadata, os.path.join(kernel_output_dir, "bundle_metadata.json"))
     save_json(env_report, os.path.join(kernel_output_dir, "env_check.json"))
@@ -3810,6 +4307,10 @@ def main() -> None:
                         help="Shell commands to run before SDK probes and staged bundle commands.")
     parser.add_argument("--shell-setup-file", type=str, default=None,
                         help="Path to a bash snippet to source before SDK probes and staged bundle commands.")
+    parser.add_argument("--generate-only", action="store_true",
+                        help="Run the Argo/LLM analysis, architecture and initial CSL generation only. "
+                             "Do not probe the Cerebras SDK, compile, simulate, repair, measure the "
+                             "reference, or optimize. The saved candidate is marked unverified.")
     parser.add_argument("--optimize-only", action="store_true",
                         help="Workflow 2: skip analyse/design/translate; load an existing "
                              "CSL file (--csl-path or the kernel's reference compute file) "
@@ -3876,6 +4377,13 @@ def main() -> None:
     parser.add_argument("--work-root", type=str, default=DEFAULT_WORK_ROOT)
     args = parser.parse_args()
 
+    if args.generate_only and (
+            args.optimize_only or args.optimize or args.auto_optimize
+            or args.rl_bandit or args.rl_mcts or args.profile_feedback):
+        parser.error(
+            "--generate-only cannot be combined with optimization, "
+            "--optimize-only, or --profile-feedback because those modes require SDK results")
+
     os.environ["XKERNEL_TARGET_SDK"] = args.target_sdk
     os.environ["XKERNEL_TARGET_ARCH"] = args.arch
 
@@ -3924,6 +4432,7 @@ def main() -> None:
         model=effective_model,
         alcf_endpoint=args.alcf_endpoint,
         shell_setup=shell_setup,
+        skip_sdk_probes=args.generate_only,
     )
     if args.check_env:
         print(json.dumps(env_report, indent=2))
@@ -3946,6 +4455,7 @@ def main() -> None:
         target_relpath=target_relpath,
         commands_script=commands_script,
         max_chars=args.max_contract_chars,
+        allow_sdk_container=not args.generate_only,
     )
 
     # Load kernels/<name>/spec.yaml if present. Used by the optimizer to
@@ -3953,6 +4463,18 @@ def main() -> None:
     # When absent the optimizer runs without a task hint.
     kernel_spec = load_kernel_spec(reference_dir)
     task_summary = spec_task_summary(kernel_spec)
+    # Structure readout of the TRAIN input (v2 sparse study, gate XKERNEL_STRUCTURE_READOUT=1):
+    # the matrix's structural facts, computed from the spec's manifest or generator, appended to
+    # the task summary the analyst/architect/implementer see. Never names a held-out matrix.
+    if os.environ.get("XKERNEL_STRUCTURE_READOUT", "0") == "1" and (kernel_spec or {}).get("structure"):
+        try:
+            import sparse_inputs as _si
+            _readout = _si.readout_for_kernel(reference_dir)
+            if _readout:
+                task_summary = (task_summary + "\n\n" if task_summary else "") + _readout
+                logging.info("[main] structure readout appended to the task summary (%d chars)", len(_readout))
+        except Exception as exc:  # never block a run on the readout
+            logging.warning("[main] structure readout unavailable: %s", exc)
     if kernel_spec:
         logging.info("[main] loaded kernel spec for %s (group=%s, difficulty=%s)",
                      kernel_spec.get("kernel_id", kernel_name),
@@ -3996,7 +4518,7 @@ def main() -> None:
     # compute-leak guard ensures the canary still trips if the reference
     # ever bleeds into a prompt.
     reference_baseline_for_trace: Optional[Dict[str, object]] = None
-    if args.measure_reference:
+    if args.measure_reference and not args.generate_only:
         import tempfile as _tmp
         try:
             with _tmp.TemporaryDirectory(prefix=f"{kernel_name.lower()}_refbench_",
@@ -4100,9 +4622,15 @@ def main() -> None:
             reference_compute_file=reference_compute,
             task_summary=task_summary,
             layout_text=layout_text,
+            generate_only=args.generate_only,
         )
 
-    optimization_summary: Dict[str, object] = {"skipped": "Optimization not requested."}
+    optimization_summary: Dict[str, object] = {
+        "skipped": (
+            "--generate-only: SDK verification and optimization were not run."
+            if args.generate_only else "Optimization not requested."
+        )
+    }
     optimize_requested = (args.optimize or args.auto_optimize
                           or args.rl_bandit or args.rl_mcts)
     if optimize_requested:
@@ -4199,6 +4727,8 @@ def main() -> None:
         "alcf_endpoint": args.alcf_endpoint,
         "shell_setup": shell_setup,
         "profile_feedback": args.profile_feedback,
+        "generate_only": args.generate_only,
+        "verification_status": "unverified" if args.generate_only else benchmark_result.get("status"),
     }
     write_final_artifacts(
         kernel_output_dir=kernel_output_dir,

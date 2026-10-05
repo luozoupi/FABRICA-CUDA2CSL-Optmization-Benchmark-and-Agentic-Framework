@@ -1,0 +1,4 @@
+kernel,O0_best,O0_median,O0_n_for_median,O0_pass,O0_runs,O0_speedup_vs_fc,O1I_best,O1I_median,O1I_n_for_median,O1I_pass,O1I_runs,O1I_speedup_vs_fc,O1_best,O1_median,O1_n_for_median,O1_pass,O1_runs,O1_speedup_vs_fc,comparable,fc_cycles,fc_source,n_candidates,n_contract_violations,ratio_best,ratio_median
+SpGEMM-Masked-Dot,194615,209541,3,3,3,2.0950983339775986,205941,228040,3,3,3,1.9251403262585511,199207,202106,3,3,3,2.1721720285394794,True,439009,run_baseline,108,0,0.9769486012037729,1.0367876262951126
+SpMM-CSR-Dense,28444,29270,3,3,3,1.0575333105568843,29550,29550,3,3,3,1.04751269035533,27114,29289,3,3,3,1.0568472805490117,True,30954,run_baseline,107,11,1.0490521501807184,0.9993512922940353
+SpMV-RowBlock,37012,37012,3,3,3,1.0,33823,35396,3,3,3,1.0456548762572042,37012,37012,3,3,3,1.0,True,37012,run_baseline,94,4,1.0,1.0

@@ -1,0 +1,55 @@
+{
+  "kernel": "ParBroadcast-Scale",
+  "run_dir": "code_translation/results/full_template_sweep_20260722_192305/ParBroadcast-Scale/run_20260723_071349",
+  "status": "extracted",
+  "n_attempts": 19,
+  "model": "claude-opus-4-8",
+  "target_relpath": "pe.csl",
+  "reference_dir": "/home/USER/xkernel/kernels/ParBroadcast-Scale/CSL",
+  "fc_attempt_index": 6,
+  "fc_cycles_send": 154,
+  "fc_cycles_send_runs": [
+    154
+  ],
+  "fc_code_lines": 122,
+  "fc_heldout_eval": {
+    "passed": true,
+    "failing_seed": null,
+    "per_seed": [
+      {
+        "seed": 101,
+        "steps": [
+          {
+            "command": "cs_python run.py --name out",
+            "ok": true,
+            "returncode": 0
+          }
+        ]
+      },
+      {
+        "seed": 202,
+        "steps": [
+          {
+            "command": "cs_python run.py --name out",
+            "ok": true,
+            "returncode": 0
+          }
+        ]
+      },
+      {
+        "seed": 303,
+        "steps": [
+          {
+            "command": "cs_python run.py --name out",
+            "ok": true,
+            "returncode": 0
+          }
+        ]
+      }
+    ],
+    "reason": "passed all 3 held-out seeds"
+  },
+  "translated_path": "/home/USER/xkernel/code_translation/sandbox/cuda2csl/parbroadcast-scale_yon4ba_v/pe.csl",
+  "source": "sandbox",
+  "dest": "code_translation/results/first_correct/template_20260722/ParBroadcast-Scale/pe.csl"
+}

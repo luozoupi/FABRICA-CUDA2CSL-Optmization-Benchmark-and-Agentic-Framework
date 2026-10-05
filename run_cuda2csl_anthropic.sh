@@ -14,7 +14,7 @@ set -e
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 XKERNEL_ROOT="${XKERNEL_ROOT:-$SCRIPT_DIR}"
-source "$XKERNEL_ROOT/fabrica_env.sh"
+source "$XKERNEL_ROOT/xkernel_env.sh"
 
 KEY_FILE="${ANTHROPIC_KEY_FILE:-$HOME/claude-api-key.txt}"
 if [ -n "${ANTHROPIC_API_KEY:-}" ]; then
@@ -26,8 +26,19 @@ elif [ ! -s "$KEY_FILE" ]; then
   exit 1
 fi
 
+# The Cerebras SDK runs inside apptainer, which refuses to start when the
+# calling uid has no /etc/passwd entry. `unshare -r` maps the caller to uid 0
+# inside a new user namespace, which does resolve. Harmless when the uid is
+# already resolvable, so it is applied unconditionally. It creates only a USER
+# namespace -- the network namespace is untouched, so API calls still work.
+UNSHARE=""
+if ! id -un >/dev/null 2>&1 && command -v unshare >/dev/null 2>&1; then
+  UNSHARE="unshare -r"
+fi
+
 # `exec` would drop the EXIT trap that removes a temporary key file.
-xk_python "$XKERNEL_ROOT/code_translation/cuda2csl.py" \
+$UNSHARE "$XKERNEL_MICROMAMBA" run -n "$XKERNEL_ENV" \
+  python "$XKERNEL_ROOT/code_translation/cuda2csl.py" \
     --api-key-file "$KEY_FILE" \
     --model "${XKERNEL_MODEL:-claude-opus-4-8}" \
     --sdk-root "$XKERNEL_SDK_ROOT" \

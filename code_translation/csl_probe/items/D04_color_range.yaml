@@ -1,0 +1,25 @@
+id: D04_color_range
+group: D_api
+prompt: 'Answer this Cerebras CSL / WSE-3 question with the single letter of the correct option, then one sentence
+  of justification.
+
+
+  How many routable colors does a CSL program have to choose from?
+
+
+  A) 8 (colors 0 to 7)
+
+  B) 16
+
+  C) 24 (colors 0 to 23)
+
+  D) 64'
+choices:
+- A) 8 (colors 0 to 7)
+- B) 16
+- C) 24 (colors 0 to 23)
+- D) 64
+expected:
+  choice: C
+scoring: first standalone letter A-D in the reply equals the key
+source_citation: error_gotcha_retrieval color-id-range

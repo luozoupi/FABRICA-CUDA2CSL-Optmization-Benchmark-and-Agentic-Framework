@@ -1,0 +1,116 @@
+{
+ "n": 2048,
+ "reps": 64,
+ "elements_per_variant": 131072,
+ "symbols": {},
+ "variants": [
+  {
+   "offset": 0,
+   "cycles": 33419,
+   "cycles_per_element": 0.25496673583984375,
+   "label": "rw-off0",
+   "stride": 1,
+   "align": 0,
+   "ratio_vs_best": 1.0000598497770596
+  },
+  {
+   "offset": 1,
+   "cycles": 33417,
+   "cycles_per_element": 0.25495147705078125,
+   "label": "rw-off1",
+   "stride": 1,
+   "align": 0,
+   "ratio_vs_best": 1.0
+  },
+  {
+   "offset": 2,
+   "cycles": 33417,
+   "cycles_per_element": 0.25495147705078125,
+   "label": "rw-off2",
+   "stride": 1,
+   "align": 0,
+   "ratio_vs_best": 1.0
+  },
+  {
+   "offset": 3,
+   "cycles": 33417,
+   "cycles_per_element": 0.25495147705078125,
+   "label": "rw-off3",
+   "stride": 1,
+   "align": 0,
+   "ratio_vs_best": 1.0
+  },
+  {
+   "offset": 4,
+   "cycles": 33417,
+   "cycles_per_element": 0.25495147705078125,
+   "label": "rw-off4",
+   "stride": 1,
+   "align": 0,
+   "ratio_vs_best": 1.0
+  },
+  {
+   "offset": 5,
+   "cycles": 33417,
+   "cycles_per_element": 0.25495147705078125,
+   "label": "rw-off5",
+   "stride": 1,
+   "align": 0,
+   "ratio_vs_best": 1.0
+  },
+  {
+   "offset": 6,
+   "cycles": 33417,
+   "cycles_per_element": 0.25495147705078125,
+   "label": "rw-off6",
+   "stride": 1,
+   "align": 0,
+   "ratio_vs_best": 1.0
+  },
+  {
+   "offset": 7,
+   "cycles": 33417,
+   "cycles_per_element": 0.25495147705078125,
+   "label": "rw-off7",
+   "stride": 1,
+   "align": 0,
+   "ratio_vs_best": 1.0
+  },
+  {
+   "offset": 8,
+   "cycles": 66185,
+   "cycles_per_element": 0.5049514770507812,
+   "label": "ctl-s2a0",
+   "stride": 2,
+   "align": 0,
+   "ratio_vs_best": 1.980578747344166
+  },
+  {
+   "offset": 9,
+   "cycles": 66185,
+   "cycles_per_element": 0.5049514770507812,
+   "label": "ctl-s2a1",
+   "stride": 2,
+   "align": 1,
+   "ratio_vs_best": 1.980578747344166
+  },
+  {
+   "offset": 10,
+   "cycles": 66185,
+   "cycles_per_element": 0.5049514770507812,
+   "label": "ctl-s2a2",
+   "stride": 2,
+   "align": 2,
+   "ratio_vs_best": 1.980578747344166
+  },
+  {
+   "offset": 11,
+   "cycles": 66185,
+   "cycles_per_element": 0.5049514770507812,
+   "label": "ctl-s2a3",
+   "stride": 2,
+   "align": 3,
+   "ratio_vs_best": 1.980578747344166
+  }
+ ]
+}

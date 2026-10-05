@@ -1,0 +1,28 @@
+// Shape check: three square f16 tiles, as a one-PE GEMM working set would need.
+param memcpy_params;
+param n: i16;
+
+const EXIT: local_task_id = @get_local_task_id(9);
+const sys_mod = @import_module("<memcpy/memcpy>", memcpy_params);
+
+var A = @zeros([n*n]f16);
+var B = @zeros([n*n]f16);
+var C = @zeros([n*n]f16);
+var ptr_C: [*]f16 = &C;
+
+const A_dsd = @get_dsd(mem1d_dsd, .{ .tensor_access = |i|{n*n} -> A[i] });
+const B_dsd = @get_dsd(mem1d_dsd, .{ .tensor_access = |i|{n*n} -> B[i] });
+const C_dsd = @get_dsd(mem1d_dsd, .{ .tensor_access = |i|{n*n} -> C[i] });
+
+fn compute() void {
+  @fmach(C_dsd, A_dsd, B_dsd, @as(f16, 1.0));
+  @activate(EXIT);
+}
+
+task f_exit() void { sys_mod.unblock_cmd_stream(); }
+
+comptime {
+  @bind_local_task(f_exit, EXIT);
+  @export_symbol(ptr_C, "C");
+  @export_symbol(compute);
+}

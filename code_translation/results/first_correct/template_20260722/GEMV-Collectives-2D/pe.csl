@@ -1,0 +1,242 @@
+// GEMV y = A*x + b on a kernel_cols x kernel_rows PE mesh via collectives_2d.
+//
+// Fix vs prior attempt: b lived only on PE(0,0). Broadcasting b along X on
+// every row sent zeros on rows py>0 (PE(0,py) had no b), so bias was missing
+// on the py=1..3 bands. Correct flow: scatter b DOWN Y (root row 0) so
+// PE(0,py) holds b[py*Mt : py*Mt+Mt], THEN broadcast that Mt-band ALONG X so
+// the reduce-root column (px=last) holds the right bias band per row.
+//
+// Data flow (roots chosen so final y lands on PE(kernel_cols-1,kernel_rows-1)):
+//   1. scatter x along X   (root col 0): PE(px,0) gets x[px*Nt : px*Nt+Nt]
+//   2. broadcast x down Y  (root row 0): every PE(px,py) holds that Nt slice
+//   3. scatter b down Y    (root row 0): PE(0,py) gets b[py*Mt : py*Mt+Mt]
+//   4. broadcast b along X (root col 0): every PE(px,py) holds its Mt band
+//   5. local GEMV: partial[i] = sum_j A[i,j]*x_slice[j], i in [0,Mt)
+//   6. reduce_fadds along X (root col last): PE(last,py) holds rowsum
+//   7. add bias band on column last
+//   8. gather along Y (root row last): PE(last,last) assembles full y
+
+param memcpy_params: comptime_struct;
+param c2d_params: comptime_struct;
+param Mt: u16; // rows per PE
+param Nt: u16; // cols per PE
+
+const sys_mod = @import_module("<memcpy/memcpy>", memcpy_params);
+const layout_mod = @import_module("<layout>");
+const timestamp = @import_module("<time>");
+
+const rect_width  = @get_rectangle().width;
+const rect_height = @get_rectangle().height;
+
+// Roots
+const ROOT_SCATTER_X: u16 = 0;               // x lives on column 0 initially
+const ROOT_BCAST_Y:   u16 = 0;               // x-slice broadcast down from row 0
+const ROOT_SCATTER_B_Y: u16 = 0;             // b lives on row 0 (PE(0,0)) initially
+const ROOT_BCAST_B_X: u16 = 0;               // b band broadcast along X from col 0
+const REDUCE_ROOT_X:  u16 = rect_width  - 1; // partial-sum reduce terminus
+const GATHER_ROOT_Y:  u16 = rect_height - 1; // final y assembly row
+
+// Task IDs (free ids: 8-13,18,19; 14-17 owned by layout)
+const scatter_x_done:  local_task_id = @get_local_task_id(10);
+const bcast_x_done:    local_task_id = @get_local_task_id(11);
+const scatter_b_done:  local_task_id = @get_local_task_id(12);
+const bcast_b_done:    local_task_id = @get_local_task_id(13);
+const compute_done:    local_task_id = @get_local_task_id(18);
+const reduce_done:     local_task_id = @get_local_task_id(19);
+const gather_done:     local_task_id = @get_local_task_id(8);
+
+// ---- collectives_2d instances (one per axis) ----
+const mpi_x = @import_module("<collectives_2d/pe>", .{
+    .dim_params = c2d_params.x,
+    .queues = [2]u16{2, 4},
+    .dest_dsr_ids = [1]u16{1},
+    .src0_dsr_ids = [1]u16{1},
+    .src1_dsr_ids = [1]u16{1},
+});
+const mpi_y = @import_module("<collectives_2d/pe>", .{
+    .dim_params = c2d_params.y,
+    .queues = [2]u16{3, 5},
+    .dest_dsr_ids = [1]u16{2},
+    .src0_dsr_ids = [1]u16{2},
+    .src1_dsr_ids = [1]u16{2},
+});
+
+// ---- Host-visible buffers ----
+// A tile: Mt x Nt, row-major (host memcpy_h2d fills this per-PE)
+var A = @zeros([Mt * Nt]f32);
+var A_ptr: [*]f32 = &A;
+
+// x full buffer: lands on PE(0,0), length matrix_cols = rect_width * Nt.
+var x = @zeros([rect_width * Nt]f32);
+var x_ptr: [*]f32 = &x;
+
+// b full buffer: lands on PE(0,0), length matrix_rows = rect_height * Mt.
+var b = @zeros([rect_height * Mt]f32);
+var b_ptr: [*]f32 = &b;
+
+// y output buffer: full length matrix_rows, assembled on PE(last,last).
+var y = @zeros([rect_height * Mt]f32);
+var y_ptr: [*]f32 = &y;
+
+// ---- Working buffers ----
+var x_slice = @zeros([Nt]f32);   // this PE's Nt-element x slice
+var b_slice = @zeros([Mt]f32);   // this PE's Mt-element bias band
+var partial = @zeros([Mt]f32);   // local GEMV partial row-sum
+var rowsum  = @zeros([Mt]f32);   // reduced row-sum (on col last)
+
+// ---- Timestamp ----
+var tscStartBuffer = @zeros([timestamp.tsc_size_words]u16);
+var tscEndBuffer   = @zeros([timestamp.tsc_size_words]u16);
+var time_buf_u16 = @zeros([6]u16);
+var ptr_time_buf_u16: [*]u16 = &time_buf_u16;
+
+// ---- DSDs ----
+// partial-sum accumulator across Mt rows
+const partial_dsd = @get_dsd(mem1d_dsd, .{ .tensor_access = |i|{Mt} -> partial[i] });
+// A viewed so we can walk column j: stride Nt over Mt rows
+const A_col_dsd = @get_dsd(mem1d_dsd, .{
+    .tensor_access = |i|{Mt} -> A[i * @as(i16, Nt)]
+});
+// rowsum and b_slice for the bias add
+const rowsum_dsd  = @get_dsd(mem1d_dsd, .{ .tensor_access = |i|{Mt} -> rowsum[i] });
+const b_slice_dsd = @get_dsd(mem1d_dsd, .{ .tensor_access = |i|{Mt} -> b_slice[i] });
+
+fn is_reduce_col() bool {
+    return layout_mod.get_x_coord() == @as(u16, REDUCE_ROOT_X);
+}
+
+// ================= Task chain =================
+
+// Local GEMV: partial[i] = sum_j A[i,j] * x_slice[j]
+fn do_compute() void {
+    // zero the accumulator
+    @fmuls(partial_dsd, partial_dsd, 0.0);
+    for (@range(i16, Nt)) |j| {
+        const col = @increment_dsd_offset(A_col_dsd, j, f32);
+        @fmacs(partial_dsd, partial_dsd, col, x_slice[j]);
+    }
+    @activate(compute_done);
+}
+
+fn main() void {
+  f_tic_dev();
+    mpi_x.init();
+    mpi_y.init();
+    // Step 1: scatter full x (on col 0) into per-column Nt slices along X
+    mpi_x.scatter(ROOT_SCATTER_X,
+                  @ptrcast([*]u32, &x),
+                  @ptrcast([*]u32, &x_slice),
+                  Nt, scatter_x_done);
+}
+
+task f_scatter_x_done() void {
+    // Step 2: broadcast x_slice down Y so every PE in the column has it
+    mpi_y.broadcast(ROOT_BCAST_Y, @ptrcast([*]u32, &x_slice), Nt, bcast_x_done);
+}
+
+task f_bcast_x_done() void {
+    // Step 3: scatter b DOWN Y (root row 0). b lives on PE(0,0).
+    // After this, PE(0,py) holds b[py*Mt : py*Mt+Mt].
+    mpi_y.scatter(ROOT_SCATTER_B_Y,
+                  @ptrcast([*]u32, &b),
+                  @ptrcast([*]u32, &b_slice),
+                  Mt, scatter_b_done);
+}
+
+task f_scatter_b_done() void {
+    // Step 4: broadcast b_slice ALONG X (root col 0) so every PE(px,py) —
+    // including the reduce-root column — holds its Mt bias band.
+    mpi_x.broadcast(ROOT_BCAST_B_X, @ptrcast([*]u32, &b_slice), Mt, bcast_b_done);
+}
+
+task f_bcast_b_done() void {
+    do_compute();
+}
+
+task f_compute_done() void {
+    // Step 6: reduce partial row-sums along X to the reduce root column
+    mpi_x.reduce_fadds(REDUCE_ROOT_X, &partial, &rowsum, Mt, reduce_done);
+}
+
+task f_reduce_done() void {
+    // Step 7: on the reduce column, add this PE's Mt bias band (added once,
+    // after reduction). b_slice now holds the correct band on every column.
+    if (is_reduce_col()) {
+        @fadds(rowsum_dsd, rowsum_dsd, b_slice_dsd);
+    }
+    // Step 8: gather Mt bands along Y into full y on gather root row
+    mpi_y.gather(GATHER_ROOT_Y,
+                 @ptrcast([*]u32, &rowsum),
+                 @ptrcast([*]u32, &y),
+                 Mt, gather_done);
+}
+
+task f_gather_done() void {
+    f_toc_dev();
+    sys_mod.unblock_cmd_stream();
+}
+
+// ================= Timing entrypoints =================
+
+fn f_enable_timer() void {
+    timestamp.enable_tsc();
+    sys_mod.unblock_cmd_stream();
+}
+
+// Device-internal timing window (protocol device_internal_v2): start stamp at
+// entry-point start, end stamp immediately before the host is unblocked.
+var tsc_window_open: bool = false;
+fn f_tic_dev() void {
+  if (!tsc_window_open) {
+    tsc_window_open = true;
+    timestamp.get_timestamp(&tscStartBuffer);
+  }
+}
+fn f_toc_dev() void {
+  timestamp.get_timestamp(&tscEndBuffer);
+}
+
+fn f_tic() void {
+    timestamp.get_timestamp(&tscStartBuffer);
+    sys_mod.unblock_cmd_stream();
+}
+
+fn f_toc() void {
+    timestamp.get_timestamp(&tscEndBuffer);
+    sys_mod.unblock_cmd_stream();
+}
+
+fn f_memcpy_timestamps() void {
+    time_buf_u16[0] = tscStartBuffer[0];
+    time_buf_u16[1] = tscStartBuffer[1];
+    time_buf_u16[2] = tscStartBuffer[2];
+    time_buf_u16[3] = tscEndBuffer[0];
+    time_buf_u16[4] = tscEndBuffer[1];
+    time_buf_u16[5] = tscEndBuffer[2];
+    sys_mod.unblock_cmd_stream();
+}
+
+// ================= Bindings & exports =================
+
+comptime {
+    @bind_local_task(f_scatter_x_done, scatter_x_done);
+    @bind_local_task(f_bcast_x_done,   bcast_x_done);
+    @bind_local_task(f_scatter_b_done, scatter_b_done);
+    @bind_local_task(f_bcast_b_done,   bcast_b_done);
+    @bind_local_task(f_compute_done,   compute_done);
+    @bind_local_task(f_reduce_done,    reduce_done);
+    @bind_local_task(f_gather_done,    gather_done);
+}
+
+comptime {
+    @export_symbol(A_ptr, "A");
+    @export_symbol(x_ptr, "x");
+    @export_symbol(b_ptr, "b");
+    @export_symbol(y_ptr, "y");
+    @export_symbol(ptr_time_buf_u16, "time_buf_u16");
+    @export_symbol(main, "main");
+    @export_symbol(f_tic, "f_tic");
+    @export_symbol(f_toc, "f_toc");
+    @export_symbol(f_memcpy_timestamps, "f_memcpy_timestamps");
+    @export_symbol(f_enable_timer, "f_enable_timer");
+}

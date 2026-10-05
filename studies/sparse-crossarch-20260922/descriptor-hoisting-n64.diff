@@ -1,0 +1,74 @@
+--- sparse-crossarch-20260922/wse/descriptor-n64/disassembly.json
+
++++ sparse-crossarch-20260922/wse/hoisted-n64/disassembly.json
+
+@@ -152,10 +152,10 @@
+
+ lddwds dds1 = [0x0]
+ fmov16.nf r1 = r0
+ fmov32.nf [dds1] = d0
++movri r5 = 0x36e6
++st16 sp[0x3] = r5
+ movri r5 = 0xd48
+ st16 sp[0x5] = r5
+-movri r5 = 0x36e6
+-st16 sp[0x3] = r5
+ movri r9 = 0xdcc
+ movri r14 = 0x16e6
+ movri r15 = 0x1dcc
+@@ -165,27 +165,27 @@
+
+ movri r5 = 0x1e
+ st16 sp[0x4] = r5
+ jmp 0x176
+-ld16 r8 = sp[0x4]
+-ltu16.and cflag0 = r8, r5
++ld16 r5 = sp[0x4]
++ltu16.and cflag0 = r5, r8
+ ld16rp d0 = sp[0x6]
+ cflag0 ? jmp 0x1f0
+-fmov16.nf r5 = r0
+-add16.nf r0 = r5, 0x1
++fmov16.nf r8 = r0
++add16.nf r0 = r8, 0x1
+ st32 sp[0x6] = d0
+-sll16.nf r8 = r0, 0x2
++sll16.nf r5 = r0, 0x2
+ ld16 r1 = sp[0x5]
+-add16.nf r8 = r8, r1
+-sll16.nf r0 = r5, 0x2
++add16.nf r5 = r5, r1
++sll16.nf r0 = r8, 0x2
+ add16.nf r0 = r0, r1
+ slr16.nf r6 = r0, 0x1
+ imov32.nf d10 = [r6]
+-slr16.nf r6 = r8, 0x1
++slr16.nf r6 = r5, 0x1
+ imov32.nf d12 = [r6]
+ lteu16.and cflag0 = r12, r10
+ cflag0 ? jmp 0x16e
+-sll16.nf r8 = r5, 0x7
++sll16.nf r5 = r8, 0x7
+ ld16 r0 = sp[0x3]
+-add16.nf r8 = r8, r0
++add16.nf r5 = r5, r0
+ sll16.nf r0 = r10, 0x2
+ add16.nf r1 = r0, r9
+ slr16.nf r6 = r1, 0x1
+@@ -202,13 +202,13 @@
+
+ nop 0x0
+ nop 0x0
+ st16 [0x7ec4] = r2
+-st16 [0x7ec5] = r8
++st16 [0x7ec5] = r5
+ st16 [0x7ec6] = r3
+ st16 [0x7ec7] = r4
+ nop 0x0
+ nop 0x0
+ st16 [0x7e44] = r2
+-st16 [0x7e45] = r8
++st16 [0x7e45] = r5
+ st16 [0x7e46] = r3
+ st16 [0x7e47] = r4
+ nop 0x0

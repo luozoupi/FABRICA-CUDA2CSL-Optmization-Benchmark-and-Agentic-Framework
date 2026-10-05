@@ -1,0 +1,55 @@
+{
+ "rows": [
+  {
+   "N": 1,
+   "B": 64,
+   "cycles": 93
+  },
+  {
+   "N": 2,
+   "B": 64,
+   "cycles": 175
+  },
+  {
+   "N": 4,
+   "B": 64,
+   "cycles": 337
+  },
+  {
+   "N": 8,
+   "B": 64,
+   "cycles": 659
+  },
+  {
+   "N": 1,
+   "B": 512,
+   "cycles": 548
+  },
+  {
+   "N": 2,
+   "B": 512,
+   "cycles": 1076
+  },
+  {
+   "N": 4,
+   "B": 512,
+   "cycles": 2132
+  },
+  {
+   "N": 8,
+   "B": 512,
+   "cycles": 4244
+  }
+ ],
+ "fit": {
+  "cyc_per_wavelet": 3.758928571428571,
+  "relay_stage_k": 304.3999999999999,
+  "offset": -761.6714285714281
+ },
+ "fit_store_forward": {
+  "cyc_per_wavelet": 1.000971638655462,
+  "per_stage_overhead": 16.120168067227045,
+  "offset": 16.499999999999762,
+  "form": "T = a*N*B + s*N + c (message-granular store-and-forward)"
+ }
+}

@@ -1,0 +1,118 @@
+param memcpy_params;
+const EXIT: local_task_id = @get_local_task_id(9);
+const sys_mod = @import_module("<memcpy/memcpy>", memcpy_params);
+
+var ai = @zeros([4]i16); var bi = @zeros([4]i16); var ci = @zeros([16]i16);
+var af = @zeros([4]f16); var bf = @zeros([4]f16); var cf = @zeros([16]f16);
+var a = @zeros([16]f16); var b = @zeros([16]f16); var c = @zeros([64]f16);
+var a32 = @zeros([8]f32); var b32 = @zeros([8]f32); var c32 = @zeros([16]f32);
+var ia8 = @zeros([8]i16); var ib8 = @zeros([8]i16); var ic8 = @zeros([8]i16);
+var mark = @zeros([32]i16);
+var acc: f16 = 0.0;
+var ptr_ai: [*]i16 = &ai; var ptr_bi: [*]i16 = &bi; var ptr_ci: [*]i16 = &ci;
+var ptr_af: [*]f16 = &af; var ptr_bf: [*]f16 = &bf; var ptr_cf: [*]f16 = &cf;
+var ptr_a: [*]f16 = &a;   var ptr_b: [*]f16 = &b;   var ptr_c: [*]f16 = &c;
+var ptr_a32: [*]f32 = &a32; var ptr_b32: [*]f32 = &b32; var ptr_c32: [*]f32 = &c32;
+var ptr_ia8: [*]i16 = &ia8; var ptr_ib8: [*]i16 = &ib8; var ptr_ic8: [*]i16 = &ic8;
+var ptr_mark: [*]i16 = &mark;
+
+const a8   = @get_dsd(mem1d_dsd, .{ .tensor_access = |i|{8} -> a[i] });
+const b8   = @get_dsd(mem1d_dsd, .{ .tensor_access = |i|{8} -> b[i] });
+const a8s2 = @get_dsd(mem1d_dsd, .{ .tensor_access = |i|{8} -> a[2 * i] });
+const c8   = @get_dsd(mem1d_dsd, .{ .tensor_access = |i|{8} -> c[i] });
+const c8b  = @get_dsd(mem1d_dsd, .{ .tensor_access = |i|{8} -> c[i + 8] });
+const c8c  = @get_dsd(mem1d_dsd, .{ .tensor_access = |i|{8} -> c[i + 16] });
+const c8d  = @get_dsd(mem1d_dsd, .{ .tensor_access = |i|{8} -> c[i + 24] });
+const c8e  = @get_dsd(mem1d_dsd, .{ .tensor_access = |i|{8} -> c[i + 32] });
+const ia8d = @get_dsd(mem1d_dsd, .{ .tensor_access = |i|{8} -> ia8[i] });
+const ib8d = @get_dsd(mem1d_dsd, .{ .tensor_access = |i|{8} -> ib8[i] });
+const ic8d = @get_dsd(mem1d_dsd, .{ .tensor_access = |i|{8} -> ic8[i] });
+const a32d = @get_dsd(mem1d_dsd, .{ .tensor_access = |i|{8} -> a32[i] });
+const b32d = @get_dsd(mem1d_dsd, .{ .tensor_access = |i|{8} -> b32[i] });
+const c32d = @get_dsd(mem1d_dsd, .{ .tensor_access = |i|{8} -> c32[i + 8] });
+
+fn compute() void {
+  mark[0] = 0x5A00;   // sub_i16
+  ci[0] = ai[0] - bi[0];
+
+  mark[1] = 0x5A01;   // mul_i16
+  ci[1] = ai[0] * bi[0];
+
+  mark[2] = 0x5A02;   // mul_f16
+  cf[0] = af[0] * bf[0];
+
+  mark[3] = 0x5A03;   // fma_f16
+  cf[1] = af[0] * bf[0] + af[1];
+
+  mark[4] = 0x5A04;   // and_i16
+  ci[2] = ai[0] & bi[0];
+
+  mark[5] = 0x5A05;   // or_i16
+  ci[3] = ai[0] | bi[0];
+
+  mark[6] = 0x5A06;   // xor_i16
+  ci[4] = ai[0] ^ bi[0];
+
+  mark[7] = 0x5A07;   // shl_i16
+  ci[5] = ai[0] << 3;
+
+  mark[8] = 0x5A08;   // shr_i16
+  ci[6] = ai[0] >> 2;
+
+  mark[9] = 0x5A09;   // br_taken
+  if (ai[2] < bi[2]) { ci[7] = 11; } else { ci[7] = 22; }
+
+  mark[10] = 0x5A0A;   // br_not
+  if (ai[3] < bi[3]) { ci[8] = 11; } else { ci[8] = 22; }
+
+  mark[11] = 0x5A0B;   // loop2
+  var k: u16 = 0;
+  while (k < @as(u16, bi[1])) : (k += 1) { ci[9] = ci[9] + ai[k]; }
+
+  mark[12] = 0x5A0C;   // f16_to_f32
+  c32[0] = @as(f32, af[0]);
+
+  mark[13] = 0x5A0D;   // f32_to_f16
+  cf[2] = @as(f16, a32[0]);
+
+  mark[14] = 0x5A0E;   // dsd_fill8
+  @fmovh(c8, @as(f16, 1.5));
+
+  mark[15] = 0x5A0F;   // dsd_copy8
+  @fmovh(c8b, a8);
+
+  mark[16] = 0x5A10;   // dsd_stride2
+  @fmovh(c8c, a8s2);
+
+  mark[17] = 0x5A11;   // dsd_reduce8
+  @faddh(&acc, acc, a8);
+  cf[3] = acc;
+
+  mark[18] = 0x5A12;   // dsd_mulh8
+  @fmulh(c8d, a8, b8);
+
+  mark[19] = 0x5A13;   // dsd_fmach8
+  @fmach(c8e, a8, b8, @as(f16, 0.5));
+
+  mark[20] = 0x5A14;   // dsd_add16x8
+  @add16(ic8d, ia8d, ib8d);
+
+  mark[21] = 0x5A15;   // dsd_fadds8
+  @fadds(c32d, a32d, b32d);
+
+  mark[22] = 0x5A16;
+  @activate(EXIT);
+}
+
+task f_exit() void { sys_mod.unblock_cmd_stream(); }
+
+comptime {
+  @bind_local_task(f_exit, EXIT);
+  @export_symbol(ptr_ai, "ai"); @export_symbol(ptr_bi, "bi"); @export_symbol(ptr_ci, "ci");
+  @export_symbol(ptr_af, "af"); @export_symbol(ptr_bf, "bf"); @export_symbol(ptr_cf, "cf");
+  @export_symbol(ptr_a, "a");   @export_symbol(ptr_b, "b");   @export_symbol(ptr_c, "c");
+  @export_symbol(ptr_a32, "a32"); @export_symbol(ptr_b32, "b32"); @export_symbol(ptr_c32, "c32");
+  @export_symbol(ptr_ia8, "ia8"); @export_symbol(ptr_ib8, "ib8"); @export_symbol(ptr_ic8, "ic8");
+  @export_symbol(ptr_mark, "mark");
+  @export_symbol(compute);
+}

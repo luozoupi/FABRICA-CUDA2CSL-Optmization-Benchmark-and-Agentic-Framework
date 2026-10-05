@@ -1,0 +1,5 @@
+{
+  "source_sha256": "9f95a8662a9fa1e5225b07214e7fc891893c02976ece9e7e53431b88a34e82e1",
+  "script_sha256": "336b517b749e900e302051e1382022f680a2d35e6107c8b657f144b3ef5f0c79",
+  "scope": "Panel 1 measured GPU, panel 2 verified local simulator cycles, panel 3 static input-derived partition prediction; no cross-architecture speedup"
+}

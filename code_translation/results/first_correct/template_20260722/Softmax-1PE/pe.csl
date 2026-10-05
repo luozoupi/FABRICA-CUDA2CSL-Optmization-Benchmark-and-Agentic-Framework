@@ -1,0 +1,87 @@
+param memcpy_params: comptime_struct;
+// === SLOT: EXTRA_PARAMS ===
+param n: u16;
+
+const EXIT: local_task_id = @get_local_task_id(9);
+const sys_mod = @import_module("<memcpy/memcpy>", memcpy_params);
+
+// === SLOT: EXTRA_IMPORTS ===
+const math = @import_module("<math>");
+
+const timestamp = @import_module("<time>");
+var tsc_start_buf = @zeros([timestamp.tsc_size_words]u16);
+var tsc_end_buf   = @zeros([timestamp.tsc_size_words]u16);
+var timer_buf = @zeros([3]f32);
+var ptr_timer_buf: [*]f32 = &timer_buf;
+
+// === SLOT: DATA_BUFFERS ===
+var x_array = @zeros([n]f32);
+var out_array = @zeros([n]f32);
+var ptr_x: [*]f32 = &x_array;
+var ptr_out: [*]f32 = &out_array;
+
+// DSD over the output vector (used for the bulk normalization pass)
+const out_dsd = @get_dsd(mem1d_dsd, .{
+    .tensor_access = |i|{n} -> out_array[i],
+});
+
+// === SLOT: KERNEL_FUNCTION ===
+fn softmax() void {
+    // Pass 1: find max (hand-loop; matches CUDA -FLT_MAX init exactly).
+    var mx: f32 = -3.402823466e38; // -FLT_MAX
+    var i: u16 = 0;
+    while (i < n) : (i += 1) {
+        if (x_array[i] > mx) mx = x_array[i];
+    }
+
+    // Pass 2: out[i] = exp(x[i] - mx), accumulate sum.
+    // exp is scalar (math.exp), so loop here; write into out_array (scratch).
+    var sum: f32 = 0.0;
+    i = 0;
+    while (i < n) : (i += 1) {
+        const e: f32 = math.exp(x_array[i] - mx);
+        out_array[i] = e;
+        sum += e;
+    }
+
+    // Pass 3: normalize out[i] /= sum == out[i] * (1/sum) via DSD bulk op.
+    const inv_sum: f32 = 1.0 / sum;
+    @fmuls(out_dsd, out_dsd, inv_sum);
+}
+
+fn compute() void {
+    timestamp.enable_tsc();
+    timestamp.get_timestamp(&tsc_start_buf);
+
+    // === SLOT: KERNEL_CALL ===
+    softmax();
+
+    timestamp.get_timestamp(&tsc_end_buf);
+    timestamp.disable_tsc();
+
+    var lo_: u16 = 0;
+    var hi_: u16 = 0;
+    lo_ = tsc_start_buf[0]; hi_ = tsc_start_buf[1];
+    timer_buf[0] = @bitcast(f32, (@as(u32, hi_) << @as(u16, 16)) | @as(u32, lo_));
+    lo_ = tsc_start_buf[2]; hi_ = tsc_end_buf[0];
+    timer_buf[1] = @bitcast(f32, (@as(u32, hi_) << @as(u16, 16)) | @as(u32, lo_));
+    lo_ = tsc_end_buf[1]; hi_ = tsc_end_buf[2];
+    timer_buf[2] = @bitcast(f32, (@as(u32, hi_) << @as(u16, 16)) | @as(u32, lo_));
+
+    @activate(EXIT);
+}
+
+task f_exit() void {
+    sys_mod.unblock_cmd_stream();
+}
+
+comptime {
+    @bind_local_task(f_exit, EXIT);
+
+    // === SLOT: EXPORT_SYMBOLS ===
+    @export_symbol(ptr_x, "x");
+    @export_symbol(ptr_out, "out");
+
+    @export_symbol(ptr_timer_buf, "maxmin_time");
+    @export_symbol(compute);
+}

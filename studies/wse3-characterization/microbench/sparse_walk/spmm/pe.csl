@@ -1,0 +1,131 @@
+// SpMM-CSR-Dense compute (hand-written reference): C_tile = A_tile * B_slice on one PE.
+//
+// Textbook scalar translation of the GraphBLAS-derived CUDA kernel (CUDA/kernel.cu): for
+// every local row r and every stored a_rk, scale the dense row B[k, 0..Nt) into C[r, 0..Nt).
+// The structure-aware and hardware-aware rewrites (one DSD per B row, row-length driven
+// axis choice) are the optimizer's job. Timing is device-internal (protocol
+// device_internal_v2): f_tic_dev() opens the window at the start of the launched entry
+// point, f_toc_dev() closes it right before the host is unblocked; the host takes
+// max(end) - min(start) over the mesh. SDK 2.10-native syntax.
+
+param memcpy_params;
+
+param Mt: u16;
+param K: u16;
+param Nt: u16;
+param max_nnz_pe: u16;
+param iters: u16;
+param structure_id: u16;
+
+const sys_mod = @import_module("<memcpy/memcpy>", memcpy_params);
+const timestamp = @import_module("<time>");
+
+var tscStartBuffer = @zeros([timestamp.tsc_size_words]u16);
+var tscEndBuffer   = @zeros([timestamp.tsc_size_words]u16);
+var time_buf_u16   = @zeros([timestamp.tsc_size_words * 2]u16);
+var ptr_time_buf_u16: [*]u16 = &time_buf_u16;
+
+// Local CSR tile of A (Mt rows, global k), B slice (K x Nt row-major), C tile (Mt x Nt).
+var row_ptr_array = @zeros([Mt + 1]u32);
+var col_idx_array = @zeros([max_nnz_pe]u32);
+var val_array     = @zeros([max_nnz_pe]f32);
+var B_tile        = @zeros([K * Nt]f32);
+var C_tile        = @zeros([Mt * Nt]f32);
+
+var ptr_row_ptr: [*]u32 = &row_ptr_array;
+var ptr_col_idx: [*]u32 = &col_idx_array;
+var ptr_val:     [*]f32 = &val_array;
+var ptr_B:       [*]f32 = &B_tile;
+var ptr_C:       [*]f32 = &C_tile;
+
+// C_tile = A_tile * B_slice, one scalar multiply-add per (nonzero, output column).
+fn spmm_tile() void {
+  var r: u16 = 0;
+  while (r < Mt) : (r += 1) {
+    const start: u32 = row_ptr_array[r];
+    const end:   u32 = row_ptr_array[r + 1];
+    const c_base: u32 = @as(u32, r) * @as(u32, Nt);
+    var c: u16 = 0;
+    while (c < Nt) : (c += 1) {
+      C_tile[c_base + c] = 0.0;
+    }
+    var j: u32 = start;
+    while (j < end) : (j += 1) {
+      const k: u32 = col_idx_array[j];
+      const v: f32 = val_array[j];
+      const b_base: u32 = k * @as(u32, Nt);
+      var cc: u16 = 0;
+      while (cc < Nt) : (cc += 1) {
+        C_tile[c_base + cc] += v * B_tile[b_base + cc];
+      }
+    }
+  }
+}
+
+// Entry point (host-launched): the whole tile product inside the device-internal window.
+fn main() void {
+  f_tic_dev();
+  for (@range(u16, iters)) |_| {
+    spmm_tile();
+  }
+  f_toc_dev();
+  sys_mod.unblock_cmd_stream();
+}
+
+fn f_enable_timer() void {
+  timestamp.enable_tsc();
+  sys_mod.unblock_cmd_stream();
+}
+
+// Device-internal timing window (protocol device_internal_v2). The start stamp
+// is taken inside the launched entry point and the end stamp right before the
+// host is unblocked, so the host RPC between separately launched f_tic/f_toc
+// (~488 us per launch on WSE-3 hardware) is no longer inside the measured window.
+// f_tic and f_toc stay exported for backward compatibility; the runner no longer
+// launches them. Both helpers are FROZEN (body and call sites) by the contract check.
+var tsc_window_open: bool = false;
+fn f_tic_dev() void {
+  if (!tsc_window_open) {
+    tsc_window_open = true;
+    timestamp.get_timestamp(&tscStartBuffer);
+  }
+}
+fn f_toc_dev() void {
+  timestamp.get_timestamp(&tscEndBuffer);
+}
+
+fn f_tic() void {
+  timestamp.get_timestamp(&tscStartBuffer);
+  sys_mod.unblock_cmd_stream();
+}
+
+fn f_toc() void {
+  timestamp.get_timestamp(&tscEndBuffer);
+  sys_mod.unblock_cmd_stream();
+}
+
+fn f_memcpy_timestamps() void {
+  time_buf_u16[0] = tscStartBuffer[0];
+  time_buf_u16[1] = tscStartBuffer[1];
+  time_buf_u16[2] = tscStartBuffer[2];
+  time_buf_u16[3] = tscEndBuffer[0];
+  time_buf_u16[4] = tscEndBuffer[1];
+  time_buf_u16[5] = tscEndBuffer[2];
+  sys_mod.unblock_cmd_stream();
+}
+
+comptime {
+  @comptime_assert(structure_id < 8);            // consumed here; the host reads it from out.json
+
+  @export_symbol(ptr_row_ptr, "row_ptr");
+  @export_symbol(ptr_col_idx, "col_idx");
+  @export_symbol(ptr_val,     "val");
+  @export_symbol(ptr_B,       "B_tile");
+  @export_symbol(ptr_C,       "C_tile");
+  @export_symbol(ptr_time_buf_u16, "time_buf_u16");
+  @export_symbol(main);
+  @export_symbol(f_tic);
+  @export_symbol(f_toc);
+  @export_symbol(f_memcpy_timestamps);
+  @export_symbol(f_enable_timer);
+}

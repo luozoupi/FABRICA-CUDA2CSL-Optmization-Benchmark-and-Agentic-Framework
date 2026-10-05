@@ -1,0 +1,317 @@
+{
+  "status": "pass",
+  "gpu_cases": 138,
+  "gpu_accepted_methods": 902,
+  "gpu_independent_output_checks": 2706,
+  "wse_builds": 8,
+  "wse_checked_launches": 576,
+  "retained_failures": [
+    {
+      "case": "HB-bcsstk08-n1",
+      "type": "measurement",
+      "method": "ge_plain",
+      "status": "failed",
+      "reason": "numerical failure session=1 elements=1 max_scaled=1.103024"
+    },
+    {
+      "case": "HB-bcsstk08-n1",
+      "type": "measurement",
+      "method": "ge_cache",
+      "status": "failed",
+      "reason": "numerical failure session=1 elements=1 max_scaled=1.103024"
+    },
+    {
+      "case": "HB-bcsstk08-n1",
+      "type": "measurement",
+      "method": "ge_merge2",
+      "status": "failed",
+      "reason": "numerical failure session=1 elements=1 max_scaled=1.103024"
+    },
+    {
+      "case": "HB-bcsstk08-n1",
+      "type": "measurement",
+      "method": "ge_merge4",
+      "status": "failed",
+      "reason": "numerical failure session=1 elements=1 max_scaled=1.103024"
+    },
+    {
+      "case": "HB-bcsstk08-n1",
+      "type": "measurement",
+      "method": "cusparse_alg1_row",
+      "status": "failed",
+      "reason": "numerical failure session=1 elements=2 max_scaled=1.107628"
+    },
+    {
+      "case": "HB-bcsstk08-n1",
+      "type": "measurement",
+      "method": "cusparse_alg2_row",
+      "status": "failed",
+      "reason": "numerical failure session=1 elements=2 max_scaled=1.107628"
+    },
+    {
+      "case": "HB-bcsstk08-n128",
+      "type": "measurement",
+      "method": "ge_plain",
+      "status": "failed",
+      "reason": "numerical failure session=0 elements=36 max_scaled=2.975942"
+    },
+    {
+      "case": "HB-bcsstk08-n128",
+      "type": "measurement",
+      "method": "ge_cache",
+      "status": "failed",
+      "reason": "numerical failure session=0 elements=36 max_scaled=2.975942"
+    },
+    {
+      "case": "HB-bcsstk08-n128",
+      "type": "measurement",
+      "method": "ge_merge2",
+      "status": "failed",
+      "reason": "numerical failure session=0 elements=36 max_scaled=2.975942"
+    },
+    {
+      "case": "HB-bcsstk08-n128",
+      "type": "measurement",
+      "method": "ge_merge4",
+      "status": "failed",
+      "reason": "numerical failure session=0 elements=36 max_scaled=2.975942"
+    },
+    {
+      "case": "HB-bcsstk08-n128",
+      "type": "measurement",
+      "method": "cusparse_alg1_col",
+      "status": "failed",
+      "reason": "numerical failure session=0 elements=36 max_scaled=2.710506"
+    },
+    {
+      "case": "HB-bcsstk08-n128",
+      "type": "measurement",
+      "method": "cusparse_alg2_row",
+      "status": "failed",
+      "reason": "numerical failure session=0 elements=36 max_scaled=2.975942"
+    },
+    {
+      "case": "HB-bcsstk08-n128",
+      "type": "measurement",
+      "method": "cusparse_alg3_row",
+      "status": "failed",
+      "reason": "numerical failure session=0 elements=36 max_scaled=2.975942"
+    },
+    {
+      "case": "HB-bcsstk08-n16",
+      "type": "measurement",
+      "method": "ge_plain",
+      "status": "failed",
+      "reason": "numerical failure session=0 elements=4 max_scaled=2.975942"
+    },
+    {
+      "case": "HB-bcsstk08-n16",
+      "type": "measurement",
+      "method": "ge_cache",
+      "status": "failed",
+      "reason": "numerical failure session=0 elements=4 max_scaled=2.975942"
+    },
+    {
+      "case": "HB-bcsstk08-n16",
+      "type": "measurement",
+      "method": "ge_merge2",
+      "status": "failed",
+      "reason": "numerical failure session=0 elements=4 max_scaled=2.975942"
+    },
+    {
+      "case": "HB-bcsstk08-n16",
+      "type": "measurement",
+      "method": "ge_merge4",
+      "status": "failed",
+      "reason": "numerical failure session=0 elements=4 max_scaled=2.975942"
+    },
+    {
+      "case": "HB-bcsstk08-n16",
+      "type": "measurement",
+      "method": "cusparse_alg1_col",
+      "status": "failed",
+      "reason": "numerical failure session=0 elements=4 max_scaled=2.710506"
+    },
+    {
+      "case": "HB-bcsstk08-n16",
+      "type": "measurement",
+      "method": "cusparse_alg2_row",
+      "status": "failed",
+      "reason": "numerical failure session=0 elements=4 max_scaled=2.975942"
+    },
+    {
+      "case": "HB-bcsstk08-n16",
+      "type": "measurement",
+      "method": "cusparse_alg3_row",
+      "status": "failed",
+      "reason": "numerical failure session=0 elements=4 max_scaled=2.975942"
+    },
+    {
+      "case": "HB-bcsstk08-n32",
+      "type": "measurement",
+      "method": "ge_plain",
+      "status": "failed",
+      "reason": "numerical failure session=0 elements=8 max_scaled=2.975942"
+    },
+    {
+      "case": "HB-bcsstk08-n32",
+      "type": "measurement",
+      "method": "ge_cache",
+      "status": "failed",
+      "reason": "numerical failure session=0 elements=8 max_scaled=2.975942"
+    },
+    {
+      "case": "HB-bcsstk08-n32",
+      "type": "measurement",
+      "method": "ge_merge2",
+      "status": "failed",
+      "reason": "numerical failure session=0 elements=8 max_scaled=2.975942"
+    },
+    {
+      "case": "HB-bcsstk08-n32",
+      "type": "measurement",
+      "method": "ge_merge4",
+      "status": "failed",
+      "reason": "numerical failure session=0 elements=8 max_scaled=2.975942"
+    },
+    {
+      "case": "HB-bcsstk08-n32",
+      "type": "measurement",
+      "method": "cusparse_alg1_col",
+      "status": "failed",
+      "reason": "numerical failure session=0 elements=8 max_scaled=2.710506"
+    },
+    {
+      "case": "HB-bcsstk08-n32",
+      "type": "measurement",
+      "method": "cusparse_alg2_row",
+      "status": "failed",
+      "reason": "numerical failure session=0 elements=8 max_scaled=2.975942"
+    },
+    {
+      "case": "HB-bcsstk08-n32",
+      "type": "measurement",
+      "method": "cusparse_alg3_row",
+      "status": "failed",
+      "reason": "numerical failure session=0 elements=8 max_scaled=2.975942"
+    },
+    {
+      "case": "HB-bcsstk08-n4",
+      "type": "measurement",
+      "method": "ge_plain",
+      "status": "failed",
+      "reason": "numerical failure session=1 elements=3 max_scaled=2.977786"
+    },
+    {
+      "case": "HB-bcsstk08-n4",
+      "type": "measurement",
+      "method": "ge_cache",
+      "status": "failed",
+      "reason": "numerical failure session=1 elements=3 max_scaled=2.977786"
+    },
+    {
+      "case": "HB-bcsstk08-n4",
+      "type": "measurement",
+      "method": "ge_merge2",
+      "status": "failed",
+      "reason": "numerical failure session=1 elements=3 max_scaled=2.977786"
+    },
+    {
+      "case": "HB-bcsstk08-n4",
+      "type": "measurement",
+      "method": "ge_merge4",
+      "status": "failed",
+      "reason": "numerical failure session=1 elements=3 max_scaled=2.977786"
+    },
+    {
+      "case": "HB-bcsstk08-n4",
+      "type": "measurement",
+      "method": "cusparse_alg1_col",
+      "status": "failed",
+      "reason": "numerical failure session=1 elements=1 max_scaled=1.269868"
+    },
+    {
+      "case": "HB-bcsstk08-n4",
+      "type": "measurement",
+      "method": "cusparse_alg2_row",
+      "status": "failed",
+      "reason": "graph numerical failure"
+    },
+    {
+      "case": "HB-bcsstk08-n4",
+      "type": "measurement",
+      "method": "cusparse_alg3_row",
+      "status": "failed",
+      "reason": "numerical failure session=1 elements=3 max_scaled=2.977786"
+    },
+    {
+      "case": "HB-bcsstk08-n64",
+      "type": "measurement",
+      "method": "ge_plain",
+      "status": "failed",
+      "reason": "numerical failure session=0 elements=18 max_scaled=2.975942"
+    },
+    {
+      "case": "HB-bcsstk08-n64",
+      "type": "measurement",
+      "method": "ge_cache",
+      "status": "failed",
+      "reason": "numerical failure session=0 elements=18 max_scaled=2.975942"
+    },
+    {
+      "case": "HB-bcsstk08-n64",
+      "type": "measurement",
+      "method": "ge_merge2",
+      "status": "failed",
+      "reason": "numerical failure session=0 elements=18 max_scaled=2.975942"
+    },
+    {
+      "case": "HB-bcsstk08-n64",
+      "type": "measurement",
+      "method": "ge_merge4",
+      "status": "failed",
+      "reason": "numerical failure session=0 elements=18 max_scaled=2.975942"
+    },
+    {
+      "case": "HB-bcsstk08-n64",
+      "type": "measurement",
+      "method": "cusparse_alg1_col",
+      "status": "failed",
+      "reason": "numerical failure session=0 elements=18 max_scaled=2.710506"
+    },
+    {
+      "case": "HB-bcsstk08-n64",
+      "type": "measurement",
+      "method": "cusparse_alg2_row",
+      "status": "failed",
+      "reason": "numerical failure session=0 elements=18 max_scaled=2.975942"
+    },
+    {
+      "case": "HB-bcsstk08-n64",
+      "type": "measurement",
+      "method": "cusparse_alg3_row",
+      "status": "failed",
+      "reason": "numerical failure session=0 elements=18 max_scaled=2.975942"
+    },
+    {
+      "wse": "descriptor-n64",
+      "status": "run_failed"
+    },
+    {
+      "wse": "hoisted-n64",
+      "status": "run_failed"
+    },
+    {
+      "wse": "scalar-n16",
+      "status": "run_failed"
+    },
+    {
+      "wse": "scalar-n64",
+      "status": "run_failed"
+    }
+  ],
+  "input_manifest_hashes": {
+    "inputs/manifest.json": "dd2eca32d88f54c38d2840e0d0cec674849a1af7fe80741e396064ac57b6f51f",
+    "inputs/capacity-manifest.json": "0bf8b26e12679b13205d9130859c4738ab38bdc8b205dbc1ff92b3488807d62f"
+  }
+}

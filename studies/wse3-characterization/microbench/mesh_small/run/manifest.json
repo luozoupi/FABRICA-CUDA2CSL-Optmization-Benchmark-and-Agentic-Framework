@@ -1,0 +1,156 @@
+{
+ "schema": "mesh-small/1",
+ "P": 4,
+ "Mt": 2,
+ "sdk": "/software/cerebras/cs_sdk-2.10",
+ "sif": [
+  "/software/cerebras/cs_sdk-2.10/sdk-cbcore-2.10.1-sdk-202606181328-8faf87a26e.sif"
+ ],
+ "commands": [
+  [
+   "cslc",
+   "./src/layout.csl",
+   "--arch=wse3",
+   "--fabric-dims=11,6",
+   "--fabric-offsets=4,1",
+   "--params=P:4,Mt:2,Kt:2,Nt:2",
+   "-o",
+   "out",
+   "--memcpy",
+   "--channels",
+   "1"
+  ],
+  [
+   "cs_python",
+   "run.py"
+  ],
+  [
+   "/home/USER/micromamba/envs/dev/bin/python",
+   "/home/USER/xkernel/studies/wse3-characterization/tools/decode_trace.py",
+   ".",
+   "-o",
+   "events.jsonl.gz"
+  ],
+  [
+   "/home/USER/micromamba/envs/dev/bin/python",
+   "/home/USER/xkernel/studies/wse3-characterization/tools/csdisasm.py",
+   "out/bin/out_0_0.elf",
+   "--json",
+   "disasm_out_0_0.json"
+  ],
+  [
+   "/home/USER/micromamba/envs/dev/bin/python",
+   "/home/USER/xkernel/studies/wse3-characterization/tools/csdisasm.py",
+   "out/bin/out_10_0.elf",
+   "--json",
+   "disasm_out_10_0.json"
+  ],
+  [
+   "/home/USER/micromamba/envs/dev/bin/python",
+   "/home/USER/xkernel/studies/wse3-characterization/tools/csdisasm.py",
+   "out/bin/out_11_0.elf",
+   "--json",
+   "disasm_out_11_0.json"
+  ],
+  [
+   "/home/USER/micromamba/envs/dev/bin/python",
+   "/home/USER/xkernel/studies/wse3-characterization/tools/csdisasm.py",
+   "out/bin/out_12_0.elf",
+   "--json",
+   "disasm_out_12_0.json"
+  ],
+  [
+   "/home/USER/micromamba/envs/dev/bin/python",
+   "/home/USER/xkernel/studies/wse3-characterization/tools/csdisasm.py",
+   "out/bin/out_13_0.elf",
+   "--json",
+   "disasm_out_13_0.json"
+  ],
+  [
+   "/home/USER/micromamba/envs/dev/bin/python",
+   "/home/USER/xkernel/studies/wse3-characterization/tools/csdisasm.py",
+   "out/bin/out_14_0.elf",
+   "--json",
+   "disasm_out_14_0.json"
+  ],
+  [
+   "/home/USER/micromamba/envs/dev/bin/python",
+   "/home/USER/xkernel/studies/wse3-characterization/tools/csdisasm.py",
+   "out/bin/out_15_0.elf",
+   "--json",
+   "disasm_out_15_0.json"
+  ],
+  [
+   "/home/USER/micromamba/envs/dev/bin/python",
+   "/home/USER/xkernel/studies/wse3-characterization/tools/csdisasm.py",
+   "out/bin/out_1_0.elf",
+   "--json",
+   "disasm_out_1_0.json"
+  ],
+  [
+   "/home/USER/micromamba/envs/dev/bin/python",
+   "/home/USER/xkernel/studies/wse3-characterization/tools/csdisasm.py",
+   "out/bin/out_2_0.elf",
+   "--json",
+   "disasm_out_2_0.json"
+  ],
+  [
+   "/home/USER/micromamba/envs/dev/bin/python",
+   "/home/USER/xkernel/studies/wse3-characterization/tools/csdisasm.py",
+   "out/bin/out_3_0.elf",
+   "--json",
+   "disasm_out_3_0.json"
+  ],
+  [
+   "/home/USER/micromamba/envs/dev/bin/python",
+   "/home/USER/xkernel/studies/wse3-characterization/tools/csdisasm.py",
+   "out/bin/out_4_0.elf",
+   "--json",
+   "disasm_out_4_0.json"
+  ],
+  [
+   "/home/USER/micromamba/envs/dev/bin/python",
+   "/home/USER/xkernel/studies/wse3-characterization/tools/csdisasm.py",
+   "out/bin/out_5_0.elf",
+   "--json",
+   "disasm_out_5_0.json"
+  ],
+  [
+   "/home/USER/micromamba/envs/dev/bin/python",
+   "/home/USER/xkernel/studies/wse3-characterization/tools/csdisasm.py",
+   "out/bin/out_6_0.elf",
+   "--json",
+   "disasm_out_6_0.json"
+  ],
+  [
+   "/home/USER/micromamba/envs/dev/bin/python",
+   "/home/USER/xkernel/studies/wse3-characterization/tools/csdisasm.py",
+   "out/bin/out_7_0.elf",
+   "--json",
+   "disasm_out_7_0.json"
+  ],
+  [
+   "/home/USER/micromamba/envs/dev/bin/python",
+   "/home/USER/xkernel/studies/wse3-characterization/tools/csdisasm.py",
+   "out/bin/out_8_0.elf",
+   "--json",
+   "disasm_out_8_0.json"
+  ],
+  [
+   "/home/USER/micromamba/envs/dev/bin/python",
+   "/home/USER/xkernel/studies/wse3-characterization/tools/csdisasm.py",
+   "out/bin/out_9_0.elf",
+   "--json",
+   "disasm_out_9_0.json"
+  ]
+ ],
+ "kernel_sources": {
+  "src/layout.csl": "c9d87403702b59f8e4b4d6f83793015e4eda18fff5443057028dabd0657a0680",
+  "src/meshgemm.csl": "282b4cbad33d3d130cf100edb5745af0a19f152c63bf84a5aff9429f5001483c",
+  "src/comm_lib/comm_layout.csl": "c635a6ef835e71e815a6137480120cbe059d7c34fe0aabfabb27ad297e0a1cbb",
+  "src/comm_lib/comm_pe.csl": "009a29a6c8383053b4fad0fd4de1772eda6a040a7088ef63717d0a41e59a14d0"
+ },
+ "host_common": "48c597d9d6ad40b8b64bd766d41a466d152ae6b743e2e0010084a35769d6300d",
+ "copied_identical": true,
+ "result_exact": true
+}

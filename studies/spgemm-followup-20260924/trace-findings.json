@@ -1,0 +1,1169 @@
+{
+  "results": [
+    {
+      "case": "general-full_row",
+      "rows": [
+        {
+          "pattern": "banded",
+          "cycles": 19986,
+          "dispatches": 11697,
+          "products": 144,
+          "opcode_dispatches": {
+            "LD16": 723,
+            "ST16": 110,
+            "MOVRI": 490,
+            "FMOV16.NF": 114,
+            "SLL16.NF": 1248,
+            "ADD16.NF": 2384,
+            "SLR16.NF": 1600,
+            "IMOV32.NF": 432,
+            "LDDWDS": 16,
+            "FMOV32.NF": 656,
+            "ST32": 112,
+            "ADDSP": 32,
+            "OR16": 32,
+            "AND16": 32,
+            "EQ16": 272,
+            "JMP": 1312,
+            "LTU16": 880,
+            "IMOV16.NF": 656,
+            "LD16RP": 160,
+            "LTEU16": 144,
+            "FMULS": 144,
+            "FADDS": 144,
+            "NOP": 4
+          },
+          "source_intervals": {
+            "(result.*)[i] = @get_config(base_words + i);": {
+              "dispatches": 10,
+              "cycles": 10
+            },
+            "status[0] = 0;": {
+              "dispatches": 1,
+              "cycles": 1
+            },
+            "count[0] = 0;": {
+              "dispatches": 21,
+              "cycles": 21
+            },
+            "cp[i] = @as(u32,output_count);": {
+              "dispatches": 80,
+              "cycles": 80
+            },
+            "@fmovs(acc_dsd, @as(f32,0.0));": {
+              "dispatches": 80,
+              "cycles": 192
+            },
+            "while (t < WIDTH) : (t += 1) { seen[t] = 0; }": {
+              "dispatches": 48,
+              "cycles": 48
+            },
+            "<no source>": {
+              "dispatches": 2289,
+              "cycles": 4433
+            },
+            "rpc_server(&(sys_mod.stack_u32));": {
+              "dispatches": 672,
+              "cycles": 1232
+            },
+            "var p: u16 = @as(u16,ap[i]);": {
+              "dispatches": 48,
+              "cycles": 48
+            },
+            "const pe: u16 = @as(u16,ap[i+1]);": {
+              "dispatches": 32,
+              "cycles": 80
+            },
+            "while (p < pe) : (p += 1) {": {
+              "dispatches": 256,
+              "cycles": 480
+            },
+            "const k: u16 = @as(u16,aj[p]);": {
+              "dispatches": 240,
+              "cycles": 336
+            },
+            "var q: u16 = @as(u16,bp[k]);": {
+              "dispatches": 240,
+              "cycles": 336
+            },
+            "const qe: u16 = @as(u16,bp[k+1]);": {
+              "dispatches": 192,
+              "cycles": 288
+            },
+            "const aval: f32 = av[p];": {
+              "dispatches": 192,
+              "cycles": 288
+            },
+            "while (q < qe) : (q += 1) {": {
+              "dispatches": 528,
+              "cycles": 1632
+            },
+            "const j: u16 = @as(u16,bj[q]);": {
+              "dispatches": 576,
+              "cycles": 864
+            },
+            "if (j >= lo and j < lo + WIDTH) {": {
+              "dispatches": 288,
+              "cycles": 576
+            },
+            "acc[local_j] += aval * bv[q];": {
+              "dispatches": 1728,
+              "cycles": 2304
+            },
+            "seen[local_j] = 1;": {
+              "dispatches": 720,
+              "cycles": 864
+            },
+            "if (seen[t] != 0) {": {
+              "dispatches": 1536,
+              "cycles": 3088
+            },
+            "if (output_count >= limit[0]) {": {
+              "dispatches": 160,
+              "cycles": 560
+            },
+            "cj[output_count] = @as(u32,lo+t);": {
+              "dispatches": 480,
+              "cycles": 480
+            },
+            "cv[output_count] = acc[t];": {
+              "dispatches": 720,
+              "cycles": 1120
+            },
+            "output_count += 1;": {
+              "dispatches": 80,
+              "cycles": 80
+            },
+            "while (t < WIDTH) : (t += 1) {": {
+              "dispatches": 256,
+              "cycles": 256
+            },
+            "cp[i+1] = @as(u32,output_count);": {
+              "dispatches": 96,
+              "cycles": 96
+            },
+            "while (i < N) : (i += 1) {": {
+              "dispatches": 128,
+              "cycles": 193
+            }
+          },
+          "verified_B_index_reads": 144,
+          "cycles_per_dispatch_event": 1.7086432418568864
+        },
+        {
+          "pattern": "uniform",
+          "cycles": 21586,
+          "dispatches": 12849,
+          "products": 144,
+          "opcode_dispatches": {
+            "LD16": 787,
+            "ST16": 110,
+            "MOVRI": 682,
+            "FMOV16.NF": 114,
+            "SLL16.NF": 1376,
+            "ADD16.NF": 2640,
+            "SLR16.NF": 1792,
+            "IMOV32.NF": 496,
+            "LDDWDS": 16,
+            "FMOV32.NF": 784,
+            "ST32": 112,
+            "ADDSP": 32,
+            "OR16": 32,
+            "AND16": 32,
+            "EQ16": 272,
+            "JMP": 1376,
+            "LTU16": 880,
+            "IMOV16.NF": 656,
+            "LD16RP": 160,
+            "LTEU16": 208,
+            "FMULS": 144,
+            "FADDS": 144,
+            "NOP": 4
+          },
+          "source_intervals": {
+            "(result.*)[i] = @get_config(base_words + i);": {
+              "dispatches": 10,
+              "cycles": 10
+            },
+            "status[0] = 0;": {
+              "dispatches": 1,
+              "cycles": 1
+            },
+            "count[0] = 0;": {
+              "dispatches": 21,
+              "cycles": 21
+            },
+            "cp[i] = @as(u32,output_count);": {
+              "dispatches": 80,
+              "cycles": 80
+            },
+            "@fmovs(acc_dsd, @as(f32,0.0));": {
+              "dispatches": 80,
+              "cycles": 192
+            },
+            "while (t < WIDTH) : (t += 1) { seen[t] = 0; }": {
+              "dispatches": 48,
+              "cycles": 48
+            },
+            "<no source>": {
+              "dispatches": 2289,
+              "cycles": 4433
+            },
+            "rpc_server(&(sys_mod.stack_u32));": {
+              "dispatches": 672,
+              "cycles": 1232
+            },
+            "var p: u16 = @as(u16,ap[i]);": {
+              "dispatches": 48,
+              "cycles": 48
+            },
+            "const pe: u16 = @as(u16,ap[i+1]);": {
+              "dispatches": 32,
+              "cycles": 80
+            },
+            "while (p < pe) : (p += 1) {": {
+              "dispatches": 256,
+              "cycles": 480
+            },
+            "const k: u16 = @as(u16,aj[p]);": {
+              "dispatches": 240,
+              "cycles": 336
+            },
+            "var q: u16 = @as(u16,bp[k]);": {
+              "dispatches": 240,
+              "cycles": 336
+            },
+            "const qe: u16 = @as(u16,bp[k+1]);": {
+              "dispatches": 192,
+              "cycles": 288
+            },
+            "const aval: f32 = av[p];": {
+              "dispatches": 192,
+              "cycles": 288
+            },
+            "while (q < qe) : (q += 1) {": {
+              "dispatches": 528,
+              "cycles": 1632
+            },
+            "const j: u16 = @as(u16,bj[q]);": {
+              "dispatches": 576,
+              "cycles": 864
+            },
+            "if (j >= lo and j < lo + WIDTH) {": {
+              "dispatches": 288,
+              "cycles": 576
+            },
+            "acc[local_j] += aval * bv[q];": {
+              "dispatches": 1728,
+              "cycles": 2304
+            },
+            "seen[local_j] = 1;": {
+              "dispatches": 720,
+              "cycles": 864
+            },
+            "if (seen[t] != 0) {": {
+              "dispatches": 1536,
+              "cycles": 2896
+            },
+            "if (output_count >= limit[0]) {": {
+              "dispatches": 288,
+              "cycles": 1008
+            },
+            "cj[output_count] = @as(u32,lo+t);": {
+              "dispatches": 864,
+              "cycles": 864
+            },
+            "cv[output_count] = acc[t];": {
+              "dispatches": 1296,
+              "cycles": 2016
+            },
+            "output_count += 1;": {
+              "dispatches": 144,
+              "cycles": 144
+            },
+            "while (t < WIDTH) : (t += 1) {": {
+              "dispatches": 256,
+              "cycles": 256
+            },
+            "cp[i+1] = @as(u32,output_count);": {
+              "dispatches": 96,
+              "cycles": 96
+            },
+            "while (i < N) : (i += 1) {": {
+              "dispatches": 128,
+              "cycles": 193
+            }
+          },
+          "verified_B_index_reads": 144,
+          "cycles_per_dispatch_event": 1.6799750953381587
+        }
+      ],
+      "uniform_minus_banded": [
+        {
+          "source": "if (seen[t] != 0) {",
+          "cycles": -192
+        },
+        {
+          "source": "if (output_count >= limit[0]) {",
+          "cycles": 448
+        },
+        {
+          "source": "cj[output_count] = @as(u32,lo+t);",
+          "cycles": 384
+        },
+        {
+          "source": "cv[output_count] = acc[t];",
+          "cycles": 896
+        },
+        {
+          "source": "output_count += 1;",
+          "cycles": 64
+        }
+      ]
+    },
+    {
+      "case": "general-tile4",
+      "rows": [
+        {
+          "pattern": "banded",
+          "cycles": 31554,
+          "dispatches": 18841,
+          "products": 144,
+          "opcode_dispatches": {
+            "LD16": 1475,
+            "ST16": 220,
+            "MOVRI": 1318,
+            "IMOV32.NF": 1393,
+            "ST32": 597,
+            "FMOV16.NF": 178,
+            "SLL16.NF": 1360,
+            "ADD16.NF": 2992,
+            "SLR16.NF": 2096,
+            "LDDWDS": 64,
+            "FMOV32.NF": 768,
+            "LD16RP": 988,
+            "LTU16": 1488,
+            "JMP": 2376,
+            "LTEU16": 632,
+            "FMULS": 144,
+            "SUB16.NF": 144,
+            "FADDS": 144,
+            "IMOV16.NF": 144,
+            "EQ16": 256,
+            "OR16": 60,
+            "NOP": 4
+          },
+          "source_intervals": {
+            "(result.*)[i] = @get_config(base_words + i);": {
+              "dispatches": 10,
+              "cycles": 10
+            },
+            "status[0] = 0;": {
+              "dispatches": 1,
+              "cycles": 1
+            },
+            "count[0] = 0;": {
+              "dispatches": 17,
+              "cycles": 17
+            },
+            "cp[i] = @as(u32,output_count);": {
+              "dispatches": 80,
+              "cycles": 80
+            },
+            "rpc_server(&(sys_mod.stack_u32));": {
+              "dispatches": 288,
+              "cycles": 336
+            },
+            "<no source>": {
+              "dispatches": 1333,
+              "cycles": 1333
+            },
+            "@fmovs(acc_dsd, @as(f32,0.0));": {
+              "dispatches": 256,
+              "cycles": 384
+            },
+            "while (t < WIDTH) : (t += 1) { seen[t] = 0; }": {
+              "dispatches": 128,
+              "cycles": 128
+            },
+            "const pe: u16 = @as(u16,ap[i+1]);": {
+              "dispatches": 128,
+              "cycles": 256
+            },
+            "var p: u16 = @as(u16,ap[i]);": {
+              "dispatches": 128,
+              "cycles": 256
+            },
+            "while (p < pe) : (p += 1) {": {
+              "dispatches": 1024,
+              "cycles": 1728
+            },
+            "const k: u16 = @as(u16,aj[p]);": {
+              "dispatches": 960,
+              "cycles": 1344
+            },
+            "var q: u16 = @as(u16,bp[k]);": {
+              "dispatches": 960,
+              "cycles": 1344
+            },
+            "const qe: u16 = @as(u16,bp[k+1]);": {
+              "dispatches": 768,
+              "cycles": 1152
+            },
+            "const aval: f32 = av[p];": {
+              "dispatches": 768,
+              "cycles": 1152
+            },
+            "while (q < qe) : (q += 1) {": {
+              "dispatches": 2112,
+              "cycles": 5232
+            },
+            "const j: u16 = @as(u16,bj[q]);": {
+              "dispatches": 2880,
+              "cycles": 4032
+            },
+            "if (j >= lo and j < lo + WIDTH) {": {
+              "dispatches": 1872,
+              "cycles": 5040
+            },
+            "acc[local_j] += aval * bv[q];": {
+              "dispatches": 1728,
+              "cycles": 2304
+            },
+            "const local_j: u16 = j - lo;": {
+              "dispatches": 144,
+              "cycles": 144
+            },
+            "seen[local_j] = 1;": {
+              "dispatches": 864,
+              "cycles": 1008
+            },
+            "if (seen[t] != 0) {": {
+              "dispatches": 768,
+              "cycles": 1808
+            },
+            "if (output_count >= limit[0]) {": {
+              "dispatches": 160,
+              "cycles": 320
+            },
+            "cj[output_count] = @as(u32,lo+t);": {
+              "dispatches": 580,
+              "cycles": 620
+            },
+            "cv[output_count] = acc[t];": {
+              "dispatches": 340,
+              "cycles": 560
+            },
+            "output_count += 1;": {
+              "dispatches": 160,
+              "cycles": 280
+            },
+            "while (lo < N) : (lo += WIDTH) {": {
+              "dispatches": 192,
+              "cycles": 368
+            },
+            "cp[i+1] = @as(u32,output_count);": {
+              "dispatches": 128,
+              "cycles": 176
+            },
+            "while (i < N) : (i += 1) {": {
+              "dispatches": 64,
+              "cycles": 141
+            }
+          },
+          "verified_B_index_reads": 576,
+          "cycles_per_dispatch_event": 1.6747518709198026
+        },
+        {
+          "pattern": "uniform",
+          "cycles": 32674,
+          "dispatches": 19721,
+          "products": 144,
+          "opcode_dispatches": {
+            "LD16": 1475,
+            "ST16": 220,
+            "MOVRI": 1382,
+            "IMOV32.NF": 1457,
+            "ST32": 613,
+            "FMOV16.NF": 178,
+            "SLL16.NF": 1424,
+            "ADD16.NF": 3184,
+            "SLR16.NF": 2224,
+            "LDDWDS": 64,
+            "FMOV32.NF": 832,
+            "LD16RP": 1100,
+            "LTU16": 1488,
+            "JMP": 2440,
+            "LTEU16": 696,
+            "FMULS": 144,
+            "SUB16.NF": 144,
+            "FADDS": 144,
+            "IMOV16.NF": 144,
+            "EQ16": 256,
+            "OR16": 108,
+            "NOP": 4
+          },
+          "source_intervals": {
+            "(result.*)[i] = @get_config(base_words + i);": {
+              "dispatches": 10,
+              "cycles": 10
+            },
+            "status[0] = 0;": {
+              "dispatches": 1,
+              "cycles": 1
+            },
+            "count[0] = 0;": {
+              "dispatches": 17,
+              "cycles": 17
+            },
+            "cp[i] = @as(u32,output_count);": {
+              "dispatches": 80,
+              "cycles": 80
+            },
+            "rpc_server(&(sys_mod.stack_u32));": {
+              "dispatches": 288,
+              "cycles": 336
+            },
+            "<no source>": {
+              "dispatches": 1221,
+              "cycles": 1221
+            },
+            "@fmovs(acc_dsd, @as(f32,0.0));": {
+              "dispatches": 256,
+              "cycles": 384
+            },
+            "while (t < WIDTH) : (t += 1) { seen[t] = 0; }": {
+              "dispatches": 128,
+              "cycles": 128
+            },
+            "const pe: u16 = @as(u16,ap[i+1]);": {
+              "dispatches": 128,
+              "cycles": 256
+            },
+            "var p: u16 = @as(u16,ap[i]);": {
+              "dispatches": 128,
+              "cycles": 256
+            },
+            "while (p < pe) : (p += 1) {": {
+              "dispatches": 1024,
+              "cycles": 1728
+            },
+            "const k: u16 = @as(u16,aj[p]);": {
+              "dispatches": 960,
+              "cycles": 1344
+            },
+            "var q: u16 = @as(u16,bp[k]);": {
+              "dispatches": 960,
+              "cycles": 1344
+            },
+            "const qe: u16 = @as(u16,bp[k+1]);": {
+              "dispatches": 768,
+              "cycles": 1152
+            },
+            "const aval: f32 = av[p];": {
+              "dispatches": 768,
+              "cycles": 1152
+            },
+            "while (q < qe) : (q += 1) {": {
+              "dispatches": 2112,
+              "cycles": 5232
+            },
+            "const j: u16 = @as(u16,bj[q]);": {
+              "dispatches": 2880,
+              "cycles": 4032
+            },
+            "if (j >= lo and j < lo + WIDTH) {": {
+              "dispatches": 1872,
+              "cycles": 5040
+            },
+            "acc[local_j] += aval * bv[q];": {
+              "dispatches": 1728,
+              "cycles": 2304
+            },
+            "const local_j: u16 = j - lo;": {
+              "dispatches": 144,
+              "cycles": 144
+            },
+            "seen[local_j] = 1;": {
+              "dispatches": 864,
+              "cycles": 1008
+            },
+            "if (seen[t] != 0) {": {
+              "dispatches": 768,
+              "cycles": 1616
+            },
+            "if (output_count >= limit[0]) {": {
+              "dispatches": 288,
+              "cycles": 576
+            },
+            "cj[output_count] = @as(u32,lo+t);": {
+              "dispatches": 1044,
+              "cycles": 1116
+            },
+            "cv[output_count] = acc[t];": {
+              "dispatches": 612,
+              "cycles": 1008
+            },
+            "output_count += 1;": {
+              "dispatches": 288,
+              "cycles": 504
+            },
+            "while (lo < N) : (lo += WIDTH) {": {
+              "dispatches": 192,
+              "cycles": 368
+            },
+            "cp[i+1] = @as(u32,output_count);": {
+              "dispatches": 128,
+              "cycles": 176
+            },
+            "while (i < N) : (i += 1) {": {
+              "dispatches": 64,
+              "cycles": 141
+            }
+          },
+          "verified_B_index_reads": 576,
+          "cycles_per_dispatch_event": 1.6568125348613154
+        }
+      ],
+      "uniform_minus_banded": [
+        {
+          "source": "<no source>",
+          "cycles": -112
+        },
+        {
+          "source": "if (seen[t] != 0) {",
+          "cycles": -192
+        },
+        {
+          "source": "if (output_count >= limit[0]) {",
+          "cycles": 256
+        },
+        {
+          "source": "cj[output_count] = @as(u32,lo+t);",
+          "cycles": 496
+        },
+        {
+          "source": "cv[output_count] = acc[t];",
+          "cycles": 448
+        },
+        {
+          "source": "output_count += 1;",
+          "cycles": 224
+        }
+      ]
+    },
+    {
+      "case": "selection-baseline",
+      "rows": [
+        {
+          "pattern": "banded",
+          "cycles": 16941,
+          "dispatches": 10730,
+          "products": 112,
+          "opcode_dispatches": {
+            "LD16": 980,
+            "ST16": 360,
+            "LDDWDS": 1,
+            "FMOV16.NF": 85,
+            "FMOV32.NF": 449,
+            "MOVRI": 405,
+            "ADDSP": 2,
+            "ST32": 83,
+            "OR16": 2,
+            "AND16": 2,
+            "EQ16": 393,
+            "JMP": 879,
+            "LTU16": 519,
+            "SLR16.NF": 1197,
+            "SLL16.NF": 1223,
+            "ADD16.NF": 2074,
+            "IMOV16.NF": 672,
+            "LD16RP": 359,
+            "LT16": 149,
+            "IMOV32.NF": 456,
+            "LTEU16": 212,
+            "FMULS": 112,
+            "FADDS": 112,
+            "NOP": 4
+          },
+          "source_intervals": {
+            "(result.*)[i] = @get_config(base_words + i);": {
+              "dispatches": 10,
+              "cycles": 10
+            },
+            "@fmovs(all_c, @as(f32,0.0));": {
+              "dispatches": 3,
+              "cycles": 68
+            },
+            "present[z] = 0;": {
+              "dispatches": 5,
+              "cycles": 5
+            },
+            "<no source>": {
+              "dispatches": 3502,
+              "cycles": 5670
+            },
+            "var slot: u16 = @as(u16,row_ptr[j]);": {
+              "dispatches": 9,
+              "cycles": 9
+            },
+            "while (j < N) : (j += 1) {": {
+              "dispatches": 65,
+              "cycles": 101
+            },
+            "rpc_server(&(sys_mod.stack_u32));": {
+              "dispatches": 208,
+              "cycles": 240
+            },
+            "while (slot < @as(u16,row_ptr[j+1])) : (slot += 1) {": {
+              "dispatches": 224,
+              "cycles": 400
+            },
+            "const i: u16 = @as(u16,col_idx[slot]);": {
+              "dispatches": 192,
+              "cycles": 288
+            },
+            "var p: u16 = @as(u16, row_ptr[i]);": {
+              "dispatches": 336,
+              "cycles": 432
+            },
+            "var q: u16 = @as(u16, row_ptr[j]);": {
+              "dispatches": 48,
+              "cycles": 48
+            },
+            "while (p < @as(u16,row_ptr[i+1]) and q < @as(u16,row_ptr[j+1])) {": {
+              "dispatches": 2052,
+              "cycles": 3406
+            },
+            "const rj: u16 = @as(u16,col_idx[q]);": {
+              "dispatches": 740,
+              "cycles": 1036
+            },
+            "const ri: u16 = @as(u16,col_idx[p]);": {
+              "dispatches": 592,
+              "cycles": 888
+            },
+            "if (ri == rj) {": {
+              "dispatches": 296,
+              "cycles": 700
+            },
+            "C[i*N+j] += values[p] * values[q];": {
+              "dispatches": 1344,
+              "cycles": 2016
+            },
+            "present[i*N+j] = 1;": {
+              "dispatches": 224,
+              "cycles": 336
+            },
+            "p += 1; q += 1;": {
+              "dispatches": 448,
+              "cycles": 784
+            },
+            "} else if (ri < rj) { p += 1; } else { q += 1; }": {
+              "dispatches": 432,
+              "cycles": 504
+            }
+          },
+          "cycles_per_dispatch_event": 1.5788443616029824,
+          "verified_equality_checks": 148
+        },
+        {
+          "pattern": "uniform",
+          "cycles": 20461,
+          "dispatches": 13261,
+          "products": 28,
+          "opcode_dispatches": {
+            "LD16": 1482,
+            "ST16": 192,
+            "LDDWDS": 1,
+            "FMOV16.NF": 85,
+            "FMOV32.NF": 113,
+            "MOVRI": 684,
+            "ADDSP": 2,
+            "ST32": 83,
+            "OR16": 2,
+            "AND16": 2,
+            "EQ16": 523,
+            "JMP": 1074,
+            "LTU16": 740,
+            "SLR16.NF": 1140,
+            "SLL16.NF": 1867,
+            "ADD16.NF": 2531,
+            "IMOV16.NF": 1100,
+            "LD16RP": 503,
+            "LT16": 214,
+            "IMOV32.NF": 586,
+            "LTEU16": 277,
+            "FMULS": 28,
+            "FADDS": 28,
+            "NOP": 4
+          },
+          "source_intervals": {
+            "(result.*)[i] = @get_config(base_words + i);": {
+              "dispatches": 10,
+              "cycles": 10
+            },
+            "@fmovs(all_c, @as(f32,0.0));": {
+              "dispatches": 3,
+              "cycles": 68
+            },
+            "present[z] = 0;": {
+              "dispatches": 5,
+              "cycles": 5
+            },
+            "<no source>": {
+              "dispatches": 4215,
+              "cycles": 6455
+            },
+            "var slot: u16 = @as(u16,row_ptr[j]);": {
+              "dispatches": 9,
+              "cycles": 9
+            },
+            "while (j < N) : (j += 1) {": {
+              "dispatches": 65,
+              "cycles": 101
+            },
+            "rpc_server(&(sys_mod.stack_u32));": {
+              "dispatches": 208,
+              "cycles": 240
+            },
+            "while (slot < @as(u16,row_ptr[j+1])) : (slot += 1) {": {
+              "dispatches": 224,
+              "cycles": 400
+            },
+            "const i: u16 = @as(u16,col_idx[slot]);": {
+              "dispatches": 192,
+              "cycles": 288
+            },
+            "var p: u16 = @as(u16, row_ptr[i]);": {
+              "dispatches": 336,
+              "cycles": 432
+            },
+            "var q: u16 = @as(u16, row_ptr[j]);": {
+              "dispatches": 48,
+              "cycles": 48
+            },
+            "while (p < @as(u16,row_ptr[i+1]) and q < @as(u16,row_ptr[j+1])) {": {
+              "dispatches": 2879,
+              "cycles": 4855
+            },
+            "const rj: u16 = @as(u16,col_idx[q]);": {
+              "dispatches": 1065,
+              "cycles": 1491
+            },
+            "const ri: u16 = @as(u16,col_idx[p]);": {
+              "dispatches": 852,
+              "cycles": 1278
+            },
+            "if (ri == rj) {": {
+              "dispatches": 426,
+              "cycles": 1407
+            },
+            "C[i*N+j] += values[p] * values[q];": {
+              "dispatches": 336,
+              "cycles": 504
+            },
+            "present[i*N+j] = 1;": {
+              "dispatches": 56,
+              "cycles": 84
+            },
+            "p += 1; q += 1;": {
+              "dispatches": 112,
+              "cycles": 196
+            },
+            "} else if (ri < rj) { p += 1; } else { q += 1; }": {
+              "dispatches": 2220,
+              "cycles": 2590
+            }
+          },
+          "cycles_per_dispatch_event": 1.5429454792247945,
+          "verified_equality_checks": 213
+        }
+      ],
+      "uniform_minus_banded": [
+        {
+          "source": "<no source>",
+          "cycles": 785
+        },
+        {
+          "source": "while (p < @as(u16,row_ptr[i+1]) and q < @as(u16,row_ptr[j+1])) {",
+          "cycles": 1449
+        },
+        {
+          "source": "const rj: u16 = @as(u16,col_idx[q]);",
+          "cycles": 455
+        },
+        {
+          "source": "const ri: u16 = @as(u16,col_idx[p]);",
+          "cycles": 390
+        },
+        {
+          "source": "if (ri == rj) {",
+          "cycles": 707
+        },
+        {
+          "source": "C[i*N+j] += values[p] * values[q];",
+          "cycles": -1512
+        },
+        {
+          "source": "present[i*N+j] = 1;",
+          "cycles": -252
+        },
+        {
+          "source": "p += 1; q += 1;",
+          "cycles": -588
+        },
+        {
+          "source": "} else if (ri < rj) { p += 1; } else { q += 1; }",
+          "cycles": 2086
+        }
+      ]
+    },
+    {
+      "case": "selection-separate_updates",
+      "rows": [
+        {
+          "pattern": "banded",
+          "cycles": 14033,
+          "dispatches": 8262,
+          "products": 112,
+          "opcode_dispatches": {
+            "LD16": 340,
+            "ST16": 72,
+            "LDDWDS": 1,
+            "FMOV16.NF": 329,
+            "FMOV32.NF": 449,
+            "MOVRI": 285,
+            "ADDSP": 2,
+            "ST32": 50,
+            "OR16": 2,
+            "AND16": 2,
+            "EQ16": 149,
+            "JMP": 797,
+            "LTU16": 471,
+            "SLR16.NF": 1161,
+            "SLL16.NF": 809,
+            "ADD16.NF": 1662,
+            "IMOV16.NF": 440,
+            "LD16RP": 309,
+            "IMOV32.NF": 456,
+            "LTEU16": 248,
+            "FMULS": 112,
+            "FADDS": 112,
+            "NOP": 4
+          },
+          "source_intervals": {
+            "(result.*)[i] = @get_config(base_words + i);": {
+              "dispatches": 10,
+              "cycles": 10
+            },
+            "@fmovs(all_c, @as(f32,0.0));": {
+              "dispatches": 3,
+              "cycles": 68
+            },
+            "present[z] = 0;": {
+              "dispatches": 5,
+              "cycles": 5
+            },
+            "<no source>": {
+              "dispatches": 2238,
+              "cycles": 4292
+            },
+            "var slot: u16 = @as(u16,row_ptr[j]);": {
+              "dispatches": 8,
+              "cycles": 9
+            },
+            "rpc_server(&(sys_mod.stack_u32));": {
+              "dispatches": 768,
+              "cycles": 800
+            },
+            "while (slot < @as(u16,row_ptr[j+1])) : (slot += 1) {": {
+              "dispatches": 176,
+              "cycles": 352
+            },
+            "const i: u16 = @as(u16,col_idx[slot]);": {
+              "dispatches": 192,
+              "cycles": 288
+            },
+            "var p: u16 = @as(u16, row_ptr[i]);": {
+              "dispatches": 240,
+              "cycles": 336
+            },
+            "while (p < @as(u16,row_ptr[i+1]) and q < @as(u16,row_ptr[j+1])) {": {
+              "dispatches": 926,
+              "cycles": 2044
+            },
+            "const ri: u16 = @as(u16,col_idx[p]);": {
+              "dispatches": 592,
+              "cycles": 888
+            },
+            "const rj: u16 = @as(u16,col_idx[q]);": {
+              "dispatches": 592,
+              "cycles": 888
+            },
+            "if (ri == rj) {": {
+              "dispatches": 296,
+              "cycles": 700
+            },
+            "C[i*N+j] += values[p] * values[q];": {
+              "dispatches": 1456,
+              "cycles": 2128
+            },
+            "present[i*N+j] = 1;": {
+              "dispatches": 448,
+              "cycles": 896
+            },
+            "if (ri < rj) { p += 1; continue; }": {
+              "dispatches": 216,
+              "cycles": 216
+            },
+            "while (j < N) : (j += 1) {": {
+              "dispatches": 96,
+              "cycles": 113
+            }
+          },
+          "cycles_per_dispatch_event": 1.6984991527475188,
+          "verified_equality_checks": 148
+        },
+        {
+          "pattern": "uniform",
+          "cycles": 15077,
+          "dispatches": 8861,
+          "products": 28,
+          "opcode_dispatches": {
+            "LD16": 256,
+            "ST16": 72,
+            "LDDWDS": 1,
+            "FMOV16.NF": 394,
+            "FMOV32.NF": 113,
+            "MOVRI": 266,
+            "ADDSP": 2,
+            "ST32": 50,
+            "OR16": 2,
+            "AND16": 2,
+            "EQ16": 214,
+            "JMP": 999,
+            "LTU16": 692,
+            "SLR16.NF": 955,
+            "SLL16.NF": 939,
+            "ADD16.NF": 1761,
+            "IMOV16.NF": 654,
+            "LD16RP": 381,
+            "IMOV32.NF": 586,
+            "LTEU16": 462,
+            "FMULS": 28,
+            "FADDS": 28,
+            "NOP": 4
+          },
+          "source_intervals": {
+            "(result.*)[i] = @get_config(base_words + i);": {
+              "dispatches": 10,
+              "cycles": 10
+            },
+            "@fmovs(all_c, @as(f32,0.0));": {
+              "dispatches": 3,
+              "cycles": 68
+            },
+            "present[z] = 0;": {
+              "dispatches": 5,
+              "cycles": 5
+            },
+            "<no source>": {
+              "dispatches": 2375,
+              "cycles": 4429
+            },
+            "var slot: u16 = @as(u16,row_ptr[j]);": {
+              "dispatches": 8,
+              "cycles": 9
+            },
+            "rpc_server(&(sys_mod.stack_u32));": {
+              "dispatches": 768,
+              "cycles": 800
+            },
+            "while (slot < @as(u16,row_ptr[j+1])) : (slot += 1) {": {
+              "dispatches": 176,
+              "cycles": 352
+            },
+            "const i: u16 = @as(u16,col_idx[slot]);": {
+              "dispatches": 192,
+              "cycles": 288
+            },
+            "var p: u16 = @as(u16, row_ptr[i]);": {
+              "dispatches": 240,
+              "cycles": 336
+            },
+            "while (p < @as(u16,row_ptr[i+1]) and q < @as(u16,row_ptr[j+1])) {": {
+              "dispatches": 1272,
+              "cycles": 2838
+            },
+            "const ri: u16 = @as(u16,col_idx[p]);": {
+              "dispatches": 852,
+              "cycles": 1278
+            },
+            "const rj: u16 = @as(u16,col_idx[q]);": {
+              "dispatches": 852,
+              "cycles": 1278
+            },
+            "if (ri == rj) {": {
+              "dispatches": 426,
+              "cycles": 1407
+            },
+            "C[i*N+j] += values[p] * values[q];": {
+              "dispatches": 364,
+              "cycles": 532
+            },
+            "present[i*N+j] = 1;": {
+              "dispatches": 112,
+              "cycles": 224
+            },
+            "if (ri < rj) { p += 1; continue; }": {
+              "dispatches": 1110,
+              "cycles": 1110
+            },
+            "while (j < N) : (j += 1) {": {
+              "dispatches": 96,
+              "cycles": 113
+            }
+          },
+          "cycles_per_dispatch_event": 1.7015009592596773,
+          "verified_equality_checks": 213
+        }
+      ],
+      "uniform_minus_banded": [
+        {
+          "source": "<no source>",
+          "cycles": 137
+        },
+        {
+          "source": "while (p < @as(u16,row_ptr[i+1]) and q < @as(u16,row_ptr[j+1])) {",
+          "cycles": 794
+        },
+        {
+          "source": "const ri: u16 = @as(u16,col_idx[p]);",
+          "cycles": 390
+        },
+        {
+          "source": "const rj: u16 = @as(u16,col_idx[q]);",
+          "cycles": 390
+        },
+        {
+          "source": "if (ri == rj) {",
+          "cycles": 707
+        },
+        {
+          "source": "C[i*N+j] += values[p] * values[q];",
+          "cycles": -1596
+        },
+        {
+          "source": "present[i*N+j] = 1;",
+          "cycles": -672
+        },
+        {
+          "source": "if (ri < rj) { p += 1; continue; }",
+          "cycles": 894
+        }
+      ]
+    }
+  ],
+  "scope": "Source-attributed dispatch intervals, not causal runtime percentages or physical instruction latencies."
+}

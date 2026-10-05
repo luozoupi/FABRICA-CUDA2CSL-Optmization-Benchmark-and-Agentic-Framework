@@ -1,0 +1,60 @@
+{
+  "case": "strong-m16-k16-n16-p1-d3-full",
+  "status": "pass",
+  "phases": [
+    {
+      "phase": "compile",
+      "command": [
+        "/home/USER/cs_sdk/cslc",
+        "layout.csl",
+        "--arch=wse3",
+        "--fabric-dims=8,3",
+        "--fabric-offsets=4,1",
+        "--memcpy",
+        "--channels=1",
+        "--width-west-buf=0",
+        "--width-east-buf=0",
+        "--out-routes",
+        "--params=S:1,N:16,K:16,R:16,AC:48,BC:48,OC:144,W:16",
+        "-o",
+        "out"
+      ],
+      "returncode": 0,
+      "wall_seconds": 3.421100612002192
+    },
+    {
+      "phase": "run",
+      "command": [
+        "/home/USER/cs_sdk/cs_python",
+        "host.py"
+      ],
+      "returncode": 0,
+      "wall_seconds": 77.42720705799002
+    }
+  ],
+  "case_sha256": "2081703c82e27f31ba39d74bb1bdbe77f7a71fd6b1e779d1066185817465bbf8",
+  "queue_wait_seconds": 1.7050013411790133e-05,
+  "errors": [],
+  "elf_sha256": {
+    "out/bin/out_0_0.elf": "70a28aec33d0fce9525acea1c5b9a89cf774850a289e1f3e1ac9fe5923786609",
+    "out/generated/default.elf": "1a4776e4e8ea2809c518b2e36632ed454f65a1b85b80172c13c8a616b46dafd1",
+    "out/generated/MEMCPY_XY_ROUTES.elf": "145cfdf2650e18ccdc7a3c92f7692e103dd9a03c2762a8f8e36727d7b9924b92",
+    "out/generated/coord.elf": "a8c0c8e70d82ceb0019009b65eb6883ffcbf91dc55b537bcc188343a08542a66",
+    "out/east/bin/out_1_0.elf": "ceaec0d944a6aab27e238890a6ba939b432fba4788be63c70b1012d9ea37be24",
+    "out/east/bin/out_0_0.elf": "f3a6926e08cfc09b009267b1704734e9a4c9c69e7a3f1a2e84dfeb9ba683443a",
+    "out/west/bin/out_1_0.elf": "f3e14e207bf62c669bdb5269208ffa2d9f342d433b7245c35bf3e194299f88cd",
+    "out/west/bin/out_2_0.elf": "603bac3d102d82db359a235d75d1432d914c2ebf234089bd6974cb6a5aa89d44",
+    "out/west/bin/out_0_0.elf": "3a73914d0f4e7dff0a8cdd28dddc9477f5d9aba57296ebf254e1e8e432d33271"
+  },
+  "source_sha256": {
+    "single_collective.csl": "95db24b1ca3fd7e9d868657d0c991e4d9d3ff4601b154caf8d394523a19870b7",
+    "pe.csl": "c5f1faad9e3331ced546ce8e83c2e9f318855d8137e49001cd23a9f9baaccb0b",
+    "case.json": "2081703c82e27f31ba39d74bb1bdbe77f7a71fd6b1e779d1066185817465bbf8",
+    "layout.csl": "0f841665ca0ea9f9e420e1099e5629bb4ab5aca660b85ce6540899c6ebe03f51",
+    "inputs.py": "99916fee5949cfa4bb7efc89b2da16ece9806de175d9bae4254f8e6504e5be4e",
+    "host.py": "afc8b5cb8fe9d182c3d3225fbba533ba233dbdbc38e82340a3e5723fd4101055",
+    "observations.json": "faf8d96eba81636fb42d5b93b996653bbddcaae6229f485bc12f670067f826c6",
+    "sim_stats.json": "558c28e9f7acbf188f45e365c90edd6d8853e6aab314da76e52adfc4f0395cdd",
+    "simconfig.json": "ac8861b1a0ab97042fb33484d83a4d3ef124877e9bef550a89a5efe1f6da2be3"
+  }
+}

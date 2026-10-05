@@ -1,0 +1,94 @@
+{
+  "schema": "gemm-walkthrough-validation/1",
+  "date": "2026-09-14",
+  "evidence": "simulator",
+  "capture_root": "results/gemm-walkthrough/try-20260914d",
+  "viewer": "results/gemm-walkthrough/gemm.html",
+  "bundle_sha256": "293e790abb5d020f094057e6298a424ede4c0d586e02fe2fd7a67feb3a272d42",
+  "scenes": [
+    {
+      "id": "g0",
+      "n": 4,
+      "p": 1,
+      "numerical_verification": {
+        "passed": true,
+        "checks": 274,
+        "contributions": 64,
+        "outputs": 16,
+        "mismatches": []
+      },
+      "instruction_binding": "complete",
+      "matched_contributions": 64,
+      "reported_discarded_events": 0,
+      "control_correct": true,
+      "history_elapsed_pe_cycles": {
+        "0,0": 29724
+      },
+      "control_elapsed_pe_cycles": {
+        "0,0": 4455
+      },
+      "history_manifest_sha256": "636a4e72ff3cd3d37e049bdf6c82e1d831562f8a9a964b7d7c24f9ed0997f5a8",
+      "control_manifest_sha256": "000ec899cdb270d06cf320d0b9eb9018e61b87488790674a9cff5f94865cb76b"
+    },
+    {
+      "id": "g1",
+      "n": 4,
+      "p": 2,
+      "numerical_verification": {
+        "passed": true,
+        "checks": 288,
+        "contributions": 64,
+        "outputs": 16,
+        "mismatches": []
+      },
+      "instruction_binding": "complete",
+      "matched_contributions": 64,
+      "reported_discarded_events": 0,
+      "control_correct": true,
+      "history_elapsed_pe_cycles": {
+        "0,0": 10002,
+        "1,0": 10064,
+        "0,1": 9965,
+        "1,1": 9958
+      },
+      "control_elapsed_pe_cycles": {
+        "0,0": 3016,
+        "1,0": 3078,
+        "0,1": 2978,
+        "1,1": 2971
+      },
+      "history_manifest_sha256": "407fd806a00e2b9bb16e7b14e37e8c1d32e67b7746fc4c75d53d1fba6da8b682",
+      "control_manifest_sha256": "af1f649db0e487a4cc15128efa9f81cf23f7f64fad62781d888cac2ff2631006"
+    },
+    {
+      "id": "g2",
+      "n": 8,
+      "p": 2,
+      "numerical_verification": {
+        "passed": true,
+        "checks": 2128,
+        "contributions": 512,
+        "outputs": 64,
+        "mismatches": []
+      },
+      "instruction_binding": "complete",
+      "matched_contributions": 512,
+      "reported_discarded_events": 0,
+      "control_correct": true,
+      "history_elapsed_pe_cycles": {
+        "0,0": 63708,
+        "1,0": 63708,
+        "0,1": 63784,
+        "1,1": 63797
+      },
+      "control_elapsed_pe_cycles": {
+        "0,0": 12399,
+        "1,0": 12399,
+        "0,1": 12475,
+        "1,1": 12488
+      },
+      "history_manifest_sha256": "0202b5463c3ef9bb7e987f6c91fc22268f56a54e359af71f202c3fc0d569cb1c",
+      "control_manifest_sha256": "96bb73680c04bdd3f4d9a02f0e3981751c6e0ac2c281bc195cb2cc5ecfe2f95f"
+    }
+  ]
+}

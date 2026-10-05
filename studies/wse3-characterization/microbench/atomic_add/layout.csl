@@ -1,0 +1,10 @@
+const memcpy = @import_module("<memcpy/get_params>", .{ .width = 1, .height = 1 });
+layout {
+  @set_rectangle(1, 1);
+  @set_tile_code(0, 0, "pe.csl", .{ .memcpy_params = memcpy.get_params(0) });
+  @export_name("ai", [*]i16, true);  @export_name("bi", [*]i16, true);  @export_name("ci", [*]i16, true);
+  @export_name("af", [*]f16, true);  @export_name("bf", [*]f16, true);  @export_name("cf", [*]f16, true);
+  @export_name("a", [*]f16, true);   @export_name("b", [*]f16, true);   @export_name("c", [*]f16, true);
+  @export_name("maxmin_time", [*]f32, true);
+  @export_name("compute", fn()void);
+}

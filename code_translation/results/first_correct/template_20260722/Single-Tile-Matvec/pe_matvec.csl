@@ -1,0 +1,100 @@
+param memcpy_params: comptime_struct;
+// === SLOT: EXTRA_PARAMS ===
+param nb: u16;
+param iters: u16;
+
+// padded_nb = ceil(nb/4)*4  (align=16 bytes / 4 bytes per f32)
+const padded_nb: u16 = ((nb + 3) / 4) * 4;
+
+const EXIT: local_task_id = @get_local_task_id(9);
+const sys_mod = @import_module("<memcpy/memcpy>", memcpy_params);
+
+// === SLOT: EXTRA_IMPORTS ===
+// (no extra imports needed)
+
+const timestamp = @import_module("<time>");
+var tsc_start_buf = @zeros([timestamp.tsc_size_words]u16);
+var tsc_end_buf   = @zeros([timestamp.tsc_size_words]u16);
+var timer_buf = @zeros([3]f32);
+var ptr_timer_buf: [*]f32 = &timer_buf;
+
+// === SLOT: DATA_BUFFERS ===
+// Host layout (from run.py):
+//   A buffer length = nb*padded_nb + 1, with a 1-element leading offset.
+//   A[i,j] is stored at A_array[1 + j*padded_nb + i]  (column j contiguous, stride 1).
+//   x length = nb.
+//   y read back with length padded_nb (only first nb are meaningful).
+const A_len: i16 = @as(i16, nb) * @as(i16, padded_nb) + 1;
+
+var A_array = @zeros([A_len]f32);
+var x_array = @zeros([nb]f32);
+var y_array = @zeros([padded_nb]f32);
+
+var ptr_A: [*]f32 = &A_array;
+var ptr_x: [*]f32 = &x_array;
+var ptr_y: [*]f32 = &y_array;
+
+// y DSD: length nb, unit stride over y_array.
+const y_dsd = @get_dsd(mem1d_dsd, .{
+    .tensor_access = |i| { nb } -> y_array[i],
+});
+
+// A column DSD template: column 0 = A_array[1 + i], contiguous (stride 1), length nb.
+// Base is shifted per column j by j*padded_nb elements via @increment_dsd_offset.
+const A_col0_dsd = @get_dsd(mem1d_dsd, .{
+    .tensor_access = |i| { nb } -> A_array[i + 1],
+});
+
+// === SLOT: KERNEL_FUNCTION ===
+fn matvec() void {
+    // Zero the accumulator y.
+    @fmovs(y_dsd, 0.0);
+
+    // Column-wise accumulation: y[:] += A[:,j] * x[j]
+    var j: i16 = 0;
+    const nb_i: i16 = @as(i16, nb);
+    const pad_i: i16 = @as(i16, padded_nb);
+    while (j < nb_i) : (j += 1) {
+        // Column j is contiguous starting at A_array[1 + j*padded_nb].
+        const col_dsd = @increment_dsd_offset(A_col0_dsd, j * pad_i, f32);
+        @fmacs(y_dsd, y_dsd, col_dsd, x_array[@as(u16, j)]);
+    }
+}
+
+fn compute() void {
+    timestamp.enable_tsc();
+    timestamp.get_timestamp(&tsc_start_buf);
+
+    // === SLOT: KERNEL_CALL ===
+    matvec();
+
+    timestamp.get_timestamp(&tsc_end_buf);
+    timestamp.disable_tsc();
+
+    var lo_: u16 = 0;
+    var hi_: u16 = 0;
+    lo_ = tsc_start_buf[0]; hi_ = tsc_start_buf[1];
+    timer_buf[0] = @bitcast(f32, (@as(u32, hi_) << @as(u16, 16)) | @as(u32, lo_));
+    lo_ = tsc_start_buf[2]; hi_ = tsc_end_buf[0];
+    timer_buf[1] = @bitcast(f32, (@as(u32, hi_) << @as(u16, 16)) | @as(u32, lo_));
+    lo_ = tsc_end_buf[1]; hi_ = tsc_end_buf[2];
+    timer_buf[2] = @bitcast(f32, (@as(u32, hi_) << @as(u16, 16)) | @as(u32, lo_));
+
+    @activate(EXIT);
+}
+
+task f_exit() void {
+    sys_mod.unblock_cmd_stream();
+}
+
+comptime {
+    @bind_local_task(f_exit, EXIT);
+
+    // === SLOT: EXPORT_SYMBOLS ===
+    @export_symbol(ptr_A, "A");
+    @export_symbol(ptr_x, "x");
+    @export_symbol(ptr_y, "y");
+
+    @export_symbol(ptr_timer_buf, "maxmin_time");
+    @export_symbol(compute);
+}

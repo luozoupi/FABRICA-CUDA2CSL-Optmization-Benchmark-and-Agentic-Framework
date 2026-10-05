@@ -1,0 +1,1001 @@
+{
+  "schema": "input-storage/1",
+  "scenes": [
+    {
+      "scene": "v0",
+      "run": "results/gemv-walkthrough/try-20260915a/v0-history",
+      "pes": [
+        {
+          "pe": "0,0",
+          "fabric": [
+            4,
+            1
+          ],
+          "elf": "out/bin/out_0_0.elf",
+          "executed_ir": "ir/out_out_0_0/cslc_ir_nezrzv10/program.ll",
+          "arrays": [
+            {
+              "name": "X",
+              "elf_address": 5128,
+              "elf_address_hex": "0x1408",
+              "bytes": 16,
+              "elements": 4,
+              "section": ".bss",
+              "section_flags": 3,
+              "ir_definition": "@X = internal global [4 x float] zeroinitializer, align 4",
+              "storage": "PE-local SRAM",
+              "role": "host-loaded input array"
+            },
+            {
+              "name": "W",
+              "elf_address": 5064,
+              "elf_address_hex": "0x13c8",
+              "bytes": 64,
+              "elements": 16,
+              "section": ".bss",
+              "section_flags": 3,
+              "ir_definition": "@W = internal global [16 x float] zeroinitializer, align 4",
+              "storage": "PE-local SRAM",
+              "role": "host-loaded input array"
+            }
+          ],
+          "hashes": {
+            "out/bin/out_0_0.elf": "a3e7b5c3dca961cf920f50967f525d50fb2d107d3d631ad188dd70fe48ea1125",
+            "pe.csl": "e3cf6cf94ae10192f956ef1a101dd489afe2ac3c664900bab47723683953bc4b",
+            "run.py": "76bc967c82726cbf315604f642ad9b4b76e2ae46e1fd26c4d6db935820f26627",
+            "ir/out_out_0_0/program.ll": "f6d22e28c3831b3c90b9106605f975ecf4b8b3790db7763341457f486d23d669",
+            "ir/out_out_0_0/cslc_ir_nezrzv10/program.ll": "183f850a1facfaee7fbccffc5313922e48cc0b6a8451ec81691928bfd3d9700e"
+          }
+        }
+      ],
+      "value_evidence": "Exact final X/W readbacks and multiply operands"
+    },
+    {
+      "scene": "v1",
+      "run": "results/gemv-walkthrough/try-20260915a/v1-history",
+      "pes": [
+        {
+          "pe": "0,0",
+          "fabric": [
+            4,
+            1
+          ],
+          "elf": "out/bin/out_0_0.elf",
+          "executed_ir": "ir/out_out_0_0/cslc_ir_2x8suvec/program.ll",
+          "arrays": [
+            {
+              "name": "X",
+              "elf_address": 6504,
+              "elf_address_hex": "0x1968",
+              "bytes": 8,
+              "elements": 2,
+              "section": ".bss",
+              "section_flags": 3,
+              "ir_definition": "@X = internal global [2 x float] zeroinitializer, align 4",
+              "storage": "PE-local SRAM",
+              "role": "host-loaded input array"
+            },
+            {
+              "name": "W",
+              "elf_address": 6488,
+              "elf_address_hex": "0x1958",
+              "bytes": 16,
+              "elements": 4,
+              "section": ".bss",
+              "section_flags": 3,
+              "ir_definition": "@W = internal global [4 x float] zeroinitializer, align 4",
+              "storage": "PE-local SRAM",
+              "role": "host-loaded input array"
+            }
+          ],
+          "hashes": {
+            "out/bin/out_0_0.elf": "811d0688895964a9ff6adc5b4c6eb8658ff778e50cb727250796f6dd7812c37e",
+            "pe.csl": "3526631e604736f809e3a83a28e0f1044fc76c4dd1a29977396f5902ddfd15b1",
+            "run.py": "76bc967c82726cbf315604f642ad9b4b76e2ae46e1fd26c4d6db935820f26627",
+            "ir/out_out_0_0/program.ll": "d575c61aea1813d6249ec4bf897e9759ca077da37de9a25dbedc3874fdca272c",
+            "ir/out_out_0_0/cslc_ir_2x8suvec/program.ll": "67dbf7123abd0c4a7a95cb991cab57b4a638b651dd8ff2ca3d4df020639a217b"
+          }
+        },
+        {
+          "pe": "0,1",
+          "fabric": [
+            4,
+            2
+          ],
+          "elf": "out/bin/out_1_0.elf",
+          "executed_ir": "ir/out_out_1_0/cslc_ir_ru9oymsm/program.ll",
+          "arrays": [
+            {
+              "name": "X",
+              "elf_address": 7016,
+              "elf_address_hex": "0x1b68",
+              "bytes": 8,
+              "elements": 2,
+              "section": ".bss",
+              "section_flags": 3,
+              "ir_definition": "@X = internal global [2 x float] zeroinitializer, align 4",
+              "storage": "PE-local SRAM",
+              "role": "host-loaded input array"
+            },
+            {
+              "name": "W",
+              "elf_address": 7000,
+              "elf_address_hex": "0x1b58",
+              "bytes": 16,
+              "elements": 4,
+              "section": ".bss",
+              "section_flags": 3,
+              "ir_definition": "@W = internal global [4 x float] zeroinitializer, align 4",
+              "storage": "PE-local SRAM",
+              "role": "host-loaded input array"
+            }
+          ],
+          "hashes": {
+            "out/bin/out_1_0.elf": "d113edb4052aeb435b179119b0499056edc43b8833e00966e6c061af2b2e1c1c",
+            "pe.csl": "3526631e604736f809e3a83a28e0f1044fc76c4dd1a29977396f5902ddfd15b1",
+            "run.py": "76bc967c82726cbf315604f642ad9b4b76e2ae46e1fd26c4d6db935820f26627",
+            "ir/out_out_1_0/program.ll": "78c4b39f7e17169805e18e6cc515b22f403f640941e02b53628c83a084d0f6ff",
+            "ir/out_out_1_0/cslc_ir_ru9oymsm/program.ll": "63097ce661aa5a8f8a435100ecd89dd3e4cd4a078d5bb7dbd345911e96e744c4"
+          }
+        },
+        {
+          "pe": "1,0",
+          "fabric": [
+            5,
+            1
+          ],
+          "elf": "out/bin/out_2_0.elf",
+          "executed_ir": "ir/out_out_2_0/cslc_ir_tqtp58s5/program.ll",
+          "arrays": [
+            {
+              "name": "X",
+              "elf_address": 6504,
+              "elf_address_hex": "0x1968",
+              "bytes": 8,
+              "elements": 2,
+              "section": ".bss",
+              "section_flags": 3,
+              "ir_definition": "@X = internal global [2 x float] zeroinitializer, align 4",
+              "storage": "PE-local SRAM",
+              "role": "host-loaded input array"
+            },
+            {
+              "name": "W",
+              "elf_address": 6488,
+              "elf_address_hex": "0x1958",
+              "bytes": 16,
+              "elements": 4,
+              "section": ".bss",
+              "section_flags": 3,
+              "ir_definition": "@W = internal global [4 x float] zeroinitializer, align 4",
+              "storage": "PE-local SRAM",
+              "role": "host-loaded input array"
+            }
+          ],
+          "hashes": {
+            "out/bin/out_2_0.elf": "e8c9f2fe267aa41e957afd05cb51416de2268559f20508178fa9b203c45f40e4",
+            "pe.csl": "3526631e604736f809e3a83a28e0f1044fc76c4dd1a29977396f5902ddfd15b1",
+            "run.py": "76bc967c82726cbf315604f642ad9b4b76e2ae46e1fd26c4d6db935820f26627",
+            "ir/out_out_2_0/program.ll": "d575c61aea1813d6249ec4bf897e9759ca077da37de9a25dbedc3874fdca272c",
+            "ir/out_out_2_0/cslc_ir_tqtp58s5/program.ll": "67dbf7123abd0c4a7a95cb991cab57b4a638b651dd8ff2ca3d4df020639a217b"
+          }
+        },
+        {
+          "pe": "1,1",
+          "fabric": [
+            5,
+            2
+          ],
+          "elf": "out/bin/out_3_0.elf",
+          "executed_ir": "ir/out_out_3_0/cslc_ir_473492h9/program.ll",
+          "arrays": [
+            {
+              "name": "X",
+              "elf_address": 7016,
+              "elf_address_hex": "0x1b68",
+              "bytes": 8,
+              "elements": 2,
+              "section": ".bss",
+              "section_flags": 3,
+              "ir_definition": "@X = internal global [2 x float] zeroinitializer, align 4",
+              "storage": "PE-local SRAM",
+              "role": "host-loaded input array"
+            },
+            {
+              "name": "W",
+              "elf_address": 7000,
+              "elf_address_hex": "0x1b58",
+              "bytes": 16,
+              "elements": 4,
+              "section": ".bss",
+              "section_flags": 3,
+              "ir_definition": "@W = internal global [4 x float] zeroinitializer, align 4",
+              "storage": "PE-local SRAM",
+              "role": "host-loaded input array"
+            }
+          ],
+          "hashes": {
+            "out/bin/out_3_0.elf": "4636457cc354d5ecefc88ab920d11245bcfd9fa9509425faf6dedbacff19c1e3",
+            "pe.csl": "3526631e604736f809e3a83a28e0f1044fc76c4dd1a29977396f5902ddfd15b1",
+            "run.py": "76bc967c82726cbf315604f642ad9b4b76e2ae46e1fd26c4d6db935820f26627",
+            "ir/out_out_3_0/program.ll": "78c4b39f7e17169805e18e6cc515b22f403f640941e02b53628c83a084d0f6ff",
+            "ir/out_out_3_0/cslc_ir_473492h9/program.ll": "63097ce661aa5a8f8a435100ecd89dd3e4cd4a078d5bb7dbd345911e96e744c4"
+          }
+        }
+      ],
+      "value_evidence": "Exact final X/W readbacks and multiply operands"
+    },
+    {
+      "scene": "v2",
+      "run": "results/gemv-walkthrough/try-20260915a/v2-history",
+      "pes": [
+        {
+          "pe": "0,0",
+          "fabric": [
+            4,
+            1
+          ],
+          "elf": "out/bin/out_0_0.elf",
+          "executed_ir": "ir/out_out_0_0/cslc_ir_8tgt8yuf/program.ll",
+          "arrays": [
+            {
+              "name": "X",
+              "elf_address": 6556,
+              "elf_address_hex": "0x199c",
+              "bytes": 16,
+              "elements": 4,
+              "section": ".bss",
+              "section_flags": 3,
+              "ir_definition": "@X = internal global [4 x float] zeroinitializer, align 4",
+              "storage": "PE-local SRAM",
+              "role": "host-loaded input array"
+            },
+            {
+              "name": "W",
+              "elf_address": 6492,
+              "elf_address_hex": "0x195c",
+              "bytes": 64,
+              "elements": 16,
+              "section": ".bss",
+              "section_flags": 3,
+              "ir_definition": "@W = internal global [16 x float] zeroinitializer, align 4",
+              "storage": "PE-local SRAM",
+              "role": "host-loaded input array"
+            }
+          ],
+          "hashes": {
+            "out/bin/out_0_0.elf": "e716c641abb90709754e2d565a225d4e500bf86a464ed1b64c3185379b930cce",
+            "pe.csl": "3526631e604736f809e3a83a28e0f1044fc76c4dd1a29977396f5902ddfd15b1",
+            "run.py": "76bc967c82726cbf315604f642ad9b4b76e2ae46e1fd26c4d6db935820f26627",
+            "ir/out_out_0_0/program.ll": "632a0bf1c079ca806264cff720345115809d45af5e3e5b05f386fb34e2beddc9",
+            "ir/out_out_0_0/cslc_ir_8tgt8yuf/program.ll": "806ac703a00420307e86d93dcd8c1e019075d8fbee6353caf324e4b4f24136f8"
+          }
+        },
+        {
+          "pe": "0,1",
+          "fabric": [
+            4,
+            2
+          ],
+          "elf": "out/bin/out_1_0.elf",
+          "executed_ir": "ir/out_out_1_0/cslc_ir_4_cb1jm9/program.ll",
+          "arrays": [
+            {
+              "name": "X",
+              "elf_address": 7064,
+              "elf_address_hex": "0x1b98",
+              "bytes": 16,
+              "elements": 4,
+              "section": ".bss",
+              "section_flags": 3,
+              "ir_definition": "@X = internal global [4 x float] zeroinitializer, align 4",
+              "storage": "PE-local SRAM",
+              "role": "host-loaded input array"
+            },
+            {
+              "name": "W",
+              "elf_address": 7000,
+              "elf_address_hex": "0x1b58",
+              "bytes": 64,
+              "elements": 16,
+              "section": ".bss",
+              "section_flags": 3,
+              "ir_definition": "@W = internal global [16 x float] zeroinitializer, align 4",
+              "storage": "PE-local SRAM",
+              "role": "host-loaded input array"
+            }
+          ],
+          "hashes": {
+            "out/bin/out_1_0.elf": "03f80a81510b97fc9c10c979d5631fc2b5877bbf479357befa6a3610f4491e0b",
+            "pe.csl": "3526631e604736f809e3a83a28e0f1044fc76c4dd1a29977396f5902ddfd15b1",
+            "run.py": "76bc967c82726cbf315604f642ad9b4b76e2ae46e1fd26c4d6db935820f26627",
+            "ir/out_out_1_0/program.ll": "5ac5e1b7d809792b0093e0503acacaaed0ae6f88dacf0b43b2bd78c7ce1e5989",
+            "ir/out_out_1_0/cslc_ir_4_cb1jm9/program.ll": "7c73276107c4871da495e94e0971b6ed165bbddbe76cc4dbcb0803258bfaab3c"
+          }
+        },
+        {
+          "pe": "1,0",
+          "fabric": [
+            5,
+            1
+          ],
+          "elf": "out/bin/out_2_0.elf",
+          "executed_ir": "ir/out_out_2_0/cslc_ir_4k8sj77v/program.ll",
+          "arrays": [
+            {
+              "name": "X",
+              "elf_address": 6556,
+              "elf_address_hex": "0x199c",
+              "bytes": 16,
+              "elements": 4,
+              "section": ".bss",
+              "section_flags": 3,
+              "ir_definition": "@X = internal global [4 x float] zeroinitializer, align 4",
+              "storage": "PE-local SRAM",
+              "role": "host-loaded input array"
+            },
+            {
+              "name": "W",
+              "elf_address": 6492,
+              "elf_address_hex": "0x195c",
+              "bytes": 64,
+              "elements": 16,
+              "section": ".bss",
+              "section_flags": 3,
+              "ir_definition": "@W = internal global [16 x float] zeroinitializer, align 4",
+              "storage": "PE-local SRAM",
+              "role": "host-loaded input array"
+            }
+          ],
+          "hashes": {
+            "out/bin/out_2_0.elf": "fcd8c9cd0f4a71ceba809f07ec7e19501af58246d8dce4b02aef7eca1506dc3c",
+            "pe.csl": "3526631e604736f809e3a83a28e0f1044fc76c4dd1a29977396f5902ddfd15b1",
+            "run.py": "76bc967c82726cbf315604f642ad9b4b76e2ae46e1fd26c4d6db935820f26627",
+            "ir/out_out_2_0/program.ll": "632a0bf1c079ca806264cff720345115809d45af5e3e5b05f386fb34e2beddc9",
+            "ir/out_out_2_0/cslc_ir_4k8sj77v/program.ll": "806ac703a00420307e86d93dcd8c1e019075d8fbee6353caf324e4b4f24136f8"
+          }
+        },
+        {
+          "pe": "1,1",
+          "fabric": [
+            5,
+            2
+          ],
+          "elf": "out/bin/out_3_0.elf",
+          "executed_ir": "ir/out_out_3_0/cslc_ir_q30lhw0y/program.ll",
+          "arrays": [
+            {
+              "name": "X",
+              "elf_address": 7064,
+              "elf_address_hex": "0x1b98",
+              "bytes": 16,
+              "elements": 4,
+              "section": ".bss",
+              "section_flags": 3,
+              "ir_definition": "@X = internal global [4 x float] zeroinitializer, align 4",
+              "storage": "PE-local SRAM",
+              "role": "host-loaded input array"
+            },
+            {
+              "name": "W",
+              "elf_address": 7000,
+              "elf_address_hex": "0x1b58",
+              "bytes": 64,
+              "elements": 16,
+              "section": ".bss",
+              "section_flags": 3,
+              "ir_definition": "@W = internal global [16 x float] zeroinitializer, align 4",
+              "storage": "PE-local SRAM",
+              "role": "host-loaded input array"
+            }
+          ],
+          "hashes": {
+            "out/bin/out_3_0.elf": "2a64b1968a7185a6455bfd2dbdae7bb74f95ff423c67cd4bbedd4572e6be0d5e",
+            "pe.csl": "3526631e604736f809e3a83a28e0f1044fc76c4dd1a29977396f5902ddfd15b1",
+            "run.py": "76bc967c82726cbf315604f642ad9b4b76e2ae46e1fd26c4d6db935820f26627",
+            "ir/out_out_3_0/program.ll": "5ac5e1b7d809792b0093e0503acacaaed0ae6f88dacf0b43b2bd78c7ce1e5989",
+            "ir/out_out_3_0/cslc_ir_q30lhw0y/program.ll": "7c73276107c4871da495e94e0971b6ed165bbddbe76cc4dbcb0803258bfaab3c"
+          }
+        }
+      ],
+      "value_evidence": "Exact final X/W readbacks and multiply operands"
+    },
+    {
+      "scene": "g0",
+      "run": "results/gemm-walkthrough/try-20260914d/g0-history",
+      "pes": [
+        {
+          "pe": "0,0",
+          "fabric": [
+            4,
+            1
+          ],
+          "elf": "out/bin/out_0_0.elf",
+          "executed_ir": "ir/out_out_0_0/cslc_ir_dyyigcvc/program.ll",
+          "arrays": [
+            {
+              "name": "A",
+              "elf_address": 4648,
+              "elf_address_hex": "0x1228",
+              "bytes": 64,
+              "elements": 16,
+              "section": ".bss",
+              "section_flags": 3,
+              "ir_definition": "@A = internal global [16 x float] zeroinitializer, align 4",
+              "storage": "PE-local SRAM",
+              "role": "host-loaded input array"
+            },
+            {
+              "name": "B",
+              "elf_address": 4712,
+              "elf_address_hex": "0x1268",
+              "bytes": 64,
+              "elements": 16,
+              "section": ".bss",
+              "section_flags": 3,
+              "ir_definition": "@B = internal global [16 x float] zeroinitializer, align 4",
+              "storage": "PE-local SRAM",
+              "role": "host-loaded input array"
+            }
+          ],
+          "hashes": {
+            "out/bin/out_0_0.elf": "83608d0f94360174dee5e4ebbd1ad1c0cdbb5ef27bddcbf10184a35b4f2da433",
+            "pe.csl": "95445566b0e91320b813c55b378132e347ee906cc7aa012bdbc2cd650b043556",
+            "run.py": "02617728570c852a5a24d0f027cf0dce718c7ff1360b7d168bc659dd8748ca36",
+            "ir/out_out_0_0/program.ll": "4691533fb6ff4b60716b7b93a23a8e78640e945ac1aac72272ab4c72965ed6ae",
+            "ir/out_out_0_0/cslc_ir_dyyigcvc/program.ll": "9b760f06e0e8b7caa7255ad375ad8817bd209fb8254ff75841bc33bf931c3bb9"
+          }
+        }
+      ],
+      "value_evidence": "Host input bits, captured panel histories and multiply operands; no separate final A/B readback"
+    },
+    {
+      "scene": "g1",
+      "run": "results/gemm-walkthrough/try-20260914d/g1-history",
+      "pes": [
+        {
+          "pe": "0,0",
+          "fabric": [
+            4,
+            1
+          ],
+          "elf": "out/bin/out_0_0.elf",
+          "executed_ir": "ir/out_out_0_0/cslc_ir_vkc4s19c/program.ll",
+          "arrays": [
+            {
+              "name": "A",
+              "elf_address": 7100,
+              "elf_address_hex": "0x1bbc",
+              "bytes": 16,
+              "elements": 4,
+              "section": ".bss",
+              "section_flags": 3,
+              "ir_definition": "@A = internal global [4 x float] zeroinitializer, align 4",
+              "storage": "PE-local SRAM",
+              "role": "host-loaded input array"
+            },
+            {
+              "name": "B",
+              "elf_address": 7116,
+              "elf_address_hex": "0x1bcc",
+              "bytes": 16,
+              "elements": 4,
+              "section": ".bss",
+              "section_flags": 3,
+              "ir_definition": "@B = internal global [4 x float] zeroinitializer, align 4",
+              "storage": "PE-local SRAM",
+              "role": "host-loaded input array"
+            },
+            {
+              "name": "abuf",
+              "elf_address": 7584,
+              "elf_address_hex": "0x1da0",
+              "bytes": 16,
+              "elements": 4,
+              "section": ".bss",
+              "section_flags": 3,
+              "ir_definition": "@abuf = internal global [4 x float] zeroinitializer, align 4",
+              "storage": "PE-local SRAM",
+              "role": "received panel buffer"
+            },
+            {
+              "name": "bbuf",
+              "elf_address": 7600,
+              "elf_address_hex": "0x1db0",
+              "bytes": 16,
+              "elements": 4,
+              "section": ".bss",
+              "section_flags": 3,
+              "ir_definition": "@bbuf = internal global [4 x float] zeroinitializer, align 4",
+              "storage": "PE-local SRAM",
+              "role": "received panel buffer"
+            }
+          ],
+          "hashes": {
+            "out/bin/out_0_0.elf": "f43926494202e85b5b1f6ba734aaf8771676e4a0084f2af6eb269b8992b4e706",
+            "pe.csl": "6831746377a6287bc3bc865e0d009752fa04495db765ec40f4720c7b8b7d5551",
+            "run.py": "02617728570c852a5a24d0f027cf0dce718c7ff1360b7d168bc659dd8748ca36",
+            "ir/out_out_0_0/program.ll": "bf97845806493524debb75bc856e75951b6e2c699556952e486024c27499daf0",
+            "ir/out_out_0_0/cslc_ir_vkc4s19c/program.ll": "c7bd18fd25386ca5117923ee3aca06d2b94cbe6ab63dcb1d64d195072f1a9f53"
+          }
+        },
+        {
+          "pe": "0,1",
+          "fabric": [
+            4,
+            2
+          ],
+          "elf": "out/bin/out_1_0.elf",
+          "executed_ir": "ir/out_out_1_0/cslc_ir_dbcqh1bf/program.ll",
+          "arrays": [
+            {
+              "name": "A",
+              "elf_address": 7104,
+              "elf_address_hex": "0x1bc0",
+              "bytes": 16,
+              "elements": 4,
+              "section": ".bss",
+              "section_flags": 3,
+              "ir_definition": "@A = internal global [4 x float] zeroinitializer, align 4",
+              "storage": "PE-local SRAM",
+              "role": "host-loaded input array"
+            },
+            {
+              "name": "B",
+              "elf_address": 7120,
+              "elf_address_hex": "0x1bd0",
+              "bytes": 16,
+              "elements": 4,
+              "section": ".bss",
+              "section_flags": 3,
+              "ir_definition": "@B = internal global [4 x float] zeroinitializer, align 4",
+              "storage": "PE-local SRAM",
+              "role": "host-loaded input array"
+            },
+            {
+              "name": "abuf",
+              "elf_address": 7588,
+              "elf_address_hex": "0x1da4",
+              "bytes": 16,
+              "elements": 4,
+              "section": ".bss",
+              "section_flags": 3,
+              "ir_definition": "@abuf = internal global [4 x float] zeroinitializer, align 4",
+              "storage": "PE-local SRAM",
+              "role": "received panel buffer"
+            },
+            {
+              "name": "bbuf",
+              "elf_address": 7604,
+              "elf_address_hex": "0x1db4",
+              "bytes": 16,
+              "elements": 4,
+              "section": ".bss",
+              "section_flags": 3,
+              "ir_definition": "@bbuf = internal global [4 x float] zeroinitializer, align 4",
+              "storage": "PE-local SRAM",
+              "role": "received panel buffer"
+            }
+          ],
+          "hashes": {
+            "out/bin/out_1_0.elf": "f080e2bf4afca91a07e011c18af63fea77c5fd717703b12052fe7feccdd7e96e",
+            "pe.csl": "6831746377a6287bc3bc865e0d009752fa04495db765ec40f4720c7b8b7d5551",
+            "run.py": "02617728570c852a5a24d0f027cf0dce718c7ff1360b7d168bc659dd8748ca36",
+            "ir/out_out_1_0/program.ll": "5854f801c1e37d284339089123689129a3e589618d499626b4c68be94192d183",
+            "ir/out_out_1_0/cslc_ir_dbcqh1bf/program.ll": "b1f08fa2cb963ad13d43ebbc1dfe04f779714bf7bdfe696eaa169d25052f9499"
+          }
+        },
+        {
+          "pe": "1,0",
+          "fabric": [
+            5,
+            1
+          ],
+          "elf": "out/bin/out_2_0.elf",
+          "executed_ir": "ir/out_out_2_0/cslc_ir_4ompk2jk/program.ll",
+          "arrays": [
+            {
+              "name": "A",
+              "elf_address": 7104,
+              "elf_address_hex": "0x1bc0",
+              "bytes": 16,
+              "elements": 4,
+              "section": ".bss",
+              "section_flags": 3,
+              "ir_definition": "@A = internal global [4 x float] zeroinitializer, align 4",
+              "storage": "PE-local SRAM",
+              "role": "host-loaded input array"
+            },
+            {
+              "name": "B",
+              "elf_address": 7120,
+              "elf_address_hex": "0x1bd0",
+              "bytes": 16,
+              "elements": 4,
+              "section": ".bss",
+              "section_flags": 3,
+              "ir_definition": "@B = internal global [4 x float] zeroinitializer, align 4",
+              "storage": "PE-local SRAM",
+              "role": "host-loaded input array"
+            },
+            {
+              "name": "abuf",
+              "elf_address": 7588,
+              "elf_address_hex": "0x1da4",
+              "bytes": 16,
+              "elements": 4,
+              "section": ".bss",
+              "section_flags": 3,
+              "ir_definition": "@abuf = internal global [4 x float] zeroinitializer, align 4",
+              "storage": "PE-local SRAM",
+              "role": "received panel buffer"
+            },
+            {
+              "name": "bbuf",
+              "elf_address": 7604,
+              "elf_address_hex": "0x1db4",
+              "bytes": 16,
+              "elements": 4,
+              "section": ".bss",
+              "section_flags": 3,
+              "ir_definition": "@bbuf = internal global [4 x float] zeroinitializer, align 4",
+              "storage": "PE-local SRAM",
+              "role": "received panel buffer"
+            }
+          ],
+          "hashes": {
+            "out/bin/out_2_0.elf": "96ad15471771378b56d722abe0b785a5341fc5b9fa6bd207378df595a87efac7",
+            "pe.csl": "6831746377a6287bc3bc865e0d009752fa04495db765ec40f4720c7b8b7d5551",
+            "run.py": "02617728570c852a5a24d0f027cf0dce718c7ff1360b7d168bc659dd8748ca36",
+            "ir/out_out_2_0/program.ll": "5adb0367ef6458f4a6c7755b1cc0c5badda6062d57f805c90fa7a502c2474077",
+            "ir/out_out_2_0/cslc_ir_4ompk2jk/program.ll": "9d51d17ae4b4d3bb6482a8c17f97743714ae81b60ed9ab12b9952ecd12d1b6cc"
+          }
+        },
+        {
+          "pe": "1,1",
+          "fabric": [
+            5,
+            2
+          ],
+          "elf": "out/bin/out_3_0.elf",
+          "executed_ir": "ir/out_out_3_0/cslc_ir_oas52vw3/program.ll",
+          "arrays": [
+            {
+              "name": "A",
+              "elf_address": 7100,
+              "elf_address_hex": "0x1bbc",
+              "bytes": 16,
+              "elements": 4,
+              "section": ".bss",
+              "section_flags": 3,
+              "ir_definition": "@A = internal global [4 x float] zeroinitializer, align 4",
+              "storage": "PE-local SRAM",
+              "role": "host-loaded input array"
+            },
+            {
+              "name": "B",
+              "elf_address": 7116,
+              "elf_address_hex": "0x1bcc",
+              "bytes": 16,
+              "elements": 4,
+              "section": ".bss",
+              "section_flags": 3,
+              "ir_definition": "@B = internal global [4 x float] zeroinitializer, align 4",
+              "storage": "PE-local SRAM",
+              "role": "host-loaded input array"
+            },
+            {
+              "name": "abuf",
+              "elf_address": 7584,
+              "elf_address_hex": "0x1da0",
+              "bytes": 16,
+              "elements": 4,
+              "section": ".bss",
+              "section_flags": 3,
+              "ir_definition": "@abuf = internal global [4 x float] zeroinitializer, align 4",
+              "storage": "PE-local SRAM",
+              "role": "received panel buffer"
+            },
+            {
+              "name": "bbuf",
+              "elf_address": 7600,
+              "elf_address_hex": "0x1db0",
+              "bytes": 16,
+              "elements": 4,
+              "section": ".bss",
+              "section_flags": 3,
+              "ir_definition": "@bbuf = internal global [4 x float] zeroinitializer, align 4",
+              "storage": "PE-local SRAM",
+              "role": "received panel buffer"
+            }
+          ],
+          "hashes": {
+            "out/bin/out_3_0.elf": "029e7d7857ffbf7a6844bea885c866135fa54ed742b2a24183f1a299adca2740",
+            "pe.csl": "6831746377a6287bc3bc865e0d009752fa04495db765ec40f4720c7b8b7d5551",
+            "run.py": "02617728570c852a5a24d0f027cf0dce718c7ff1360b7d168bc659dd8748ca36",
+            "ir/out_out_3_0/program.ll": "5f65c4a422d2e6784791ff4fb599a25200344e77595fe6b1267e59e709eb70a7",
+            "ir/out_out_3_0/cslc_ir_oas52vw3/program.ll": "d7f8fb607e311be45b37396f07a5c0f454b26a76181bc08df265992ff3db3aa0"
+          }
+        }
+      ],
+      "value_evidence": "Host input bits, captured panel histories and multiply operands; no separate final A/B readback"
+    },
+    {
+      "scene": "g2",
+      "run": "results/gemm-walkthrough/try-20260914d/g2-history",
+      "pes": [
+        {
+          "pe": "0,0",
+          "fabric": [
+            4,
+            1
+          ],
+          "elf": "out/bin/out_0_0.elf",
+          "executed_ir": "ir/out_out_0_0/cslc_ir_sgafdgxz/program.ll",
+          "arrays": [
+            {
+              "name": "A",
+              "elf_address": 7100,
+              "elf_address_hex": "0x1bbc",
+              "bytes": 64,
+              "elements": 16,
+              "section": ".bss",
+              "section_flags": 3,
+              "ir_definition": "@A = internal global [16 x float] zeroinitializer, align 4",
+              "storage": "PE-local SRAM",
+              "role": "host-loaded input array"
+            },
+            {
+              "name": "B",
+              "elf_address": 7164,
+              "elf_address_hex": "0x1bfc",
+              "bytes": 64,
+              "elements": 16,
+              "section": ".bss",
+              "section_flags": 3,
+              "ir_definition": "@B = internal global [16 x float] zeroinitializer, align 4",
+              "storage": "PE-local SRAM",
+              "role": "host-loaded input array"
+            },
+            {
+              "name": "abuf",
+              "elf_address": 10384,
+              "elf_address_hex": "0x2890",
+              "bytes": 64,
+              "elements": 16,
+              "section": ".bss",
+              "section_flags": 3,
+              "ir_definition": "@abuf = internal global [16 x float] zeroinitializer, align 4",
+              "storage": "PE-local SRAM",
+              "role": "received panel buffer"
+            },
+            {
+              "name": "bbuf",
+              "elf_address": 10448,
+              "elf_address_hex": "0x28d0",
+              "bytes": 64,
+              "elements": 16,
+              "section": ".bss",
+              "section_flags": 3,
+              "ir_definition": "@bbuf = internal global [16 x float] zeroinitializer, align 4",
+              "storage": "PE-local SRAM",
+              "role": "received panel buffer"
+            }
+          ],
+          "hashes": {
+            "out/bin/out_0_0.elf": "06ea73ee8891915c5987e6c952749368b411b5c0138942ee44b60ae9369ed9fd",
+            "pe.csl": "6831746377a6287bc3bc865e0d009752fa04495db765ec40f4720c7b8b7d5551",
+            "run.py": "02617728570c852a5a24d0f027cf0dce718c7ff1360b7d168bc659dd8748ca36",
+            "ir/out_out_0_0/program.ll": "a47da314af32c9b8eb3b1c6d95b6197a18d8cff7ec9c0f8b4a5316d7abcf51f7",
+            "ir/out_out_0_0/cslc_ir_sgafdgxz/program.ll": "e4be83647de8dcde77ebe9a61f33adfaec0efef4c969aecb0a13c54da7ab5cb2"
+          }
+        },
+        {
+          "pe": "0,1",
+          "fabric": [
+            4,
+            2
+          ],
+          "elf": "out/bin/out_1_0.elf",
+          "executed_ir": "ir/out_out_1_0/cslc_ir_0zo7jfvt/program.ll",
+          "arrays": [
+            {
+              "name": "A",
+              "elf_address": 7104,
+              "elf_address_hex": "0x1bc0",
+              "bytes": 64,
+              "elements": 16,
+              "section": ".bss",
+              "section_flags": 3,
+              "ir_definition": "@A = internal global [16 x float] zeroinitializer, align 4",
+              "storage": "PE-local SRAM",
+              "role": "host-loaded input array"
+            },
+            {
+              "name": "B",
+              "elf_address": 7168,
+              "elf_address_hex": "0x1c00",
+              "bytes": 64,
+              "elements": 16,
+              "section": ".bss",
+              "section_flags": 3,
+              "ir_definition": "@B = internal global [16 x float] zeroinitializer, align 4",
+              "storage": "PE-local SRAM",
+              "role": "host-loaded input array"
+            },
+            {
+              "name": "abuf",
+              "elf_address": 10388,
+              "elf_address_hex": "0x2894",
+              "bytes": 64,
+              "elements": 16,
+              "section": ".bss",
+              "section_flags": 3,
+              "ir_definition": "@abuf = internal global [16 x float] zeroinitializer, align 4",
+              "storage": "PE-local SRAM",
+              "role": "received panel buffer"
+            },
+            {
+              "name": "bbuf",
+              "elf_address": 10452,
+              "elf_address_hex": "0x28d4",
+              "bytes": 64,
+              "elements": 16,
+              "section": ".bss",
+              "section_flags": 3,
+              "ir_definition": "@bbuf = internal global [16 x float] zeroinitializer, align 4",
+              "storage": "PE-local SRAM",
+              "role": "received panel buffer"
+            }
+          ],
+          "hashes": {
+            "out/bin/out_1_0.elf": "c90c0fdde4de56c4a6ebbd7d0a9e04f401d73ab4ec460949bc2688d72f905e37",
+            "pe.csl": "6831746377a6287bc3bc865e0d009752fa04495db765ec40f4720c7b8b7d5551",
+            "run.py": "02617728570c852a5a24d0f027cf0dce718c7ff1360b7d168bc659dd8748ca36",
+            "ir/out_out_1_0/program.ll": "0304172a6e760f9f91695696e2d03706d4f9602b33a8def0d0a615a21e2b652f",
+            "ir/out_out_1_0/cslc_ir_0zo7jfvt/program.ll": "43d235462b2526e04232b9740142758a61c8285418d0105add22a6dd60946a2a"
+          }
+        },
+        {
+          "pe": "1,0",
+          "fabric": [
+            5,
+            1
+          ],
+          "elf": "out/bin/out_2_0.elf",
+          "executed_ir": "ir/out_out_2_0/cslc_ir__oxz45ks/program.ll",
+          "arrays": [
+            {
+              "name": "A",
+              "elf_address": 7104,
+              "elf_address_hex": "0x1bc0",
+              "bytes": 64,
+              "elements": 16,
+              "section": ".bss",
+              "section_flags": 3,
+              "ir_definition": "@A = internal global [16 x float] zeroinitializer, align 4",
+              "storage": "PE-local SRAM",
+              "role": "host-loaded input array"
+            },
+            {
+              "name": "B",
+              "elf_address": 7168,
+              "elf_address_hex": "0x1c00",
+              "bytes": 64,
+              "elements": 16,
+              "section": ".bss",
+              "section_flags": 3,
+              "ir_definition": "@B = internal global [16 x float] zeroinitializer, align 4",
+              "storage": "PE-local SRAM",
+              "role": "host-loaded input array"
+            },
+            {
+              "name": "abuf",
+              "elf_address": 10388,
+              "elf_address_hex": "0x2894",
+              "bytes": 64,
+              "elements": 16,
+              "section": ".bss",
+              "section_flags": 3,
+              "ir_definition": "@abuf = internal global [16 x float] zeroinitializer, align 4",
+              "storage": "PE-local SRAM",
+              "role": "received panel buffer"
+            },
+            {
+              "name": "bbuf",
+              "elf_address": 10452,
+              "elf_address_hex": "0x28d4",
+              "bytes": 64,
+              "elements": 16,
+              "section": ".bss",
+              "section_flags": 3,
+              "ir_definition": "@bbuf = internal global [16 x float] zeroinitializer, align 4",
+              "storage": "PE-local SRAM",
+              "role": "received panel buffer"
+            }
+          ],
+          "hashes": {
+            "out/bin/out_2_0.elf": "6e27850eaf3fcb40ea76c24b562dc02d5b31ac3e2576af1623ac2bc7bb57058e",
+            "pe.csl": "6831746377a6287bc3bc865e0d009752fa04495db765ec40f4720c7b8b7d5551",
+            "run.py": "02617728570c852a5a24d0f027cf0dce718c7ff1360b7d168bc659dd8748ca36",
+            "ir/out_out_2_0/program.ll": "2e701f8fefc9a051cbe61060353a72cd5fea2e377946baa3ff6abeb0b9c18b8f",
+            "ir/out_out_2_0/cslc_ir__oxz45ks/program.ll": "cba01e0e909f6ad13d3936f41b9127b4f78e8c4554ad0eca3c59b872ad8926d1"
+          }
+        },
+        {
+          "pe": "1,1",
+          "fabric": [
+            5,
+            2
+          ],
+          "elf": "out/bin/out_3_0.elf",
+          "executed_ir": "ir/out_out_3_0/cslc_ir_kt_o0jft/program.ll",
+          "arrays": [
+            {
+              "name": "A",
+              "elf_address": 7100,
+              "elf_address_hex": "0x1bbc",
+              "bytes": 64,
+              "elements": 16,
+              "section": ".bss",
+              "section_flags": 3,
+              "ir_definition": "@A = internal global [16 x float] zeroinitializer, align 4",
+              "storage": "PE-local SRAM",
+              "role": "host-loaded input array"
+            },
+            {
+              "name": "B",
+              "elf_address": 7164,
+              "elf_address_hex": "0x1bfc",
+              "bytes": 64,
+              "elements": 16,
+              "section": ".bss",
+              "section_flags": 3,
+              "ir_definition": "@B = internal global [16 x float] zeroinitializer, align 4",
+              "storage": "PE-local SRAM",
+              "role": "host-loaded input array"
+            },
+            {
+              "name": "abuf",
+              "elf_address": 10384,
+              "elf_address_hex": "0x2890",
+              "bytes": 64,
+              "elements": 16,
+              "section": ".bss",
+              "section_flags": 3,
+              "ir_definition": "@abuf = internal global [16 x float] zeroinitializer, align 4",
+              "storage": "PE-local SRAM",
+              "role": "received panel buffer"
+            },
+            {
+              "name": "bbuf",
+              "elf_address": 10448,
+              "elf_address_hex": "0x28d0",
+              "bytes": 64,
+              "elements": 16,
+              "section": ".bss",
+              "section_flags": 3,
+              "ir_definition": "@bbuf = internal global [16 x float] zeroinitializer, align 4",
+              "storage": "PE-local SRAM",
+              "role": "received panel buffer"
+            }
+          ],
+          "hashes": {
+            "out/bin/out_3_0.elf": "c4dc613f02d70b07088cba8de71cddda8c7443c84484d64a153ca371da5edea8",
+            "pe.csl": "6831746377a6287bc3bc865e0d009752fa04495db765ec40f4720c7b8b7d5551",
+            "run.py": "02617728570c852a5a24d0f027cf0dce718c7ff1360b7d168bc659dd8748ca36",
+            "ir/out_out_3_0/program.ll": "19a3e47f098e2b3759c22a5d52bf262188a2aa3f2a9bb9a262112e1f0ee68174",
+            "ir/out_out_3_0/cslc_ir_kt_o0jft/program.ll": "015a0b2760ecd338465b29666d91458acf7cbf88b6a971afcd1bcbec4183eded"
+          }
+        }
+      ],
+      "value_evidence": "Host input bits, captured panel histories and multiply operands; no separate final A/B readback"
+    }
+  ],
+  "arrays": 52,
+  "scope": "Compiled PE-local SRAM allocations for retained simulator builds, not physical bank measurements or cycle-by-cycle SRAM contents. Scalar arithmetic uses transient operand copies; fabric buffering is distinct from these allocated arrays.",
+  "architecture_sources": [
+    "https://sdk.cerebras.ai/computing-with-cerebras",
+    "https://sdk.cerebras.ai/csl/language/appendix"
+  ]
+}

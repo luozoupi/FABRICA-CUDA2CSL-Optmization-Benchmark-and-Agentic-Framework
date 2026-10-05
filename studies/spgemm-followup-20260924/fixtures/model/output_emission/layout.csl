@@ -1,0 +1,20 @@
+const memcpy = @import_module("<memcpy/get_params>", .{ .width=1, .height=1 });
+layout {
+@set_rectangle(1,1);
+@set_tile_code(0,0,"pe.csl", .{ .memcpy_params=memcpy.get_params(0) });
+@export_name("ap", [*]u32, true);
+@export_name("aj", [*]u32, true);
+@export_name("av", [*]f32, true);
+@export_name("bp", [*]u32, true);
+@export_name("bj", [*]u32, true);
+@export_name("bv", [*]f32, true);
+@export_name("cp", [*]u32, true);
+@export_name("cj", [*]u32, true);
+@export_name("cv", [*]f32, true);
+@export_name("count", [*]u16, true);
+@export_name("status", [*]u16, true);
+@export_name("limit", [*]u16, true);
+@export_name("time_words", [*]u16, true);
+@export_name("compute", fn()void);
+@export_name("enable_timer", fn()void);
+}

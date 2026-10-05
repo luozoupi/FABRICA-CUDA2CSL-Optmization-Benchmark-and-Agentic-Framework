@@ -1,0 +1,242 @@
+[
+  {
+    "kernel_dir": "<path>",
+    "csl_main": "layout.csl",
+    "params": {
+      "S": "4",
+      "N": "16",
+      "K": "16",
+      "R": "1",
+      "AC": "16",
+      "BC": "48",
+      "OC": "16",
+      "W": "16"
+    },
+    "arms": {
+      "sim": {
+        "status": "pass",
+        "cycles_send": 3558,
+        "success_marker": true,
+        "returncode": 0,
+        "wall_s": 190.6,
+        "reason": null,
+        "stdout_tail": "8ae67e834b1d4a8fe45', 'B': '7e2967fcea3826400e618dd285fa7a79de53670f9f2aba326e16e3278b7e9ef8'}} mode 1 root 5948 local_max 3907\nPASS strong-m16-k16-n16-p16-d3-full {'pattern': 'skewed', 'policy': 'product_balanced', 'changed': True, 'matrix_hashes': {'A': '478347abfaefc3478a995b4c43157169208ab36b66e81bafa953182b7d42a791', 'B': '89314289f495628630415783f044dc889450c90810bff1920735875d88e0fde8'}} mode 0 root 6172 local_max 3907\nPASS strong-m16-k16-n16-p16-d3-full {'pattern': 'skewed', 'policy': 'product_balanced', 'changed': True, 'matrix_hashes': {'A': '478347abfaefc3478a995b4c43157169208ab36b66e81bafa953182b7d42a791', 'B': '89314289f495628630415783f044dc889450c90810bff1920735875d88e0fde8'}} mode 1 root 5948 local_max 3907\nPASS strong-m16-k16-n16-p16-d3-full {'pattern': 'skewed', 'policy': 'product_balanced', 'changed': False, 'matrix_hashes': {'A': '2fe6166c51a712116c9b33c161c8d3f6b7e2f13596a0d8ae67e834b1d4a8fe45', 'B': '7e2967fcea3826400e618dd285fa7a79de53670f9f2aba326e16e3278b7e9ef8'}} mode 0 root 6172 local_max 3907\nPASS strong-m16-k16-n16-p16-d3-full {'pattern': 'skewed', 'policy': 'product_balanced', 'changed': False, 'matrix_hashes': {'A': '2fe6166c51a712116c9b33c161c8d3f6b7e2f13596a0d8ae67e834b1d4a8fe45', 'B': '7e2967fcea3826400e618dd285fa7a79de53670f9f2aba326e16e3278b7e9ef8'}} mode 1 root 5948 local_max 3907\nCOMPLETE strong-m16-k16-n16-p16-d3-full 48 verified distributed launches\nsession banded broadcast root spans [3558, 3558, 3558]\ncycles_send = 3558 cycles\nSUCCESS\n",
+        "stderr_tail": "Event 2026-09-26 22:01:06 +0000 UTC reason=InconsistentVersion wsjob=wsjob-REDACTED message='Warning: client semantic version 1.14.0 is inconsistent with cluster server semantic version 1.20.2, there's a risk job could fail due to inconsistent setup.'\nEmpty ingress service url. Falling back to default server: 0.0.0.0:443\n"
+      },
+      "hw": {
+        "status": "pass",
+        "cycles_send": 3597,
+        "success_marker": true,
+        "returncode": 0,
+        "wall_s": 80.5,
+        "reason": null,
+        "stdout_tail": "8ae67e834b1d4a8fe45', 'B': '7e2967fcea3826400e618dd285fa7a79de53670f9f2aba326e16e3278b7e9ef8'}} mode 1 root 5896 local_max 3774\nPASS strong-m16-k16-n16-p16-d3-full {'pattern': 'skewed', 'policy': 'product_balanced', 'changed': True, 'matrix_hashes': {'A': '478347abfaefc3478a995b4c43157169208ab36b66e81bafa953182b7d42a791', 'B': '89314289f495628630415783f044dc889450c90810bff1920735875d88e0fde8'}} mode 0 root 6158 local_max 3774\nPASS strong-m16-k16-n16-p16-d3-full {'pattern': 'skewed', 'policy': 'product_balanced', 'changed': True, 'matrix_hashes': {'A': '478347abfaefc3478a995b4c43157169208ab36b66e81bafa953182b7d42a791', 'B': '89314289f495628630415783f044dc889450c90810bff1920735875d88e0fde8'}} mode 1 root 5896 local_max 3774\nPASS strong-m16-k16-n16-p16-d3-full {'pattern': 'skewed', 'policy': 'product_balanced', 'changed': False, 'matrix_hashes': {'A': '2fe6166c51a712116c9b33c161c8d3f6b7e2f13596a0d8ae67e834b1d4a8fe45', 'B': '7e2967fcea3826400e618dd285fa7a79de53670f9f2aba326e16e3278b7e9ef8'}} mode 0 root 6158 local_max 3774\nPASS strong-m16-k16-n16-p16-d3-full {'pattern': 'skewed', 'policy': 'product_balanced', 'changed': False, 'matrix_hashes': {'A': '2fe6166c51a712116c9b33c161c8d3f6b7e2f13596a0d8ae67e834b1d4a8fe45', 'B': '7e2967fcea3826400e618dd285fa7a79de53670f9f2aba326e16e3278b7e9ef8'}} mode 1 root 5896 local_max 3774\nCOMPLETE strong-m16-k16-n16-p16-d3-full 48 verified distributed launches\nsession banded broadcast root spans [3597, 3597, 3597]\ncycles_send = 3597 cycles\nSUCCESS\n",
+        "stderr_tail": "Event 2026-09-26 22:05:07 +0000 UTC reason=InconsistentVersion wsjob=wsjob-REDACTED message='Warning: client semantic version 1.14.0 is inconsistent with cluster server semantic version 1.20.2, there's a risk job could fail due to inconsistent setup.'\nCould not find coordinator IP:port in cluster details\nEmpty ingress service url. Falling back to default server: 0.0.0.0:443\n"
+      }
+    },
+    "timing_method": "device_internal",
+    "hw_comparable": true,
+    "hw_vs_sim": {
+      "sim_cycles": 3558,
+      "hw_cycles": 3597,
+      "ratio": 1.011,
+      "delta_pct": 1.1,
+      "comparable": true,
+      "caveat": null
+    },
+    "case": "strong-m16-k16-n16-p16-d3-full",
+    "wall_s": 381.6
+  },
+  {
+    "kernel_dir": "<path>",
+    "csl_main": "layout.csl",
+    "params": {
+      "S": "2",
+      "N": "16",
+      "K": "16",
+      "R": "4",
+      "AC": "32",
+      "BC": "48",
+      "OC": "36",
+      "W": "16"
+    },
+    "arms": {
+      "sim": {
+        "status": "pass",
+        "cycles_send": 7360,
+        "success_marker": true,
+        "returncode": 0,
+        "wall_s": 170.7,
+        "reason": null,
+        "stdout_tail": "96a0d8ae67e834b1d4a8fe45', 'B': '7e2967fcea3826400e618dd285fa7a79de53670f9f2aba326e16e3278b7e9ef8'}} mode 1 root 7718 local_max 5764\nPASS strong-m16-k16-n16-p4-d3-full {'pattern': 'skewed', 'policy': 'product_balanced', 'changed': True, 'matrix_hashes': {'A': '478347abfaefc3478a995b4c43157169208ab36b66e81bafa953182b7d42a791', 'B': '89314289f495628630415783f044dc889450c90810bff1920735875d88e0fde8'}} mode 0 root 7942 local_max 5764\nPASS strong-m16-k16-n16-p4-d3-full {'pattern': 'skewed', 'policy': 'product_balanced', 'changed': True, 'matrix_hashes': {'A': '478347abfaefc3478a995b4c43157169208ab36b66e81bafa953182b7d42a791', 'B': '89314289f495628630415783f044dc889450c90810bff1920735875d88e0fde8'}} mode 1 root 7718 local_max 5764\nPASS strong-m16-k16-n16-p4-d3-full {'pattern': 'skewed', 'policy': 'product_balanced', 'changed': False, 'matrix_hashes': {'A': '2fe6166c51a712116c9b33c161c8d3f6b7e2f13596a0d8ae67e834b1d4a8fe45', 'B': '7e2967fcea3826400e618dd285fa7a79de53670f9f2aba326e16e3278b7e9ef8'}} mode 0 root 7942 local_max 5764\nPASS strong-m16-k16-n16-p4-d3-full {'pattern': 'skewed', 'policy': 'product_balanced', 'changed': False, 'matrix_hashes': {'A': '2fe6166c51a712116c9b33c161c8d3f6b7e2f13596a0d8ae67e834b1d4a8fe45', 'B': '7e2967fcea3826400e618dd285fa7a79de53670f9f2aba326e16e3278b7e9ef8'}} mode 1 root 7718 local_max 5764\nCOMPLETE strong-m16-k16-n16-p4-d3-full 48 verified distributed launches\nsession banded broadcast root spans [7360, 7360, 7360]\ncycles_send = 7360 cycles\nSUCCESS\n",
+        "stderr_tail": "Event 2026-09-26 22:07:07 +0000 UTC reason=InconsistentVersion wsjob=wsjob-REDACTED message='Warning: client semantic version 1.14.0 is inconsistent with cluster server semantic version 1.20.2, there's a risk job could fail due to inconsistent setup.'\nEmpty ingress service url. Falling back to default server: 0.0.0.0:443\n"
+      },
+      "hw": {
+        "status": "pass",
+        "cycles_send": 7129,
+        "success_marker": true,
+        "returncode": 0,
+        "wall_s": 80.5,
+        "reason": null,
+        "stdout_tail": "96a0d8ae67e834b1d4a8fe45', 'B': '7e2967fcea3826400e618dd285fa7a79de53670f9f2aba326e16e3278b7e9ef8'}} mode 1 root 7430 local_max 5392\nPASS strong-m16-k16-n16-p4-d3-full {'pattern': 'skewed', 'policy': 'product_balanced', 'changed': True, 'matrix_hashes': {'A': '478347abfaefc3478a995b4c43157169208ab36b66e81bafa953182b7d42a791', 'B': '89314289f495628630415783f044dc889450c90810bff1920735875d88e0fde8'}} mode 0 root 7692 local_max 5392\nPASS strong-m16-k16-n16-p4-d3-full {'pattern': 'skewed', 'policy': 'product_balanced', 'changed': True, 'matrix_hashes': {'A': '478347abfaefc3478a995b4c43157169208ab36b66e81bafa953182b7d42a791', 'B': '89314289f495628630415783f044dc889450c90810bff1920735875d88e0fde8'}} mode 1 root 7430 local_max 5392\nPASS strong-m16-k16-n16-p4-d3-full {'pattern': 'skewed', 'policy': 'product_balanced', 'changed': False, 'matrix_hashes': {'A': '2fe6166c51a712116c9b33c161c8d3f6b7e2f13596a0d8ae67e834b1d4a8fe45', 'B': '7e2967fcea3826400e618dd285fa7a79de53670f9f2aba326e16e3278b7e9ef8'}} mode 0 root 7692 local_max 5392\nPASS strong-m16-k16-n16-p4-d3-full {'pattern': 'skewed', 'policy': 'product_balanced', 'changed': False, 'matrix_hashes': {'A': '2fe6166c51a712116c9b33c161c8d3f6b7e2f13596a0d8ae67e834b1d4a8fe45', 'B': '7e2967fcea3826400e618dd285fa7a79de53670f9f2aba326e16e3278b7e9ef8'}} mode 1 root 7430 local_max 5392\nCOMPLETE strong-m16-k16-n16-p4-d3-full 48 verified distributed launches\nsession banded broadcast root spans [7129, 7129, 7129]\ncycles_send = 7129 cycles\nSUCCESS\n",
+        "stderr_tail": "Event 2026-09-26 22:11:08 +0000 UTC reason=InconsistentVersion wsjob=wsjob-REDACTED message='Warning: client semantic version 1.14.0 is inconsistent with cluster server semantic version 1.20.2, there's a risk job could fail due to inconsistent setup.'\nCould not find coordinator IP:port in cluster details\nEmpty ingress service url. Falling back to default server: 0.0.0.0:443\n"
+      }
+    },
+    "timing_method": "device_internal",
+    "hw_comparable": true,
+    "hw_vs_sim": {
+      "sim_cycles": 7360,
+      "hw_cycles": 7129,
+      "ratio": 0.9686,
+      "delta_pct": -3.14,
+      "comparable": true,
+      "caveat": null
+    },
+    "case": "strong-m16-k16-n16-p4-d3-full",
+    "wall_s": 361.4
+  },
+  {
+    "kernel_dir": "<path>",
+    "csl_main": "layout.csl",
+    "params": {
+      "S": "4",
+      "N": "64",
+      "K": "64",
+      "R": "4",
+      "AC": "68",
+      "BC": "192",
+      "OC": "204",
+      "W": "64"
+    },
+    "arms": {
+      "sim": {
+        "status": "pass",
+        "cycles_send": 14471,
+        "success_marker": true,
+        "returncode": 0,
+        "wall_s": 630.6,
+        "reason": null,
+        "stdout_tail": "c3b2e', 'B': '05720ddab4ddd020c28a8cb8906678d2b96c1c88659cab39f25da63921c05894'}} mode 1 root 15013 local_max 12952\nPASS strong-m64-k64-n64-p16-d3-full {'pattern': 'skewed', 'policy': 'product_balanced', 'changed': True, 'matrix_hashes': {'A': '5ada9d8dead6ff05e71a8ce876a62c99c1a0df8a5490f29c6fa99400f213138e', 'B': '1f1bbee00fbf8e45ccc99a5abab50621ca43f66cdd237885c75fc6baf1f58c29'}} mode 0 root 15920 local_max 12952\nPASS strong-m64-k64-n64-p16-d3-full {'pattern': 'skewed', 'policy': 'product_balanced', 'changed': True, 'matrix_hashes': {'A': '5ada9d8dead6ff05e71a8ce876a62c99c1a0df8a5490f29c6fa99400f213138e', 'B': '1f1bbee00fbf8e45ccc99a5abab50621ca43f66cdd237885c75fc6baf1f58c29'}} mode 1 root 15022 local_max 12952\nPASS strong-m64-k64-n64-p16-d3-full {'pattern': 'skewed', 'policy': 'product_balanced', 'changed': False, 'matrix_hashes': {'A': '7eabbd764da11b598349629d770d83568eb90f468003f387e40799bf6f8c3b2e', 'B': '05720ddab4ddd020c28a8cb8906678d2b96c1c88659cab39f25da63921c05894'}} mode 0 root 15911 local_max 12952\nPASS strong-m64-k64-n64-p16-d3-full {'pattern': 'skewed', 'policy': 'product_balanced', 'changed': False, 'matrix_hashes': {'A': '7eabbd764da11b598349629d770d83568eb90f468003f387e40799bf6f8c3b2e', 'B': '05720ddab4ddd020c28a8cb8906678d2b96c1c88659cab39f25da63921c05894'}} mode 1 root 15013 local_max 12952\nCOMPLETE strong-m64-k64-n64-p16-d3-full 48 verified distributed launches\nsession banded broadcast root spans [14471, 14471, 14471]\ncycles_send = 14471 cycles\nSUCCESS\n",
+        "stderr_tail": "Event 2026-09-26 22:13:09 +0000 UTC reason=InconsistentVersion wsjob=wsjob-REDACTED message='Warning: client semantic version 1.14.0 is inconsistent with cluster server semantic version 1.20.2, there's a risk job could fail due to inconsistent setup.'\nEmpty ingress service url. Falling back to default server: 0.0.0.0:443\n"
+      },
+      "hw": {
+        "status": "pass",
+        "cycles_send": 13430,
+        "success_marker": true,
+        "returncode": 0,
+        "wall_s": 70.6,
+        "reason": null,
+        "stdout_tail": "c3b2e', 'B': '05720ddab4ddd020c28a8cb8906678d2b96c1c88659cab39f25da63921c05894'}} mode 1 root 13729 local_max 11576\nPASS strong-m64-k64-n64-p16-d3-full {'pattern': 'skewed', 'policy': 'product_balanced', 'changed': True, 'matrix_hashes': {'A': '5ada9d8dead6ff05e71a8ce876a62c99c1a0df8a5490f29c6fa99400f213138e', 'B': '1f1bbee00fbf8e45ccc99a5abab50621ca43f66cdd237885c75fc6baf1f58c29'}} mode 0 root 14802 local_max 11577\nPASS strong-m64-k64-n64-p16-d3-full {'pattern': 'skewed', 'policy': 'product_balanced', 'changed': True, 'matrix_hashes': {'A': '5ada9d8dead6ff05e71a8ce876a62c99c1a0df8a5490f29c6fa99400f213138e', 'B': '1f1bbee00fbf8e45ccc99a5abab50621ca43f66cdd237885c75fc6baf1f58c29'}} mode 1 root 13736 local_max 11577\nPASS strong-m64-k64-n64-p16-d3-full {'pattern': 'skewed', 'policy': 'product_balanced', 'changed': False, 'matrix_hashes': {'A': '7eabbd764da11b598349629d770d83568eb90f468003f387e40799bf6f8c3b2e', 'B': '05720ddab4ddd020c28a8cb8906678d2b96c1c88659cab39f25da63921c05894'}} mode 0 root 14795 local_max 11576\nPASS strong-m64-k64-n64-p16-d3-full {'pattern': 'skewed', 'policy': 'product_balanced', 'changed': False, 'matrix_hashes': {'A': '7eabbd764da11b598349629d770d83568eb90f468003f387e40799bf6f8c3b2e', 'B': '05720ddab4ddd020c28a8cb8906678d2b96c1c88659cab39f25da63921c05894'}} mode 1 root 13729 local_max 11576\nCOMPLETE strong-m64-k64-n64-p16-d3-full 48 verified distributed launches\nsession banded broadcast root spans [13430, 13430, 13430]\ncycles_send = 13430 cycles\nSUCCESS\n",
+        "stderr_tail": "Event 2026-09-26 22:24:19 +0000 UTC reason=InconsistentVersion wsjob=wsjob-REDACTED message='Warning: client semantic version 1.14.0 is inconsistent with cluster server semantic version 1.20.2, there's a risk job could fail due to inconsistent setup.'\nCould not find coordinator IP:port in cluster details\nEmpty ingress service url. Falling back to default server: 0.0.0.0:443\n"
+      }
+    },
+    "timing_method": "device_internal",
+    "hw_comparable": true,
+    "hw_vs_sim": {
+      "sim_cycles": 14471,
+      "hw_cycles": 13430,
+      "ratio": 0.9281,
+      "delta_pct": -7.19,
+      "comparable": true,
+      "caveat": null
+    },
+    "case": "strong-m64-k64-n64-p16-d3-full",
+    "wall_s": 781.3
+  },
+  {
+    "kernel_dir": "<path>",
+    "csl_main": "layout.csl",
+    "params": {
+      "S": "2",
+      "N": "64",
+      "K": "64",
+      "R": "16",
+      "AC": "136",
+      "BC": "192",
+      "OC": "408",
+      "W": "64"
+    },
+    "arms": {
+      "sim": {
+        "status": "pass",
+        "cycles_send": 48990,
+        "success_marker": true,
+        "returncode": 0,
+        "wall_s": 730.7,
+        "reason": null,
+        "stdout_tail": "bf6f8c3b2e', 'B': '05720ddab4ddd020c28a8cb8906678d2b96c1c88659cab39f25da63921c05894'}} mode 1 root 49425 local_max 47475\nPASS strong-m64-k64-n64-p4-d3-full {'pattern': 'skewed', 'policy': 'product_balanced', 'changed': True, 'matrix_hashes': {'A': '5ada9d8dead6ff05e71a8ce876a62c99c1a0df8a5490f29c6fa99400f213138e', 'B': '1f1bbee00fbf8e45ccc99a5abab50621ca43f66cdd237885c75fc6baf1f58c29'}} mode 0 root 50448 local_max 47600\nPASS strong-m64-k64-n64-p4-d3-full {'pattern': 'skewed', 'policy': 'product_balanced', 'changed': True, 'matrix_hashes': {'A': '5ada9d8dead6ff05e71a8ce876a62c99c1a0df8a5490f29c6fa99400f213138e', 'B': '1f1bbee00fbf8e45ccc99a5abab50621ca43f66cdd237885c75fc6baf1f58c29'}} mode 1 root 49550 local_max 47600\nPASS strong-m64-k64-n64-p4-d3-full {'pattern': 'skewed', 'policy': 'product_balanced', 'changed': False, 'matrix_hashes': {'A': '7eabbd764da11b598349629d770d83568eb90f468003f387e40799bf6f8c3b2e', 'B': '05720ddab4ddd020c28a8cb8906678d2b96c1c88659cab39f25da63921c05894'}} mode 0 root 50323 local_max 47475\nPASS strong-m64-k64-n64-p4-d3-full {'pattern': 'skewed', 'policy': 'product_balanced', 'changed': False, 'matrix_hashes': {'A': '7eabbd764da11b598349629d770d83568eb90f468003f387e40799bf6f8c3b2e', 'B': '05720ddab4ddd020c28a8cb8906678d2b96c1c88659cab39f25da63921c05894'}} mode 1 root 49425 local_max 47475\nCOMPLETE strong-m64-k64-n64-p4-d3-full 48 verified distributed launches\nsession banded broadcast root spans [48990, 48990, 48990]\ncycles_send = 48990 cycles\nSUCCESS\n",
+        "stderr_tail": "Event 2026-09-26 22:26:10 +0000 UTC reason=InconsistentVersion wsjob=wsjob-REDACTED message='Warning: client semantic version 1.14.0 is inconsistent with cluster server semantic version 1.20.2, there's a risk job could fail due to inconsistent setup.'\nEmpty ingress service url. Falling back to default server: 0.0.0.0:443\n"
+      },
+      "hw": {
+        "status": "pass",
+        "cycles_send": 43985,
+        "success_marker": true,
+        "returncode": 0,
+        "wall_s": 80.5,
+        "reason": null,
+        "stdout_tail": "bf6f8c3b2e', 'B': '05720ddab4ddd020c28a8cb8906678d2b96c1c88659cab39f25da63921c05894'}} mode 1 root 44129 local_max 42103\nPASS strong-m64-k64-n64-p4-d3-full {'pattern': 'skewed', 'policy': 'product_balanced', 'changed': True, 'matrix_hashes': {'A': '5ada9d8dead6ff05e71a8ce876a62c99c1a0df8a5490f29c6fa99400f213138e', 'B': '1f1bbee00fbf8e45ccc99a5abab50621ca43f66cdd237885c75fc6baf1f58c29'}} mode 0 root 45309 local_max 42217\nPASS strong-m64-k64-n64-p4-d3-full {'pattern': 'skewed', 'policy': 'product_balanced', 'changed': True, 'matrix_hashes': {'A': '5ada9d8dead6ff05e71a8ce876a62c99c1a0df8a5490f29c6fa99400f213138e', 'B': '1f1bbee00fbf8e45ccc99a5abab50621ca43f66cdd237885c75fc6baf1f58c29'}} mode 1 root 44243 local_max 42217\nPASS strong-m64-k64-n64-p4-d3-full {'pattern': 'skewed', 'policy': 'product_balanced', 'changed': False, 'matrix_hashes': {'A': '7eabbd764da11b598349629d770d83568eb90f468003f387e40799bf6f8c3b2e', 'B': '05720ddab4ddd020c28a8cb8906678d2b96c1c88659cab39f25da63921c05894'}} mode 0 root 45195 local_max 42103\nPASS strong-m64-k64-n64-p4-d3-full {'pattern': 'skewed', 'policy': 'product_balanced', 'changed': False, 'matrix_hashes': {'A': '7eabbd764da11b598349629d770d83568eb90f468003f387e40799bf6f8c3b2e', 'B': '05720ddab4ddd020c28a8cb8906678d2b96c1c88659cab39f25da63921c05894'}} mode 1 root 44129 local_max 42103\nCOMPLETE strong-m64-k64-n64-p4-d3-full 48 verified distributed launches\nsession banded broadcast root spans [43985, 43985, 43985]\ncycles_send = 43985 cycles\nSUCCESS\n",
+        "stderr_tail": "Event 2026-09-26 22:39:11 +0000 UTC reason=InconsistentVersion wsjob=wsjob-REDACTED message='Warning: client semantic version 1.14.0 is inconsistent with cluster server semantic version 1.20.2, there's a risk job could fail due to inconsistent setup.'\nCould not find coordinator IP:port in cluster details\nEmpty ingress service url. Falling back to default server: 0.0.0.0:443\n"
+      }
+    },
+    "timing_method": "device_internal",
+    "hw_comparable": true,
+    "hw_vs_sim": {
+      "sim_cycles": 48990,
+      "hw_cycles": 43985,
+      "ratio": 0.8978,
+      "delta_pct": -10.22,
+      "comparable": true,
+      "caveat": null
+    },
+    "case": "strong-m64-k64-n64-p4-d3-full",
+    "wall_s": 901.5
+  },
+  {
+    "kernel_dir": "<path>",
+    "csl_main": "layout.csl",
+    "params": {
+      "S": "8",
+      "N": "64",
+      "K": "64",
+      "R": "1",
+      "AC": "17",
+      "BC": "192",
+      "OC": "51",
+      "W": "64"
+    },
+    "arms": {
+      "sim": {
+        "status": "pass",
+        "cycles_send": 5920,
+        "success_marker": true,
+        "returncode": 0,
+        "wall_s": 580.7,
+        "reason": null,
+        "stdout_tail": "387e40799bf6f8c3b2e', 'B': '05720ddab4ddd020c28a8cb8906678d2b96c1c88659cab39f25da63921c05894'}} mode 1 root 8325 local_max 6307\nPASS strong-m64-k64-n64-p64-d3-full {'pattern': 'skewed', 'policy': 'product_balanced', 'changed': True, 'matrix_hashes': {'A': '5ada9d8dead6ff05e71a8ce876a62c99c1a0df8a5490f29c6fa99400f213138e', 'B': '1f1bbee00fbf8e45ccc99a5abab50621ca43f66cdd237885c75fc6baf1f58c29'}} mode 0 root 9232 local_max 6307\nPASS strong-m64-k64-n64-p64-d3-full {'pattern': 'skewed', 'policy': 'product_balanced', 'changed': True, 'matrix_hashes': {'A': '5ada9d8dead6ff05e71a8ce876a62c99c1a0df8a5490f29c6fa99400f213138e', 'B': '1f1bbee00fbf8e45ccc99a5abab50621ca43f66cdd237885c75fc6baf1f58c29'}} mode 1 root 8334 local_max 6307\nPASS strong-m64-k64-n64-p64-d3-full {'pattern': 'skewed', 'policy': 'product_balanced', 'changed': False, 'matrix_hashes': {'A': '7eabbd764da11b598349629d770d83568eb90f468003f387e40799bf6f8c3b2e', 'B': '05720ddab4ddd020c28a8cb8906678d2b96c1c88659cab39f25da63921c05894'}} mode 0 root 9223 local_max 6307\nPASS strong-m64-k64-n64-p64-d3-full {'pattern': 'skewed', 'policy': 'product_balanced', 'changed': False, 'matrix_hashes': {'A': '7eabbd764da11b598349629d770d83568eb90f468003f387e40799bf6f8c3b2e', 'B': '05720ddab4ddd020c28a8cb8906678d2b96c1c88659cab39f25da63921c05894'}} mode 1 root 8325 local_max 6307\nCOMPLETE strong-m64-k64-n64-p64-d3-full 48 verified distributed launches\nsession banded broadcast root spans [5920, 5920, 5920]\ncycles_send = 5920 cycles\nSUCCESS\n",
+        "stderr_tail": "Event 2026-09-26 22:41:12 +0000 UTC reason=InconsistentVersion wsjob=wsjob-REDACTED message='Warning: client semantic version 1.14.0 is inconsistent with cluster server semantic version 1.20.2, there's a risk job could fail due to inconsistent setup.'\nEmpty ingress service url. Falling back to default server: 0.0.0.0:443\n"
+      },
+      "hw": {
+        "status": "pass",
+        "cycles_send": 5876,
+        "success_marker": true,
+        "returncode": 0,
+        "wall_s": 70.6,
+        "reason": null,
+        "stdout_tail": "387e40799bf6f8c3b2e', 'B': '05720ddab4ddd020c28a8cb8906678d2b96c1c88659cab39f25da63921c05894'}} mode 1 root 7994 local_max 5881\nPASS strong-m64-k64-n64-p64-d3-full {'pattern': 'skewed', 'policy': 'product_balanced', 'changed': True, 'matrix_hashes': {'A': '5ada9d8dead6ff05e71a8ce876a62c99c1a0df8a5490f29c6fa99400f213138e', 'B': '1f1bbee00fbf8e45ccc99a5abab50621ca43f66cdd237885c75fc6baf1f58c29'}} mode 0 root 9073 local_max 5884\nPASS strong-m64-k64-n64-p64-d3-full {'pattern': 'skewed', 'policy': 'product_balanced', 'changed': True, 'matrix_hashes': {'A': '5ada9d8dead6ff05e71a8ce876a62c99c1a0df8a5490f29c6fa99400f213138e', 'B': '1f1bbee00fbf8e45ccc99a5abab50621ca43f66cdd237885c75fc6baf1f58c29'}} mode 1 root 8007 local_max 5884\nPASS strong-m64-k64-n64-p64-d3-full {'pattern': 'skewed', 'policy': 'product_balanced', 'changed': False, 'matrix_hashes': {'A': '7eabbd764da11b598349629d770d83568eb90f468003f387e40799bf6f8c3b2e', 'B': '05720ddab4ddd020c28a8cb8906678d2b96c1c88659cab39f25da63921c05894'}} mode 0 root 9060 local_max 5881\nPASS strong-m64-k64-n64-p64-d3-full {'pattern': 'skewed', 'policy': 'product_balanced', 'changed': False, 'matrix_hashes': {'A': '7eabbd764da11b598349629d770d83568eb90f468003f387e40799bf6f8c3b2e', 'B': '05720ddab4ddd020c28a8cb8906678d2b96c1c88659cab39f25da63921c05894'}} mode 1 root 7994 local_max 5881\nCOMPLETE strong-m64-k64-n64-p64-d3-full 48 verified distributed launches\nsession banded broadcast root spans [5876, 5876, 5876]\ncycles_send = 5876 cycles\nSUCCESS\n",
+        "stderr_tail": "Event 2026-09-26 22:52:12 +0000 UTC reason=InconsistentVersion wsjob=wsjob-REDACTED message='Warning: client semantic version 1.14.0 is inconsistent with cluster server semantic version 1.20.2, there's a risk job could fail due to inconsistent setup.'\nCould not find coordinator IP:port in cluster details\nEmpty ingress service url. Falling back to default server: 0.0.0.0:443\n"
+      }
+    },
+    "timing_method": "device_internal",
+    "hw_comparable": true,
+    "hw_vs_sim": {
+      "sim_cycles": 5920,
+      "hw_cycles": 5876,
+      "ratio": 0.9926,
+      "delta_pct": -0.74,
+      "comparable": true,
+      "caveat": null
+    },
+    "case": "strong-m64-k64-n64-p64-d3-full",
+    "wall_s": 771.4
+  }
+]

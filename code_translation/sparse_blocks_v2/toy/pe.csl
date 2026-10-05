@@ -1,0 +1,259 @@
+// Verified building blocks for the sparse strategies, version 2 (XKERNEL_SPARSE_BLOCKS=2). One PE, a toy CSR
+// matrix with the same host contract as the sparse tasks (u32 row pointers and column indices,
+// f32 values). run.py checks every method against numpy and measures its cycles. The regions
+// between "BLOCK <name> BEGIN/END" are cut out verbatim into the optimizer prompt
+// (sparse_blocks.py), so the prompt only ever shows code that compiled and ran correctly here.
+// Names and sizes are the toy's own; nothing here comes from a task's reference program.
+
+param memcpy_params;
+param N: u16;        // rows = columns
+param CAP: u16;      // nonzero capacity
+
+const EXIT: local_task_id = @get_local_task_id(9);
+const sys_mod = @import_module("<memcpy/memcpy>", memcpy_params);
+const timestamp = @import_module("<time>");
+var tsc_a = @zeros([timestamp.tsc_size_words]u16);
+var tsc_b = @zeros([timestamp.tsc_size_words]u16);
+var tbuf = @zeros([3]f32);
+var ptr_tbuf: [*]f32 = &tbuf;
+
+var rp = @zeros([N + 1]u32);     // CSR row pointers (host)
+var ci = @zeros([CAP]u32);       // CSR column indices (host)
+var va = @zeros([CAP]f32);       // CSR values (host)
+var xv = @zeros([N]f32);         // dense input vector (host)
+var yv = @zeros([N]f32);         // result (host reads)
+var ctl = @zeros([2]u32);        // ctl[0] = method, ctl[1] = number of products (host)
+var ptr_rp: [*]u32 = &rp; var ptr_ci: [*]u32 = &ci; var ptr_va: [*]f32 = &va;
+var ptr_xv: [*]f32 = &xv; var ptr_yv: [*]f32 = &yv; var ptr_ctl: [*]u32 = &ctl;
+
+// ---------------------------------------------------------------- method 0: textbook scalar CSR
+fn spmv_scalar() void {
+  var r: u16 = 0;
+  while (r < N) : (r += 1) {
+    var acc: f32 = 0.0;
+    var j: u32 = rp[r];
+    const e: u32 = rp[r + 1];
+    while (j < e) : (j += 1) { acc += va[j] * xv[ci[j]]; }
+    yv[r] = acc;
+  }
+}
+
+// BLOCK index_type_narrowing_cast BEGIN
+// 16-bit indexing with the u32 host arrays unchanged: narrow each index once, right after the load,
+// and keep loop counters in u16, so address arithmetic stays 16-bit (valid while N and the nonzero
+// count are below 65,536).
+fn spmv_cast16() void {
+  var r: u16 = 0;
+  while (r < N) : (r += 1) {
+    var acc: f32 = 0.0;
+    var j: u16 = @as(u16, rp[r]);
+    const e: u16 = @as(u16, rp[r + 1]);
+    while (j < e) : (j += 1) {
+      const c: u16 = @as(u16, ci[j]);
+      acc += va[j] * xv[c];
+    }
+    yv[r] = acc;
+  }
+}
+// BLOCK index_type_narrowing_cast END
+
+// BLOCK index_type_narrowing_shadow BEGIN
+// u16 shadow copies of the index arrays, built once and reused by every later product. The pass
+// costs about as much as one product, so it pays only when the same matrix is used repeatedly.
+var rp16 = @zeros([N + 1]u16);
+var ci16 = @zeros([CAP]u16);
+var have16: bool = false;
+fn build_shadow16() void {
+  var r: u16 = 0;
+  while (r <= N) : (r += 1) { rp16[r] = @as(u16, rp[r]); }
+  const nnz: u16 = rp16[N];
+  var j: u16 = 0;
+  while (j < nnz) : (j += 1) { ci16[j] = @as(u16, ci[j]); }
+  have16 = true;
+}
+fn spmv_shadow16() void {
+  if (!have16) { build_shadow16(); }
+  var r: u16 = 0;
+  while (r < N) : (r += 1) {
+    var acc: f32 = 0.0;
+    var j: u16 = rp16[r];
+    const e: u16 = rp16[r + 1];
+    while (j < e) : (j += 1) { acc += va[j] * xv[ci16[j]]; }
+    yv[r] = acc;
+  }
+}
+// BLOCK index_type_narrowing_shadow END
+
+// BLOCK row_dsd_runtime_repoint BEGIN
+// One DSD multiply per row whose columns form one contiguous run, the scalar loop otherwise.
+// Full-length descriptors are built once; per row they are re-pointed (offset) and re-lengthed.
+// The products go to a scratch row in memory and are summed by a scalar loop: never reduce an f32
+// DSD into a register (@fadds(&acc, acc, dsd) can compile to a form that returns the last element).
+// Operand forms: @fmuls(dst, a, b) and @fadds(dst, a, b) take three DSD/scalar operands;
+// @fmacs(dst, acc, a, scalar) takes four. @increment_dsd_offset(dsd, i16 offset, f32) and
+// @set_dsd_length(dsd, u16 length) return new descriptors.
+var trow = @zeros([N]f32);
+const va_all = @get_dsd(mem1d_dsd, .{ .tensor_access = |i|{CAP} -> va[i] });
+const xv_all = @get_dsd(mem1d_dsd, .{ .tensor_access = |i|{N} -> xv[i] });
+const tr_all = @get_dsd(mem1d_dsd, .{ .tensor_access = |i|{N} -> trow[i] });
+fn spmv_rowdsd() void {
+  var r: u16 = 0;
+  while (r < N) : (r += 1) {
+    const s: u16 = @as(u16, rp[r]);
+    const e: u16 = @as(u16, rp[r + 1]);
+    const n: u16 = e - s;
+    var acc: f32 = 0.0;
+    if (n > 0 and @as(u16, ci[e - 1]) - @as(u16, ci[s]) == n - 1) {
+      var vd = @set_dsd_length(va_all, n);
+      vd = @increment_dsd_offset(vd, @as(i16, s), f32);
+      var xd = @set_dsd_length(xv_all, n);
+      xd = @increment_dsd_offset(xd, @as(i16, ci[s]), f32);
+      const td = @set_dsd_length(tr_all, n);
+      @fmuls(td, vd, xd);
+      var q: u16 = 0;
+      while (q < n) : (q += 1) { acc += trow[q]; }
+    } else {
+      var j: u16 = s;
+      while (j < e) : (j += 1) { acc += va[j] * xv[@as(u16, ci[j])]; }
+    }
+    yv[r] = acc;
+  }
+}
+// BLOCK row_dsd_runtime_repoint END
+
+// BLOCK vectorise_along_structure BEGIN
+// Diagonal (DIA) storage plus a CSR remainder, built on the PE from the CSR input. Each nonzero
+// (r, c) lies on diagonal off = c - r; a table indexed by off + N gives its slot in O(1). The first
+// MAXD distinct diagonals get a dense store dval[d * N + r]; other nonzeros go to the remainder.
+// The sweep then needs two DSD operations per diagonal and no gather: y[lo..lo+len) +=
+// dval[d][lo..] * x[lo+off..]. The conversion costs about 1.6 products, so this pays when the same
+// matrix is multiplied at least three times (it wins 2.8x per product afterwards on a banded
+// matrix); with a single product, keep the CSR form.
+// The conversion is part of the measured work: call build_dia() from inside the timed kernel function
+// (here the first spmv_dia() call builds it and later products reuse it). Converting before the timing
+// window opens is moving work out of the window, and the contract check rejects that candidate.
+// On a multi-PE kernel use the global row (this PE's first row + local row) in off and in the valid
+// row range, and clamp the range: a diagonal can miss a PE's rows entirely.
+const MAXD: u16 = 8;
+const NOSLOT: u16 = 0xFFFF;
+var slot = @constants([2 * N]u16, NOSLOT);    // off + N -> slot
+var doff = @zeros([MAXD]i16);                 // diagonal offset c - r per slot
+var dlo  = @zeros([MAXD]u16);                 // first row with a valid column
+var dlen = @zeros([MAXD]u16);                 // number of rows with a valid column
+var dval = @zeros([MAXD * N]f32);             // dense diagonal store (zeros where empty)
+var nd: u16 = 0;
+var rem_rp = @zeros([N + 1]u16);              // remainder CSR (own arrays: the input stays intact)
+var rem_ci = @zeros([CAP]u16);
+var rem_va = @zeros([CAP]f32);
+var have_dia: bool = false;
+const dv_all = @get_dsd(mem1d_dsd, .{ .tensor_access = |i|{MAXD * N} -> dval[i] });
+const yv_all = @get_dsd(mem1d_dsd, .{ .tensor_access = |i|{N} -> yv[i] });
+
+fn build_dia() void {
+  var w: u16 = 0;
+  var r: u16 = 0;
+  while (r < N) : (r += 1) {
+    rem_rp[r] = w;
+    var j: u16 = @as(u16, rp[r]);
+    const e: u16 = @as(u16, rp[r + 1]);
+    while (j < e) : (j += 1) {
+      const c: u16 = @as(u16, ci[j]);
+      const off: i16 = @as(i16, c) - @as(i16, r);
+      const key: u16 = @as(u16, off + @as(i16, N));
+      var d: u16 = slot[key];
+      if (d == NOSLOT and nd < MAXD) {
+        d = nd; slot[key] = d; doff[d] = off; nd += 1;
+      }
+      if (d != NOSLOT) {
+        dval[d * N + r] = va[j];
+      } else {
+        rem_ci[w] = c; rem_va[w] = va[j]; w += 1;
+      }
+    }
+  }
+  rem_rp[N] = w;
+  var d: u16 = 0;
+  while (d < nd) : (d += 1) {           // valid rows: 0 <= r + off < N
+    var lo: i16 = 0;
+    if (doff[d] < 0) { lo = -doff[d]; }
+    var hi: i16 = @as(i16, N);
+    if (doff[d] > 0) { hi = @as(i16, N) - doff[d]; }
+    if (hi < lo) { hi = lo; }           // empty on this PE: length 0, never a wrapped u16
+    dlo[d] = @as(u16, lo);
+    dlen[d] = @as(u16, hi - lo);
+  }
+  have_dia = true;
+}
+
+fn spmv_dia() void {
+  if (!have_dia) { build_dia(); }       // inside the timed window, once per launch
+  @fmovs(yv_all, 0.0);
+  var d: u16 = 0;
+  while (d < nd) : (d += 1) {
+    const r0: u16 = dlo[d];
+    const len: u16 = dlen[d];
+    var vd = @set_dsd_length(dv_all, len);
+    vd = @increment_dsd_offset(vd, @as(i16, d * N + r0), f32);
+    var xd = @set_dsd_length(xv_all, len);
+    xd = @increment_dsd_offset(xd, @as(i16, r0) + doff[d], f32);
+    var yw = @set_dsd_length(yv_all, len);
+    yw = @increment_dsd_offset(yw, @as(i16, r0), f32);
+    const td = @set_dsd_length(tr_all, len);
+    @fmuls(td, vd, xd);
+    @fadds(yw, yw, td);                  // memory destination: accumulates correctly
+  }
+  var r: u16 = 0;
+  while (r < N) : (r += 1) {             // remainder, scalar
+    var acc: f32 = 0.0;
+    var j: u16 = rem_rp[r];
+    const e: u16 = rem_rp[r + 1];
+    while (j < e) : (j += 1) { acc += rem_va[j] * xv[rem_ci[j]]; }
+    yv[r] += acc;
+  }
+}
+// BLOCK vectorise_along_structure END
+
+fn reset_state() void {        // outside the timed window: every launch starts from the CSR input
+  var d: u16 = 0;
+  while (d < nd) : (d += 1) { slot[@as(u16, doff[d] + @as(i16, N))] = NOSLOT; }
+  var k: u16 = 0;
+  while (k < MAXD * N) : (k += 1) { dval[k] = 0.0; }
+  nd = 0; have_dia = false; have16 = false;
+}
+
+fn run_method(m: u32) void {
+  if (m == 0) { spmv_scalar(); }
+  else if (m == 1) { spmv_cast16(); }
+  else if (m == 2) { spmv_shadow16(); }
+  else if (m == 3) { spmv_rowdsd(); }
+  else { spmv_dia(); }
+}
+
+fn compute() void {
+  reset_state();
+  const m: u32 = ctl[0];
+  const k: u32 = ctl[1];
+  timestamp.enable_tsc();
+  timestamp.get_timestamp(&tsc_a);
+  var it: u32 = 0;
+  while (it < k) : (it += 1) { run_method(m); }
+  timestamp.get_timestamp(&tsc_b);
+  timestamp.disable_tsc();
+  var lo_: u16 = tsc_a[0]; var hi_: u16 = tsc_a[1];
+  tbuf[0] = @bitcast(f32, (@as(u32, hi_) << @as(u16, 16)) | @as(u32, lo_));
+  lo_ = tsc_a[2]; hi_ = tsc_b[0];
+  tbuf[1] = @bitcast(f32, (@as(u32, hi_) << @as(u16, 16)) | @as(u32, lo_));
+  lo_ = tsc_b[1]; hi_ = tsc_b[2];
+  tbuf[2] = @bitcast(f32, (@as(u32, hi_) << @as(u16, 16)) | @as(u32, lo_));
+  @activate(EXIT);
+}
+
+task f_exit() void { sys_mod.unblock_cmd_stream(); }
+
+comptime {
+  @bind_local_task(f_exit, EXIT);
+  @export_symbol(ptr_rp, "rp"); @export_symbol(ptr_ci, "ci"); @export_symbol(ptr_va, "va");
+  @export_symbol(ptr_xv, "xv"); @export_symbol(ptr_yv, "yv"); @export_symbol(ptr_ctl, "ctl");
+  @export_symbol(ptr_tbuf, "tbuf");
+  @export_symbol(compute);
+}

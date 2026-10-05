@@ -1,0 +1,10 @@
+kernel,split,seed,status,agent_cycles,ref_cycles,speedup_vs_ref
+GEMM-1PE,test,1,PASS,16318,119197,7.3
+GEMM-1PE,test,2,PASS,13867,119197,8.6
+GEMM-1PE,test,3,PASS,16800,119197,7.1
+Laplacian2D-Reduce,test,1,PASS,763,1950,2.56
+Laplacian2D-Reduce,test,2,PASS,1698,1950,1.15
+Laplacian2D-Reduce,test,3,PASS,1013,1950,1.92
+LorenzoPredictor-Tile,test,1,PASS,575,1315,2.29
+LorenzoPredictor-Tile,test,2,FAIL,,,
+LorenzoPredictor-Tile,test,3,PASS,542,1315,2.43

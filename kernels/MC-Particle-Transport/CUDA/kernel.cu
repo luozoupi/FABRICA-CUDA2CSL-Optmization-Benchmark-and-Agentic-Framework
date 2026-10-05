@@ -62,7 +62,7 @@ __global__ void calculate_xs_kernel(int n_particles, int n_nuclides, int n_gridp
   #ifdef USE_UEG
   int uidx = iterative_binary_search( ueg_energy, n_nuclides * n_gridpoints_per_nuclide, e);
   #endif
-  for (int n = 0; n < n_nuclides; n++) {
+  for (int n = 0; n < n_nuclides; n++) { 
     // Binary search for location on energy grid
     // The particle's energy will almost always fall between two energy points
     #ifdef USE_UEG
@@ -72,7 +72,7 @@ __global__ void calculate_xs_kernel(int n_particles, int n_nuclides, int n_gridp
 		else
 			ueg_lower_index = ueg_idx[uidx * n_nuclides + n];
     int lower_index = ueg_lower_index;
-
+    
     #else
     int lower_index = iterative_binary_search( &nuclide_energy_grids[n * n_gridpoints_per_nuclide], n_gridpoints_per_nuclide, e);
     #endif
@@ -118,7 +118,7 @@ __global__ void calculate_xs_kernel_LCG(int n_particles, int n_nuclides, int n_g
     return;
   float e = particles[p].energy;
   int uidx = iterative_binary_search( ueg_energy, n_nuclides * n_gridpoints_per_nuclide, e);
-  for (int n = 0; n < n_nuclides; n++) {
+  for (int n = 0; n < n_nuclides; n++) { 
     // Binary search for location on energy grid
     // The particle's energy will almost always fall between two energy points
     int ueg_lower_index;
@@ -151,7 +151,7 @@ __global__ void calculate_xs_kernel_og(int n_particles, int n_nuclides, int n_gr
     return;
   float e = particles[p].energy;
   int uidx = iterative_binary_search( ueg_energy, n_nuclides * n_gridpoints_per_nuclide, e);
-  for (int n = 0; n < n_nuclides; n++) {
+  for (int n = 0; n < n_nuclides; n++) { 
     // Binary search for location on energy grid
     // The particle's energy will almost always fall between two energy points
     //int lower_index = iterative_binary_search( &nuclide_energy_grids[n * n_gridpoints_per_nuclide], n_gridpoints_per_nuclide, e);
@@ -161,7 +161,7 @@ __global__ void calculate_xs_kernel_og(int n_particles, int n_nuclides, int n_gr
 		else
 			ueg_lower_index = ueg_idx[uidx * n_nuclides + n];
     int lower_index = ueg_lower_index;
-
+    
     //int ueg_lower_index = ueg_idx[ui];
     //if( lower_index != ueg_lower_index )
     //  printf("true lower index = %d, ueg lower index = %d\n", lower_index, ueg_lower_index);
@@ -207,7 +207,7 @@ int main(int argc, char* argv[])
   // 1D array with length n_nuclides.
   // Each entry represents the density of each nuclide present in the material
   float* densities;
-
+  
   // 1D array of lightweight particle objects with length n_particles.
   // Each particle represents a computational task, where the particle's energy is
   // used as input to the cross section lookup kernel, and the kernel will fill in
@@ -235,7 +235,7 @@ int main(int argc, char* argv[])
   // Generate double index grid
   int * idx_low = (int *) calloc( n_nuclides, sizeof(int));
   float * energy_high = (float *) malloc( n_nuclides * sizeof(float));
-
+  
   int n_idx_total = n_gridpoints_total * n_nuclides;
 
   ueg_idx = (int*) malloc(n_idx_total * sizeof(int));
@@ -262,7 +262,7 @@ int main(int argc, char* argv[])
   }
   #endif
 
-
+  
   // Generates randomized particles
   init_particles(&seed, n_particles, &particles);
 
@@ -277,24 +277,24 @@ int main(int argc, char* argv[])
   size_t sz = n_nuclides * n_gridpoints_per_nuclide * sizeof(float);
   cudaMalloc(&d_nuclide_energy_grids, sz);
   cudaMemcpy(d_nuclide_energy_grids, nuclide_energy_grids, sz, cudaMemcpyHostToDevice);
-
+  
   sz = n_nuclides * n_gridpoints_per_nuclide * NXS * sizeof(float);
   cudaMalloc(&d_nuclide_xs_data, sz);
   cudaMemcpy(d_nuclide_xs_data, nuclide_xs_data, sz, cudaMemcpyHostToDevice);
-
+  
   sz = n_nuclides * sizeof(float);
   cudaMalloc(&d_densities, sz);
   cudaMemcpy(d_densities, densities, sz, cudaMemcpyHostToDevice);
-
+  
   sz = n_particles * sizeof(Particle);
   cudaMalloc(&d_particles, sz);
   cudaMemcpy(d_particles, particles, sz, cudaMemcpyHostToDevice);
-
+  
   #ifdef USE_UEG
   sz = n_gridpoints_total * sizeof(float);
   cudaMalloc(&d_ueg_energy, sz);
   cudaMemcpy(d_ueg_energy, ueg_energy, sz, cudaMemcpyHostToDevice);
-
+  
   sz = n_idx_total * sizeof(int);
   cudaMalloc(&d_ueg_idx, sz);
   cudaMemcpy(d_ueg_idx, ueg_idx, sz, cudaMemcpyHostToDevice);
@@ -305,27 +305,27 @@ int main(int argc, char* argv[])
   sz = n_particles * sizeof(curandStatePhilox4_32_10_t);
   cudaMalloc(&d_states, sz);
   #endif
-
+  
   printf("=====================================================================\n");
   printf("Simulation\n");
   printf("=====================================================================\n");
   cudaEvent_t start, stop;
   cudaEventCreate(&start);
   cudaEventCreate(&stop);
-
+  
   cudaEvent_t sort_start, sort_stop;
   cudaEventCreate(&sort_start);
   cudaEventCreate(&sort_stop);
 
   printf("Sorting on Thrust...\n");
-
+  
   cudaEventRecord(sort_start);
   #ifdef USE_SORT
   thrust::sort(thrust::device, d_particles, d_particles + n_particles, Cmp());
   #endif
   cudaEventRecord(sort_stop);
   cudaEventSynchronize(sort_stop);
-
+  
   printf("Running simulation kernel on GPU...\n");
 
   int nthreads = 256;
@@ -470,7 +470,7 @@ void init_grids(uint32_t* seed, int n_nuclides, int n_gridpoints_per_nuclide, fl
     for (int e = 0; e < n_gridpoints_per_nuclide; e++) {
       nuclide_energy_grids[n * n_gridpoints_per_nuclide + e] = LCG_random_float(seed);
     }
-
+      
     // Sort energy grid for the nuclide
     qsort(nuclide_energy_grids + n*n_gridpoints_per_nuclide, n_gridpoints_per_nuclide, sizeof(float), compare);
 
@@ -516,10 +516,10 @@ void init_grids(uint32_t* seed, int n_nuclides, int n_gridpoints_per_nuclide, fl
 
 void init_particles(uint32_t* seed, int n_particles, Particle** par) {
   printf("Initializing particles...\n");
-
+  
   // Initialize randomized particle energies, set macro XS data to zero
   Particle* particles = (Particle*) malloc(n_particles * sizeof(Particle));
-
+  
   double total_kb = n_particles * sizeof(Particle);
   printf("Allocating particle data of size:          %.2le [bytes]\n", total_kb);
 

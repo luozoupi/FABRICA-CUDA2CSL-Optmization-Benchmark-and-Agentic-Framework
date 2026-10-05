@@ -1,0 +1,3 @@
+# Capacity extension, registered before these four runs
+
+The GPU reports 134,217,728 bytes of L2. The original largest A/B/C arrays together fit within that capacity. Add A of 262144 by 262144, degree 8, uniform and block structure, output widths 64 and 128. Minimum unique input/output footprints exceed L2. These four cases are a separately versioned extension; the original 120-case manifest remains unchanged. They still use warm repeated operations and do not establish a cold-cache streaming workload. Cache-residency conclusions require counters, not array size alone. Same binary, implementations, timing, tolerances and correctness checks.

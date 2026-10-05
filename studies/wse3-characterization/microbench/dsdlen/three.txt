@@ -1,0 +1,9 @@
+n=7000 OK   3*n*2=42000B  elf=46208 bytes
+n=7400 OK   3*n*2=44400B  elf=48608 bytes
+n=7480 OK   3*n*2=44880B  elf=49088 bytes
+n=7488 OK   3*n*2=44928B  elf=49136 bytes
+n=7492 OK   3*n*2=44952B  elf=49152 bytes
+n=7496 FAIL 3*n*2=44976B  ld.lld: error: ran out of PE memory for task table
+n=7500 FAIL 3*n*2=45000B  ld.lld: error: ran out of PE memory for task table
+n=7600 FAIL 3*n*2=45600B  ld.lld: error: ran out of PE memory for task table
+FIN

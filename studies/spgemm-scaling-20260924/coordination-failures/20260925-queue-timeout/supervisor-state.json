@@ -1,0 +1,10 @@
+{
+  "pid": 3882769,
+  "started_utc": "2026-09-25T17:19:30.252969+00:00",
+  "status": "supervisor_failed",
+  "command": [
+    "python3",
+    "run.py"
+  ],
+  "error": "CalledProcessError(1, ['python3', 'run.py'])"
+}

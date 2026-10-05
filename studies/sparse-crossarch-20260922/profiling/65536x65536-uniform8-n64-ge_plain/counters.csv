@@ -1,0 +1,5 @@
+==WARNING== Note: Running with uncontrolled GPU caches. Profiling results may be inconsistent.
+==WARNING== Note: Running with unmodified GPU clocks. If not controlled otherwise, profiling results may be inconsistent.
+==PROF== Connected to process 176631 (/home/USER/sparse-crossarch-20260922/gpu-bench)
+==PROF== Disconnected from process 176631
+==PROF== Report: /home/USER/sparse-crossarch-20260922/profiling/65536x65536-uniform8-n64-ge_plain/report.ncu-rep

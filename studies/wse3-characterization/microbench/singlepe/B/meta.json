@@ -1,0 +1,235 @@
+{
+ "suite": "B",
+ "exports": [
+  {
+   "name": "x_arr",
+   "dtype": "f16",
+   "len": 2048
+  },
+  {
+   "name": "y_arr",
+   "dtype": "f16",
+   "len": 2048
+  },
+  {
+   "name": "t_arr",
+   "dtype": "f16",
+   "len": 2048
+  },
+  {
+   "name": "z_arr",
+   "dtype": "f16",
+   "len": 2048
+  }
+ ],
+ "variants": [
+  {
+   "name": "axpy_7",
+   "family": "axpy",
+   "elems": 7,
+   "reps": 1170,
+   "flop": 2,
+   "bytes": 6
+  },
+  {
+   "name": "axpy_8",
+   "family": "axpy",
+   "elems": 8,
+   "reps": 1024,
+   "flop": 2,
+   "bytes": 6
+  },
+  {
+   "name": "axpy_9",
+   "family": "axpy",
+   "elems": 9,
+   "reps": 910,
+   "flop": 2,
+   "bytes": 6
+  },
+  {
+   "name": "axpy_15",
+   "family": "axpy",
+   "elems": 15,
+   "reps": 546,
+   "flop": 2,
+   "bytes": 6
+  },
+  {
+   "name": "axpy_16",
+   "family": "axpy",
+   "elems": 16,
+   "reps": 512,
+   "flop": 2,
+   "bytes": 6
+  },
+  {
+   "name": "axpy_17",
+   "family": "axpy",
+   "elems": 17,
+   "reps": 481,
+   "flop": 2,
+   "bytes": 6
+  },
+  {
+   "name": "axpy_32",
+   "family": "axpy",
+   "elems": 32,
+   "reps": 256,
+   "flop": 2,
+   "bytes": 6
+  },
+  {
+   "name": "axpy_128",
+   "family": "axpy",
+   "elems": 128,
+   "reps": 64,
+   "flop": 2,
+   "bytes": 6
+  },
+  {
+   "name": "axpy_512",
+   "family": "axpy",
+   "elems": 512,
+   "reps": 16,
+   "flop": 2,
+   "bytes": 6
+  },
+  {
+   "name": "axpy_2048",
+   "family": "axpy",
+   "elems": 2048,
+   "reps": 4,
+   "flop": 2,
+   "bytes": 6
+  },
+  {
+   "name": "dotloop_1",
+   "family": "dotloop",
+   "elems": 1,
+   "reps": 4096,
+   "flop": 2,
+   "bytes": 4
+  },
+  {
+   "name": "dotloop_2",
+   "family": "dotloop",
+   "elems": 2,
+   "reps": 2048,
+   "flop": 2,
+   "bytes": 4
+  },
+  {
+   "name": "dotloop_4",
+   "family": "dotloop",
+   "elems": 4,
+   "reps": 1024,
+   "flop": 2,
+   "bytes": 4
+  },
+  {
+   "name": "dotloop_8",
+   "family": "dotloop",
+   "elems": 8,
+   "reps": 512,
+   "flop": 2,
+   "bytes": 4
+  },
+  {
+   "name": "dotloop_64",
+   "family": "dotloop",
+   "elems": 64,
+   "reps": 64,
+   "flop": 2,
+   "bytes": 4
+  },
+  {
+   "name": "dotloop_256",
+   "family": "dotloop",
+   "elems": 256,
+   "reps": 16,
+   "flop": 2,
+   "bytes": 4
+  },
+  {
+   "name": "dotloop_1024",
+   "family": "dotloop",
+   "elems": 1024,
+   "reps": 4,
+   "flop": 2,
+   "bytes": 4
+  },
+  {
+   "name": "vdot_8",
+   "family": "vdot",
+   "elems": 8,
+   "reps": 512,
+   "flop": 2,
+   "bytes": 8
+  },
+  {
+   "name": "vdot_64",
+   "family": "vdot",
+   "elems": 64,
+   "reps": 64,
+   "flop": 2,
+   "bytes": 8
+  },
+  {
+   "name": "vdot_256",
+   "family": "vdot",
+   "elems": 256,
+   "reps": 16,
+   "flop": 2,
+   "bytes": 8
+  },
+  {
+   "name": "vdot_1024",
+   "family": "vdot",
+   "elems": 1024,
+   "reps": 4,
+   "flop": 2,
+   "bytes": 8
+  },
+  {
+   "name": "vdot_2048",
+   "family": "vdot",
+   "elems": 2048,
+   "reps": 2,
+   "flop": 2,
+   "bytes": 8
+  },
+  {
+   "name": "reduce_64",
+   "family": "reduce",
+   "elems": 64,
+   "reps": 64,
+   "flop": 1,
+   "bytes": 2
+  },
+  {
+   "name": "reduce_1024",
+   "family": "reduce",
+   "elems": 1024,
+   "reps": 4,
+   "flop": 1,
+   "bytes": 2
+  },
+  {
+   "name": "reduce_2048",
+   "family": "reduce",
+   "elems": 2048,
+   "reps": 2,
+   "flop": 1,
+   "bytes": 2
+  },
+  {
+   "name": "axpy_2047",
+   "family": "axpy",
+   "elems": 2047,
+   "reps": 4,
+   "flop": 2,
+   "bytes": 6
+  }
+ ]
+}

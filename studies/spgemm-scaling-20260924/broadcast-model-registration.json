@@ -1,0 +1,63 @@
+{
+  "created_utc": "2026-09-24T23:45:05.412492+00:00",
+  "hypothesis": "For P>1, replacing the resident one-word start broadcast with B distribution adds 2*(B_words-2) root cycles in the uniform full-accumulator cases.",
+  "motivation": "Two sequential row/column broadcasts. This conditional hypothesis uses the observed 16x16,4-PE difference to set the intercept; it does not establish a universal wavelet latency.",
+  "calibration_case": "strong-m16-k16-n16-p4-d3-full",
+  "calibration_observation_sha256": "8132ae5a9385d364a20126f85f4850b53105155b1c7bbe6b58c7f06c7441c066",
+  "calibration_cycles": {
+    "broadcast": 7684,
+    "resident": 7460
+  },
+  "targets": [
+    {
+      "case": "weak-m64-k64-n64-p16-d3-full",
+      "predicted_extra_cycles": 896
+    },
+    {
+      "case": "strong-m64-k64-n64-p4-d3-full",
+      "predicted_extra_cycles": 896
+    },
+    {
+      "case": "density-m64-k64-n64-p4-d8-full",
+      "predicted_extra_cycles": 2176
+    },
+    {
+      "case": "density-m64-k64-n64-p16-d8-full",
+      "predicted_extra_cycles": 2176
+    },
+    {
+      "case": "weak-m16-k64-n64-p4-d3-full",
+      "predicted_extra_cycles": 896
+    },
+    {
+      "case": "density-m64-k64-n64-p64-d8-full",
+      "predicted_extra_cycles": 2176
+    },
+    {
+      "case": "strong-m64-k64-n64-p16-d3-full",
+      "predicted_extra_cycles": 896
+    },
+    {
+      "case": "weak-m256-k64-n64-p64-d3-full",
+      "predicted_extra_cycles": 896
+    },
+    {
+      "case": "strong-m256-k256-n256-p4-d3-full",
+      "predicted_extra_cycles": 3584
+    },
+    {
+      "case": "strong-m64-k64-n64-p64-d3-full",
+      "predicted_extra_cycles": 896
+    },
+    {
+      "case": "strong-m256-k256-n256-p16-d3-full",
+      "predicted_extra_cycles": 3584
+    },
+    {
+      "case": "strong-m256-k256-n256-p64-d3-full",
+      "predicted_extra_cycles": 3584
+    }
+  ],
+  "acceptance": "Compare median broadcast root interval minus median resident root interval on first unchanged uniform session. Report every residual including failures/missing targets. No refit before reporting.",
+  "test_evidence_status": "No registered N>16 case has emitted an observation checkpoint at registration. Prior N=64,P=16 development smoke has already run and is excluded from validation; its numerical correctness was inspected, but its timing values were not used to fit this hypothesis."
+}

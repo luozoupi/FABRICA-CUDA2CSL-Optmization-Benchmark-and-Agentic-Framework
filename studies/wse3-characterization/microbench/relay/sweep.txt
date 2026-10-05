@@ -1,0 +1,9 @@
+RELAY N=1 B=64 cycles=93
+RELAY N=2 B=64 cycles=175
+RELAY N=4 B=64 cycles=337
+RELAY N=8 B=64 cycles=659
+RELAY N=1 B=512 cycles=548
+RELAY N=2 B=512 cycles=1076
+RELAY N=4 B=512 cycles=2132
+RELAY N=8 B=512 cycles=4244
+FIN

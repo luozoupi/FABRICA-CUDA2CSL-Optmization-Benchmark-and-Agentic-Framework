@@ -1,0 +1,2 @@
+kernel,O0_best,O0_median,O0_n_for_median,O0_pass,O0_runs,O0_speedup_vs_fc,O1_best,O1_median,O1_n_for_median,O1_pass,O1_runs,O1_speedup_vs_fc,comparable,fc_cycles,fc_source,n_candidates,n_contract_violations,ratio_best,ratio_median
+SpMV-RowBlock,363378,363378,1,1,1,1.0465575791599933,380296,380296,1,1,1,1.0,False,380296,run_baseline,22,1,0.955513599932684,

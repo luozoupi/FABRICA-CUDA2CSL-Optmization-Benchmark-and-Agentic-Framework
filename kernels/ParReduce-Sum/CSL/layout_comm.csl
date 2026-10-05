@@ -1,0 +1,24 @@
+param n_per_pe: u16;
+param width: i16 = 2;
+param height: i16 = 1;
+const C_REDUCE: color = @get_color(8);
+const memcpy = @import_module("<memcpy/get_params>", .{ .width = width, .height = height });
+layout {
+  @set_rectangle(width, height);
+  var px: i16 = 0;
+  while (px < width) : (px += 1) {
+    @set_tile_code(px, 0, "pe_comm.csl", .{
+      .memcpy_params = memcpy.get_params(px),
+      .n_per_pe = n_per_pe,
+      .px = px,
+      .C_REDUCE = C_REDUCE,
+    });
+  }
+  // PE1 sends WEST on C_REDUCE, PE0 receives from EAST
+  @set_color_config(1, 0, C_REDUCE, .{ .routes = .{ .rx = .{ RAMP }, .tx = .{ WEST }}});
+  @set_color_config(0, 0, C_REDUCE, .{ .routes = .{ .rx = .{ EAST }, .tx = .{ RAMP }}});
+
+  @export_name("x", [*]f32, true);
+  @export_name("result", [*]f32, true);
+  @export_name("compute", fn()void);
+}

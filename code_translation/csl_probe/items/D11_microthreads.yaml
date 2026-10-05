@@ -1,0 +1,25 @@
+id: D11_microthreads
+group: D_api
+prompt: 'Answer this Cerebras CSL / WSE-3 question with the single letter of the correct option, then one sentence
+  of justification.
+
+
+  Two asynchronous DSD operations must be in flight at the same time on one PE. What must differ between them?
+
+
+  A) nothing, the hardware serialises them
+
+  B) their microthread id (`.ut_id`), one per concurrent async op
+
+  C) their colors only
+
+  D) their element types'
+choices:
+- A) nothing, the hardware serialises them
+- B) their microthread id (`.ut_id`), one per concurrent async op
+- C) their colors only
+- D) their element types
+expected:
+  choice: B
+scoring: first standalone letter A-D in the reply equals the key
+source_citation: "error_gotcha_retrieval microthread-reuse; FINDINGS \xA76"

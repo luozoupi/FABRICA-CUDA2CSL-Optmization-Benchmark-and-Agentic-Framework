@@ -1,0 +1,53 @@
+{
+  "created_utc": "2026-09-24T20:51:46.465700+00:00",
+  "registration_sha256": "e25e785e05a6ddeb261039904b874d9a061134b802169a60ab8f6b89ed3aa39d",
+  "selected": "separate_updates",
+  "geometric_cycle_ratios": {
+    "baseline": 1.0,
+    "cached_ends": 1.0,
+    "separate_updates": 0.7939990840682021,
+    "cached_split": 0.9142765377199012,
+    "combined": 0.8493725136182788
+  },
+  "original_medians": {
+    "baseline": {
+      "banded": 16941,
+      "uniform": 20461,
+      "skewed": 30237
+    },
+    "cached_ends": {
+      "banded": 16941,
+      "uniform": 20461,
+      "skewed": 30237
+    },
+    "separate_updates": {
+      "banded": 14033,
+      "uniform": 15077,
+      "skewed": 24797
+    },
+    "cached_split": {
+      "banded": 15957,
+      "uniform": 18141,
+      "skewed": 27671
+    },
+    "combined": {
+      "banded": 15207,
+      "uniform": 16135,
+      "skewed": 26175
+    },
+    "nested": {
+      "banded": 19376,
+      "uniform": 17696,
+      "skewed": 43088
+    }
+  },
+  "failures": {},
+  "observation_hashes": {
+    "baseline": "54ad6ed165c9834870f6af0bddde6b090c43c5e15a7cf2d4c5abe419d13d92c9",
+    "cached_ends": "8c5a8a381696373346d3033e1689c4192b8fca59dd66ab8435268f8ad1bf2a95",
+    "separate_updates": "00a49832e29787e43cc9d6c401dbfa0f5cc39b1a1277c5ed6fbe3d08707741a0",
+    "cached_split": "80917cff4a36ad28024a51629ce5a1abdbed13be6b5c4119d539caa854772a4e",
+    "combined": "31ae91caf79461f9ecd592f78911c847c5d6e6b1771470b4a8db531c5018c438",
+    "nested": "9091afb8f0341e47c3af56d347c2a62e02933da8862f0d3a7b03ede44fa7b89a"
+  }
+}

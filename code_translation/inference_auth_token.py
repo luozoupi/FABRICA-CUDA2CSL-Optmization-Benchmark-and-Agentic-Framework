@@ -20,7 +20,7 @@ TOKENS_PATH = f"{os.path.expanduser('~')}/.globus/app/{AUTH_CLIENT_ID}/{APP_NAME
 GA_PARAMS = globus_sdk.gare.GlobusAuthorizationParameters(session_required_policies=["83732ff2-9c42-4548-b5ce-17e498c84f6a"])
 
 
-# Error handler to guide user through specific identity providers
+# Error handler to guide user through specific identity providers 
 class DomainBasedErrorHandler:
     def __call__(self, app, error):
         print(f"Encountered error '{error}', initiating login...")
@@ -100,7 +100,7 @@ def get_time_until_token_expiration(units="seconds"):
         delta_t = delta_t / 3600
     else:
         return "Error: units must be 'seconds', 'minutes', or 'hours'."
-
+    
     # Return the time difference in the requested Units
     return round(delta_t, 2)
 
@@ -129,7 +129,7 @@ if __name__ == "__main__":
 
     # Authentication
     if args.action == AUTHENTICATE_ACTION:
-
+        
         # Authenticate using Globus account
         _ = get_auth_object(force=True)
 
@@ -141,7 +141,7 @@ if __name__ == "__main__":
         if not os.path.isfile(TOKENS_PATH):
             raise InferenceAuthError('Access token does not exist. '
                 'Please authenticate by running "python3 inference_auth_token.py authenticate".')
-
+        
         # Make sure no force flag was provided
         if args.force:
             raise InferenceAuthError(f"The --force flag cannot be used with the {GET_ACCESS_TOKEN_ACTION} action.")
@@ -157,5 +157,5 @@ if __name__ == "__main__":
         if not os.path.isfile(TOKENS_PATH):
             raise InferenceAuthError('Access token does not exist. '
                 'Please authenticate by running "python3 inference_auth_token.py authenticate".')
-
+        
         print(get_time_until_token_expiration(args.units))

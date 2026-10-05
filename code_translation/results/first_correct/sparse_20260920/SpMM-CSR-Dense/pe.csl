@@ -1,0 +1,135 @@
+param memcpy_params;
+// === SLOT: EXTRA_PARAMS ===
+param Mt: u16;          // rows in this PE's tile
+param Nt: u16;          // columns in this PE's tile (B slice / C slice width)
+param K:  u16;          // shared dimension (rows of B)
+param max_nnz_pe: u16;  // padded nonzero capacity per PE
+param iters: u16;       // repeat count (declared to satisfy tile-code contract)
+param structure_id: u16;// host manifest selector (declared to satisfy contract)
+
+const EXIT: local_task_id = @get_local_task_id(9);
+const sys_mod = @import_module("<memcpy/memcpy>", memcpy_params);
+
+// === SLOT: EXTRA_IMPORTS ===
+
+const timestamp = @import_module("<time>");
+var tsc_start_buf = @zeros([timestamp.tsc_size_words]u16);
+var tsc_end_buf   = @zeros([timestamp.tsc_size_words]u16);
+// Host-visible timestamp buffer: 6 u16 words = [start lo,mid,hi, end lo,mid,hi]
+var time_buf_u16 = @zeros([6]u16);
+var ptr_time_buf: [*]u16 = &time_buf_u16;
+
+// === SLOT: DATA_BUFFERS ===
+// CSR row offsets for this PE's Mt rows (+1)
+var row_ptr_array = @zeros([Mt + 1]u32);
+var ptr_row_ptr: [*]u32 = &row_ptr_array;
+
+// Column indices (into B rows, < K) for stored nonzeros
+var col_idx_array = @zeros([max_nnz_pe]u32);
+var ptr_col_idx: [*]u32 = &col_idx_array;
+
+// Nonzero values
+var val_array = @zeros([max_nnz_pe]f32);
+var ptr_val: [*]f32 = &val_array;
+
+// Local dense B slice: K rows x Nt cols, row-major
+var B_array = @zeros([K * Nt]f32);
+var ptr_B: [*]f32 = &B_array;
+
+// Output C tile: Mt rows x Nt cols, row-major
+var C_array = @zeros([Mt * Nt]f32);
+var ptr_C: [*]f32 = &C_array;
+
+// === SLOT: KERNEL_FUNCTION ===
+// Base DSDs over the whole arrays; per-iteration we shift them with
+// @increment_dsd_offset (element-count offsets), which returns a new DSD
+// pointing at the requested row without illegally decaying to a *f32.
+const c_base_dsd = @get_dsd(mem1d_dsd, .{
+    .tensor_access = |i|{Nt} -> C_array[i]
+});
+const b_base_dsd = @get_dsd(mem1d_dsd, .{
+    .tensor_access = |i|{Nt} -> B_array[i]
+});
+
+fn spmm() void {
+    var r: u16 = 0;
+    while (r < Mt) : (r += 1) {
+        // C row r = base + r*Nt elements.
+        var c_dsd = @increment_dsd_offset(c_base_dsd, @as(i16, r * Nt), f32);
+
+        // Zero-initialize the accumulator row (empty rows -> 0).
+        @fmovs(c_dsd, @as(f32, 0.0));
+
+        const start: u16 = @as(u16, row_ptr_array[r]);
+        const end:   u16 = @as(u16, row_ptr_array[r + 1]);
+
+        var p: u16 = start;
+        while (p < end) : (p += 1) {
+            const k: u16 = @as(u16, col_idx_array[p]);
+
+            // B row k = base + k*Nt elements.
+            var b_dsd = @increment_dsd_offset(b_base_dsd, @as(i16, k * Nt), f32);
+
+            // C[r,:] += val[p] * B[k,:]  (fused multiply-add over the whole Nt row;
+            // the scalar multiplier is a bare f32, not a DSD).
+            @fmacs(c_dsd, c_dsd, b_dsd, val_array[p]);
+        }
+    }
+}
+
+// Contract entrypoints (device-internal timing).
+fn f_enable_timer() void {
+    timestamp.enable_tsc();
+    sys_mod.unblock_cmd_stream();
+}
+
+fn f_tic() void {
+    timestamp.get_timestamp(&tsc_start_buf);
+}
+
+fn f_toc() void {
+    timestamp.get_timestamp(&tsc_end_buf);
+}
+
+fn main() void {
+    // === SLOT: KERNEL_CALL ===
+    f_tic();
+    spmm();
+    f_toc();
+
+    @activate(EXIT);
+}
+
+fn f_memcpy_timestamps() void {
+    timestamp.disable_tsc();
+    // Pack raw tsc words as u16: [start lo,mid,hi, end lo,mid,hi]
+    time_buf_u16[0] = tsc_start_buf[0];
+    time_buf_u16[1] = tsc_start_buf[1];
+    time_buf_u16[2] = tsc_start_buf[2];
+    time_buf_u16[3] = tsc_end_buf[0];
+    time_buf_u16[4] = tsc_end_buf[1];
+    time_buf_u16[5] = tsc_end_buf[2];
+    sys_mod.unblock_cmd_stream();
+}
+
+task f_exit() void {
+    sys_mod.unblock_cmd_stream();
+}
+
+comptime {
+    @bind_local_task(f_exit, EXIT);
+
+    // === SLOT: EXPORT_SYMBOLS ===
+    @export_symbol(ptr_row_ptr, "row_ptr");
+    @export_symbol(ptr_col_idx, "col_idx");
+    @export_symbol(ptr_val,     "val");
+    @export_symbol(ptr_B,       "B_tile");
+    @export_symbol(ptr_C,       "C_tile");
+    @export_symbol(ptr_time_buf, "time_buf_u16");
+
+    @export_symbol(main);
+    @export_symbol(f_enable_timer);
+    @export_symbol(f_memcpy_timestamps);
+    @export_symbol(f_tic);
+    @export_symbol(f_toc);
+}

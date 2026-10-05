@@ -1,0 +1,28 @@
+param N: i16;
+param B: u16;
+const memcpy = @import_module("<memcpy/get_params>", .{ .width = N + 1, .height = 1 });
+const CA: color = @get_color(6);
+const CB: color = @get_color(7);
+layout {
+  @set_rectangle(N + 1, 1);
+  for (@range(i16, N + 1)) |i| {
+    // hop j (PE j -> PE j+1) carries colour 6 when j is even, 7 when odd
+    const cout_id: u16 = if (i % 2 == 0) 6 else 7;
+    const cin_id: u16 = if ((i + 1) % 2 == 0) 6 else 7;
+    @set_tile_code(i, 0, "pe.csl", .{
+      .memcpy_params = memcpy.get_params(i), .B = B,
+      .is_first = (i == 0), .is_last = (i == N),
+      .cin_id = cin_id, .cout_id = cout_id,
+    });
+    if (i > 0) {
+      @set_color_config(i, 0, if (cin_id == 6) CA else CB,
+                        .{ .routes = .{ .rx = .{ WEST }, .tx = .{ RAMP } } });
+    }
+    if (i < N) {
+      @set_color_config(i, 0, if (cout_id == 6) CA else CB,
+                        .{ .routes = .{ .rx = .{ RAMP }, .tx = .{ EAST } } });
+    }
+  }
+  @export_name("timer", [*]f32, true);
+  @export_name("run", fn()void);
+}

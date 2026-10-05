@@ -1,0 +1,161 @@
+param memcpy_params;
+// === SLOT: EXTRA_PARAMS ===
+param P: i16;
+param px: i16;
+param nrows_pe: u16;
+param ncols: u16;
+param max_nnz_pe: u16;
+param iters: u16;
+param structure_id: u16;
+param C_X: color;
+
+const EXIT: local_task_id = @get_local_task_id(9);
+const sys_mod = @import_module("<memcpy/memcpy>", memcpy_params);
+
+// === SLOT: EXTRA_IMPORTS ===
+
+const timestamp = @import_module("<time>");
+var tsc_start_buf = @zeros([timestamp.tsc_size_words]u16);
+var tsc_end_buf   = @zeros([timestamp.tsc_size_words]u16);
+var timer_buf = @zeros([3]f32);
+var ptr_timer_buf: [*]f32 = &timer_buf;
+
+// === SLOT: DATA_BUFFERS ===
+// Timestamp buffer the host reads (u16, 6 words: start[3], end[3]).
+var time_buf_u16 = @zeros([6]u16);
+var ptr_time_buf_u16: [*]u16 = &time_buf_u16;
+
+// CSR slice for this PE + resident copy of the dense vector x + output y.
+var row_ptr_array = @zeros([nrows_pe + 1]u32);
+var col_idx_array = @zeros([max_nnz_pe]u32);
+var val_array     = @zeros([max_nnz_pe]f32);
+var x_array       = @zeros([ncols]f32);
+var y_array       = @zeros([nrows_pe]f32);
+
+var ptr_row_ptr: [*]u32 = &row_ptr_array;
+var ptr_col_idx: [*]u32 = &col_idx_array;
+var ptr_val:     [*]f32 = &val_array;
+var ptr_x:       [*]f32 = &x_array;
+var ptr_y:       [*]f32 = &y_array;
+
+// Fabric queues for broadcasting x east on color C_X.
+// WSE-3: the color is bound to the QUEUE via @initialize_queue, not to the DSD.
+const out_q = @get_output_queue(2);
+const in_q  = @get_input_queue(3);
+
+const x_out_dsd = @get_dsd(fabout_dsd, .{
+  .extent = ncols,
+  .output_queue = out_q,
+});
+const x_in_dsd = @get_dsd(fabin_dsd, .{
+  .extent = ncols,
+  .input_queue = in_q,
+});
+const x_mem_dsd = @get_dsd(mem1d_dsd, .{
+  .tensor_access = |i| { ncols } -> x_array[i],
+});
+
+// === SLOT: KERNEL_FUNCTION ===
+// Broadcast x from PE 0 east along C_X so every PE has a complete copy,
+// then run the serial CSR-vector SpMV over this PE's row block.
+// The layout wires C_X so PE0 tx=EAST, middle PEs rx=WEST tx={RAMP,EAST},
+// last PE rx=WEST tx=RAMP. Each downstream PE consumes x via its RAMP input
+// queue while the fabric fans the same wavelets further east automatically.
+fn bcast_x() void {
+    if (P > 1) {
+        if (px == 0) {
+            // Source PE: drive x eastward on C_X.
+            @fmovs(x_out_dsd, x_mem_dsd);
+        } else {
+            // Downstream PEs: pull x off the fabric (RAMP) into local x_array.
+            @fmovs(x_mem_dsd, x_in_dsd);
+        }
+    }
+}
+
+fn spmv() void {
+    var row: u16 = 0;
+    while (row < nrows_pe) : (row += 1) {
+        const start: u32 = row_ptr_array[row];
+        const end:   u32 = row_ptr_array[row + 1];
+        var sum: f32 = 0.0;
+        var p: u32 = start;
+        while (p < end) : (p += 1) {
+            const c: u32 = col_idx_array[p];       // global column index into x
+            sum += val_array[p] * x_array[c];       // fp32 plus-times MULTADD
+        }
+        y_array[row] = sum;                         // empty rows -> 0.0
+    }
+}
+
+fn compute() void {
+    bcast_x();
+    spmv();
+}
+
+// === SLOT: KERNEL_FUNCTION (end) ===
+
+fn f_enable_timer() void {
+    timestamp.enable_tsc();
+    sys_mod.unblock_cmd_stream();
+}
+
+fn f_tic() void {
+    timestamp.get_timestamp(&tsc_start_buf);
+}
+
+fn f_toc() void {
+    timestamp.get_timestamp(&tsc_end_buf);
+    timestamp.disable_tsc();
+}
+
+fn f_memcpy_timestamps() void {
+    // Pack start[3] then end[3] into the u16 buffer the host reads.
+    time_buf_u16[0] = tsc_start_buf[0];
+    time_buf_u16[1] = tsc_start_buf[1];
+    time_buf_u16[2] = tsc_start_buf[2];
+    time_buf_u16[3] = tsc_end_buf[0];
+    time_buf_u16[4] = tsc_end_buf[1];
+    time_buf_u16[5] = tsc_end_buf[2];
+    sys_mod.unblock_cmd_stream();
+}
+
+fn main() void {
+    f_tic();
+
+    // === SLOT: KERNEL_CALL ===
+    var it: u16 = 0;
+    while (it < iters) : (it += 1) {
+        compute();
+    }
+
+    f_toc();
+
+    @activate(EXIT);
+}
+
+task f_exit() void {
+    sys_mod.unblock_cmd_stream();
+}
+
+comptime {
+    @bind_local_task(f_exit, EXIT);
+
+    // WSE-3: bind color C_X to the fabric queues (fabric_color on the DSD is deprecated).
+    @initialize_queue(out_q, .{ .color = C_X });
+    @initialize_queue(in_q,  .{ .color = C_X });
+
+    // === SLOT: EXPORT_SYMBOLS ===
+    @export_symbol(ptr_row_ptr, "row_ptr");
+    @export_symbol(ptr_col_idx, "col_idx");
+    @export_symbol(ptr_val, "val");
+    @export_symbol(ptr_x, "x");
+    @export_symbol(ptr_y, "y");
+
+    @export_symbol(ptr_time_buf_u16, "time_buf_u16");
+    @export_symbol(main);
+    @export_symbol(f_enable_timer);
+    @export_symbol(f_memcpy_timestamps);
+    @export_symbol(f_tic);
+    @export_symbol(f_toc);
+}

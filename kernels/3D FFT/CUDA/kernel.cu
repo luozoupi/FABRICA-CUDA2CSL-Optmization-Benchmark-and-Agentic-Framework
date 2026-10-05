@@ -1,16 +1,16 @@
 
 #include "cuda_runtime.h"
 #include "device_launch_parameters.h"
-#include <stdio.h>
-#include <stdlib.h>
-#include <math.h>
-#include <cuda.h>
-#include <cufft.h>
-#include <memory.h>
+#include <stdio.h>   
+#include <stdlib.h>  
+#include <math.h>  
+#include <cuda.h> 
+#include <cufft.h> 
+#include <memory.h> 
 #include<time.h>
 #pragma comment( lib, "cufft.lib" )
 
-#define N1 128
+#define N1 128 
 #define N2 128
 #define N3 16
 
@@ -39,7 +39,7 @@ void FFT3d_GPU(double A[2][N1][N2][N3])
 
 	const int    FFT_SIZE_C = N1 * N2 * CN3 * sizeof(cufftDoubleComplex);
 
-	cufftDoubleReal *h_oRealData = (cufftDoubleReal*)malloc(FFT_SIZE_R);
+	cufftDoubleReal *h_oRealData = (cufftDoubleReal*)malloc(FFT_SIZE_R); 
 	memset(h_oRealData, 0x00, FFT_SIZE_R);
 	cufftDoubleComplex *h_otestComplexData = (cufftDoubleComplex*)malloc(FFT_SIZE_C);
 	memset(h_otestComplexData, 0x00, FFT_SIZE_C);
@@ -67,13 +67,13 @@ void FFT3d_GPU(double A[2][N1][N2][N3])
 
 	cudaMemcpy(h_otestComplexData, d_oComplexData, FFT_SIZE_C, cudaMemcpyDeviceToHost);
 	cudaEventRecord(start, 0);
-	//Create a 3D FFT plan for Z2D.
+	//Create a 3D FFT plan for Z2D. 
 	cufftHandle  planZ2D3D;
 	cufftPlan3d(&planZ2D3D, N1, N2, N3, CUFFT_Z2D);
 	//D2Z out of  place
 	printf("\n\nAfter 3D C2R out of place : \n");
 	printf("cuFFT IFFT,inverse transform(x-->A), A:\n");
-	// Use the CUFFT plan to transform the signal out of place.
+	// Use the CUFFT plan to transform the signal out of place.  
 	cufftExecZ2D(planZ2D3D, d_oComplexData, (cufftDoubleReal*)d_oRealData);
 	cudaEventRecord(stop, 0);
 	cudaEventSynchronize(stop);

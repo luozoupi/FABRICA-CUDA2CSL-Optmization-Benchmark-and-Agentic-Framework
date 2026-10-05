@@ -1,0 +1,3920 @@
+{
+  "status": "pass",
+  "case": {
+    "id": "strong-m64-k64-n64-p4-d3-full",
+    "group": "strong",
+    "M": 64,
+    "K": 64,
+    "N": 64,
+    "P": 4,
+    "S": 2,
+    "R": 16,
+    "AC": 136,
+    "BC": 192,
+    "OC": 408,
+    "W": 64,
+    "degree": 3,
+    "variant": "full",
+    "sessions": [
+      {
+        "pattern": "banded",
+        "policy": "row_blocks",
+        "changed": false,
+        "matrix_hashes": {
+          "A": "8c61fe7ae14361f422ee7529be3435b77426f94df81a7c8f4f0d6e729634c630",
+          "B": "e87d2d6f14920130741970d72b490354401b917b8e6cf7e8ed4021efbcf48fdb"
+        }
+      },
+      {
+        "pattern": "uniform",
+        "policy": "row_blocks",
+        "changed": false,
+        "matrix_hashes": {
+          "A": "1df301320bec0d637b9e4bb9dfb62e3572f21d68672d117282c1cdd834bc1562",
+          "B": "05720ddab4ddd020c28a8cb8906678d2b96c1c88659cab39f25da63921c05894"
+        }
+      },
+      {
+        "pattern": "skewed",
+        "policy": "row_blocks",
+        "changed": false,
+        "matrix_hashes": {
+          "A": "7eabbd764da11b598349629d770d83568eb90f468003f387e40799bf6f8c3b2e",
+          "B": "05720ddab4ddd020c28a8cb8906678d2b96c1c88659cab39f25da63921c05894"
+        }
+      },
+      {
+        "pattern": "skewed",
+        "policy": "product_balanced",
+        "changed": false,
+        "matrix_hashes": {
+          "A": "7eabbd764da11b598349629d770d83568eb90f468003f387e40799bf6f8c3b2e",
+          "B": "05720ddab4ddd020c28a8cb8906678d2b96c1c88659cab39f25da63921c05894"
+        }
+      },
+      {
+        "pattern": "skewed",
+        "policy": "product_balanced",
+        "changed": true,
+        "matrix_hashes": {
+          "A": "5ada9d8dead6ff05e71a8ce876a62c99c1a0df8a5490f29c6fa99400f213138e",
+          "B": "1f1bbee00fbf8e45ccc99a5abab50621ca43f66cdd237885c75fc6baf1f58c29"
+        }
+      },
+      {
+        "pattern": "skewed",
+        "policy": "product_balanced",
+        "changed": false,
+        "matrix_hashes": {
+          "A": "7eabbd764da11b598349629d770d83568eb90f468003f387e40799bf6f8c3b2e",
+          "B": "05720ddab4ddd020c28a8cb8906678d2b96c1c88659cab39f25da63921c05894"
+        }
+      }
+    ],
+    "repetitions": 3,
+    "declared_application_bytes": 6796,
+    "allocation_rule": "Per-PE max over frozen sessions/partitions of sum(min(N,row candidate products)); input capacities likewise. Includes guard slots. No numerical oracle result used to choose capacity.",
+    "preflight": "compile_required",
+    "source_hashes": {
+      "single_collective.csl": "95db24b1ca3fd7e9d868657d0c991e4d9d3ff4601b154caf8d394523a19870b7",
+      "pe.csl": "8cc560b7f7a1fe6660f222c15d6a7d72a98cb6d5029b6734240e14cce65d5011",
+      "layout.csl": "0f841665ca0ea9f9e420e1099e5629bb4ab5aca660b85ce6540899c6ebe03f51",
+      "host.py": "afc8b5cb8fe9d182c3d3225fbba533ba233dbdbc38e82340a3e5723fd4101055",
+      "inputs.py": "99916fee5949cfa4bb7efc89b2da16ece9806de175d9bae4254f8e6504e5be4e"
+    }
+  },
+  "records": [
+    {
+      "pattern": "banded",
+      "policy": "row_blocks",
+      "changed": false,
+      "matrix_hashes": {
+        "A": "8c61fe7ae14361f422ee7529be3435b77426f94df81a7c8f4f0d6e729634c630",
+        "B": "e87d2d6f14920130741970d72b490354401b917b8e6cf7e8ed4021efbcf48fdb"
+      },
+      "mode": "broadcast",
+      "input_hashes": {
+        "A": "829a137f11efe02bdc10a2a209697ee285752289d2f6d6dcb017b3eda2a5d5c1",
+        "B": "c11e23b573fea6e59c693525158980a47cc5cd193c5a151da0b1c2947a9f3cff"
+      },
+      "row_assignment": [
+        [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15
+        ],
+        [
+          16,
+          17,
+          18,
+          19,
+          20,
+          21,
+          22,
+          23,
+          24,
+          25,
+          26,
+          27,
+          28,
+          29,
+          30,
+          31
+        ],
+        [
+          32,
+          33,
+          34,
+          35,
+          36,
+          37,
+          38,
+          39,
+          40,
+          41,
+          42,
+          43,
+          44,
+          45,
+          46,
+          47
+        ],
+        [
+          48,
+          49,
+          50,
+          51,
+          52,
+          53,
+          54,
+          55,
+          56,
+          57,
+          58,
+          59,
+          60,
+          61,
+          62,
+          63
+        ]
+      ],
+      "products_per_pe": [
+        144,
+        144,
+        144,
+        144
+      ],
+      "output_nnz_per_pe": [
+        80,
+        80,
+        80,
+        80
+      ],
+      "B_words": 450,
+      "host_preparation": {
+        "input_generation_s": 0.00042704399675130844,
+        "partition_s": 4.4840388000011444e-05,
+        "oracle_s": 0.00013079121708869934,
+        "packing_s": 0.0005053253844380379
+      },
+      "preprocessing_including_oracle_seconds": 0.0011277394369244576,
+      "host_h2d_seconds": 0.006348106078803539,
+      "samples": [
+        {
+          "repetition": 0,
+          "warmup": true,
+          "correct": true,
+          "root_ack": 4.0,
+          "root_span_cycles": 48988,
+          "local_compute_cycles": [
+            46141,
+            46141,
+            46141,
+            46141
+          ],
+          "local_precompute_cycles": [
+            1531,
+            1531,
+            2243,
+            2243
+          ],
+          "raw_timestamps": [
+            [
+              11398,
+              12929,
+              59070,
+              60386
+            ],
+            [
+              11398,
+              12929,
+              59070,
+              60256
+            ],
+            [
+              10687,
+              12930,
+              59071,
+              59615
+            ],
+            [
+              10687,
+              12930,
+              59071,
+              59615
+            ]
+          ],
+          "host_launch_seconds": 0.0006497064605355263,
+          "host_d2h_and_validation_seconds": 14.746347358450294,
+          "output_sha256": "b17f63017e602015c4803b84948a762a13620d6c5529f3c6c5b5cca81b778151"
+        },
+        {
+          "repetition": 1,
+          "warmup": false,
+          "correct": true,
+          "root_ack": 4.0,
+          "root_span_cycles": 48990,
+          "local_compute_cycles": [
+            46141,
+            46141,
+            46141,
+            46141
+          ],
+          "local_precompute_cycles": [
+            1533,
+            1533,
+            1537,
+            1537
+          ],
+          "raw_timestamps": [
+            [
+              147974,
+              149507,
+              195648,
+              196964
+            ],
+            [
+              147974,
+              149507,
+              195648,
+              196834
+            ],
+            [
+              147971,
+              149508,
+              195649,
+              196193
+            ],
+            [
+              147971,
+              149508,
+              195649,
+              196193
+            ]
+          ],
+          "host_launch_seconds": 0.0014905324205756187,
+          "host_d2h_and_validation_seconds": 13.257843897677958,
+          "output_sha256": "b17f63017e602015c4803b84948a762a13620d6c5529f3c6c5b5cca81b778151"
+        },
+        {
+          "repetition": 2,
+          "warmup": false,
+          "correct": true,
+          "root_ack": 4.0,
+          "root_span_cycles": 48990,
+          "local_compute_cycles": [
+            46141,
+            46141,
+            46141,
+            46141
+          ],
+          "local_precompute_cycles": [
+            1533,
+            1533,
+            1537,
+            1537
+          ],
+          "raw_timestamps": [
+            [
+              283380,
+              284913,
+              331054,
+              332370
+            ],
+            [
+              283380,
+              284913,
+              331054,
+              332240
+            ],
+            [
+              283377,
+              284914,
+              331055,
+              331599
+            ],
+            [
+              283377,
+              284914,
+              331055,
+              331599
+            ]
+          ],
+          "host_launch_seconds": 0.0009199483320116997,
+          "host_d2h_and_validation_seconds": 12.99943020939827,
+          "output_sha256": "b17f63017e602015c4803b84948a762a13620d6c5529f3c6c5b5cca81b778151"
+        },
+        {
+          "repetition": 3,
+          "warmup": false,
+          "correct": true,
+          "root_ack": 4.0,
+          "root_span_cycles": 48990,
+          "local_compute_cycles": [
+            46141,
+            46141,
+            46141,
+            46141
+          ],
+          "local_precompute_cycles": [
+            1533,
+            1533,
+            1537,
+            1537
+          ],
+          "raw_timestamps": [
+            [
+              418794,
+              420327,
+              466468,
+              467784
+            ],
+            [
+              418794,
+              420327,
+              466468,
+              467654
+            ],
+            [
+              418791,
+              420328,
+              466469,
+              467013
+            ],
+            [
+              418791,
+              420328,
+              466469,
+              467013
+            ]
+          ],
+          "host_launch_seconds": 0.001073499210178852,
+          "host_d2h_and_validation_seconds": 12.921332253143191,
+          "output_sha256": "b17f63017e602015c4803b84948a762a13620d6c5529f3c6c5b5cca81b778151"
+        }
+      ]
+    },
+    {
+      "pattern": "banded",
+      "policy": "row_blocks",
+      "changed": false,
+      "matrix_hashes": {
+        "A": "8c61fe7ae14361f422ee7529be3435b77426f94df81a7c8f4f0d6e729634c630",
+        "B": "e87d2d6f14920130741970d72b490354401b917b8e6cf7e8ed4021efbcf48fdb"
+      },
+      "mode": "resident",
+      "input_hashes": {
+        "A": "829a137f11efe02bdc10a2a209697ee285752289d2f6d6dcb017b3eda2a5d5c1",
+        "B": "c11e23b573fea6e59c693525158980a47cc5cd193c5a151da0b1c2947a9f3cff"
+      },
+      "row_assignment": [
+        [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15
+        ],
+        [
+          16,
+          17,
+          18,
+          19,
+          20,
+          21,
+          22,
+          23,
+          24,
+          25,
+          26,
+          27,
+          28,
+          29,
+          30,
+          31
+        ],
+        [
+          32,
+          33,
+          34,
+          35,
+          36,
+          37,
+          38,
+          39,
+          40,
+          41,
+          42,
+          43,
+          44,
+          45,
+          46,
+          47
+        ],
+        [
+          48,
+          49,
+          50,
+          51,
+          52,
+          53,
+          54,
+          55,
+          56,
+          57,
+          58,
+          59,
+          60,
+          61,
+          62,
+          63
+        ]
+      ],
+      "products_per_pe": [
+        144,
+        144,
+        144,
+        144
+      ],
+      "output_nnz_per_pe": [
+        80,
+        80,
+        80,
+        80
+      ],
+      "B_words": 450,
+      "host_preparation": {
+        "input_generation_s": 0.00042704399675130844,
+        "partition_s": 4.4840388000011444e-05,
+        "oracle_s": 0.00013079121708869934,
+        "packing_s": 0.0005053253844380379
+      },
+      "preprocessing_including_oracle_seconds": 0.0011277394369244576,
+      "host_h2d_seconds": 0.006348106078803539,
+      "samples": [
+        {
+          "repetition": 0,
+          "warmup": true,
+          "correct": true,
+          "root_ack": 4.0,
+          "root_span_cycles": 48092,
+          "local_compute_cycles": [
+            46141,
+            46141,
+            46141,
+            46141
+          ],
+          "local_precompute_cycles": [
+            635,
+            635,
+            638,
+            638
+          ],
+          "raw_timestamps": [
+            [
+              599854,
+              600489,
+              646630,
+              647946
+            ],
+            [
+              599854,
+              600489,
+              646630,
+              647816
+            ],
+            [
+              599852,
+              600490,
+              646631,
+              647175
+            ],
+            [
+              599852,
+              600490,
+              646631,
+              647175
+            ]
+          ],
+          "host_launch_seconds": 0.0007266458123922348,
+          "host_d2h_and_validation_seconds": 13.318338306620717,
+          "output_sha256": "b17f63017e602015c4803b84948a762a13620d6c5529f3c6c5b5cca81b778151"
+        },
+        {
+          "repetition": 1,
+          "warmup": false,
+          "correct": true,
+          "root_ack": 4.0,
+          "root_span_cycles": 48092,
+          "local_compute_cycles": [
+            46141,
+            46141,
+            46141,
+            46141
+          ],
+          "local_precompute_cycles": [
+            635,
+            635,
+            639,
+            639
+          ],
+          "raw_timestamps": [
+            [
+              734987,
+              735622,
+              781763,
+              783079
+            ],
+            [
+              734987,
+              735622,
+              781763,
+              782949
+            ],
+            [
+              734984,
+              735623,
+              781764,
+              782308
+            ],
+            [
+              734984,
+              735623,
+              781764,
+              782308
+            ]
+          ],
+          "host_launch_seconds": 0.0012208912521600723,
+          "host_d2h_and_validation_seconds": 12.678000542335212,
+          "output_sha256": "b17f63017e602015c4803b84948a762a13620d6c5529f3c6c5b5cca81b778151"
+        },
+        {
+          "repetition": 2,
+          "warmup": false,
+          "correct": true,
+          "root_ack": 4.0,
+          "root_span_cycles": 48092,
+          "local_compute_cycles": [
+            46141,
+            46141,
+            46141,
+            46141
+          ],
+          "local_precompute_cycles": [
+            635,
+            635,
+            639,
+            639
+          ],
+          "raw_timestamps": [
+            [
+              869509,
+              870144,
+              916285,
+              917601
+            ],
+            [
+              869509,
+              870144,
+              916285,
+              917471
+            ],
+            [
+              869506,
+              870145,
+              916286,
+              916830
+            ],
+            [
+              869506,
+              870145,
+              916286,
+              916830
+            ]
+          ],
+          "host_launch_seconds": 0.0010229386389255524,
+          "host_d2h_and_validation_seconds": 12.773321740329266,
+          "output_sha256": "b17f63017e602015c4803b84948a762a13620d6c5529f3c6c5b5cca81b778151"
+        },
+        {
+          "repetition": 3,
+          "warmup": false,
+          "correct": true,
+          "root_ack": 4.0,
+          "root_span_cycles": 48092,
+          "local_compute_cycles": [
+            46141,
+            46141,
+            46141,
+            46141
+          ],
+          "local_precompute_cycles": [
+            635,
+            635,
+            639,
+            639
+          ],
+          "raw_timestamps": [
+            [
+              1004036,
+              1004671,
+              1050812,
+              1052128
+            ],
+            [
+              1004036,
+              1004671,
+              1050812,
+              1051998
+            ],
+            [
+              1004033,
+              1004672,
+              1050813,
+              1051357
+            ],
+            [
+              1004033,
+              1004672,
+              1050813,
+              1051357
+            ]
+          ],
+          "host_launch_seconds": 0.0014321738854050636,
+          "host_d2h_and_validation_seconds": 12.856111180968583,
+          "output_sha256": "b17f63017e602015c4803b84948a762a13620d6c5529f3c6c5b5cca81b778151"
+        }
+      ]
+    },
+    {
+      "pattern": "uniform",
+      "policy": "row_blocks",
+      "changed": false,
+      "matrix_hashes": {
+        "A": "1df301320bec0d637b9e4bb9dfb62e3572f21d68672d117282c1cdd834bc1562",
+        "B": "05720ddab4ddd020c28a8cb8906678d2b96c1c88659cab39f25da63921c05894"
+      },
+      "mode": "broadcast",
+      "input_hashes": {
+        "A": "03eed89e6ee2aed871202c9ba667adada1515d9c0e956b788f2cde3021847ae2",
+        "B": "95cd5b77461ffaedc217cdfdc260f1ca327050ccb7420f1863cd22da67b96127"
+      },
+      "row_assignment": [
+        [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15
+        ],
+        [
+          16,
+          17,
+          18,
+          19,
+          20,
+          21,
+          22,
+          23,
+          24,
+          25,
+          26,
+          27,
+          28,
+          29,
+          30,
+          31
+        ],
+        [
+          32,
+          33,
+          34,
+          35,
+          36,
+          37,
+          38,
+          39,
+          40,
+          41,
+          42,
+          43,
+          44,
+          45,
+          46,
+          47
+        ],
+        [
+          48,
+          49,
+          50,
+          51,
+          52,
+          53,
+          54,
+          55,
+          56,
+          57,
+          58,
+          59,
+          60,
+          61,
+          62,
+          63
+        ]
+      ],
+      "products_per_pe": [
+        144,
+        144,
+        144,
+        144
+      ],
+      "output_nnz_per_pe": [
+        138,
+        135,
+        139,
+        137
+      ],
+      "B_words": 450,
+      "host_preparation": {
+        "input_generation_s": 0.0011865198612213135,
+        "partition_s": 4.107039421796799e-05,
+        "oracle_s": 0.0009492076933383942,
+        "packing_s": 0.0004386734217405319
+      },
+      "preprocessing_including_oracle_seconds": 0.0026442930102348328,
+      "host_h2d_seconds": 0.007714977487921715,
+      "samples": [
+        {
+          "repetition": 0,
+          "warmup": true,
+          "correct": true,
+          "root_ack": 4.0,
+          "root_span_cycles": 50462,
+          "local_compute_cycles": [
+            47591,
+            47516,
+            47616,
+            47566
+          ],
+          "local_precompute_cycles": [
+            1531,
+            1531,
+            2337,
+            2337
+          ],
+          "raw_timestamps": [
+            [
+              1149929,
+              1151460,
+              1199051,
+              1200391
+            ],
+            [
+              1149929,
+              1151460,
+              1198976,
+              1200211
+            ],
+            [
+              1149124,
+              1151461,
+              1199077,
+              1199621
+            ],
+            [
+              1149124,
+              1151461,
+              1199027,
+              1199571
+            ]
+          ],
+          "host_launch_seconds": 0.0006502261385321617,
+          "host_d2h_and_validation_seconds": 14.350011766888201,
+          "output_sha256": "15de3d8a33d32182ad649f7f5cfe590e5d74a84a63c4ad08a999ee622482411f"
+        },
+        {
+          "repetition": 1,
+          "warmup": false,
+          "correct": true,
+          "root_ack": 4.0,
+          "root_span_cycles": 50464,
+          "local_compute_cycles": [
+            47591,
+            47516,
+            47616,
+            47566
+          ],
+          "local_precompute_cycles": [
+            1533,
+            1533,
+            1537,
+            1537
+          ],
+          "raw_timestamps": [
+            [
+              1286805,
+              1288338,
+              1335929,
+              1337269
+            ],
+            [
+              1286805,
+              1288338,
+              1335854,
+              1337089
+            ],
+            [
+              1286802,
+              1288339,
+              1335955,
+              1336499
+            ],
+            [
+              1286802,
+              1288339,
+              1335905,
+              1336449
+            ]
+          ],
+          "host_launch_seconds": 0.0008148364722728729,
+          "host_d2h_and_validation_seconds": 13.066929461434484,
+          "output_sha256": "15de3d8a33d32182ad649f7f5cfe590e5d74a84a63c4ad08a999ee622482411f"
+        },
+        {
+          "repetition": 2,
+          "warmup": false,
+          "correct": true,
+          "root_ack": 4.0,
+          "root_span_cycles": 50464,
+          "local_compute_cycles": [
+            47591,
+            47516,
+            47616,
+            47566
+          ],
+          "local_precompute_cycles": [
+            1533,
+            1533,
+            1537,
+            1537
+          ],
+          "raw_timestamps": [
+            [
+              1423692,
+              1425225,
+              1472816,
+              1474156
+            ],
+            [
+              1423692,
+              1425225,
+              1472741,
+              1473976
+            ],
+            [
+              1423689,
+              1425226,
+              1472842,
+              1473386
+            ],
+            [
+              1423689,
+              1425226,
+              1472792,
+              1473336
+            ]
+          ],
+          "host_launch_seconds": 0.0009697685018181801,
+          "host_d2h_and_validation_seconds": 12.762044819071889,
+          "output_sha256": "15de3d8a33d32182ad649f7f5cfe590e5d74a84a63c4ad08a999ee622482411f"
+        },
+        {
+          "repetition": 3,
+          "warmup": false,
+          "correct": true,
+          "root_ack": 4.0,
+          "root_span_cycles": 50464,
+          "local_compute_cycles": [
+            47591,
+            47516,
+            47616,
+            47566
+          ],
+          "local_precompute_cycles": [
+            1533,
+            1533,
+            1537,
+            1537
+          ],
+          "raw_timestamps": [
+            [
+              1560579,
+              1562112,
+              1609703,
+              1611043
+            ],
+            [
+              1560579,
+              1562112,
+              1609628,
+              1610863
+            ],
+            [
+              1560576,
+              1562113,
+              1609729,
+              1610273
+            ],
+            [
+              1560576,
+              1562113,
+              1609679,
+              1610223
+            ]
+          ],
+          "host_launch_seconds": 0.0010794391855597496,
+          "host_d2h_and_validation_seconds": 13.168007117696106,
+          "output_sha256": "15de3d8a33d32182ad649f7f5cfe590e5d74a84a63c4ad08a999ee622482411f"
+        }
+      ]
+    },
+    {
+      "pattern": "uniform",
+      "policy": "row_blocks",
+      "changed": false,
+      "matrix_hashes": {
+        "A": "1df301320bec0d637b9e4bb9dfb62e3572f21d68672d117282c1cdd834bc1562",
+        "B": "05720ddab4ddd020c28a8cb8906678d2b96c1c88659cab39f25da63921c05894"
+      },
+      "mode": "resident",
+      "input_hashes": {
+        "A": "03eed89e6ee2aed871202c9ba667adada1515d9c0e956b788f2cde3021847ae2",
+        "B": "95cd5b77461ffaedc217cdfdc260f1ca327050ccb7420f1863cd22da67b96127"
+      },
+      "row_assignment": [
+        [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15
+        ],
+        [
+          16,
+          17,
+          18,
+          19,
+          20,
+          21,
+          22,
+          23,
+          24,
+          25,
+          26,
+          27,
+          28,
+          29,
+          30,
+          31
+        ],
+        [
+          32,
+          33,
+          34,
+          35,
+          36,
+          37,
+          38,
+          39,
+          40,
+          41,
+          42,
+          43,
+          44,
+          45,
+          46,
+          47
+        ],
+        [
+          48,
+          49,
+          50,
+          51,
+          52,
+          53,
+          54,
+          55,
+          56,
+          57,
+          58,
+          59,
+          60,
+          61,
+          62,
+          63
+        ]
+      ],
+      "products_per_pe": [
+        144,
+        144,
+        144,
+        144
+      ],
+      "output_nnz_per_pe": [
+        138,
+        135,
+        139,
+        137
+      ],
+      "B_words": 450,
+      "host_preparation": {
+        "input_generation_s": 0.0011865198612213135,
+        "partition_s": 4.107039421796799e-05,
+        "oracle_s": 0.0009492076933383942,
+        "packing_s": 0.0004386734217405319
+      },
+      "preprocessing_including_oracle_seconds": 0.0026442930102348328,
+      "host_h2d_seconds": 0.007714977487921715,
+      "samples": [
+        {
+          "repetition": 0,
+          "warmup": true,
+          "correct": true,
+          "root_ack": 4.0,
+          "root_span_cycles": 49566,
+          "local_compute_cycles": [
+            47591,
+            47516,
+            47616,
+            47566
+          ],
+          "local_precompute_cycles": [
+            635,
+            635,
+            638,
+            638
+          ],
+          "raw_timestamps": [
+            [
+              1743110,
+              1743745,
+              1791336,
+              1792676
+            ],
+            [
+              1743110,
+              1743745,
+              1791261,
+              1792496
+            ],
+            [
+              1743108,
+              1743746,
+              1791362,
+              1791906
+            ],
+            [
+              1743108,
+              1743746,
+              1791312,
+              1791856
+            ]
+          ],
+          "host_launch_seconds": 0.0005234433338046074,
+          "host_d2h_and_validation_seconds": 12.969152066856623,
+          "output_sha256": "15de3d8a33d32182ad649f7f5cfe590e5d74a84a63c4ad08a999ee622482411f"
+        },
+        {
+          "repetition": 1,
+          "warmup": false,
+          "correct": true,
+          "root_ack": 4.0,
+          "root_span_cycles": 49566,
+          "local_compute_cycles": [
+            47591,
+            47516,
+            47616,
+            47566
+          ],
+          "local_precompute_cycles": [
+            635,
+            635,
+            639,
+            639
+          ],
+          "raw_timestamps": [
+            [
+              1879104,
+              1879739,
+              1927330,
+              1928670
+            ],
+            [
+              1879104,
+              1879739,
+              1927255,
+              1928490
+            ],
+            [
+              1879101,
+              1879740,
+              1927356,
+              1927900
+            ],
+            [
+              1879101,
+              1879740,
+              1927306,
+              1927850
+            ]
+          ],
+          "host_launch_seconds": 0.0011121900752186775,
+          "host_d2h_and_validation_seconds": 12.56794232223183,
+          "output_sha256": "15de3d8a33d32182ad649f7f5cfe590e5d74a84a63c4ad08a999ee622482411f"
+        },
+        {
+          "repetition": 2,
+          "warmup": false,
+          "correct": true,
+          "root_ack": 4.0,
+          "root_span_cycles": 49566,
+          "local_compute_cycles": [
+            47591,
+            47516,
+            47616,
+            47566
+          ],
+          "local_precompute_cycles": [
+            635,
+            635,
+            639,
+            639
+          ],
+          "raw_timestamps": [
+            [
+              2015089,
+              2015724,
+              2063315,
+              2064655
+            ],
+            [
+              2015089,
+              2015724,
+              2063240,
+              2064475
+            ],
+            [
+              2015086,
+              2015725,
+              2063341,
+              2063885
+            ],
+            [
+              2015086,
+              2015725,
+              2063291,
+              2063835
+            ]
+          ],
+          "host_launch_seconds": 0.0008698981255292892,
+          "host_d2h_and_validation_seconds": 12.93095035571605,
+          "output_sha256": "15de3d8a33d32182ad649f7f5cfe590e5d74a84a63c4ad08a999ee622482411f"
+        },
+        {
+          "repetition": 3,
+          "warmup": false,
+          "correct": true,
+          "root_ack": 4.0,
+          "root_span_cycles": 49566,
+          "local_compute_cycles": [
+            47591,
+            47516,
+            47616,
+            47566
+          ],
+          "local_precompute_cycles": [
+            635,
+            635,
+            639,
+            639
+          ],
+          "raw_timestamps": [
+            [
+              2151071,
+              2151706,
+              2199297,
+              2200637
+            ],
+            [
+              2151071,
+              2151706,
+              2199222,
+              2200457
+            ],
+            [
+              2151068,
+              2151707,
+              2199323,
+              2199867
+            ],
+            [
+              2151068,
+              2151707,
+              2199273,
+              2199817
+            ]
+          ],
+          "host_launch_seconds": 0.000936548225581646,
+          "host_d2h_and_validation_seconds": 12.92778816074133,
+          "output_sha256": "15de3d8a33d32182ad649f7f5cfe590e5d74a84a63c4ad08a999ee622482411f"
+        }
+      ]
+    },
+    {
+      "pattern": "skewed",
+      "policy": "row_blocks",
+      "changed": false,
+      "matrix_hashes": {
+        "A": "7eabbd764da11b598349629d770d83568eb90f468003f387e40799bf6f8c3b2e",
+        "B": "05720ddab4ddd020c28a8cb8906678d2b96c1c88659cab39f25da63921c05894"
+      },
+      "mode": "broadcast",
+      "input_hashes": {
+        "A": "a63a82604d628193f33d31a84098d54f0801509253fc868b615935e7939c3eb1",
+        "B": "95cd5b77461ffaedc217cdfdc260f1ca327050ccb7420f1863cd22da67b96127"
+      },
+      "row_assignment": [
+        [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15
+        ],
+        [
+          16,
+          17,
+          18,
+          19,
+          20,
+          21,
+          22,
+          23,
+          24,
+          25,
+          26,
+          27,
+          28,
+          29,
+          30,
+          31
+        ],
+        [
+          32,
+          33,
+          34,
+          35,
+          36,
+          37,
+          38,
+          39,
+          40,
+          41,
+          42,
+          43,
+          44,
+          45,
+          46,
+          47
+        ],
+        [
+          48,
+          49,
+          50,
+          51,
+          52,
+          53,
+          54,
+          55,
+          56,
+          57,
+          58,
+          59,
+          60,
+          61,
+          62,
+          63
+        ]
+      ],
+      "products_per_pe": [
+        408,
+        0,
+        96,
+        96
+      ],
+      "output_nnz_per_pe": [
+        283,
+        0,
+        94,
+        92
+      ],
+      "B_words": 450,
+      "host_preparation": {
+        "input_generation_s": 0.0010184692218899727,
+        "partition_s": 2.7460046112537384e-05,
+        "oracle_s": 0.00010497123003005981,
+        "packing_s": 0.00030236318707466125
+      },
+      "preprocessing_including_oracle_seconds": 0.0014827027916908264,
+      "host_h2d_seconds": 0.005534809082746506,
+      "samples": [
+        {
+          "repetition": 0,
+          "warmup": true,
+          "correct": true,
+          "root_ack": 4.0,
+          "root_span_cycles": 69788,
+          "local_compute_cycles": [
+            66936,
+            35485,
+            43627,
+            43577
+          ],
+          "local_precompute_cycles": [
+            1531,
+            1531,
+            2337,
+            2337
+          ],
+          "raw_timestamps": [
+            [
+              2298411,
+              2299942,
+              2366878,
+              2368199
+            ],
+            [
+              2298411,
+              2299942,
+              2335427,
+              2367798
+            ],
+            [
+              2297606,
+              2299943,
+              2343570,
+              2367148
+            ],
+            [
+              2297606,
+              2299943,
+              2343520,
+              2344064
+            ]
+          ],
+          "host_launch_seconds": 0.0005834056064486504,
+          "host_d2h_and_validation_seconds": 17.394758846610785,
+          "output_sha256": "9e3d244d960fdc2fc5bc9d9a5e5d4a2a10d1613539efa961b3a3a484b3966b59"
+        },
+        {
+          "repetition": 1,
+          "warmup": false,
+          "correct": true,
+          "root_ack": 4.0,
+          "root_span_cycles": 69790,
+          "local_compute_cycles": [
+            66936,
+            35485,
+            43627,
+            43577
+          ],
+          "local_precompute_cycles": [
+            1533,
+            1533,
+            1537,
+            1537
+          ],
+          "raw_timestamps": [
+            [
+              2454644,
+              2456177,
+              2523113,
+              2524434
+            ],
+            [
+              2454644,
+              2456177,
+              2491662,
+              2524033
+            ],
+            [
+              2454641,
+              2456178,
+              2499805,
+              2523383
+            ],
+            [
+              2454641,
+              2456178,
+              2499755,
+              2500299
+            ]
+          ],
+          "host_launch_seconds": 0.0014991145581007004,
+          "host_d2h_and_validation_seconds": 14.803246553987265,
+          "output_sha256": "9e3d244d960fdc2fc5bc9d9a5e5d4a2a10d1613539efa961b3a3a484b3966b59"
+        },
+        {
+          "repetition": 2,
+          "warmup": false,
+          "correct": true,
+          "root_ack": 4.0,
+          "root_span_cycles": 69790,
+          "local_compute_cycles": [
+            66936,
+            35485,
+            43627,
+            43577
+          ],
+          "local_precompute_cycles": [
+            1533,
+            1533,
+            1537,
+            1537
+          ],
+          "raw_timestamps": [
+            [
+              2610834,
+              2612367,
+              2679303,
+              2680624
+            ],
+            [
+              2610834,
+              2612367,
+              2647852,
+              2680223
+            ],
+            [
+              2610831,
+              2612368,
+              2655995,
+              2679573
+            ],
+            [
+              2610831,
+              2612368,
+              2655945,
+              2656489
+            ]
+          ],
+          "host_launch_seconds": 0.0010251794010400772,
+          "host_d2h_and_validation_seconds": 14.439469084143639,
+          "output_sha256": "9e3d244d960fdc2fc5bc9d9a5e5d4a2a10d1613539efa961b3a3a484b3966b59"
+        },
+        {
+          "repetition": 3,
+          "warmup": false,
+          "correct": true,
+          "root_ack": 4.0,
+          "root_span_cycles": 69790,
+          "local_compute_cycles": [
+            66936,
+            35485,
+            43627,
+            43577
+          ],
+          "local_precompute_cycles": [
+            1533,
+            1533,
+            1537,
+            1537
+          ],
+          "raw_timestamps": [
+            [
+              2767049,
+              2768582,
+              2835518,
+              2836839
+            ],
+            [
+              2767049,
+              2768582,
+              2804067,
+              2836438
+            ],
+            [
+              2767046,
+              2768583,
+              2812210,
+              2835788
+            ],
+            [
+              2767046,
+              2768583,
+              2812160,
+              2812704
+            ]
+          ],
+          "host_launch_seconds": 0.0010042591020464897,
+          "host_d2h_and_validation_seconds": 14.702537912875414,
+          "output_sha256": "9e3d244d960fdc2fc5bc9d9a5e5d4a2a10d1613539efa961b3a3a484b3966b59"
+        }
+      ]
+    },
+    {
+      "pattern": "skewed",
+      "policy": "row_blocks",
+      "changed": false,
+      "matrix_hashes": {
+        "A": "7eabbd764da11b598349629d770d83568eb90f468003f387e40799bf6f8c3b2e",
+        "B": "05720ddab4ddd020c28a8cb8906678d2b96c1c88659cab39f25da63921c05894"
+      },
+      "mode": "resident",
+      "input_hashes": {
+        "A": "a63a82604d628193f33d31a84098d54f0801509253fc868b615935e7939c3eb1",
+        "B": "95cd5b77461ffaedc217cdfdc260f1ca327050ccb7420f1863cd22da67b96127"
+      },
+      "row_assignment": [
+        [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15
+        ],
+        [
+          16,
+          17,
+          18,
+          19,
+          20,
+          21,
+          22,
+          23,
+          24,
+          25,
+          26,
+          27,
+          28,
+          29,
+          30,
+          31
+        ],
+        [
+          32,
+          33,
+          34,
+          35,
+          36,
+          37,
+          38,
+          39,
+          40,
+          41,
+          42,
+          43,
+          44,
+          45,
+          46,
+          47
+        ],
+        [
+          48,
+          49,
+          50,
+          51,
+          52,
+          53,
+          54,
+          55,
+          56,
+          57,
+          58,
+          59,
+          60,
+          61,
+          62,
+          63
+        ]
+      ],
+      "products_per_pe": [
+        408,
+        0,
+        96,
+        96
+      ],
+      "output_nnz_per_pe": [
+        283,
+        0,
+        94,
+        92
+      ],
+      "B_words": 450,
+      "host_preparation": {
+        "input_generation_s": 0.0010184692218899727,
+        "partition_s": 2.7460046112537384e-05,
+        "oracle_s": 0.00010497123003005981,
+        "packing_s": 0.00030236318707466125
+      },
+      "preprocessing_including_oracle_seconds": 0.0014827027916908264,
+      "host_h2d_seconds": 0.005534809082746506,
+      "samples": [
+        {
+          "repetition": 0,
+          "warmup": true,
+          "correct": true,
+          "root_ack": 4.0,
+          "root_span_cycles": 68892,
+          "local_compute_cycles": [
+            66936,
+            35485,
+            43627,
+            43577
+          ],
+          "local_precompute_cycles": [
+            635,
+            635,
+            636,
+            636
+          ],
+          "raw_timestamps": [
+            [
+              2968894,
+              2969529,
+              3036465,
+              3037786
+            ],
+            [
+              2968894,
+              2969529,
+              3005014,
+              3037385
+            ],
+            [
+              2968894,
+              2969530,
+              3013157,
+              3036735
+            ],
+            [
+              2968894,
+              2969530,
+              3013107,
+              3013651
+            ]
+          ],
+          "host_launch_seconds": 0.0006229057908058167,
+          "host_d2h_and_validation_seconds": 14.63385335355997,
+          "output_sha256": "9e3d244d960fdc2fc5bc9d9a5e5d4a2a10d1613539efa961b3a3a484b3966b59"
+        },
+        {
+          "repetition": 1,
+          "warmup": false,
+          "correct": true,
+          "root_ack": 4.0,
+          "root_span_cycles": 68892,
+          "local_compute_cycles": [
+            66936,
+            35485,
+            43627,
+            43577
+          ],
+          "local_precompute_cycles": [
+            635,
+            635,
+            639,
+            639
+          ],
+          "raw_timestamps": [
+            [
+              3124202,
+              3124837,
+              3191773,
+              3193094
+            ],
+            [
+              3124202,
+              3124837,
+              3160322,
+              3192693
+            ],
+            [
+              3124199,
+              3124838,
+              3168465,
+              3192043
+            ],
+            [
+              3124199,
+              3124838,
+              3168415,
+              3168959
+            ]
+          ],
+          "host_launch_seconds": 0.0009484291076660156,
+          "host_d2h_and_validation_seconds": 14.062871840782464,
+          "output_sha256": "9e3d244d960fdc2fc5bc9d9a5e5d4a2a10d1613539efa961b3a3a484b3966b59"
+        },
+        {
+          "repetition": 2,
+          "warmup": false,
+          "correct": true,
+          "root_ack": 4.0,
+          "root_span_cycles": 68892,
+          "local_compute_cycles": [
+            66936,
+            35485,
+            43627,
+            43577
+          ],
+          "local_precompute_cycles": [
+            635,
+            635,
+            639,
+            639
+          ],
+          "raw_timestamps": [
+            [
+              3279523,
+              3280158,
+              3347094,
+              3348415
+            ],
+            [
+              3279523,
+              3280158,
+              3315643,
+              3348014
+            ],
+            [
+              3279520,
+              3280159,
+              3323786,
+              3347364
+            ],
+            [
+              3279520,
+              3280159,
+              3323736,
+              3324280
+            ]
+          ],
+          "host_launch_seconds": 0.0010968893766403198,
+          "host_d2h_and_validation_seconds": 13.956979158334434,
+          "output_sha256": "9e3d244d960fdc2fc5bc9d9a5e5d4a2a10d1613539efa961b3a3a484b3966b59"
+        },
+        {
+          "repetition": 3,
+          "warmup": false,
+          "correct": true,
+          "root_ack": 4.0,
+          "root_span_cycles": 68892,
+          "local_compute_cycles": [
+            66936,
+            35485,
+            43627,
+            43577
+          ],
+          "local_precompute_cycles": [
+            635,
+            635,
+            639,
+            639
+          ],
+          "raw_timestamps": [
+            [
+              3434818,
+              3435453,
+              3502389,
+              3503710
+            ],
+            [
+              3434818,
+              3435453,
+              3470938,
+              3503309
+            ],
+            [
+              3434815,
+              3435454,
+              3479081,
+              3502659
+            ],
+            [
+              3434815,
+              3435454,
+              3479031,
+              3479575
+            ]
+          ],
+          "host_launch_seconds": 0.0010033687576651573,
+          "host_d2h_and_validation_seconds": 13.925255610607564,
+          "output_sha256": "9e3d244d960fdc2fc5bc9d9a5e5d4a2a10d1613539efa961b3a3a484b3966b59"
+        }
+      ]
+    },
+    {
+      "pattern": "skewed",
+      "policy": "product_balanced",
+      "changed": false,
+      "matrix_hashes": {
+        "A": "7eabbd764da11b598349629d770d83568eb90f468003f387e40799bf6f8c3b2e",
+        "B": "05720ddab4ddd020c28a8cb8906678d2b96c1c88659cab39f25da63921c05894"
+      },
+      "mode": "broadcast",
+      "input_hashes": {
+        "A": "60d5a0adf990b8db6be0906edcee0a1980f77a0bfc4ae8e77bee5df3148abfeb",
+        "B": "95cd5b77461ffaedc217cdfdc260f1ca327050ccb7420f1863cd22da67b96127"
+      },
+      "row_assignment": [
+        [
+          0,
+          4,
+          8,
+          12,
+          16,
+          20,
+          24,
+          28,
+          32,
+          36,
+          40,
+          44,
+          48,
+          52,
+          56,
+          60
+        ],
+        [
+          1,
+          5,
+          9,
+          13,
+          17,
+          21,
+          25,
+          29,
+          33,
+          37,
+          41,
+          45,
+          49,
+          53,
+          57,
+          61
+        ],
+        [
+          2,
+          6,
+          10,
+          14,
+          18,
+          22,
+          26,
+          30,
+          34,
+          38,
+          42,
+          46,
+          50,
+          54,
+          58,
+          62
+        ],
+        [
+          3,
+          7,
+          11,
+          15,
+          19,
+          23,
+          27,
+          31,
+          35,
+          39,
+          43,
+          47,
+          51,
+          55,
+          59,
+          63
+        ]
+      ],
+      "products_per_pe": [
+        150,
+        150,
+        150,
+        150
+      ],
+      "output_nnz_per_pe": [
+        118,
+        113,
+        120,
+        118
+      ],
+      "B_words": 450,
+      "host_preparation": {
+        "input_generation_s": 0.0009772488847374916,
+        "partition_s": 0.00010745134204626083,
+        "oracle_s": 0.0001096213236451149,
+        "packing_s": 0.00029096193611621857
+      },
+      "preprocessing_including_oracle_seconds": 0.0015166942030191422,
+      "host_h2d_seconds": 0.0052525345236063,
+      "samples": [
+        {
+          "repetition": 0,
+          "warmup": true,
+          "correct": true,
+          "root_ack": 4.0,
+          "root_span_cycles": 50321,
+          "local_compute_cycles": [
+            47425,
+            47300,
+            47475,
+            47425
+          ],
+          "local_precompute_cycles": [
+            1531,
+            1531,
+            2335,
+            2335
+          ],
+          "raw_timestamps": [
+            [
+              3601484,
+              3603015,
+              3650440,
+              3651805
+            ],
+            [
+              3601484,
+              3603015,
+              3650315,
+              3651625
+            ],
+            [
+              3600681,
+              3603016,
+              3650491,
+              3651035
+            ],
+            [
+              3600681,
+              3603016,
+              3650441,
+              3650985
+            ]
+          ],
+          "host_launch_seconds": 0.0005587954074144363,
+          "host_d2h_and_validation_seconds": 14.541230708360672,
+          "output_sha256": "182d7871e644093bc49139376bfaf5c7268835517982b2e14ba1a9a619aabdaa"
+        },
+        {
+          "repetition": 1,
+          "warmup": false,
+          "correct": true,
+          "root_ack": 4.0,
+          "root_span_cycles": 50323,
+          "local_compute_cycles": [
+            47425,
+            47300,
+            47475,
+            47425
+          ],
+          "local_precompute_cycles": [
+            1533,
+            1533,
+            1537,
+            1537
+          ],
+          "raw_timestamps": [
+            [
+              3738364,
+              3739897,
+              3787322,
+              3788687
+            ],
+            [
+              3738364,
+              3739897,
+              3787197,
+              3788507
+            ],
+            [
+              3738361,
+              3739898,
+              3787373,
+              3787917
+            ],
+            [
+              3738361,
+              3739898,
+              3787323,
+              3787867
+            ]
+          ],
+          "host_launch_seconds": 0.0010485593229532242,
+          "host_d2h_and_validation_seconds": 12.91285766940564,
+          "output_sha256": "182d7871e644093bc49139376bfaf5c7268835517982b2e14ba1a9a619aabdaa"
+        },
+        {
+          "repetition": 2,
+          "warmup": false,
+          "correct": true,
+          "root_ack": 4.0,
+          "root_span_cycles": 50323,
+          "local_compute_cycles": [
+            47425,
+            47300,
+            47475,
+            47425
+          ],
+          "local_precompute_cycles": [
+            1533,
+            1533,
+            1537,
+            1537
+          ],
+          "raw_timestamps": [
+            [
+              3875102,
+              3876635,
+              3924060,
+              3925425
+            ],
+            [
+              3875102,
+              3876635,
+              3923935,
+              3925245
+            ],
+            [
+              3875099,
+              3876636,
+              3924111,
+              3924655
+            ],
+            [
+              3875099,
+              3876636,
+              3924061,
+              3924605
+            ]
+          ],
+          "host_launch_seconds": 0.0009138276800513268,
+          "host_d2h_and_validation_seconds": 12.846040215343237,
+          "output_sha256": "182d7871e644093bc49139376bfaf5c7268835517982b2e14ba1a9a619aabdaa"
+        },
+        {
+          "repetition": 3,
+          "warmup": false,
+          "correct": true,
+          "root_ack": 4.0,
+          "root_span_cycles": 50323,
+          "local_compute_cycles": [
+            47425,
+            47300,
+            47475,
+            47425
+          ],
+          "local_precompute_cycles": [
+            1533,
+            1533,
+            1537,
+            1537
+          ],
+          "raw_timestamps": [
+            [
+              4011852,
+              4013385,
+              4060810,
+              4062175
+            ],
+            [
+              4011852,
+              4013385,
+              4060685,
+              4061995
+            ],
+            [
+              4011849,
+              4013386,
+              4060861,
+              4061405
+            ],
+            [
+              4011849,
+              4013386,
+              4060811,
+              4061355
+            ]
+          ],
+          "host_launch_seconds": 0.0013744020834565163,
+          "host_d2h_and_validation_seconds": 12.637553869746625,
+          "output_sha256": "182d7871e644093bc49139376bfaf5c7268835517982b2e14ba1a9a619aabdaa"
+        }
+      ]
+    },
+    {
+      "pattern": "skewed",
+      "policy": "product_balanced",
+      "changed": false,
+      "matrix_hashes": {
+        "A": "7eabbd764da11b598349629d770d83568eb90f468003f387e40799bf6f8c3b2e",
+        "B": "05720ddab4ddd020c28a8cb8906678d2b96c1c88659cab39f25da63921c05894"
+      },
+      "mode": "resident",
+      "input_hashes": {
+        "A": "60d5a0adf990b8db6be0906edcee0a1980f77a0bfc4ae8e77bee5df3148abfeb",
+        "B": "95cd5b77461ffaedc217cdfdc260f1ca327050ccb7420f1863cd22da67b96127"
+      },
+      "row_assignment": [
+        [
+          0,
+          4,
+          8,
+          12,
+          16,
+          20,
+          24,
+          28,
+          32,
+          36,
+          40,
+          44,
+          48,
+          52,
+          56,
+          60
+        ],
+        [
+          1,
+          5,
+          9,
+          13,
+          17,
+          21,
+          25,
+          29,
+          33,
+          37,
+          41,
+          45,
+          49,
+          53,
+          57,
+          61
+        ],
+        [
+          2,
+          6,
+          10,
+          14,
+          18,
+          22,
+          26,
+          30,
+          34,
+          38,
+          42,
+          46,
+          50,
+          54,
+          58,
+          62
+        ],
+        [
+          3,
+          7,
+          11,
+          15,
+          19,
+          23,
+          27,
+          31,
+          35,
+          39,
+          43,
+          47,
+          51,
+          55,
+          59,
+          63
+        ]
+      ],
+      "products_per_pe": [
+        150,
+        150,
+        150,
+        150
+      ],
+      "output_nnz_per_pe": [
+        118,
+        113,
+        120,
+        118
+      ],
+      "B_words": 450,
+      "host_preparation": {
+        "input_generation_s": 0.0009772488847374916,
+        "partition_s": 0.00010745134204626083,
+        "oracle_s": 0.0001096213236451149,
+        "packing_s": 0.00029096193611621857
+      },
+      "preprocessing_including_oracle_seconds": 0.0015166942030191422,
+      "host_h2d_seconds": 0.0052525345236063,
+      "samples": [
+        {
+          "repetition": 0,
+          "warmup": true,
+          "correct": true,
+          "root_ack": 4.0,
+          "root_span_cycles": 49425,
+          "local_compute_cycles": [
+            47425,
+            47300,
+            47475,
+            47425
+          ],
+          "local_precompute_cycles": [
+            635,
+            635,
+            638,
+            638
+          ],
+          "raw_timestamps": [
+            [
+              4194293,
+              4194928,
+              4242353,
+              4243718
+            ],
+            [
+              4194293,
+              4194928,
+              4242228,
+              4243538
+            ],
+            [
+              4194291,
+              4194929,
+              4242404,
+              4242948
+            ],
+            [
+              4194291,
+              4194929,
+              4242354,
+              4242898
+            ]
+          ],
+          "host_launch_seconds": 0.0006812466308474541,
+          "host_d2h_and_validation_seconds": 12.460921159945428,
+          "output_sha256": "182d7871e644093bc49139376bfaf5c7268835517982b2e14ba1a9a619aabdaa"
+        },
+        {
+          "repetition": 1,
+          "warmup": false,
+          "correct": true,
+          "root_ack": 4.0,
+          "root_span_cycles": 49425,
+          "local_compute_cycles": [
+            47425,
+            47300,
+            47475,
+            47425
+          ],
+          "local_precompute_cycles": [
+            635,
+            635,
+            639,
+            639
+          ],
+          "raw_timestamps": [
+            [
+              4330143,
+              4330778,
+              4378203,
+              4379568
+            ],
+            [
+              4330143,
+              4330778,
+              4378078,
+              4379388
+            ],
+            [
+              4330140,
+              4330779,
+              4378254,
+              4378798
+            ],
+            [
+              4330140,
+              4330779,
+              4378204,
+              4378748
+            ]
+          ],
+          "host_launch_seconds": 0.001069759950041771,
+          "host_d2h_and_validation_seconds": 12.462759812362492,
+          "output_sha256": "182d7871e644093bc49139376bfaf5c7268835517982b2e14ba1a9a619aabdaa"
+        },
+        {
+          "repetition": 2,
+          "warmup": false,
+          "correct": true,
+          "root_ack": 4.0,
+          "root_span_cycles": 49425,
+          "local_compute_cycles": [
+            47425,
+            47300,
+            47475,
+            47425
+          ],
+          "local_precompute_cycles": [
+            635,
+            635,
+            639,
+            639
+          ],
+          "raw_timestamps": [
+            [
+              4465988,
+              4466623,
+              4514048,
+              4515413
+            ],
+            [
+              4465988,
+              4466623,
+              4513923,
+              4515233
+            ],
+            [
+              4465985,
+              4466624,
+              4514099,
+              4514643
+            ],
+            [
+              4465985,
+              4466624,
+              4514049,
+              4514593
+            ]
+          ],
+          "host_launch_seconds": 0.0009344583377242088,
+          "host_d2h_and_validation_seconds": 12.607386521995068,
+          "output_sha256": "182d7871e644093bc49139376bfaf5c7268835517982b2e14ba1a9a619aabdaa"
+        },
+        {
+          "repetition": 3,
+          "warmup": false,
+          "correct": true,
+          "root_ack": 4.0,
+          "root_span_cycles": 49425,
+          "local_compute_cycles": [
+            47425,
+            47300,
+            47475,
+            47425
+          ],
+          "local_precompute_cycles": [
+            635,
+            635,
+            639,
+            639
+          ],
+          "raw_timestamps": [
+            [
+              4601831,
+              4602466,
+              4649891,
+              4651256
+            ],
+            [
+              4601831,
+              4602466,
+              4649766,
+              4651076
+            ],
+            [
+              4601828,
+              4602467,
+              4649942,
+              4650486
+            ],
+            [
+              4601828,
+              4602467,
+              4649892,
+              4650436
+            ]
+          ],
+          "host_launch_seconds": 0.0010360274463891983,
+          "host_d2h_and_validation_seconds": 12.079334266483784,
+          "output_sha256": "182d7871e644093bc49139376bfaf5c7268835517982b2e14ba1a9a619aabdaa"
+        }
+      ]
+    },
+    {
+      "pattern": "skewed",
+      "policy": "product_balanced",
+      "changed": true,
+      "matrix_hashes": {
+        "A": "5ada9d8dead6ff05e71a8ce876a62c99c1a0df8a5490f29c6fa99400f213138e",
+        "B": "1f1bbee00fbf8e45ccc99a5abab50621ca43f66cdd237885c75fc6baf1f58c29"
+      },
+      "mode": "broadcast",
+      "input_hashes": {
+        "A": "b60c8d43ac9f296132d10f42493c4e63b3a65f0d93d7fce9089b456acc48096d",
+        "B": "9997614f171bcc2c766a82d0b46aa3aa5429f65521d867ec7b9675573b8b51a1"
+      },
+      "row_assignment": [
+        [
+          0,
+          4,
+          8,
+          12,
+          16,
+          20,
+          24,
+          28,
+          32,
+          36,
+          40,
+          44,
+          48,
+          52,
+          56,
+          60
+        ],
+        [
+          1,
+          5,
+          9,
+          13,
+          17,
+          21,
+          25,
+          29,
+          33,
+          37,
+          41,
+          45,
+          49,
+          53,
+          57,
+          61
+        ],
+        [
+          2,
+          6,
+          10,
+          14,
+          18,
+          22,
+          26,
+          30,
+          34,
+          38,
+          42,
+          46,
+          50,
+          54,
+          58,
+          62
+        ],
+        [
+          3,
+          7,
+          11,
+          15,
+          19,
+          23,
+          27,
+          31,
+          35,
+          39,
+          43,
+          47,
+          51,
+          55,
+          59,
+          63
+        ]
+      ],
+      "products_per_pe": [
+        150,
+        150,
+        150,
+        150
+      ],
+      "output_nnz_per_pe": [
+        118,
+        122,
+        125,
+        121
+      ],
+      "B_words": 450,
+      "host_preparation": {
+        "input_generation_s": 0.0012608198449015617,
+        "partition_s": 0.00014916155487298965,
+        "oracle_s": 0.00015166215598583221,
+        "packing_s": 0.0004006531089544296
+      },
+      "preprocessing_including_oracle_seconds": 0.002002696506679058,
+      "host_h2d_seconds": 0.005427255295217037,
+      "samples": [
+        {
+          "repetition": 0,
+          "warmup": true,
+          "correct": true,
+          "root_ack": 4.0,
+          "root_span_cycles": 50446,
+          "local_compute_cycles": [
+            47425,
+            47525,
+            47600,
+            47500
+          ],
+          "local_precompute_cycles": [
+            1531,
+            1531,
+            2337,
+            2337
+          ],
+          "raw_timestamps": [
+            [
+              4749098,
+              4750629,
+              4798054,
+              4799544
+            ],
+            [
+              4749098,
+              4750629,
+              4798154,
+              4799341
+            ],
+            [
+              4748293,
+              4750630,
+              4798230,
+              4798774
+            ],
+            [
+              4748293,
+              4750630,
+              4798130,
+              4798674
+            ]
+          ],
+          "host_launch_seconds": 0.0005344338715076447,
+          "host_d2h_and_validation_seconds": 13.91542680375278,
+          "output_sha256": "49757af3867b688542a7852aaffefd4f61be9bfb0f3bdd4fffa320d65613a544"
+        },
+        {
+          "repetition": 1,
+          "warmup": false,
+          "correct": true,
+          "root_ack": 4.0,
+          "root_span_cycles": 50448,
+          "local_compute_cycles": [
+            47425,
+            47525,
+            47600,
+            47500
+          ],
+          "local_precompute_cycles": [
+            1533,
+            1533,
+            1537,
+            1537
+          ],
+          "raw_timestamps": [
+            [
+              4885967,
+              4887500,
+              4934925,
+              4936415
+            ],
+            [
+              4885967,
+              4887500,
+              4935025,
+              4936212
+            ],
+            [
+              4885964,
+              4887501,
+              4935101,
+              4935645
+            ],
+            [
+              4885964,
+              4887501,
+              4935001,
+              4935545
+            ]
+          ],
+          "host_launch_seconds": 0.0009483871981501579,
+          "host_d2h_and_validation_seconds": 13.089518273249269,
+          "output_sha256": "49757af3867b688542a7852aaffefd4f61be9bfb0f3bdd4fffa320d65613a544"
+        },
+        {
+          "repetition": 2,
+          "warmup": false,
+          "correct": true,
+          "root_ack": 4.0,
+          "root_span_cycles": 50448,
+          "local_compute_cycles": [
+            47425,
+            47525,
+            47600,
+            47500
+          ],
+          "local_precompute_cycles": [
+            1533,
+            1533,
+            1537,
+            1537
+          ],
+          "raw_timestamps": [
+            [
+              5022832,
+              5024365,
+              5071790,
+              5073280
+            ],
+            [
+              5022832,
+              5024365,
+              5071890,
+              5073077
+            ],
+            [
+              5022829,
+              5024366,
+              5071966,
+              5072510
+            ],
+            [
+              5022829,
+              5024366,
+              5071866,
+              5072410
+            ]
+          ],
+          "host_launch_seconds": 0.0013764919713139534,
+          "host_d2h_and_validation_seconds": 15.767200312577188,
+          "output_sha256": "49757af3867b688542a7852aaffefd4f61be9bfb0f3bdd4fffa320d65613a544"
+        },
+        {
+          "repetition": 3,
+          "warmup": false,
+          "correct": true,
+          "root_ack": 4.0,
+          "root_span_cycles": 50448,
+          "local_compute_cycles": [
+            47425,
+            47525,
+            47600,
+            47500
+          ],
+          "local_precompute_cycles": [
+            1533,
+            1533,
+            1537,
+            1537
+          ],
+          "raw_timestamps": [
+            [
+              5159722,
+              5161255,
+              5208680,
+              5210170
+            ],
+            [
+              5159722,
+              5161255,
+              5208780,
+              5209967
+            ],
+            [
+              5159719,
+              5161256,
+              5208856,
+              5209400
+            ],
+            [
+              5159719,
+              5161256,
+              5208756,
+              5209300
+            ]
+          ],
+          "host_launch_seconds": 0.0010786904022097588,
+          "host_d2h_and_validation_seconds": 13.146954977884889,
+          "output_sha256": "49757af3867b688542a7852aaffefd4f61be9bfb0f3bdd4fffa320d65613a544"
+        }
+      ]
+    },
+    {
+      "pattern": "skewed",
+      "policy": "product_balanced",
+      "changed": true,
+      "matrix_hashes": {
+        "A": "5ada9d8dead6ff05e71a8ce876a62c99c1a0df8a5490f29c6fa99400f213138e",
+        "B": "1f1bbee00fbf8e45ccc99a5abab50621ca43f66cdd237885c75fc6baf1f58c29"
+      },
+      "mode": "resident",
+      "input_hashes": {
+        "A": "b60c8d43ac9f296132d10f42493c4e63b3a65f0d93d7fce9089b456acc48096d",
+        "B": "9997614f171bcc2c766a82d0b46aa3aa5429f65521d867ec7b9675573b8b51a1"
+      },
+      "row_assignment": [
+        [
+          0,
+          4,
+          8,
+          12,
+          16,
+          20,
+          24,
+          28,
+          32,
+          36,
+          40,
+          44,
+          48,
+          52,
+          56,
+          60
+        ],
+        [
+          1,
+          5,
+          9,
+          13,
+          17,
+          21,
+          25,
+          29,
+          33,
+          37,
+          41,
+          45,
+          49,
+          53,
+          57,
+          61
+        ],
+        [
+          2,
+          6,
+          10,
+          14,
+          18,
+          22,
+          26,
+          30,
+          34,
+          38,
+          42,
+          46,
+          50,
+          54,
+          58,
+          62
+        ],
+        [
+          3,
+          7,
+          11,
+          15,
+          19,
+          23,
+          27,
+          31,
+          35,
+          39,
+          43,
+          47,
+          51,
+          55,
+          59,
+          63
+        ]
+      ],
+      "products_per_pe": [
+        150,
+        150,
+        150,
+        150
+      ],
+      "output_nnz_per_pe": [
+        118,
+        122,
+        125,
+        121
+      ],
+      "B_words": 450,
+      "host_preparation": {
+        "input_generation_s": 0.0012608198449015617,
+        "partition_s": 0.00014916155487298965,
+        "oracle_s": 0.00015166215598583221,
+        "packing_s": 0.0004006531089544296
+      },
+      "preprocessing_including_oracle_seconds": 0.002002696506679058,
+      "host_h2d_seconds": 0.005427255295217037,
+      "samples": [
+        {
+          "repetition": 0,
+          "warmup": true,
+          "correct": true,
+          "root_ack": 4.0,
+          "root_span_cycles": 49550,
+          "local_compute_cycles": [
+            47425,
+            47525,
+            47600,
+            47500
+          ],
+          "local_precompute_cycles": [
+            635,
+            635,
+            638,
+            638
+          ],
+          "raw_timestamps": [
+            [
+              5342266,
+              5342901,
+              5390326,
+              5391816
+            ],
+            [
+              5342266,
+              5342901,
+              5390426,
+              5391613
+            ],
+            [
+              5342264,
+              5342902,
+              5390502,
+              5391046
+            ],
+            [
+              5342264,
+              5342902,
+              5390402,
+              5390946
+            ]
+          ],
+          "host_launch_seconds": 0.0005993861705064774,
+          "host_d2h_and_validation_seconds": 13.005515165627003,
+          "output_sha256": "49757af3867b688542a7852aaffefd4f61be9bfb0f3bdd4fffa320d65613a544"
+        },
+        {
+          "repetition": 1,
+          "warmup": false,
+          "correct": true,
+          "root_ack": 4.0,
+          "root_span_cycles": 49550,
+          "local_compute_cycles": [
+            47425,
+            47525,
+            47600,
+            47500
+          ],
+          "local_precompute_cycles": [
+            635,
+            635,
+            639,
+            639
+          ],
+          "raw_timestamps": [
+            [
+              5478233,
+              5478868,
+              5526293,
+              5527783
+            ],
+            [
+              5478233,
+              5478868,
+              5526393,
+              5527580
+            ],
+            [
+              5478230,
+              5478869,
+              5526469,
+              5527013
+            ],
+            [
+              5478230,
+              5478869,
+              5526369,
+              5526913
+            ]
+          ],
+          "host_launch_seconds": 0.0009442577138543129,
+          "host_d2h_and_validation_seconds": 13.23402551934123,
+          "output_sha256": "49757af3867b688542a7852aaffefd4f61be9bfb0f3bdd4fffa320d65613a544"
+        },
+        {
+          "repetition": 2,
+          "warmup": false,
+          "correct": true,
+          "root_ack": 4.0,
+          "root_span_cycles": 49550,
+          "local_compute_cycles": [
+            47425,
+            47525,
+            47600,
+            47500
+          ],
+          "local_precompute_cycles": [
+            635,
+            635,
+            639,
+            639
+          ],
+          "raw_timestamps": [
+            [
+              5614212,
+              5614847,
+              5662272,
+              5663762
+            ],
+            [
+              5614212,
+              5614847,
+              5662372,
+              5663559
+            ],
+            [
+              5614209,
+              5614848,
+              5662448,
+              5662992
+            ],
+            [
+              5614209,
+              5614848,
+              5662348,
+              5662892
+            ]
+          ],
+          "host_launch_seconds": 0.001055259257555008,
+          "host_d2h_and_validation_seconds": 13.004121804609895,
+          "output_sha256": "49757af3867b688542a7852aaffefd4f61be9bfb0f3bdd4fffa320d65613a544"
+        },
+        {
+          "repetition": 3,
+          "warmup": false,
+          "correct": true,
+          "root_ack": 4.0,
+          "root_span_cycles": 49550,
+          "local_compute_cycles": [
+            47425,
+            47525,
+            47600,
+            47500
+          ],
+          "local_precompute_cycles": [
+            635,
+            635,
+            639,
+            639
+          ],
+          "raw_timestamps": [
+            [
+              5750180,
+              5750815,
+              5798240,
+              5799730
+            ],
+            [
+              5750180,
+              5750815,
+              5798340,
+              5799527
+            ],
+            [
+              5750177,
+              5750816,
+              5798416,
+              5798960
+            ],
+            [
+              5750177,
+              5750816,
+              5798316,
+              5798860
+            ]
+          ],
+          "host_launch_seconds": 0.0010020481422543526,
+          "host_d2h_and_validation_seconds": 13.381557296030223,
+          "output_sha256": "49757af3867b688542a7852aaffefd4f61be9bfb0f3bdd4fffa320d65613a544"
+        }
+      ]
+    },
+    {
+      "pattern": "skewed",
+      "policy": "product_balanced",
+      "changed": false,
+      "matrix_hashes": {
+        "A": "7eabbd764da11b598349629d770d83568eb90f468003f387e40799bf6f8c3b2e",
+        "B": "05720ddab4ddd020c28a8cb8906678d2b96c1c88659cab39f25da63921c05894"
+      },
+      "mode": "broadcast",
+      "input_hashes": {
+        "A": "60d5a0adf990b8db6be0906edcee0a1980f77a0bfc4ae8e77bee5df3148abfeb",
+        "B": "95cd5b77461ffaedc217cdfdc260f1ca327050ccb7420f1863cd22da67b96127"
+      },
+      "row_assignment": [
+        [
+          0,
+          4,
+          8,
+          12,
+          16,
+          20,
+          24,
+          28,
+          32,
+          36,
+          40,
+          44,
+          48,
+          52,
+          56,
+          60
+        ],
+        [
+          1,
+          5,
+          9,
+          13,
+          17,
+          21,
+          25,
+          29,
+          33,
+          37,
+          41,
+          45,
+          49,
+          53,
+          57,
+          61
+        ],
+        [
+          2,
+          6,
+          10,
+          14,
+          18,
+          22,
+          26,
+          30,
+          34,
+          38,
+          42,
+          46,
+          50,
+          54,
+          58,
+          62
+        ],
+        [
+          3,
+          7,
+          11,
+          15,
+          19,
+          23,
+          27,
+          31,
+          35,
+          39,
+          43,
+          47,
+          51,
+          55,
+          59,
+          63
+        ]
+      ],
+      "products_per_pe": [
+        150,
+        150,
+        150,
+        150
+      ],
+      "output_nnz_per_pe": [
+        118,
+        113,
+        120,
+        118
+      ],
+      "B_words": 450,
+      "host_preparation": {
+        "input_generation_s": 0.0009629596024751663,
+        "partition_s": 9.769108146429062e-05,
+        "oracle_s": 0.00012054108083248138,
+        "packing_s": 0.0002835337072610855
+      },
+      "preprocessing_including_oracle_seconds": 0.0014973431825637817,
+      "host_h2d_seconds": 0.0051938751712441444,
+      "samples": [
+        {
+          "repetition": 0,
+          "warmup": true,
+          "correct": true,
+          "root_ack": 4.0,
+          "root_span_cycles": 50321,
+          "local_compute_cycles": [
+            47425,
+            47300,
+            47475,
+            47425
+          ],
+          "local_precompute_cycles": [
+            1531,
+            1531,
+            2335,
+            2335
+          ],
+          "raw_timestamps": [
+            [
+              5898807,
+              5900338,
+              5947763,
+              5949128
+            ],
+            [
+              5898807,
+              5900338,
+              5947638,
+              5948948
+            ],
+            [
+              5898004,
+              5900339,
+              5947814,
+              5948358
+            ],
+            [
+              5898004,
+              5900339,
+              5947764,
+              5948308
+            ]
+          ],
+          "host_launch_seconds": 0.000585705041885376,
+          "host_d2h_and_validation_seconds": 14.226873440667987,
+          "output_sha256": "182d7871e644093bc49139376bfaf5c7268835517982b2e14ba1a9a619aabdaa"
+        },
+        {
+          "repetition": 1,
+          "warmup": false,
+          "correct": true,
+          "root_ack": 4.0,
+          "root_span_cycles": 50323,
+          "local_compute_cycles": [
+            47425,
+            47300,
+            47475,
+            47425
+          ],
+          "local_precompute_cycles": [
+            1533,
+            1533,
+            1537,
+            1537
+          ],
+          "raw_timestamps": [
+            [
+              6035548,
+              6037081,
+              6084506,
+              6085871
+            ],
+            [
+              6035548,
+              6037081,
+              6084381,
+              6085691
+            ],
+            [
+              6035545,
+              6037082,
+              6084557,
+              6085101
+            ],
+            [
+              6035545,
+              6037082,
+              6084507,
+              6085051
+            ]
+          ],
+          "host_launch_seconds": 0.001090208999812603,
+          "host_d2h_and_validation_seconds": 12.616801862604916,
+          "output_sha256": "182d7871e644093bc49139376bfaf5c7268835517982b2e14ba1a9a619aabdaa"
+        },
+        {
+          "repetition": 2,
+          "warmup": false,
+          "correct": true,
+          "root_ack": 4.0,
+          "root_span_cycles": 50323,
+          "local_compute_cycles": [
+            47425,
+            47300,
+            47475,
+            47425
+          ],
+          "local_precompute_cycles": [
+            1533,
+            1533,
+            1537,
+            1537
+          ],
+          "raw_timestamps": [
+            [
+              6172403,
+              6173936,
+              6221361,
+              6222726
+            ],
+            [
+              6172403,
+              6173936,
+              6221236,
+              6222546
+            ],
+            [
+              6172400,
+              6173937,
+              6221412,
+              6221956
+            ],
+            [
+              6172400,
+              6173937,
+              6221362,
+              6221906
+            ]
+          ],
+          "host_launch_seconds": 0.007544533349573612,
+          "host_d2h_and_validation_seconds": 12.792431293986738,
+          "output_sha256": "182d7871e644093bc49139376bfaf5c7268835517982b2e14ba1a9a619aabdaa"
+        },
+        {
+          "repetition": 3,
+          "warmup": false,
+          "correct": true,
+          "root_ack": 4.0,
+          "root_span_cycles": 50323,
+          "local_compute_cycles": [
+            47425,
+            47300,
+            47475,
+            47425
+          ],
+          "local_precompute_cycles": [
+            1533,
+            1533,
+            1537,
+            1537
+          ],
+          "raw_timestamps": [
+            [
+              6309140,
+              6310673,
+              6358098,
+              6359463
+            ],
+            [
+              6309140,
+              6310673,
+              6357973,
+              6359283
+            ],
+            [
+              6309137,
+              6310674,
+              6358149,
+              6358693
+            ],
+            [
+              6309137,
+              6310674,
+              6358099,
+              6358643
+            ]
+          ],
+          "host_launch_seconds": 0.001069728285074234,
+          "host_d2h_and_validation_seconds": 12.964480116963387,
+          "output_sha256": "182d7871e644093bc49139376bfaf5c7268835517982b2e14ba1a9a619aabdaa"
+        }
+      ]
+    },
+    {
+      "pattern": "skewed",
+      "policy": "product_balanced",
+      "changed": false,
+      "matrix_hashes": {
+        "A": "7eabbd764da11b598349629d770d83568eb90f468003f387e40799bf6f8c3b2e",
+        "B": "05720ddab4ddd020c28a8cb8906678d2b96c1c88659cab39f25da63921c05894"
+      },
+      "mode": "resident",
+      "input_hashes": {
+        "A": "60d5a0adf990b8db6be0906edcee0a1980f77a0bfc4ae8e77bee5df3148abfeb",
+        "B": "95cd5b77461ffaedc217cdfdc260f1ca327050ccb7420f1863cd22da67b96127"
+      },
+      "row_assignment": [
+        [
+          0,
+          4,
+          8,
+          12,
+          16,
+          20,
+          24,
+          28,
+          32,
+          36,
+          40,
+          44,
+          48,
+          52,
+          56,
+          60
+        ],
+        [
+          1,
+          5,
+          9,
+          13,
+          17,
+          21,
+          25,
+          29,
+          33,
+          37,
+          41,
+          45,
+          49,
+          53,
+          57,
+          61
+        ],
+        [
+          2,
+          6,
+          10,
+          14,
+          18,
+          22,
+          26,
+          30,
+          34,
+          38,
+          42,
+          46,
+          50,
+          54,
+          58,
+          62
+        ],
+        [
+          3,
+          7,
+          11,
+          15,
+          19,
+          23,
+          27,
+          31,
+          35,
+          39,
+          43,
+          47,
+          51,
+          55,
+          59,
+          63
+        ]
+      ],
+      "products_per_pe": [
+        150,
+        150,
+        150,
+        150
+      ],
+      "output_nnz_per_pe": [
+        118,
+        113,
+        120,
+        118
+      ],
+      "B_words": 450,
+      "host_preparation": {
+        "input_generation_s": 0.0009629596024751663,
+        "partition_s": 9.769108146429062e-05,
+        "oracle_s": 0.00012054108083248138,
+        "packing_s": 0.0002835337072610855
+      },
+      "preprocessing_including_oracle_seconds": 0.0014973431825637817,
+      "host_h2d_seconds": 0.0051938751712441444,
+      "samples": [
+        {
+          "repetition": 0,
+          "warmup": true,
+          "correct": true,
+          "root_ack": 4.0,
+          "root_span_cycles": 49425,
+          "local_compute_cycles": [
+            47425,
+            47300,
+            47475,
+            47425
+          ],
+          "local_precompute_cycles": [
+            635,
+            635,
+            638,
+            638
+          ],
+          "raw_timestamps": [
+            [
+              6491639,
+              6492274,
+              6539699,
+              6541064
+            ],
+            [
+              6491639,
+              6492274,
+              6539574,
+              6540884
+            ],
+            [
+              6491637,
+              6492275,
+              6539750,
+              6540294
+            ],
+            [
+              6491637,
+              6492275,
+              6539700,
+              6540244
+            ]
+          ],
+          "host_launch_seconds": 0.0009485883638262749,
+          "host_d2h_and_validation_seconds": 13.144839091226459,
+          "output_sha256": "182d7871e644093bc49139376bfaf5c7268835517982b2e14ba1a9a619aabdaa"
+        },
+        {
+          "repetition": 1,
+          "warmup": false,
+          "correct": true,
+          "root_ack": 4.0,
+          "root_span_cycles": 49425,
+          "local_compute_cycles": [
+            47425,
+            47300,
+            47475,
+            47425
+          ],
+          "local_precompute_cycles": [
+            635,
+            635,
+            639,
+            639
+          ],
+          "raw_timestamps": [
+            [
+              6627605,
+              6628240,
+              6675665,
+              6677030
+            ],
+            [
+              6627605,
+              6628240,
+              6675540,
+              6676850
+            ],
+            [
+              6627602,
+              6628241,
+              6675716,
+              6676260
+            ],
+            [
+              6627602,
+              6628241,
+              6675666,
+              6676210
+            ]
+          ],
+          "host_launch_seconds": 0.0011308789253234863,
+          "host_d2h_and_validation_seconds": 12.613658618181944,
+          "output_sha256": "182d7871e644093bc49139376bfaf5c7268835517982b2e14ba1a9a619aabdaa"
+        },
+        {
+          "repetition": 2,
+          "warmup": false,
+          "correct": true,
+          "root_ack": 4.0,
+          "root_span_cycles": 49425,
+          "local_compute_cycles": [
+            47425,
+            47300,
+            47475,
+            47425
+          ],
+          "local_precompute_cycles": [
+            635,
+            635,
+            639,
+            639
+          ],
+          "raw_timestamps": [
+            [
+              6763572,
+              6764207,
+              6811632,
+              6812997
+            ],
+            [
+              6763572,
+              6764207,
+              6811507,
+              6812817
+            ],
+            [
+              6763569,
+              6764208,
+              6811683,
+              6812227
+            ],
+            [
+              6763569,
+              6764208,
+              6811633,
+              6812177
+            ]
+          ],
+          "host_launch_seconds": 0.007697196677327156,
+          "host_d2h_and_validation_seconds": 12.797347006388009,
+          "output_sha256": "182d7871e644093bc49139376bfaf5c7268835517982b2e14ba1a9a619aabdaa"
+        },
+        {
+          "repetition": 3,
+          "warmup": false,
+          "correct": true,
+          "root_ack": 4.0,
+          "root_span_cycles": 49425,
+          "local_compute_cycles": [
+            47425,
+            47300,
+            47475,
+            47425
+          ],
+          "local_precompute_cycles": [
+            635,
+            635,
+            639,
+            639
+          ],
+          "raw_timestamps": [
+            [
+              6899418,
+              6900053,
+              6947478,
+              6948843
+            ],
+            [
+              6899418,
+              6900053,
+              6947353,
+              6948663
+            ],
+            [
+              6899415,
+              6900054,
+              6947529,
+              6948073
+            ],
+            [
+              6899415,
+              6900054,
+              6947479,
+              6948023
+            ]
+          ],
+          "host_launch_seconds": 0.0010103285312652588,
+          "host_d2h_and_validation_seconds": 12.857897720299661,
+          "output_sha256": "182d7871e644093bc49139376bfaf5c7268835517982b2e14ba1a9a619aabdaa"
+        }
+      ]
+    }
+  ],
+  "controls": [
+    {
+      "repetition": 0,
+      "warmup": true,
+      "correct": true,
+      "root_ack": 4.0,
+      "root_span_cycles": 2866,
+      "local_compute_cycles": [
+        19,
+        19,
+        19,
+        19
+      ],
+      "local_precompute_cycles": [
+        1531,
+        1531,
+        1536,
+        1536
+      ],
+      "raw_timestamps": [
+        [
+          7036517,
+          7038048,
+          7038067,
+          7039383
+        ],
+        [
+          7036517,
+          7038048,
+          7038067,
+          7039253
+        ],
+        [
+          7036513,
+          7038049,
+          7038068,
+          7038612
+        ],
+        [
+          7036513,
+          7038049,
+          7038068,
+          7038612
+        ]
+      ],
+      "host_launch_seconds": 0.0005624238401651382,
+      "host_d2h_and_validation_seconds": 0.7383143743500113,
+      "output_sha256": null
+    },
+    {
+      "repetition": 1,
+      "warmup": false,
+      "correct": true,
+      "root_ack": 4.0,
+      "root_span_cycles": 2868,
+      "local_compute_cycles": [
+        19,
+        19,
+        19,
+        19
+      ],
+      "local_precompute_cycles": [
+        1533,
+        1533,
+        1537,
+        1537
+      ],
+      "raw_timestamps": [
+        [
+          7043456,
+          7044989,
+          7045008,
+          7046324
+        ],
+        [
+          7043456,
+          7044989,
+          7045008,
+          7046194
+        ],
+        [
+          7043453,
+          7044990,
+          7045009,
+          7045553
+        ],
+        [
+          7043453,
+          7044990,
+          7045009,
+          7045553
+        ]
+      ],
+      "host_launch_seconds": 0.0009105177596211433,
+      "host_d2h_and_validation_seconds": 0.6326362816616893,
+      "output_sha256": null
+    },
+    {
+      "repetition": 2,
+      "warmup": false,
+      "correct": true,
+      "root_ack": 4.0,
+      "root_span_cycles": 2868,
+      "local_compute_cycles": [
+        19,
+        19,
+        19,
+        19
+      ],
+      "local_precompute_cycles": [
+        1533,
+        1533,
+        1537,
+        1537
+      ],
+      "raw_timestamps": [
+        [
+          7050397,
+          7051930,
+          7051949,
+          7053265
+        ],
+        [
+          7050397,
+          7051930,
+          7051949,
+          7053135
+        ],
+        [
+          7050394,
+          7051931,
+          7051950,
+          7052494
+        ],
+        [
+          7050394,
+          7051931,
+          7051950,
+          7052494
+        ]
+      ],
+      "host_launch_seconds": 0.0009222570806741714,
+      "host_d2h_and_validation_seconds": 0.6341732041910291,
+      "output_sha256": null
+    },
+    {
+      "repetition": 3,
+      "warmup": false,
+      "correct": true,
+      "root_ack": 4.0,
+      "root_span_cycles": 2868,
+      "local_compute_cycles": [
+        19,
+        19,
+        19,
+        19
+      ],
+      "local_precompute_cycles": [
+        1533,
+        1533,
+        1537,
+        1537
+      ],
+      "raw_timestamps": [
+        [
+          7057340,
+          7058873,
+          7058892,
+          7060208
+        ],
+        [
+          7057340,
+          7058873,
+          7058892,
+          7060078
+        ],
+        [
+          7057337,
+          7058874,
+          7058893,
+          7059437
+        ],
+        [
+          7057337,
+          7058874,
+          7058893,
+          7059437
+        ]
+      ],
+      "host_launch_seconds": 0.000880667008459568,
+      "host_d2h_and_validation_seconds": 0.6355592953041196,
+      "output_sha256": null
+    }
+  ],
+  "timing_scope": "root local clock: causal start/B broadcast through all-PE completion reduction; local kernel duration uses same-PE subtraction; host packing/transfers, library init and output gather excluded; resident mode broadcasts a one-word start token",
+  "elf_hashes": {}
+}

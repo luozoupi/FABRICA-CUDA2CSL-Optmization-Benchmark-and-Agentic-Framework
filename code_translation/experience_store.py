@@ -17,7 +17,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Dict, Optional
 
-DEFAULT_STORE = os.path.expanduser("~/.cache/fabrica/rl_data/experience.jsonl")
+DEFAULT_STORE = os.path.expanduser("~/xkernel/rl_data/experience.jsonl")
 
 # Baseline run_time_ms from gpt-5.4-pro no-optimization run — used for speedup calc
 BASELINE_MS = 2930.0

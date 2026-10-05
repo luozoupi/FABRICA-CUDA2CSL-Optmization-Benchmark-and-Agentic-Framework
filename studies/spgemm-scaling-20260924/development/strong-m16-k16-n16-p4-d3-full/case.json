@@ -1,0 +1,38 @@
+{
+  "id": "strong-m16-k16-n16-p4-d3-full",
+  "group": "strong",
+  "M": 16,
+  "K": 16,
+  "N": 16,
+  "P": 4,
+  "S": 2,
+  "R": 4,
+  "AC": 16,
+  "BC": 48,
+  "OC": 36,
+  "W": 16,
+  "degree": 3,
+  "variant": "full",
+  "sessions": [
+    {
+      "pattern": "uniform",
+      "policy": "row_blocks",
+      "changed": false
+    },
+    {
+      "pattern": "skewed",
+      "policy": "product_balanced",
+      "changed": true
+    }
+  ],
+  "repetitions": 1,
+  "declared_application_bytes": 1156,
+  "allocation_rule": "Per-PE max over frozen sessions/partitions of sum(min(N,row candidate products)); input capacities likewise. Includes guard slots. No numerical oracle result used to choose capacity.",
+  "preflight": "compile_required",
+  "source_hashes": {
+    "pe.csl": "8cc560b7f7a1fe6660f222c15d6a7d72a98cb6d5029b6734240e14cce65d5011",
+    "layout.csl": "0f841665ca0ea9f9e420e1099e5629bb4ab5aca660b85ce6540899c6ebe03f51",
+    "host.py": "cd38e24bcdaa04a19383724de8c8bff73043169867e6c6d4760d4dc9f09edd5c",
+    "inputs.py": "49cdb7d8602e94611157bdb98e75ea89bf5c692b82ea1e6c6e2d37cfc7f9ab73"
+  }
+}

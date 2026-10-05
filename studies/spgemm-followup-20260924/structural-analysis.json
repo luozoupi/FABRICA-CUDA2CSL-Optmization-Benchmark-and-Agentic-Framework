@@ -1,0 +1,50 @@
+[
+  {
+    "pattern": "empty",
+    "products": 0,
+    "output_nnz": 0,
+    "duplicates": 0,
+    "max_products_per_row": 0,
+    "cancelled_positions": 0
+  },
+  {
+    "pattern": "diagonal",
+    "products": 16,
+    "output_nnz": 16,
+    "duplicates": 0,
+    "max_products_per_row": 1,
+    "cancelled_positions": 0
+  },
+  {
+    "pattern": "banded",
+    "products": 144,
+    "output_nnz": 80,
+    "duplicates": 64,
+    "max_products_per_row": 9,
+    "cancelled_positions": 6
+  },
+  {
+    "pattern": "uniform",
+    "products": 144,
+    "output_nnz": 144,
+    "duplicates": 0,
+    "max_products_per_row": 9,
+    "cancelled_positions": 0
+  },
+  {
+    "pattern": "skewed",
+    "products": 292,
+    "output_nnz": 68,
+    "duplicates": 224,
+    "max_products_per_row": 72,
+    "cancelled_positions": 6
+  },
+  {
+    "pattern": "dense",
+    "products": 4096,
+    "output_nnz": 256,
+    "duplicates": 3840,
+    "max_products_per_row": 256,
+    "cancelled_positions": 10
+  }
+]

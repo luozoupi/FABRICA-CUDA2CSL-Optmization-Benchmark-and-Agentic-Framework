@@ -1,0 +1,9 @@
+node_modules/
+dist/
+test-results/
+playwright-report/
+public/bundle.json
+public/gemv-bundle.json
+public/time-bundle.json
+public/dataflow-bundle.json
+public/matmul-bundle.json

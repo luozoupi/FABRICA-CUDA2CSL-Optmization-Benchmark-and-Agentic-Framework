@@ -1,0 +1,577 @@
+// Matmul traversal probe.  Six loop orders, 32x32x32 f16, 32768 MACs each.
+param memcpy_params;
+
+const EXIT: local_task_id = @get_local_task_id(9);
+const sys_mod = @import_module("<memcpy/memcpy>", memcpy_params);
+const timestamp = @import_module("<time>");
+
+var tsc_s0 = @zeros([timestamp.tsc_size_words]u16);
+var tsc_e0 = @zeros([timestamp.tsc_size_words]u16);
+var tsc_s1 = @zeros([timestamp.tsc_size_words]u16);
+var tsc_e1 = @zeros([timestamp.tsc_size_words]u16);
+var tsc_s2 = @zeros([timestamp.tsc_size_words]u16);
+var tsc_e2 = @zeros([timestamp.tsc_size_words]u16);
+var tsc_s3 = @zeros([timestamp.tsc_size_words]u16);
+var tsc_e3 = @zeros([timestamp.tsc_size_words]u16);
+var tsc_s4 = @zeros([timestamp.tsc_size_words]u16);
+var tsc_e4 = @zeros([timestamp.tsc_size_words]u16);
+var tsc_s5 = @zeros([timestamp.tsc_size_words]u16);
+var tsc_e5 = @zeros([timestamp.tsc_size_words]u16);
+var tsc_s6 = @zeros([timestamp.tsc_size_words]u16);
+var tsc_e6 = @zeros([timestamp.tsc_size_words]u16);
+var tsc_s7 = @zeros([timestamp.tsc_size_words]u16);
+var tsc_e7 = @zeros([timestamp.tsc_size_words]u16);
+var tsc_s8 = @zeros([timestamp.tsc_size_words]u16);
+var tsc_e8 = @zeros([timestamp.tsc_size_words]u16);
+var tsc_s9 = @zeros([timestamp.tsc_size_words]u16);
+var tsc_e9 = @zeros([timestamp.tsc_size_words]u16);
+var tsc_s10 = @zeros([timestamp.tsc_size_words]u16);
+var tsc_e10 = @zeros([timestamp.tsc_size_words]u16);
+var tsc_s11 = @zeros([timestamp.tsc_size_words]u16);
+var tsc_e11 = @zeros([timestamp.tsc_size_words]u16);
+var tsc_s12 = @zeros([timestamp.tsc_size_words]u16);
+var tsc_e12 = @zeros([timestamp.tsc_size_words]u16);
+var tsc_s13 = @zeros([timestamp.tsc_size_words]u16);
+var tsc_e13 = @zeros([timestamp.tsc_size_words]u16);
+var tsc_s14 = @zeros([timestamp.tsc_size_words]u16);
+var tsc_e14 = @zeros([timestamp.tsc_size_words]u16);
+
+var cyc_buf = @zeros([45]f32);
+var ptr_cyc: [*]f32 = &cyc_buf;
+
+var A = @zeros([1024]f16);
+var B = @zeros([1024]f16);
+var Bt = @zeros([1024]f16);
+var ptr_Bt: [*]f16 = &Bt;
+var C = @zeros([1024]f16);
+var Cout = @zeros([2400]f16);
+var ptr_A: [*]f16 = &A;
+var ptr_B: [*]f16 = &B;
+var ptr_Cout: [*]f16 = &Cout;
+
+var t_buf = @zeros([32]f16);
+
+// Descriptor registers for the @map idiom.
+const c_dsr_d = @get_dsr(dsr_dest, 0);
+const c_dsr_0 = @get_dsr(dsr_src0, 0);
+const b_dsr_1 = @get_dsr(dsr_src1, 1);
+const td0 = @get_dsr(dsr_dest, 2);
+const td1 = @get_dsr(dsr_dest, 3);
+const td2 = @get_dsr(dsr_dest, 4);
+const td3 = @get_dsr(dsr_dest, 5);
+const ts0 = @get_dsr(dsr_src0, 2);
+const ts1 = @get_dsr(dsr_src0, 3);
+const ts2 = @get_dsr(dsr_src0, 4);
+const ts3 = @get_dsr(dsr_src0, 5);
+const tb1 = @get_dsr(dsr_src1, 3);
+
+// Base descriptors. Runtime row/column selection is one @increment_dsd_offset.
+const c_row = @get_dsd(mem1d_dsd, .{ .tensor_access = |j|{32} -> C[j] });
+const b_row = @get_dsd(mem1d_dsd, .{ .tensor_access = |j|{32} -> B[j] });
+const c_col = @get_dsd(mem1d_dsd, .{ .tensor_access = |i|{32} -> C[i * 32] });
+const a_col = @get_dsd(mem1d_dsd, .{ .tensor_access = |i|{32} -> A[i * 32] });
+const a_row = @get_dsd(mem1d_dsd, .{ .tensor_access = |k|{32} -> A[k] });
+const b_col = @get_dsd(mem1d_dsd, .{ .tensor_access = |k|{32} -> B[k * 32] });
+const bt_row = @get_dsd(mem1d_dsd, .{ .tensor_access = |k|{32} -> Bt[k] });
+const t16a = @get_dsd(mem1d_dsd, .{ .tensor_access = |x|{16} -> t_buf[x] });
+const t16b = @get_dsd(mem1d_dsd, .{ .tensor_access = |x|{16} -> t_buf[x + 16] });
+const t8a  = @get_dsd(mem1d_dsd, .{ .tensor_access = |x|{8}  -> t_buf[x] });
+const t8b  = @get_dsd(mem1d_dsd, .{ .tensor_access = |x|{8}  -> t_buf[x + 8] });
+const t4a  = @get_dsd(mem1d_dsd, .{ .tensor_access = |x|{4}  -> t_buf[x] });
+const t4b  = @get_dsd(mem1d_dsd, .{ .tensor_access = |x|{4}  -> t_buf[x + 4] });
+const t2a  = @get_dsd(mem1d_dsd, .{ .tensor_access = |x|{2}  -> t_buf[x] });
+const t2b  = @get_dsd(mem1d_dsd, .{ .tensor_access = |x|{2}  -> t_buf[x + 2] });
+const t1a  = @get_dsd(mem1d_dsd, .{ .tensor_access = |x|{1}  -> t_buf[x] });
+const t1b  = @get_dsd(mem1d_dsd, .{ .tensor_access = |x|{1}  -> t_buf[x + 1] });
+const t_vec = @get_dsd(mem1d_dsd, .{ .tensor_access = |k|{32} -> t_buf[k] });
+
+fn zero_C() void {
+  var z: u16 = 0;
+  while (z < 1024) : (z += 1) { C[z] = @as(f16, 0.0); }
+}
+
+fn save_C(slot: i16) void {
+  const base: u16 = @as(u16, slot) * 160;
+  var z: u16 = 0;
+  while (z < 128) : (z += 1) { Cout[base + z] = C[z]; }   // first 4 rows verbatim
+  var r: u16 = 0;
+  while (r < 32) : (r += 1) {                                // every row's sum
+    var acc: f16 = @as(f16, 0.0);
+    var c: u16 = 0;
+    while (c < 32) : (c += 1) { acc += C[r * 32 + c]; }
+    Cout[base + 128 + r] = acc;
+  }
+}
+
+// ikj: innermost loop walks C's row -> one FMACH, unit stride, all 8 lanes.
+fn bench_ikj() void {
+  var i: u16 = 0;
+  while (i < 32) : (i += 1) {
+    var k: u16 = 0;
+    while (k < 32) : (k += 1) {
+      var cd = @increment_dsd_offset(c_row, @as(i16, i * 32), f16);
+      var bd = @increment_dsd_offset(b_row, @as(i16, k * 32), f16);
+      @fmach(cd, cd, bd, A[i * 32 + k]);
+    }
+  }
+}
+
+// kij: innermost loop walks C's row -> one FMACH, unit stride, all 8 lanes.
+fn bench_kij() void {
+  var k: u16 = 0;
+  while (k < 32) : (k += 1) {
+    var i: u16 = 0;
+    while (i < 32) : (i += 1) {
+      var cd = @increment_dsd_offset(c_row, @as(i16, i * 32), f16);
+      var bd = @increment_dsd_offset(b_row, @as(i16, k * 32), f16);
+      @fmach(cd, cd, bd, A[i * 32 + k]);
+    }
+  }
+}
+
+// jki: innermost loop walks C's column -> one FMACH, stride 32, all 8 lanes.
+fn bench_jki() void {
+  var j: u16 = 0;
+  while (j < 32) : (j += 1) {
+    var k: u16 = 0;
+    while (k < 32) : (k += 1) {
+      var cd = @increment_dsd_offset(c_col, @as(i16, j), f16);
+      var ad = @increment_dsd_offset(a_col, @as(i16, k), f16);
+      @fmach(cd, cd, ad, B[k * 32 + j]);
+    }
+  }
+}
+
+// kji: innermost loop walks C's column -> one FMACH, stride 32, all 8 lanes.
+fn bench_kji() void {
+  var k: u16 = 0;
+  while (k < 32) : (k += 1) {
+    var j: u16 = 0;
+    while (j < 32) : (j += 1) {
+      var cd = @increment_dsd_offset(c_col, @as(i16, j), f16);
+      var ad = @increment_dsd_offset(a_col, @as(i16, k), f16);
+      @fmach(cd, cd, ad, B[k * 32 + j]);
+    }
+  }
+}
+
+// ijk: innermost loop walks K -> a dot product. Not one FMA: multiply, then a
+// dependent reduction.
+fn bench_ijk() void {
+  var i: u16 = 0;
+  while (i < 32) : (i += 1) {
+    var j: u16 = 0;
+    while (j < 32) : (j += 1) {
+      var ad = @increment_dsd_offset(a_row, @as(i16, i * 32), f16);
+      var bd = @increment_dsd_offset(b_col, @as(i16, j), f16);
+      @fmulh(t_vec, ad, bd);
+      var acc: f16 = @as(f16, 0.0);
+      @faddh(&acc, acc, t_vec);
+      C[i * 32 + j] = acc;
+    }
+  }
+}
+
+// jik: innermost loop walks K -> a dot product. Not one FMA: multiply, then a
+// dependent reduction.
+fn bench_jik() void {
+  var j: u16 = 0;
+  while (j < 32) : (j += 1) {
+    var i: u16 = 0;
+    while (i < 32) : (i += 1) {
+      var ad = @increment_dsd_offset(a_row, @as(i16, i * 32), f16);
+      var bd = @increment_dsd_offset(b_col, @as(i16, j), f16);
+      @fmulh(t_vec, ad, bd);
+      var acc: f16 = @as(f16, 0.0);
+      @faddh(&acc, acc, t_vec);
+      C[i * 32 + j] = acc;
+    }
+  }
+}
+
+// ikj_map: same traversal as ikj, but the descriptors are loaded once per row
+// and @map supplies the scalars, so the inner loop is pure FMACH.
+fn step_map(alpha: f16) void {
+  @fmach(c_dsr_d, c_dsr_0, b_dsr_1, alpha);
+}
+
+fn bench_ikj_map() void {
+  var i: u16 = 0;
+  while (i < 32) : (i += 1) {
+    var cd = @increment_dsd_offset(c_row, @as(i16, i * 32), f16);
+    @load_to_dsr(c_dsr_d, cd, .{ .save_address = false });
+    @load_to_dsr(c_dsr_0, cd, .{ .save_address = false });
+    @load_to_dsr(b_dsr_1, b_row, .{ .save_address = true });
+    var ad = @increment_dsd_offset(a_row, @as(i16, i * 32), f16);
+    @map(step_map, ad);
+  }
+}
+
+// ijk_scalar: k innermost as a plain scalar loop. No DSD, no reduction builtin,
+// so it is correct; it is also the slowest thing here.
+fn bench_ijk_scalar() void {
+  var i: u16 = 0;
+  while (i < 32) : (i += 1) {
+    var j: u16 = 0;
+    while (j < 32) : (j += 1) {
+      var acc: f16 = @as(f16, 0.0);
+      var k: u16 = 0;
+      while (k < 32) : (k += 1) {
+        acc += A[i * 32 + k] * B[k * 32 + j];
+      }
+      C[i * 32 + j] = acc;
+    }
+  }
+}
+
+// ijk_bt: dot product with B pre-transposed, so both operands are unit stride.
+// A direct test of the claim that a strided operand is what collapses the lanes.
+fn bench_ijk_bt() void {
+  var i: u16 = 0;
+  while (i < 32) : (i += 1) {
+    var j: u16 = 0;
+    while (j < 32) : (j += 1) {
+      var ad = @increment_dsd_offset(a_row, @as(i16, i * 32), f16);
+      var bd = @increment_dsd_offset(bt_row, @as(i16, j * 32), f16);
+      @fmulh(t_vec, ad, bd);
+      var acc: f16 = @as(f16, 0.0);
+      @faddh(&acc, acc, t_vec);
+      C[i * 32 + j] = acc;
+    }
+  }
+}
+
+// ikj_map_blk: the seventh textbook way, tiling. The output row is split into
+// 8-element tiles. Note what this costs: @map's streaming operand advances by
+// the DSD length, so once the tile width (8) stops matching B's row pitch (32),
+// the stream walks the wrong elements. A correct tiled version must reload B
+// every k -- which is precisely the per-iteration descriptor traffic that made
+// the untiled version fast.
+fn bench_ikj_map_blk() void {
+  var i: u16 = 0;
+  while (i < 32) : (i += 1) {
+    var jb: u16 = 0;
+    while (jb < 4) : (jb += 1) {
+      var cd = @set_dsd_length(@increment_dsd_offset(c_row,
+                 @as(i16, i * 32 + jb * 8), f16), 8);
+      var k: u16 = 0;
+      while (k < 32) : (k += 1) {
+        var bd = @set_dsd_length(@increment_dsd_offset(b_row,
+                   @as(i16, k * 32 + jb * 8), f16), 8);
+        @fmach(cd, cd, bd, A[i * 32 + k]);
+      }
+    }
+  }
+}
+
+// ijk_tree: inner product done correctly -- multiply, then a 32-element
+// reduction as 5 elementwise vector adds. No horizontal reduction anywhere.
+fn bench_ijk_tree() void {
+  var i: u16 = 0;
+  while (i < 32) : (i += 1) {
+    var j: u16 = 0;
+    while (j < 32) : (j += 1) {
+      var ad = @increment_dsd_offset(a_row, @as(i16, i * 32), f16);
+      var bd = @increment_dsd_offset(bt_row, @as(i16, j * 32), f16);
+      @fmulh(t_vec, ad, bd);
+      @faddh(t16a, t16a, t16b);
+      @faddh(t8a, t8a, t8b);
+      @faddh(t4a, t4a, t4b);
+      @faddh(t2a, t2a, t2b);
+      @faddh(t1a, t1a, t1b);
+      C[i * 32 + j] = t_buf[0];
+    }
+  }
+}
+
+// kij_map: outer product, descriptors hoisted. For a fixed k the scalars come
+// from a column of A and each step writes a different row of C, so the FMACHs
+// are mutually independent -- ikj_map's are a dependent chain on one row.
+fn bench_kij_map() void {
+  var k: u16 = 0;
+  while (k < 32) : (k += 1) {
+    @load_to_dsr(c_dsr_d, c_row, .{ .save_address = true });
+    @load_to_dsr(c_dsr_0, c_row, .{ .save_address = true });
+    var bd = @increment_dsd_offset(b_row, @as(i16, k * 32), f16);
+    @load_to_dsr(b_dsr_1, bd, .{ .save_address = false });
+    var ak = @increment_dsd_offset(a_col, @as(i16, k), f16);
+    @map(step_map, ak);
+  }
+}
+
+// outer_tile4: the tiled outer product. Four rows of C are held as a tile and k
+// is walked once, so each B row loaded feeds 4 x 32 MACs instead of 32. On a GPU the
+// tile would live in registers; here it can only live in SRAM.
+fn bench_outer_tile4() void {
+  var ib: u16 = 0;
+  while (ib < 8) : (ib += 1) {
+      var cd0 = @increment_dsd_offset(c_row, @as(i16, (ib * 4 + 0) * 32), f16);
+      var cd1 = @increment_dsd_offset(c_row, @as(i16, (ib * 4 + 1) * 32), f16);
+      var cd2 = @increment_dsd_offset(c_row, @as(i16, (ib * 4 + 2) * 32), f16);
+      var cd3 = @increment_dsd_offset(c_row, @as(i16, (ib * 4 + 3) * 32), f16);
+    var k: u16 = 0;
+    while (k < 32) : (k += 1) {
+      var bd = @increment_dsd_offset(b_row, @as(i16, k * 32), f16);
+        @fmach(cd0, cd0, bd, A[(ib * 4 + 0) * 32 + k]);
+        @fmach(cd1, cd1, bd, A[(ib * 4 + 1) * 32 + k]);
+        @fmach(cd2, cd2, bd, A[(ib * 4 + 2) * 32 + k]);
+        @fmach(cd3, cd3, bd, A[(ib * 4 + 3) * 32 + k]);
+    }
+  }
+}
+
+// outer_tile4b: the tiled outer product with running offsets instead of index
+// arithmetic. Same tile, same reuse, no multiplies in the inner loop.
+fn bench_outer_tile4b() void {
+  var ib: u16 = 0;
+  while (ib < 8) : (ib += 1) {
+    var cd0 = @increment_dsd_offset(c_row, @as(i16, (ib * 4 + 0) * 32), f16);
+    var a0: u16 = (ib * 4 + 0) * 32;
+    var cd1 = @increment_dsd_offset(c_row, @as(i16, (ib * 4 + 1) * 32), f16);
+    var a1: u16 = (ib * 4 + 1) * 32;
+    var cd2 = @increment_dsd_offset(c_row, @as(i16, (ib * 4 + 2) * 32), f16);
+    var a2: u16 = (ib * 4 + 2) * 32;
+    var cd3 = @increment_dsd_offset(c_row, @as(i16, (ib * 4 + 3) * 32), f16);
+    var a3: u16 = (ib * 4 + 3) * 32;
+    var bo: i16 = 0;
+    var k: u16 = 0;
+    while (k < 32) : (k += 1) {
+      var bd = @increment_dsd_offset(b_row, bo, f16);
+      @fmach(cd0, cd0, bd, A[a0]);
+      @fmach(cd1, cd1, bd, A[a1]);
+      @fmach(cd2, cd2, bd, A[a2]);
+      @fmach(cd3, cd3, bd, A[a3]);
+      a0 += 1;
+      a1 += 1;
+      a2 += 1;
+      a3 += 1;
+      bo += 32;
+    }
+  }
+}
+
+// outer_tile4c: the tiled outer product with all four C-row descriptors pinned
+// in DSRs for the tile's lifetime. One B descriptor load now feeds four FMACHs,
+// and the four are mutually independent because they write different rows.
+fn bench_outer_tile4c() void {
+  var ib: u16 = 0;
+  while (ib < 8) : (ib += 1) {
+    var cd0 = @increment_dsd_offset(c_row, @as(i16, (ib * 4 + 0) * 32), f16);
+    @load_to_dsr(td0, cd0, .{ .save_address = false });
+    @load_to_dsr(ts0, cd0, .{ .save_address = false });
+    var a0: u16 = (ib * 4 + 0) * 32;
+    var cd1 = @increment_dsd_offset(c_row, @as(i16, (ib * 4 + 1) * 32), f16);
+    @load_to_dsr(td1, cd1, .{ .save_address = false });
+    @load_to_dsr(ts1, cd1, .{ .save_address = false });
+    var a1: u16 = (ib * 4 + 1) * 32;
+    var cd2 = @increment_dsd_offset(c_row, @as(i16, (ib * 4 + 2) * 32), f16);
+    @load_to_dsr(td2, cd2, .{ .save_address = false });
+    @load_to_dsr(ts2, cd2, .{ .save_address = false });
+    var a2: u16 = (ib * 4 + 2) * 32;
+    var cd3 = @increment_dsd_offset(c_row, @as(i16, (ib * 4 + 3) * 32), f16);
+    @load_to_dsr(td3, cd3, .{ .save_address = false });
+    @load_to_dsr(ts3, cd3, .{ .save_address = false });
+    var a3: u16 = (ib * 4 + 3) * 32;
+    var bo: i16 = 0;
+    var k: u16 = 0;
+    while (k < 32) : (k += 1) {
+      var bd = @increment_dsd_offset(b_row, bo, f16);
+      @load_to_dsr(tb1, bd, .{ .save_address = false });
+      @fmach(td0, ts0, tb1, A[a0]);
+      @fmach(td1, ts1, tb1, A[a1]);
+      @fmach(td2, ts2, tb1, A[a2]);
+      @fmach(td3, ts3, tb1, A[a3]);
+      a0 += 1;
+      a1 += 1;
+      a2 += 1;
+      a3 += 1;
+      bo += 32;
+    }
+  }
+}
+
+fn compute() void {
+  var lo_: u16 = 0;
+  var hi_: u16 = 0;
+  timestamp.enable_tsc();
+
+  zero_C();
+  timestamp.get_timestamp(&tsc_s0);
+  bench_ikj();
+  timestamp.get_timestamp(&tsc_e0);
+  save_C(0);
+  lo_ = tsc_s0[0]; hi_ = tsc_s0[1];
+  cyc_buf[0] = @bitcast(f32, (@as(u32, hi_) << @as(u16, 16)) | @as(u32, lo_));
+  lo_ = tsc_s0[2]; hi_ = tsc_e0[0];
+  cyc_buf[1] = @bitcast(f32, (@as(u32, hi_) << @as(u16, 16)) | @as(u32, lo_));
+  lo_ = tsc_e0[1]; hi_ = tsc_e0[2];
+  cyc_buf[2] = @bitcast(f32, (@as(u32, hi_) << @as(u16, 16)) | @as(u32, lo_));
+  zero_C();
+  timestamp.get_timestamp(&tsc_s1);
+  bench_kij();
+  timestamp.get_timestamp(&tsc_e1);
+  save_C(1);
+  lo_ = tsc_s1[0]; hi_ = tsc_s1[1];
+  cyc_buf[3] = @bitcast(f32, (@as(u32, hi_) << @as(u16, 16)) | @as(u32, lo_));
+  lo_ = tsc_s1[2]; hi_ = tsc_e1[0];
+  cyc_buf[4] = @bitcast(f32, (@as(u32, hi_) << @as(u16, 16)) | @as(u32, lo_));
+  lo_ = tsc_e1[1]; hi_ = tsc_e1[2];
+  cyc_buf[5] = @bitcast(f32, (@as(u32, hi_) << @as(u16, 16)) | @as(u32, lo_));
+  zero_C();
+  timestamp.get_timestamp(&tsc_s2);
+  bench_jki();
+  timestamp.get_timestamp(&tsc_e2);
+  save_C(2);
+  lo_ = tsc_s2[0]; hi_ = tsc_s2[1];
+  cyc_buf[6] = @bitcast(f32, (@as(u32, hi_) << @as(u16, 16)) | @as(u32, lo_));
+  lo_ = tsc_s2[2]; hi_ = tsc_e2[0];
+  cyc_buf[7] = @bitcast(f32, (@as(u32, hi_) << @as(u16, 16)) | @as(u32, lo_));
+  lo_ = tsc_e2[1]; hi_ = tsc_e2[2];
+  cyc_buf[8] = @bitcast(f32, (@as(u32, hi_) << @as(u16, 16)) | @as(u32, lo_));
+  zero_C();
+  timestamp.get_timestamp(&tsc_s3);
+  bench_kji();
+  timestamp.get_timestamp(&tsc_e3);
+  save_C(3);
+  lo_ = tsc_s3[0]; hi_ = tsc_s3[1];
+  cyc_buf[9] = @bitcast(f32, (@as(u32, hi_) << @as(u16, 16)) | @as(u32, lo_));
+  lo_ = tsc_s3[2]; hi_ = tsc_e3[0];
+  cyc_buf[10] = @bitcast(f32, (@as(u32, hi_) << @as(u16, 16)) | @as(u32, lo_));
+  lo_ = tsc_e3[1]; hi_ = tsc_e3[2];
+  cyc_buf[11] = @bitcast(f32, (@as(u32, hi_) << @as(u16, 16)) | @as(u32, lo_));
+  zero_C();
+  timestamp.get_timestamp(&tsc_s4);
+  bench_ijk();
+  timestamp.get_timestamp(&tsc_e4);
+  save_C(4);
+  lo_ = tsc_s4[0]; hi_ = tsc_s4[1];
+  cyc_buf[12] = @bitcast(f32, (@as(u32, hi_) << @as(u16, 16)) | @as(u32, lo_));
+  lo_ = tsc_s4[2]; hi_ = tsc_e4[0];
+  cyc_buf[13] = @bitcast(f32, (@as(u32, hi_) << @as(u16, 16)) | @as(u32, lo_));
+  lo_ = tsc_e4[1]; hi_ = tsc_e4[2];
+  cyc_buf[14] = @bitcast(f32, (@as(u32, hi_) << @as(u16, 16)) | @as(u32, lo_));
+  zero_C();
+  timestamp.get_timestamp(&tsc_s5);
+  bench_jik();
+  timestamp.get_timestamp(&tsc_e5);
+  save_C(5);
+  lo_ = tsc_s5[0]; hi_ = tsc_s5[1];
+  cyc_buf[15] = @bitcast(f32, (@as(u32, hi_) << @as(u16, 16)) | @as(u32, lo_));
+  lo_ = tsc_s5[2]; hi_ = tsc_e5[0];
+  cyc_buf[16] = @bitcast(f32, (@as(u32, hi_) << @as(u16, 16)) | @as(u32, lo_));
+  lo_ = tsc_e5[1]; hi_ = tsc_e5[2];
+  cyc_buf[17] = @bitcast(f32, (@as(u32, hi_) << @as(u16, 16)) | @as(u32, lo_));
+  zero_C();
+  timestamp.get_timestamp(&tsc_s6);
+  bench_ikj_map();
+  timestamp.get_timestamp(&tsc_e6);
+  save_C(6);
+  lo_ = tsc_s6[0]; hi_ = tsc_s6[1];
+  cyc_buf[18] = @bitcast(f32, (@as(u32, hi_) << @as(u16, 16)) | @as(u32, lo_));
+  lo_ = tsc_s6[2]; hi_ = tsc_e6[0];
+  cyc_buf[19] = @bitcast(f32, (@as(u32, hi_) << @as(u16, 16)) | @as(u32, lo_));
+  lo_ = tsc_e6[1]; hi_ = tsc_e6[2];
+  cyc_buf[20] = @bitcast(f32, (@as(u32, hi_) << @as(u16, 16)) | @as(u32, lo_));
+  zero_C();
+  timestamp.get_timestamp(&tsc_s7);
+  bench_ijk_scalar();
+  timestamp.get_timestamp(&tsc_e7);
+  save_C(7);
+  lo_ = tsc_s7[0]; hi_ = tsc_s7[1];
+  cyc_buf[21] = @bitcast(f32, (@as(u32, hi_) << @as(u16, 16)) | @as(u32, lo_));
+  lo_ = tsc_s7[2]; hi_ = tsc_e7[0];
+  cyc_buf[22] = @bitcast(f32, (@as(u32, hi_) << @as(u16, 16)) | @as(u32, lo_));
+  lo_ = tsc_e7[1]; hi_ = tsc_e7[2];
+  cyc_buf[23] = @bitcast(f32, (@as(u32, hi_) << @as(u16, 16)) | @as(u32, lo_));
+  zero_C();
+  timestamp.get_timestamp(&tsc_s8);
+  bench_ijk_bt();
+  timestamp.get_timestamp(&tsc_e8);
+  save_C(8);
+  lo_ = tsc_s8[0]; hi_ = tsc_s8[1];
+  cyc_buf[24] = @bitcast(f32, (@as(u32, hi_) << @as(u16, 16)) | @as(u32, lo_));
+  lo_ = tsc_s8[2]; hi_ = tsc_e8[0];
+  cyc_buf[25] = @bitcast(f32, (@as(u32, hi_) << @as(u16, 16)) | @as(u32, lo_));
+  lo_ = tsc_e8[1]; hi_ = tsc_e8[2];
+  cyc_buf[26] = @bitcast(f32, (@as(u32, hi_) << @as(u16, 16)) | @as(u32, lo_));
+  zero_C();
+  timestamp.get_timestamp(&tsc_s9);
+  bench_ikj_map_blk();
+  timestamp.get_timestamp(&tsc_e9);
+  save_C(9);
+  lo_ = tsc_s9[0]; hi_ = tsc_s9[1];
+  cyc_buf[27] = @bitcast(f32, (@as(u32, hi_) << @as(u16, 16)) | @as(u32, lo_));
+  lo_ = tsc_s9[2]; hi_ = tsc_e9[0];
+  cyc_buf[28] = @bitcast(f32, (@as(u32, hi_) << @as(u16, 16)) | @as(u32, lo_));
+  lo_ = tsc_e9[1]; hi_ = tsc_e9[2];
+  cyc_buf[29] = @bitcast(f32, (@as(u32, hi_) << @as(u16, 16)) | @as(u32, lo_));
+  zero_C();
+  timestamp.get_timestamp(&tsc_s10);
+  bench_ijk_tree();
+  timestamp.get_timestamp(&tsc_e10);
+  save_C(10);
+  lo_ = tsc_s10[0]; hi_ = tsc_s10[1];
+  cyc_buf[30] = @bitcast(f32, (@as(u32, hi_) << @as(u16, 16)) | @as(u32, lo_));
+  lo_ = tsc_s10[2]; hi_ = tsc_e10[0];
+  cyc_buf[31] = @bitcast(f32, (@as(u32, hi_) << @as(u16, 16)) | @as(u32, lo_));
+  lo_ = tsc_e10[1]; hi_ = tsc_e10[2];
+  cyc_buf[32] = @bitcast(f32, (@as(u32, hi_) << @as(u16, 16)) | @as(u32, lo_));
+  zero_C();
+  timestamp.get_timestamp(&tsc_s11);
+  bench_kij_map();
+  timestamp.get_timestamp(&tsc_e11);
+  save_C(11);
+  lo_ = tsc_s11[0]; hi_ = tsc_s11[1];
+  cyc_buf[33] = @bitcast(f32, (@as(u32, hi_) << @as(u16, 16)) | @as(u32, lo_));
+  lo_ = tsc_s11[2]; hi_ = tsc_e11[0];
+  cyc_buf[34] = @bitcast(f32, (@as(u32, hi_) << @as(u16, 16)) | @as(u32, lo_));
+  lo_ = tsc_e11[1]; hi_ = tsc_e11[2];
+  cyc_buf[35] = @bitcast(f32, (@as(u32, hi_) << @as(u16, 16)) | @as(u32, lo_));
+  zero_C();
+  timestamp.get_timestamp(&tsc_s12);
+  bench_outer_tile4();
+  timestamp.get_timestamp(&tsc_e12);
+  save_C(12);
+  lo_ = tsc_s12[0]; hi_ = tsc_s12[1];
+  cyc_buf[36] = @bitcast(f32, (@as(u32, hi_) << @as(u16, 16)) | @as(u32, lo_));
+  lo_ = tsc_s12[2]; hi_ = tsc_e12[0];
+  cyc_buf[37] = @bitcast(f32, (@as(u32, hi_) << @as(u16, 16)) | @as(u32, lo_));
+  lo_ = tsc_e12[1]; hi_ = tsc_e12[2];
+  cyc_buf[38] = @bitcast(f32, (@as(u32, hi_) << @as(u16, 16)) | @as(u32, lo_));
+  zero_C();
+  timestamp.get_timestamp(&tsc_s13);
+  bench_outer_tile4b();
+  timestamp.get_timestamp(&tsc_e13);
+  save_C(13);
+  lo_ = tsc_s13[0]; hi_ = tsc_s13[1];
+  cyc_buf[39] = @bitcast(f32, (@as(u32, hi_) << @as(u16, 16)) | @as(u32, lo_));
+  lo_ = tsc_s13[2]; hi_ = tsc_e13[0];
+  cyc_buf[40] = @bitcast(f32, (@as(u32, hi_) << @as(u16, 16)) | @as(u32, lo_));
+  lo_ = tsc_e13[1]; hi_ = tsc_e13[2];
+  cyc_buf[41] = @bitcast(f32, (@as(u32, hi_) << @as(u16, 16)) | @as(u32, lo_));
+  zero_C();
+  timestamp.get_timestamp(&tsc_s14);
+  bench_outer_tile4c();
+  timestamp.get_timestamp(&tsc_e14);
+  save_C(14);
+  lo_ = tsc_s14[0]; hi_ = tsc_s14[1];
+  cyc_buf[42] = @bitcast(f32, (@as(u32, hi_) << @as(u16, 16)) | @as(u32, lo_));
+  lo_ = tsc_s14[2]; hi_ = tsc_e14[0];
+  cyc_buf[43] = @bitcast(f32, (@as(u32, hi_) << @as(u16, 16)) | @as(u32, lo_));
+  lo_ = tsc_e14[1]; hi_ = tsc_e14[2];
+  cyc_buf[44] = @bitcast(f32, (@as(u32, hi_) << @as(u16, 16)) | @as(u32, lo_));
+  timestamp.disable_tsc();
+  @activate(EXIT);
+}
+
+task f_exit() void { sys_mod.unblock_cmd_stream(); }
+
+comptime {
+  @bind_local_task(f_exit, EXIT);
+  @export_symbol(ptr_A, "A");
+  @export_symbol(ptr_B, "B");
+  @export_symbol(ptr_Bt, "Bt");
+  @export_symbol(ptr_Cout, "Cout");
+  @export_symbol(ptr_cyc, "cycles");
+  @export_symbol(compute);
+}

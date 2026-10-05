@@ -1,0 +1,25 @@
+id: D01_local_task_ids
+group: D_api
+prompt: 'Answer this Cerebras CSL / WSE-3 question with the single letter of the correct option, then one sentence
+  of justification.
+
+
+  On the WSE-3, which range of local task IDs may a program bind with @get_local_task_id / @bind_local_task?
+
+
+  A) 0 to 7
+
+  B) 8 to 30 (the band [8, 31))
+
+  C) 32 to 63
+
+  D) any u16'
+choices:
+- A) 0 to 7
+- B) 8 to 30 (the band [8, 31))
+- C) 32 to 63
+- D) any u16
+expected:
+  choice: B
+scoring: first standalone letter A-D in the reply equals the key
+source_citation: 'docs/WSE3_PORTING.md rule: task-id band [8,31); error_gotcha_retrieval task-id-reuse'

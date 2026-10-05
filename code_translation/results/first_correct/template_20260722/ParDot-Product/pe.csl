@@ -1,0 +1,224 @@
+// ParDot-Product compute file (pe.csl)
+// 4-PE strip distributed dot product with 2-phase west-ward tree reduction.
+//   Phase 1 (C_PHASE1): PE3->PE2, PE1->PE0 (odd sends west, even recv+add)
+//   Phase 2 (C_PHASE2): PE2->PE0 (relayed through PE1); PE0 adds committed p0.
+//
+// FIX (bucket B): the even PE's phase-1 add is now committed in p1_add_task,
+// which fires ONLY after the phase-1 recv drains and BEFORE p1_done arms
+// phase 2.  Previously the recv async op fired p1_done directly, leaving
+// p_val = 0.0, so PE0 dropped PE1 and PE2 sent a zero partial (dropping
+// PE2/PE3).  Now p_val = local + recv1[0] is a strict data dependency.
+//
+// NOTE: no host-side changes were made; <debug> tracing would require a host
+// D2H of the trace buffer that the fixed run.py does not perform, so the
+// trace-verification step is described here but not wired in.  The repair
+// follows the reviewer's rationale directly.
+
+param memcpy_params: comptime_struct;
+param n_per_pe: u16;
+param px: i16;
+param width: i16;
+param C_PHASE1: color;
+param C_PHASE2: color;
+
+const sys_mod = @import_module("<memcpy/memcpy>", memcpy_params);
+const timestamp = @import_module("<time>");
+
+// ---------------------------------------------------------------------------
+// Host-visible buffers
+// ---------------------------------------------------------------------------
+var x = @zeros([n_per_pe]f32);
+var y = @zeros([n_per_pe]f32);
+var result = @zeros([1]f32);
+var maxmin_time = @zeros([3]f32);
+
+var ptr_x: [*]f32 = &x;
+var ptr_y: [*]f32 = &y;
+var ptr_result: [*]f32 = &result;
+var ptr_maxmin_time: [*]f32 = &maxmin_time;
+
+// ---------------------------------------------------------------------------
+// Timestamp scratch
+// ---------------------------------------------------------------------------
+var tscStartBuffer = @zeros([timestamp.tsc_size_words]u16);
+var tscEndBuffer   = @zeros([timestamp.tsc_size_words]u16);
+
+// ---------------------------------------------------------------------------
+// Reduction scalars / staging
+// ---------------------------------------------------------------------------
+var local: f32 = 0.0;    // local partial dot product
+var p_val: f32 = 0.0;    // committed phase-1 accumulator (p0 or p2)
+var recv1 = @zeros([1]f32);  // staging for phase-1 receive
+var recv2 = @zeros([1]f32);  // staging for phase-2 receive
+var send_word = @zeros([1]f32);
+
+// ---------------------------------------------------------------------------
+// Task IDs (local ids in [8,20])
+// ---------------------------------------------------------------------------
+const p1_add_id:  local_task_id = @get_local_task_id(9);
+const p1_done_id: local_task_id = @get_local_task_id(10);
+const p2_done_id: local_task_id = @get_local_task_id(11);
+const finish_id:  local_task_id = @get_local_task_id(12);
+
+// ---------------------------------------------------------------------------
+// Microthread IDs and queues for fabric ops
+// ---------------------------------------------------------------------------
+const p1_ut: ut_id = @get_ut_id(4);
+const p2_ut: ut_id = @get_ut_id(5);
+
+const p1_iq: input_queue  = @get_input_queue(2);
+const p1_oq: output_queue = @get_output_queue(2);
+const p2_iq: input_queue  = @get_input_queue(3);
+const p2_oq: output_queue = @get_output_queue(3);
+
+// Fabric DSDs (single f32 word transfers)
+const p1_in_dsd = @get_dsd(fabin_dsd, .{
+  .fabric_color = C_PHASE1, .extent = 1, .input_queue = p1_iq
+});
+const p1_out_dsd = @get_dsd(fabout_dsd, .{
+  .fabric_color = C_PHASE1, .extent = 1, .output_queue = p1_oq
+});
+const p2_in_dsd = @get_dsd(fabin_dsd, .{
+  .fabric_color = C_PHASE2, .extent = 1, .input_queue = p2_iq
+});
+const p2_out_dsd = @get_dsd(fabout_dsd, .{
+  .fabric_color = C_PHASE2, .extent = 1, .output_queue = p2_oq
+});
+
+// Staging DSDs (single element) for async fabric ops
+const recv1_dsd = @get_dsd(mem1d_dsd, .{ .tensor_access = |i|{1} -> recv1[i] });
+const recv2_dsd = @get_dsd(mem1d_dsd, .{ .tensor_access = |i|{1} -> recv2[i] });
+const send_dsd  = @get_dsd(mem1d_dsd, .{ .tensor_access = |i|{1} -> send_word[i] });
+
+// ---------------------------------------------------------------------------
+// Local dot product: local = sum_j x[j]*y[j]
+// ---------------------------------------------------------------------------
+fn local_dot() void {
+  local = 0.0;
+  var j: i16 = 0;
+  while (j < @as(i16, n_per_pe)) : (j += 1) {
+    local += x[j] * y[j];
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Finish: capture end timestamp, pack timing into maxmin_time, unblock.
+// Every PE must reach unblock_cmd_stream() so the host D2H proceeds.
+// ---------------------------------------------------------------------------
+fn do_finish() void {
+  timestamp.get_timestamp(&tscEndBuffer);
+  // Pack 6 u16 tsc words into 3 f32 words: run.py reads them back and
+  // computes make_u48(end) - make_u48(start).
+  maxmin_time[0] = @bitcast(f32, @as(u32, tscStartBuffer[0]) |
+                                 (@as(u32, tscStartBuffer[1]) << 16));
+  maxmin_time[1] = @bitcast(f32, @as(u32, tscStartBuffer[2]) |
+                                 (@as(u32, tscEndBuffer[0]) << 16));
+  maxmin_time[2] = @bitcast(f32, @as(u32, tscEndBuffer[1]) |
+                                 (@as(u32, tscEndBuffer[2]) << 16));
+  sys_mod.unblock_cmd_stream();
+}
+
+task finish_task() void {
+  do_finish();
+}
+
+// ---------------------------------------------------------------------------
+// Phase-1 add (even PEs only): COMMIT p_val = local + recv1, then chain.
+// This is the fix: without this step p_val stayed 0.0.
+// ---------------------------------------------------------------------------
+task p1_add_task() void {
+  p_val = local + recv1[0];   // committed phase-1 partial ({0,1} on PE0, {2,3} on PE2)
+  @activate(p1_done_id);
+}
+
+// ---------------------------------------------------------------------------
+// Phase-1 completion handler.
+//   PE0: p_val = {0,1} committed. Arm phase-2 receive (combined {2,3}).
+//   PE2: p_val = {2,3} committed. Send p_val WEST on C_PHASE2, then finish.
+//   PE1/PE3: only sent in phase 1 (this fires on send drain) -> finish.
+// ---------------------------------------------------------------------------
+task p1_done_task() void {
+  if (px == 0) {
+    @fmovs(recv2_dsd, p2_in_dsd, .{
+      .async = true, .ut_id = p2_ut, .activate = p2_done_id
+    });
+  } else if (px == 2) {
+    send_word[0] = p_val;   // freshly committed {2,3}
+    @fmovs(p2_out_dsd, send_dsd, .{
+      .async = true, .ut_id = p2_ut, .activate = finish_id
+    });
+  } else {
+    // PE1, PE3: already contributed via phase-1 send.
+    do_finish();
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Phase-2 completion handler (PE0 only): result = p0 + recv2 = {0,1}+{2,3}.
+// ---------------------------------------------------------------------------
+task p2_done_task() void {
+  result[0] = p_val + recv2[0];
+  do_finish();
+}
+
+// ---------------------------------------------------------------------------
+// compute — host entrypoint (launched via runner.launch("compute")).
+// ---------------------------------------------------------------------------
+fn compute() void {
+  timestamp.get_timestamp(&tscStartBuffer);
+
+  local_dot();
+
+  if (px == 1 or px == 3) {
+    // Odd PEs: send local WEST on C_PHASE1; on drain -> p1_done -> finish.
+    send_word[0] = local;
+    @fmovs(p1_out_dsd, send_dsd, .{
+      .async = true, .ut_id = p1_ut, .activate = p1_done_id
+    });
+  } else {
+    // Even PEs (0,2): receive neighbor's local; on drain -> p1_add (commit
+    // p_val = local + recv1) -> p1_done (arm phase 2 / send).
+    @fmovs(recv1_dsd, p1_in_dsd, .{
+      .async = true, .ut_id = p1_ut, .activate = p1_add_id
+    });
+  }
+}
+
+// ---------------------------------------------------------------------------
+// tic / toc (canonical bodies required by the launch contract validator).
+// ---------------------------------------------------------------------------
+fn f_tic() void {
+  timestamp.get_timestamp(&tscStartBuffer);
+  sys_mod.unblock_cmd_stream();
+}
+fn f_toc() void {
+  timestamp.get_timestamp(&tscEndBuffer);
+  sys_mod.unblock_cmd_stream();
+}
+
+// ---------------------------------------------------------------------------
+// Comptime: startup timer enable, task bindings, queue init, symbol exports.
+// ---------------------------------------------------------------------------
+comptime {
+  timestamp.enable_tsc();
+
+  @bind_local_task(p1_add_task,  p1_add_id);
+  @bind_local_task(p1_done_task, p1_done_id);
+  @bind_local_task(p2_done_task, p2_done_id);
+  @bind_local_task(finish_task,  finish_id);
+
+  if (@is_arch("wse3")) {
+    @initialize_queue(p1_iq, .{ .color = C_PHASE1 });
+    @initialize_queue(p1_oq, .{ .color = C_PHASE1 });
+    @initialize_queue(p2_iq, .{ .color = C_PHASE2 });
+    @initialize_queue(p2_oq, .{ .color = C_PHASE2 });
+  }
+}
+
+comptime {
+  @export_symbol(ptr_x, "x");
+  @export_symbol(ptr_y, "y");
+  @export_symbol(ptr_result, "result");
+  @export_symbol(ptr_maxmin_time, "maxmin_time");
+  @export_symbol(compute, "compute");
+}

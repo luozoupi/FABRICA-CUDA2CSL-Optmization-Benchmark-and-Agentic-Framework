@@ -1,0 +1,8 @@
+n=80 OK  3n^2*2=38400B  elf=42608 bytes
+n=84 OK  3n^2*2=42336B  elf=46544 bytes
+n=85 OK  3n^2*2=43350B  elf=47552 bytes
+n=86 OK  3n^2*2=44376B  elf=48576 bytes
+n=87 FAIL 3n^2*2=45414B  ld.lld: error: ran out of PE memory for task table
+n=88 FAIL 3n^2*2=46464B  ld.lld: error: ran out of PE memory for data (section .bss) 
+n=90 FAIL 3n^2*2=48600B  ld.lld: error: ran out of PE memory for data (section .bss) 
+FIN

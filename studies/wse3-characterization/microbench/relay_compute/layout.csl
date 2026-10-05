@@ -1,0 +1,12 @@
+param B: u16;
+const memcpy = @import_module("<memcpy/get_params>", .{ .width = 2, .height = 1 });
+const C6: color = @get_color(6);
+layout {
+  @set_rectangle(2, 1);
+  @set_tile_code(0, 0, "pe.csl", .{ .memcpy_params = memcpy.get_params(0), .B = B, .is_first = true });
+  @set_tile_code(1, 0, "pe.csl", .{ .memcpy_params = memcpy.get_params(1), .B = B, .is_first = false });
+  @set_color_config(0, 0, C6, .{ .routes = .{ .rx = .{ RAMP }, .tx = .{ EAST } } });
+  @set_color_config(1, 0, C6, .{ .routes = .{ .rx = .{ WEST }, .tx = .{ RAMP } } });
+  @export_name("buf", [*]f32, true); @export_name("loc", [*]f32, true); @export_name("res", [*]f32, true);
+  @export_name("run", fn()void);
+}

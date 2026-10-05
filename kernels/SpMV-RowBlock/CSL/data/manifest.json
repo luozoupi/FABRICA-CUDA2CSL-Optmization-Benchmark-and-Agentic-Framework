@@ -1,0 +1,40 @@
+{
+ "schema": 1,
+ "class": "hb_n1024",
+ "train_seed": 7,
+ "values": "seeded_uniform",
+ "matrices": [
+  {
+   "id": "HB/sherman1",
+   "file": "sherman1.mtx",
+   "sha256": "c3aaff0fca59d2ff29ff1d879c0cf0e57bba73cab718da5107c3e4e88652a9b4",
+   "n": 1000,
+   "m": 1000,
+   "nnz": 3750
+  },
+  {
+   "id": "HB/jagmesh1",
+   "file": "jagmesh1.mtx",
+   "sha256": "f9a08894b991c27849fc13c21bc492d088bd4575e511b4906d5e5e1c64e01f11",
+   "n": 936,
+   "m": 936,
+   "nnz": 6264
+  },
+  {
+   "id": "HB/gr_30_30",
+   "file": "gr_30_30.mtx",
+   "sha256": "f3eb41b3ae7349a00f034150d741293ca8cdb626d045476449bb1177e50c8a86",
+   "n": 900,
+   "m": 900,
+   "nnz": 7744
+  },
+  {
+   "id": "HB/dwt_1005",
+   "file": "dwt_1005.mtx",
+   "sha256": "9e01e79c94b2a48518efd40ab899247785384e2dc3050ab514630d8ad93da962",
+   "n": 1005,
+   "m": 1005,
+   "nnz": 8621
+  }
+ ]
+}

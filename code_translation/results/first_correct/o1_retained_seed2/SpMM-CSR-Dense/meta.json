@@ -1,0 +1,7 @@
+{
+  "kernel": "SpMM-CSR-Dense",
+  "target_relpath": "pe.csl",
+  "fc_cycles_send": 29530,
+  "source": "O1 retained program, seed 2 (mg_sparse_luna_seeds_20260922/SpMM-CSR-Dense/O1/seed_2/run_20260922_100116/SpMM-CSR-Dense/benchmark.json)",
+  "rule": "staged optimisation (arm O2, 2026-09-28): start = the paired O1 cell's retained program"
+}

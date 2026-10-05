@@ -1,0 +1,361 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Mesh Dataflow in 3D</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@400;600&display=swap">
+<style>
+:root{--bg:#EEF2F8;--bg2:#DCE4F0;--pan:rgba(255,255,255,.92);--ln:#CBD4E3;--ink:#121826;--ink2:#37415A;--dim:#5E6B85;
+ --x:#2D5FA8;--w:#B55C05;--c:#07766C;--ok:#07766C;--bad:#B3282C}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#1B2A40;--bg2:#0E1624;--pan:rgba(20,28,44,.9);--ln:#2F3C55;
+ --ink:#E4EAF5;--ink2:#B4C0D4;--dim:#8593AD;--x:#7FB0FF;--w:#FFB454;--c:#4FD1C5;--ok:#4FD1C5;--bad:#F2686B}}
+:root[data-theme="dark"]{--bg:#1B2A40;--bg2:#0E1624;--pan:rgba(20,28,44,.9);--ln:#2F3C55;--ink:#E4EAF5;--ink2:#B4C0D4;--dim:#8593AD;
+ --x:#7FB0FF;--w:#FFB454;--c:#4FD1C5;--ok:#4FD1C5;--bad:#F2686B}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;overflow:hidden}
+body{background:radial-gradient(ellipse at 50% 40%,var(--bg),var(--bg2));color:var(--ink);font-family:"IBM Plex Sans",system-ui,sans-serif;font-size:14px}
+#gl{position:fixed;inset:0;display:block;width:100%;height:100%;touch-action:none}
+.panel{position:fixed;background:var(--pan);border:1px solid var(--ln);border-radius:4px;padding:12px 14px;backdrop-filter:blur(6px);
+ box-shadow:0 6px 20px rgba(0,0,0,.12)}
+#ctl{top:12px;left:12px;width:300px;max-height:calc(100% - 24px);overflow:auto}
+#info{top:12px;right:12px;width:360px;max-height:calc(100% - 24px);overflow:auto}
+h1{font-size:17px;margin:0 0 4px;line-height:1.2}
+p{margin:0 0 8px;color:var(--ink2);line-height:1.45}
+.eyebrow{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--dim);margin:10px 0 6px}
+.tabs{display:flex;gap:4px;margin:8px 0}
+button{font-family:"IBM Plex Mono",monospace;font-size:12px;padding:6px 10px;border:1px solid var(--ln);background:transparent;color:var(--ink2);
+ border-radius:3px;cursor:pointer;min-height:32px}
+button[aria-pressed="true"]{background:var(--ink);color:var(--bg2);border-color:var(--ink);font-weight:600}
+label.lay{display:flex;align-items:center;gap:8px;padding:4px 0;font-size:13px;color:var(--ink2);cursor:pointer}
+label.lay input{width:16px;height:16px;accent-color:var(--c)}
+.key{display:grid;grid-template-columns:auto 1fr;gap:4px 8px;font-size:12px;color:var(--ink2);align-items:center}
+.key i{display:inline-block;width:48px;height:10px;border-radius:2px}
+.mono{font-family:"IBM Plex Mono",monospace}
+table{border-collapse:collapse;font-family:"IBM Plex Mono",monospace;font-size:11px;width:100%}
+td,th{padding:2px 6px;text-align:right;border-bottom:1px solid var(--ln)}
+th{color:var(--dim);font-weight:400} td:first-child,th:first-child{text-align:left}
+.ok{color:var(--ok);font-weight:600} .bad{color:var(--bad);font-weight:600}
+.big{font-family:"IBM Plex Mono",monospace;font-size:22px;font-weight:600}
+#hint{position:fixed;left:50%;bottom:12px;transform:translateX(-50%);font-size:12px;color:var(--dim);background:var(--pan);
+ padding:6px 12px;border-radius:3px;border:1px solid var(--ln);white-space:nowrap}
+#fail{display:none;position:fixed;inset:0;place-items:center;text-align:center;padding:24px}
+@media (max-width:760px){#ctl{width:auto;right:12px;max-height:40%}#info{top:auto;bottom:12px;left:12px;width:auto;max-height:38%}#hint{display:none}}
+</style>
+</head>
+<body>
+<canvas id="gl" aria-label="3D view of the PE mesh, one layer per compute step"></canvas>
+<div class="panel" id="ctl">
+  <h1>Mesh dataflow in 3D</h1>
+  <p>Each layer is the 4 × 4 PE mesh at one compute step, and every cube is one value from the traced run. Lines between layers show where each tile goes next.</p>
+  <div class="tabs" id="tabs"><button data-s="gemm">MeshGEMM</button><button data-s="gemv">MeshGEMV</button></div>
+  <p style="font-size:12px"><a style="color:var(--ink)" href="https://claude.ai/artifact/HJwSSpWzFYHdZoVPo4vWCe" target="_blank" rel="noopener">2D lifecycle, host to host, with the CSL ↗</a></p>
+  <p class="eyebrow">Layers</p><div id="layers"></div>
+  <p class="eyebrow">Show</p>
+  <div class="tabs" id="emode"><button data-e="sel">selected tile's path</button><button data-e="all">all moves</button><button data-e="none">none</button></div>
+  <label class="lay"><input type="checkbox" id="theme"> dark background</label>
+  <p class="eyebrow">Colour</p><div class="key" id="key"></div>
+  <p class="eyebrow" style="margin-top:12px">Views</p>
+  <div class="tabs"><button id="v-iso">angled</button><button id="v-top">top</button><button id="v-side">side</button></div>
+</div>
+<div class="panel" id="info"></div>
+<div id="hint">drag to orbit · scroll to zoom · right-drag to pan · hover a cube for its value · click to pin it</div>
+<div id="fail"><div><h1>WebGL is not available</h1><p>This view needs WebGL. The 2D page shows the same data.</p></div></div>
+<script type="importmap">
+{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+ "three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}
+</script>
+<script type="module">
+import * as THREE from 'three';
+import {OrbitControls} from 'three/addons/controls/OrbitControls.js';
+import {mergeGeometries} from 'three/addons/utils/BufferGeometryUtils.js';
+const D = %%DATA%%;
+const $ = i => document.getElementById(i), P = 4, T = 16;
+const f16 = h => { const s = (h >> 15) & 1, e = (h >> 10) & 31, m = h & 1023;
+  const v = e === 0 ? m * 2 ** -24 : e === 31 ? (m ? NaN : Infinity) : (1 + m / 1024) * 2 ** (e - 15); return s ? -v : v; };
+function toF16(x){ if (Number.isNaN(x)) return 0x7E00; let s = 0; if (x < 0 || Object.is(x, -0)){ s = 0x8000; x = -x; } if (x === 0) return s;
+  let e = Math.floor(Math.log2(x)); if (2 ** e > x) e--; if (2 ** (e + 1) <= x) e++; if (e < -14) e = -14;
+  const q = 2 ** (e - 10); let r = Math.floor(x / q); const fr = x / q - r; if (fr > .5 || (fr === .5 && (r & 1))) r++;
+  if (r >= 2048){ r /= 2; e++; } if (e > 15) return s | 0x7C00; return r < 1024 ? (s | r) : (s | ((e + 15) << 10) | (r - 1024)); }
+const hex = h => '0x' + h.toString(16).padStart(4, '0');
+const fv = h => f16(h).toFixed(4);
+const recv = D.send.map((_, p) => D.send.indexOf(p));
+const kx = (px, py, s) => D.steps[s][`${px},${py}`].x[1];
+
+/* ---------- renderer ---------- */
+const canvas = $('gl');
+let renderer;
+try { renderer = new THREE.WebGLRenderer({canvas, antialias: true, alpha: true, preserveDrawingBuffer: true}); }
+catch (e){ $('fail').style.display = 'grid'; throw e; }
+renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+const scene = new THREE.Scene(), camera = new THREE.OrthographicCamera(-1, 1, 1, -1, -4000, 8000);
+const FRUSTUM = 150;                 /* half-height of the view, in scene units; orthographic, so nothing shrinks with depth */
+const controls = new OrbitControls(camera, canvas); controls.enableDamping = true;
+scene.add(new THREE.HemisphereLight(0xffffff, 0x445066, 2.2));
+const sun = new THREE.DirectionalLight(0xffffff, 1.6); sun.position.set(200, 400, 150); scene.add(sun);
+const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+
+/* ---------- layout ---------- */
+const PITCH = 1, CUBE = .9, CELL_H = .45, LAYER = 74, PEX = 62, PEZ = 26;
+const peO = (px, py, L) => new THREE.Vector3((px - 1.5) * PEX, L * LAYER, (py - 1.5) * PEZ);
+/* where each tensor sits inside a PE, and how its [i,j] maps to (x, z) */
+const SLOT = {
+  gemm: {x: [-26, -8], w: [-8, -8], c: [10, -8]},          /* 16 x 16 tiles side by side: X, W, C */
+  gemv: {w: [-8, -6], x: [9.5, -6], y: [-8, -8.5]},        /* x beside W's rows, y above W's columns */
+};
+function cellPos(scheme, t, px, py, L, i, j){
+  const o = peO(px, py, L), [sx, sz] = SLOT[scheme][t];
+  if (scheme === 'gemv' && t === 'x') return o.add(new THREE.Vector3(sx, 0, sz + i));
+  if (scheme === 'gemv' && t === 'y') return o.add(new THREE.Vector3(sx + i, 0, sz));
+  return o.add(new THREE.Vector3(sx + j, 0, sz + i));        /* row i along z, column j along x */
+}
+
+/* ---------- the model per scheme: layers of tensors ---------- */
+function gemmModel(){
+  const layers = [0, 1, 2, 3].map(s => ({name: `step ${s + 1}`, id: s}));
+  const cubes = [];                                          /* {t, L, px, py, i, j, h} */
+  for (let s = 0; s < P; s++) for (let py = 0; py < P; py++) for (let px = 0; px < P; px++){
+    const tile = D.gv[`${px},${py},${s}`];
+    for (const [t, M] of [['x', tile.X], ['w', tile.W], ['c', tile.C1]])
+      for (let i = 0; i < T; i++) for (let j = 0; j < T; j++) cubes.push({t, L: s, px, py, i, j, h: M[i][j]});
+  }
+  const edges = [];                                          /* tile moves from layer s to s+1 */
+  for (let s = 0; s < P - 1; s++) for (let py = 0; py < P; py++) for (let px = 0; px < P; px++){
+    const k = kx(px, py, s);
+    edges.push({t: 'x', k, a: [px, py, s], b: [D.send[px], py, s + 1]});
+    edges.push({t: 'w', k, a: [px, py, s], b: [px, D.send[py], s + 1]});
+    edges.push({t: 'c', a: [px, py, s], b: [px, py, s + 1], stay: true});
+  }
+  return {scheme: 'gemm', layers, cubes, edges, tensors: ['x', 'w', 'c'],
+    names: {x: 'X tile (moves along the row ring)', w: 'W tile (moves down the column ring)', c: 'C tile (stationary, accumulating)'}};
+}
+function gemvModel(){
+  const layers = [{name: 'local multiply', id: 'local'}, {name: 'reduce, stage 1', id: 'r1'}, {name: 'reduce, stage 2', id: 'r2'}, {name: 'broadcast', id: 'bc'}];
+  const yAt = (px, py, L) => { const e = D.vv.pes[`${px},${py}`];
+    if (L === 0) return {v: e.partial, note: 'partial'};
+    if (L === 1) return py % 2 ? {v: e.adds[0].sum, note: 'sum', add: e.adds[0]} : {v: e.partial, note: 'sent', dim: true};
+    if (L === 2) return py === 3 ? {v: e.adds[1].sum, note: 'sum', add: e.adds[1]} : py === 1 ? {v: e.adds[0].sum, note: 'sent', dim: true} : {v: py === 0 ? e.partial : e.partial, note: 'idle', dim: true};
+    return {v: D.vv.final[px], note: 'final'}; };
+  const cubes = [];
+  for (let L = 0; L < 4; L++) for (let py = 0; py < P; py++) for (let px = 0; px < P; px++){
+    const e = D.vv.pes[`${px},${py}`], y = yAt(px, py, L);
+    for (let i = 0; i < T; i++) for (let j = 0; j < T; j++) cubes.push({t: 'w', L, px, py, i, j, h: e.W[i][j], dim: L > 0});
+    for (let i = 0; i < T; i++) cubes.push({t: 'x', L, px, py, i, j: 0, h: e.x[i], dim: L > 0});
+    for (let i = 0; i < T; i++) cubes.push({t: 'y', L, px, py, i, j: 0, h: y.v[i], dim: y.dim, note: y.note, add: y.add});
+  }
+  const edges = [];
+  for (let px = 0; px < P; px++){
+    edges.push({t: 'y', a: [px, 0, 0], b: [px, 1, 1]}, {t: 'y', a: [px, 2, 0], b: [px, 3, 1]});
+    edges.push({t: 'y', a: [px, 1, 1], b: [px, 3, 2]});
+    for (const r of [0, 1, 2, 3]) edges.push({t: 'y', a: [px, 3, 2], b: [px, r, 3], mult: r !== 3});
+  }
+  return {scheme: 'gemv', layers, cubes, edges, tensors: ['w', 'x', 'y'], yAt,
+    names: {w: 'W tile (stationary)', x: 'x slice (stationary, host-replicated)', y: 'y: partial → reduced → broadcast'}};
+}
+
+/* ---------- build the scene for a model ---------- */
+let model, mesh, edgeLines, labels = [], visible = [];
+const tcol = t => new THREE.Color(css(t === 'y' ? '--c' : `--${t}`));
+function range(model){ const r = {};
+  for (const c of model.cubes){ const v = f16(c.h); const q = r[c.t] || (r[c.t] = [Infinity, -Infinity]); q[0] = Math.min(q[0], v); q[1] = Math.max(q[1], v); }
+  return r; }
+function sprite(text, size = 3.2, color){
+  const cv = document.createElement('canvas'), ctx = cv.getContext('2d'), fs = 48;
+  ctx.font = `600 ${fs}px IBM Plex Mono, monospace`; cv.width = Math.ceil(ctx.measureText(text).width) + 16; cv.height = fs + 16;
+  ctx.font = `600 ${fs}px IBM Plex Mono, monospace`; ctx.fillStyle = color || css('--ink'); ctx.textBaseline = 'middle'; ctx.fillText(text, 8, cv.height / 2);
+  const s = new THREE.Sprite(new THREE.SpriteMaterial({map: new THREE.CanvasTexture(cv), depthWrite: false, transparent: true}));
+  s.scale.set(size * cv.width / cv.height, size, 1); return s;
+}
+const dummy = new THREE.Object3D(), tmpC = new THREE.Color();
+function build(m){
+  model = m; pinned = -1; hovered = -1;             /* indices belong to the previous model */
+  [mesh, edgeLines, ...labels].forEach(o => { if (o){ scene.remove(o); o.geometry && o.geometry.dispose(); } });
+  labels = []; visible = m.layers.map(() => true);
+  const rg = range(m), bg = new THREE.Color(css('--bg2'));
+  mesh = new THREE.InstancedMesh(new THREE.BoxGeometry(1, 1, 1), new THREE.MeshLambertMaterial(), m.cubes.length);
+  m.cubes.forEach((c, n) => {
+    const [lo, hi] = rg[c.t], u = hi > lo ? (f16(c.h) - lo) / (hi - lo) : .5;
+    c.u = u; c.pos = cellPos(m.scheme, c.t, c.px, c.py, c.L, c.i, c.j);
+    tmpC.copy(tcol(c.t)).lerp(new THREE.Color(0xffffff), (1 - u) * .85);           /* colour only: pale = low, full colour = high */
+    if (c.dim) tmpC.lerp(bg, .6);
+    mesh.setColorAt(n, tmpC);
+  });
+  place(); scene.add(mesh);
+  /* layer plates and labels */
+  m.layers.forEach((l, L) => {
+    const s = sprite(l.name, 5); s.position.set(-2.1 * PEX, L * LAYER + 2, -1.5 * PEZ); s.userData.L = L; labels.push(s); scene.add(s);
+    for (let py = 0; py < P; py++) for (let px = 0; px < P; px++){
+      const g = new THREE.Mesh(new THREE.BoxGeometry(PEX - 6, .3, PEZ - 3), new THREE.MeshLambertMaterial({color: css('--ln'), transparent: true, opacity: .55}));
+      g.position.copy(peO(px, py, L)).add(new THREE.Vector3(m.scheme === 'gemm' ? 2 : 1, -.5, m.scheme === 'gemm' ? 0 : -1)); g.userData.L = L; labels.push(g); scene.add(g);
+    }
+  });
+  for (let px = 0; px < P; px++){ const s = sprite(`px ${px}`, 3.2, css('--dim')); s.position.copy(peO(px, 0, m.layers.length - 1)).add(new THREE.Vector3(0, 6, -PEZ / 2 - 4)); s.userData.L = m.layers.length - 1; labels.push(s); scene.add(s); }
+  for (let py = 0; py < P; py++){ const s = sprite(`py ${py}`, 3.2, css('--dim')); s.position.copy(peO(3, py, m.layers.length - 1)).add(new THREE.Vector3(PEX / 2 + 6, 6, 0)); s.userData.L = m.layers.length - 1; labels.push(s); scene.add(s); }
+  buildEdges(); buildUI();
+}
+function place(){
+  model.cubes.forEach((c, n) => {
+    const h = CELL_H;
+    dummy.position.copy(c.pos).setY(c.pos.y + h / 2);
+    dummy.scale.set(visible[c.L] ? CUBE : 0, visible[c.L] ? h : 0, visible[c.L] ? CUBE : 0);
+    dummy.updateMatrix(); mesh.setMatrixAt(n, dummy.matrix);
+  });
+  mesh.instanceMatrix.needsUpdate = true; if (mesh.instanceColor) mesh.instanceColor.needsUpdate = true;
+  mesh.computeBoundingSphere();
+  labels.forEach(o => o.visible = visible[o.userData.L]);
+  if (edgeLines) buildEdges();
+}
+const tileCenter = (t, px, py, L) => model.scheme === 'gemv'
+  ? cellPos('gemv', t, px, py, L, 7.5, 0).add(new THREE.Vector3(0, 3, 0))
+  : cellPos('gemm', t, px, py, L, 7.5, 7.5).add(new THREE.Vector3(0, 3, 0));
+function shade(t, k){ const c = tcol(t); if (k === undefined) return c; return c.lerp(new THREE.Color(css('--ink')), k * .18); }
+function buildEdges(){
+  if (edgeLines){ scene.remove(edgeLines); edgeLines.geometry.dispose(); edgeLines = null; }
+  if (emode === 'none') return;
+  const parts = [], keep = emode === 'all' ? null : pathOf(pinned >= 0 ? pinned : hovered);
+  if (keep && !keep.size) return;
+  model.edges.forEach((e, ei) => {
+    if (keep && !keep.has(ei)) return;
+    if (!visible[e.a[2]] || !visible[e.b[2]]) return;
+    const A = tileCenter(e.t, ...e.a), B = tileCenter(e.t, ...e.b), c = shade(e.t, e.k);
+    if (e.stay) c.lerp(new THREE.Color(css('--bg2')), .6);
+    /* an arc up out of the source tile and down into the destination: a tube, so it reads at any zoom */
+    const mid = A.clone().lerp(B, .5).add(new THREE.Vector3(0, LAYER * .12, 0));
+    const curve = new THREE.QuadraticBezierCurve3(A, mid, B);
+    const tube = new THREE.TubeGeometry(curve, 24, e.stay ? .18 : .42, 6, false);
+    const tip = curve.getPoint(1), dir = curve.getTangent(1);
+    const cone = new THREE.ConeGeometry(1.2, 3.2, 10); cone.translate(0, -1.6, 0);
+    cone.applyQuaternion(new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(0, 1, 0), dir)); cone.translate(tip.x, tip.y, tip.z);
+    for (const g of e.stay ? [tube] : [tube, cone]){
+      const n = g.attributes.position.count, cols = new Float32Array(n * 3);
+      for (let i = 0; i < n; i++) c.toArray(cols, i * 3);
+      g.setAttribute('color', new THREE.BufferAttribute(cols, 3)); if (g.index) parts.push(g.toNonIndexed()); else parts.push(g);
+    }
+  });
+  if (!parts.length) return;
+  parts.forEach(g => { for (const k of Object.keys(g.attributes)) if (!['position', 'normal', 'color'].includes(k)) g.deleteAttribute(k); });
+  edgeLines = new THREE.Mesh(mergeGeometries(parts), new THREE.MeshLambertMaterial({vertexColors: true}));
+  scene.add(edgeLines);
+}
+
+let emode = 'sel';
+function pathOf(n){
+  const keep = new Set(); if (n < 0 || !model || !model.cubes[n]) return keep;
+  const c = model.cubes[n];
+  if (model.scheme === 'gemv'){ model.edges.forEach((e, i) => { if (e.a[0] === c.px) keep.add(i); }); return keep; }
+  const t = c.t, same = e => e.t === t;
+  let cur = [c.px, c.py, c.L];
+  for (;;){ const i = model.edges.findIndex(e => same(e) && e.a[0] === cur[0] && e.a[1] === cur[1] && e.a[2] === cur[2]); if (i < 0 || keep.has(i)) break; keep.add(i); cur = model.edges[i].b; }
+  cur = [c.px, c.py, c.L];
+  for (;;){ const i = model.edges.findIndex(e => same(e) && e.b[0] === cur[0] && e.b[1] === cur[1] && e.b[2] === cur[2]); if (i < 0 || keep.has(i)) break; keep.add(i); cur = model.edges[i].a; }
+  return keep;
+}
+/* ---------- hover and pin: exact values, and the inputs that make a value (nn_vis style) ---------- */
+const ray = new THREE.Raycaster(), mouse = new THREE.Vector2(-9, -9);
+let hovered = -1, pinned = -1, focusLines = null;
+const box = new THREE.LineSegments(new THREE.EdgesGeometry(new THREE.BoxGeometry(1, 1, 1)), new THREE.LineBasicMaterial({color: 0x000000}));
+box.visible = false; scene.add(box);
+function cubeIdx(t, px, py, L, i, j){ return model.cubes.findIndex(c => c.t === t && c.px === px && c.py === py && c.L === L && c.i === i && c.j === j); }
+function focus(n){
+  hovered = n; if (emode === 'sel') buildEdges();
+  if (focusLines){ scene.remove(focusLines); focusLines.geometry.dispose(); focusLines = null; }
+  if (n < 0){ box.visible = false; showInfo(-1); return; }
+  const c = model.cubes[n], h = CELL_H;
+  box.visible = true; box.position.copy(c.pos).setY(c.pos.y + h / 2); box.scale.set(1.25, h + .5, 1.25);
+  box.material.color.set(css('--ink'));
+  /* edges from the operands of this value */
+  const src = [];
+  if (model.scheme === 'gemm' && c.t === 'c') for (let k = 0; k < T; k++) src.push(['x', c.i, k], ['w', k, c.j]);
+  if (model.scheme === 'gemm' && c.t === 'x') for (let j = 0; j < T; j++) src.push(['c', c.i, j]);
+  if (model.scheme === 'gemm' && c.t === 'w') for (let i = 0; i < T; i++) src.push(['c', i, c.j]);
+  if (model.scheme === 'gemv' && c.t === 'y' && c.L === 0) for (let k = 0; k < T; k++) src.push(['w', k, c.i], ['x', k, 0]);
+  const pos = [], col = [], top = c.pos.clone().setY(c.pos.y + h);
+  src.forEach(([t, i, j]) => { const q = cubeIdx(t, c.px, c.py, c.L, i, j); if (q < 0) return; const o = model.cubes[q];
+    const p = o.pos.clone().setY(o.pos.y + CELL_H); const cc = tcol(t);
+    pos.push(...p.toArray(), ...top.toArray()); col.push(...cc.toArray(), ...cc.toArray()); });
+  if (pos.length){ const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3)); g.setAttribute('color', new THREE.Float32BufferAttribute(col, 3));
+    focusLines = new THREE.LineSegments(g, new THREE.LineBasicMaterial({vertexColors: true})); scene.add(focusLines); }
+  showInfo(n);
+}
+function showInfo(n){
+  const el = $('info');
+  if (n < 0){ el.innerHTML = `<p class="eyebrow">${model.scheme === 'gemm' ? 'MeshGEMM · repeat 1 of 7, the run the host checks' : 'MeshGEMV · first run'}</p>
+    <p>Hover any cube to see its exact traced value, and click to pin it. For a ${model.scheme === 'gemm' ? 'C element, the lines show the 16 X and 16 W values that feed it, and the chain is recomputed below' : 'y element on the first layer, the lines show the W column and x values that feed it'}.</p>
+    <p class="mini" style="font-size:12px;color:var(--dim)">Colour encodes the value: deeper colour = larger value, scaled per tensor across the whole run. Every cell has the same height, and the view is orthographic, so every matrix is drawn at the same size on every layer.</p>`; return; }
+  const c = model.cubes[n], L = model.layers[c.L].name;
+  const T0 = {x: 'X', w: 'W', c: 'C', y: 'y'}[c.t];
+  let h = `<p class="eyebrow">${model.scheme === 'gemm' ? 'MeshGEMM' : 'MeshGEMV'} · PE (${c.px},${c.py}) · ${L}${pinned === n ? ' · pinned' : ''}</p>`;
+  const idx = (c.t === 'x' || c.t === 'y') && model.scheme === 'gemv' ? `[${c.i}]` : `[${c.i},${c.j}]`;
+  h += `<div class="big">${T0}${idx} = ${f16(c.h)}</div><p class="mono" style="color:var(--dim)">${hex(c.h)} · IEEE f16 bits from the trace</p>`;
+  if (model.scheme === 'gemm'){
+    const s = c.L, k = kx(c.px, c.py, s), tile = D.gv[`${c.px},${c.py},${s}`];
+    if (c.t === 'x') h += `<p>Tile X(${c.py},${k}). ${s < 3 ? `It moves next to PE (${D.send[c.px]},${c.py}) along the row ring.` : 'This is its last step.'} ${s ? `It arrived from PE (${recv[c.px]},${c.py}).` : 'It arrived by the skew.'}</p><p>It feeds C[${c.i},·], the 16 lines shown.</p>`;
+    if (c.t === 'w') h += `<p>Tile W(${k},${c.px}). ${s < 3 ? `It moves next to PE (${c.px},${D.send[c.py]}) down the column ring.` : 'This is its last step.'} Each W element is one FMACH's scalar.</p><p>It feeds C[·,${c.j}].</p>`;
+    if (c.t === 'c'){
+      let run = tile.C0[c.i][c.j], rows = '';
+      for (let kk = 0; kk < T; kk++){ const x = tile.X[c.i][kk], w = tile.W[kk][c.j]; run = toF16(f16(run) + f16(x) * f16(w));
+        rows += `<tr><td>${kk}</td><td style="color:var(--x)">${fv(x)}</td><td style="color:var(--w)">${fv(w)}</td><td>${fv(run)}</td></tr>`; }
+      const okk = run === c.h;
+      h += `<p>C(${c.py},${c.px}) stays on this PE. Step ${s + 1} adds X(${c.py},${k})·W(${k},${c.px}): 16 FMACHs, starting from ${fv(tile.C0[c.i][c.j])}.</p>
+        <table><tr><th>k</th><th>X[${c.i},k]</th><th>W[k,${c.j}]</th><th>acc</th></tr>${rows}</table>
+        <p class="${okk ? 'ok' : 'bad'}" style="margin-top:8px">${okk ? '✓ recomputed here, bit for bit equal to the trace' : '✗ differs from the trace'}</p>`;
+    }
+  } else {
+    if (c.t === 'w') h += `<p>W(${c.py},${c.px}) is stationary. Row k is the vector FMACH k streams, scaled by x[k].</p>`;
+    if (c.t === 'x') h += `<p>x(${c.py}) slice. The host replicated it across the row. Element ${c.i} is FMACH ${c.i}'s scalar.</p>`;
+    if (c.t === 'y'){
+      if (c.L === 0){ let r = 0; const e = D.vv.pes[`${c.px},${c.py}`];
+        for (let k = 0; k < T; k++) r = toF16(f16(r) + f16(e.W[k][c.i]) * f16(e.x[k]));
+        h += `<p>Partial y[${c.i}] = Σ<sub>k</sub> W[k,${c.i}]·x[k]: 16 FMACHs on this PE.</p><p class="${r === c.h ? 'ok' : 'bad'}">${r === c.h ? '✓ recomputed here, bit for bit' : '✗ differs'} (${hex(r)})</p>`; }
+      else if (c.add){ const r = toF16(f16(c.add.received[c.i]) + f16(c.add.own[c.i]));
+        h += `<p>FADDH at cycle ${c.add.cycle.toLocaleString('en-US')}: received ${fv(c.add.received[c.i])} + own ${fv(c.add.own[c.i])}.</p><p class="${r === c.h ? 'ok' : 'bad'}">${r === c.h ? '✓ sum recomputed bit for bit' : '✗ differs'}</p>`; }
+      else h += `<p>${c.note === 'final' ? `Final y for column ${c.px}. Row 3 multicast it up the column; every row holds the identical value.` : c.note === 'sent' ? 'This partial was sent down the column and is not added here.' : 'This row is idle in this stage.'}</p>`;
+    }
+  }
+  el.innerHTML = h;
+}
+function onMove(e){ const r = canvas.getBoundingClientRect(); mouse.set(((e.clientX - r.left) / r.width) * 2 - 1, -((e.clientY - r.top) / r.height) * 2 + 1); }
+canvas.addEventListener('pointermove', onMove);
+let downAt = null;
+canvas.addEventListener('pointerdown', e => downAt = [e.clientX, e.clientY]);
+canvas.addEventListener('pointerup', e => { if (!downAt || Math.hypot(e.clientX - downAt[0], e.clientY - downAt[1]) > 4) return;
+  onMove(e); const n = pickAt(); pinned = n === pinned ? -1 : n; focus(pinned); });
+function pickAt(){ ray.setFromCamera(mouse, camera); const hit = ray.intersectObject(mesh, false)[0]; return hit ? hit.instanceId : -1; }
+
+/* ---------- UI ---------- */
+function buildUI(){
+  $('tabs').querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.s === model.scheme)));
+  $('layers').innerHTML = model.layers.map((l, L) => `<label class="lay"><input type="checkbox" data-l="${L}" checked> ${l.name}</label>`).join('');
+  $('layers').querySelectorAll('input').forEach(i => i.onchange = () => { visible[+i.dataset.l] = i.checked; place(); });
+  $('key').innerHTML = model.tensors.map(t => { const c = tcol(t).getStyle(); return `<i style="background:linear-gradient(90deg,#fff,${c})"></i><span>${model.names[t]}</span>`; }).join('') +
+    (model.scheme === 'gemm' ? `<i style="background:linear-gradient(90deg,${[0, 1, 2, 3].map(k => shade('x', k).getStyle()).join(',')})"></i><span>edge shade = the k-block the tile carries, k = 0 … 3</span>` : '');
+  pinned = -1; focus(-1);
+}
+$('tabs').querySelectorAll('button').forEach(b => b.onclick = () => { build(b.dataset.s === 'gemm' ? gemmModel() : gemvModel()); view('iso'); });
+$('emode').querySelectorAll('button').forEach(b => b.onclick = () => { emode = b.dataset.e; markEmode(); buildEdges(); });
+function markEmode(){ $('emode').querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.e === emode))); }
+markEmode();
+$('theme').checked = matchMedia('(prefers-color-scheme: dark)').matches;
+$('theme').onchange = () => { document.documentElement.dataset.theme = $('theme').checked ? 'dark' : 'light'; build(model.scheme === 'gemm' ? gemmModel() : gemvModel()); };
+function view(v){
+  const top = (model.layers.length - 1) * LAYER;
+  if (v === 'iso') camera.position.set(230, top + 190, 330);
+  if (v === 'top') camera.position.set(0, top + 360, 1);
+  if (v === 'side') camera.position.set(0, top / 2 + 30, 470);
+  controls.target.set(0, top / 2, 0); controls.update();
+}
+$('v-iso').onclick = () => view('iso'); $('v-top').onclick = () => view('top'); $('v-side').onclick = () => view('side');
+function resize(){ const w = innerWidth, h = innerHeight, a = w / h; renderer.setSize(w, h, false);
+  camera.left = -FRUSTUM * a; camera.right = FRUSTUM * a; camera.top = FRUSTUM; camera.bottom = -FRUSTUM; camera.updateProjectionMatrix(); }
+addEventListener('resize', resize); resize();
+build(gemmModel()); view('iso');
+let lastPick = -2;
+renderer.setAnimationLoop(() => {
+  controls.update();
+  if (pinned < 0){ const n = pickAt(); if (n !== lastPick){ lastPick = n; focus(n); } }
+  renderer.render(scene, camera);
+});
+window.__mesh = {get model(){ return model; }, focus, build, gemmModel, gemvModel, view, set pinned(v){ pinned = v; }};
+</script>
+</body>
+</html>

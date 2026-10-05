@@ -1,0 +1,9 @@
+// D3 fallback: scalar integer multiply in a loop.
+var a = @zeros([64]i16);
+var b = @zeros([64]i16);
+var acc: i16 = 0;
+fn f() void {
+  var i: u16 = 0;
+  while (i < 64) : (i += 1) { acc = acc + a[i] * b[i]; }
+}
+

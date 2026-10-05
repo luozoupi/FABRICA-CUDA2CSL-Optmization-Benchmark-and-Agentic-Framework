@@ -1,0 +1,41 @@
+{
+ "iters": 512,
+ "fmas_per_iter": 8,
+ "total_fmas_per_variant": 4096,
+ "sink": [
+  27442.296875,
+  6557.1728515625,
+  3543.506103515625,
+  2714.866943359375
+ ],
+ "variants": [
+  {
+   "chains": 1,
+   "depth": 8,
+   "cycles": 19982,
+   "cycles_per_fma": 4.878,
+   "speedup_vs_k1": 1.0
+  },
+  {
+   "chains": 2,
+   "depth": 4,
+   "cycles": 18446,
+   "cycles_per_fma": 4.503,
+   "speedup_vs_k1": 1.083
+  },
+  {
+   "chains": 4,
+   "depth": 2,
+   "cycles": 15896,
+   "cycles_per_fma": 3.881,
+   "speedup_vs_k1": 1.257
+  },
+  {
+   "chains": 8,
+   "depth": 1,
+   "cycles": 22068,
+   "cycles_per_fma": 5.388,
+   "speedup_vs_k1": 0.905
+  }
+ ]
+}

@@ -1,0 +1,421 @@
+// BiCGSTAB compute file — on-device Krylov solver.
+//
+// Design (per DESIGN.md): 5x5 mesh, each PE owns a z-fiber of MAX_ZDIM f32.
+// A is the 7-point stencil (never materialized dense). A*p and A*s use the
+// stencil_3d_7pts.spmv; all dot products use allreduce over C8.
+// The loop runs on-device driven by the STATE task; async stencil/allreduce
+// each call back into a state-advance function on completion.
+//
+// FIX (runtime ut_instr[4] term): the stencil output microthread id must NOT
+// collide with the stencil queue ids {2,3,4,5} nor the allreduce queue {6}.
+// Set output_ut_id = 7 (distinct). Also removed redundant callback tasks:
+// the library f_callback fns activate STATE directly.
+
+param memcpyParams: comptime_struct;
+param reduceParams: comptime_struct;
+param stencilParams: comptime_struct;
+
+param MAX_ZDIM: i16;   // maximum size of local z-fiber
+param BLOCK_SIZE: i16; // temp buffer size for stencil comm
+param STATE: local_task_id;
+
+// ----------------------------------------------------------------------------
+// system / timing / math
+// ----------------------------------------------------------------------------
+const sys_mod = @import_module("<memcpy/memcpy>", memcpyParams);
+const timestamp = @import_module("<time>");
+const math_lib = @import_module("<math>");
+
+// ----------------------------------------------------------------------------
+// Problem-size runtime state
+// ----------------------------------------------------------------------------
+var zDim: i16 = MAX_ZDIM;   // set from f_bicgstab(size,...)
+var tol_v: f32 = 0.0;
+var max_ite: i16 = 0;
+var iter: i16 = 0;
+
+// ----------------------------------------------------------------------------
+// Data buffers (host-visible)
+// ----------------------------------------------------------------------------
+var b     = @zeros([MAX_ZDIM]f32);
+var x     = @zeros([MAX_ZDIM]f32);
+var stencil_coeff = @zeros([7]f32);
+
+var ptr_b: [*]f32 = &b;
+var ptr_x: [*]f32 = &x;
+var ptr_stencil_coeff: [*]f32 = &stencil_coeff;
+
+// Krylov vectors (each PE holds its z-fiber slice)
+var r   = @zeros([MAX_ZDIM]f32);
+var r0  = @zeros([MAX_ZDIM]f32);
+var p   = @zeros([MAX_ZDIM]f32);
+var v   = @zeros([MAX_ZDIM]f32);
+var s   = @zeros([MAX_ZDIM]f32);
+var t   = @zeros([MAX_ZDIM]f32);
+
+// Scalar reduction scratch — allreduce operates on this in-place.
+var reduce_buf = @zeros([1]f32);
+
+// Global scalars (identical on all PEs after each reduce)
+var rho_v     = @zeros([1]f32);
+var xi_v      = @zeros([1]f32);
+var rho_old_v: f32 = 0.0;
+var alpha_v:   f32 = 0.0;
+var omega_v:   f32 = 0.0;
+var beta_v:    f32 = 0.0;
+var r0v_v:     f32 = 0.0;
+var ts_v:      f32 = 0.0;
+var tt_v:      f32 = 0.0;
+
+var ptr_rho: [*]f32 = &rho_v;
+var ptr_xi:  [*]f32 = &xi_v;
+
+// ----------------------------------------------------------------------------
+// timing buffers
+// ----------------------------------------------------------------------------
+var tscStartBuffer = @zeros([timestamp.tsc_size_words]u16);
+var tscEndBuffer   = @zeros([timestamp.tsc_size_words]u16);
+var time_buf_u16   = @zeros([timestamp.tsc_size_words*2]u16);
+var time_ref_u16   = @zeros([timestamp.tsc_size_words]u16);
+
+var ptr_time_buf_u16: [*]u16 = &time_buf_u16;
+var ptr_time_ref:     [*]u16 = &time_ref_u16;
+
+// ----------------------------------------------------------------------------
+// Task IDs (free band: 8,9,10,11,13,21,22,23)
+// ----------------------------------------------------------------------------
+const EXIT_T: local_task_id = @get_local_task_id(10); // final exit
+
+// ----------------------------------------------------------------------------
+// Library callbacks — defined BEFORE the imports that reference them.
+// Both async op families (stencil, allreduce) simply re-enter STATE.
+// ----------------------------------------------------------------------------
+fn stencil_callback() void {
+    @activate(STATE);
+}
+fn reduce_callback() void {
+    @activate(STATE);
+}
+fn sync_callback() void {
+    sys_mod.unblock_cmd_stream();
+}
+
+// ----------------------------------------------------------------------------
+// Library imports (wrap the layout structs; add leaf params).
+//
+// Queue / microthread allocation:
+//   stencil input_queues  = {2,3,4,5}  (memcpy owns 0,1)
+//   stencil output_queues = {2,3,4,5}
+//   stencil output_ut_id  = 7          <-- DISTINCT from any queue-driven ut
+//   allreduce queues      = {6}
+// DSR ids: stencil uses {3,4,5,6}; allreduce uses {7,0}.
+//   In-place alias rule: src0_dsr_ids[0] == dest_dsr_ids[0].
+// ----------------------------------------------------------------------------
+const stencil_mod = @import_module(
+    "../../benchmark-libs/stencil_3d_7pts/pe.csl",
+    @concat_structs(stencilParams, .{
+        .f_callback    = stencil_callback,
+        .input_queues  = [4]u16{ 2, 3, 4, 5 },
+        .output_queues = [4]u16{ 2, 3, 4, 5 },
+        .output_ut_id  = @as(u16, 7),
+        .BLOCK_SIZE    = BLOCK_SIZE,
+        .dest_dsr_ids  = [2]u16{ 3, 4 },
+        .src0_dsr_ids  = [1]u16{ 3 },
+        .src1_dsr_ids  = [2]u16{ 5, 6 },
+    }));
+
+const reduce_mod = @import_module(
+    "../../benchmark-libs/allreduce/pe.csl",
+    @concat_structs(reduceParams, .{
+        .f_callback   = reduce_callback,
+        .queues       = [1]u16{ 6 },
+        .dest_dsr_ids = [1]u16{ 7 },
+        .src0_dsr_ids = [1]u16{ 7 },
+        .src1_dsr_ids = [1]u16{ 0 },
+    }));
+
+// separate allreduce instance handle is not possible; f_sync reuses reduce_mod
+// but needs its OWN callback. We special-case by a flag instead.
+
+// ----------------------------------------------------------------------------
+// DSD helpers for local elementwise vector ops over the active z-fiber.
+// ----------------------------------------------------------------------------
+var dsd_r  = @get_dsd(mem1d_dsd, .{ .tensor_access = |i|{MAX_ZDIM} -> r[i]  });
+var dsd_r0 = @get_dsd(mem1d_dsd, .{ .tensor_access = |i|{MAX_ZDIM} -> r0[i] });
+var dsd_p  = @get_dsd(mem1d_dsd, .{ .tensor_access = |i|{MAX_ZDIM} -> p[i]  });
+var dsd_v  = @get_dsd(mem1d_dsd, .{ .tensor_access = |i|{MAX_ZDIM} -> v[i]  });
+var dsd_s  = @get_dsd(mem1d_dsd, .{ .tensor_access = |i|{MAX_ZDIM} -> s[i]  });
+var dsd_t  = @get_dsd(mem1d_dsd, .{ .tensor_access = |i|{MAX_ZDIM} -> t[i]  });
+var dsd_x  = @get_dsd(mem1d_dsd, .{ .tensor_access = |i|{MAX_ZDIM} -> x[i]  });
+
+fn set_all_dsd_lengths(n: i16) void {
+    dsd_r  = @set_dsd_length(dsd_r,  @as(u16, n));
+    dsd_r0 = @set_dsd_length(dsd_r0, @as(u16, n));
+    dsd_p  = @set_dsd_length(dsd_p,  @as(u16, n));
+    dsd_v  = @set_dsd_length(dsd_v,  @as(u16, n));
+    dsd_s  = @set_dsd_length(dsd_s,  @as(u16, n));
+    dsd_t  = @set_dsd_length(dsd_t,  @as(u16, n));
+    dsd_x  = @set_dsd_length(dsd_x,  @as(u16, n));
+}
+
+// ----------------------------------------------------------------------------
+// Local vector-update helpers (all local, no comm)
+// ----------------------------------------------------------------------------
+
+// s = r - alpha*v
+fn compute_s() void {
+    @fmovs(dsd_s, dsd_r);
+    @fmacs(dsd_s, dsd_s, dsd_v, -alpha_v);
+}
+
+// x += alpha*p + omega*s ; r = s - omega*t
+fn update_x_r() void {
+    @fmacs(dsd_x, dsd_x, dsd_p, alpha_v);
+    @fmacs(dsd_x, dsd_x, dsd_s, omega_v);
+    @fmovs(dsd_r, dsd_s);
+    @fmacs(dsd_r, dsd_r, dsd_t, -omega_v);
+}
+
+// p = r + beta*(p - omega*v)
+fn update_p() void {
+    @fmacs(dsd_p, dsd_p, dsd_v, -omega_v);
+    @fmuls(dsd_p, dsd_p, beta_v);
+    @fadds(dsd_p, dsd_p, dsd_r);
+}
+
+// ----------------------------------------------------------------------------
+// Per-PE partial dot products (loop over z-fiber; global sum via allreduce)
+// ----------------------------------------------------------------------------
+var dot_acc = @zeros([1]f32);
+
+fn partial_r0_r() void {
+    dot_acc[0] = 0.0;
+    var i: i16 = 0;
+    while (i < zDim) : (i += 1) { dot_acc[0] += r0[i] * r[i]; }
+}
+fn partial_r_r() void {
+    dot_acc[0] = 0.0;
+    var i: i16 = 0;
+    while (i < zDim) : (i += 1) { dot_acc[0] += r[i] * r[i]; }
+}
+fn partial_r0_v() void {
+    dot_acc[0] = 0.0;
+    var i: i16 = 0;
+    while (i < zDim) : (i += 1) { dot_acc[0] += r0[i] * v[i]; }
+}
+fn partial_t_s() void {
+    dot_acc[0] = 0.0;
+    var i: i16 = 0;
+    while (i < zDim) : (i += 1) { dot_acc[0] += t[i] * s[i]; }
+}
+fn partial_t_t() void {
+    dot_acc[0] = 0.0;
+    var i: i16 = 0;
+    while (i < zDim) : (i += 1) { dot_acc[0] += t[i] * t[i]; }
+}
+
+fn launch_reduce() void {
+    reduce_buf[0] = dot_acc[0];
+    reduce_mod.allreduce(1, @ptrcast([*]f32, &reduce_buf), reduce_mod.TYPE_BINARY_OP.ADD);
+}
+
+fn launch_spmv(inp: [*]f32, outp: [*]f32) void {
+    stencil_mod.spmv(zDim, &stencil_coeff, inp, outp);
+}
+
+fn do_converged_or_exit() bool {
+    const nrm = math_lib.sqrt(xi_v[0]);
+    if (nrm < tol_v) { return true; }
+    if (iter >= max_ite) { return true; }
+    return false;
+}
+
+// ----------------------------------------------------------------------------
+// STATE MACHINE
+//   0  : rho = (r0,r)                  -> reduce
+//   1  : rho ready; xi = ||r||^2        -> reduce
+//   2  : xi ready; loop-top: converge?; v = A*p   -> spmv
+//   3  : v ready; r0v = (r0,v)          -> reduce
+//   4  : r0v ready; alpha; s=r-alpha*v; t=A*s -> spmv
+//   5  : t ready; ts = (t,s)            -> reduce
+//   6  : ts ready; tt = (t,t)           -> reduce
+//   7  : tt ready; omega; update x,r; rho=(r0,r) -> reduce
+//   8  : rho ready; xi = ||r||^2        -> reduce
+//   9  : xi ready; beta; update p; iter++; goto 2
+// ----------------------------------------------------------------------------
+var state: i16 = 0;
+
+task state_task() void {
+    switch (state) {
+        0 => {
+            partial_r0_r();
+            state = 1;
+            launch_reduce();
+        },
+        1 => {
+            rho_v[0] = reduce_buf[0];
+            partial_r_r();
+            state = 2;
+            launch_reduce();
+        },
+        2 => {
+            xi_v[0] = reduce_buf[0];
+            if (do_converged_or_exit()) {
+                @activate(EXIT_T);
+                return;
+            }
+            state = 3;
+            launch_spmv(&p, &v);
+        },
+        3 => {
+            partial_r0_v();
+            state = 4;
+            launch_reduce();
+        },
+        4 => {
+            r0v_v = reduce_buf[0];
+            alpha_v = rho_v[0] / r0v_v;
+            compute_s();
+            state = 5;
+            launch_spmv(&s, &t);
+        },
+        5 => {
+            partial_t_s();
+            state = 6;
+            launch_reduce();
+        },
+        6 => {
+            ts_v = reduce_buf[0];
+            partial_t_t();
+            state = 7;
+            launch_reduce();
+        },
+        7 => {
+            tt_v = reduce_buf[0];
+            omega_v = ts_v / tt_v;
+            update_x_r();
+            rho_old_v = rho_v[0];
+            partial_r0_r();
+            state = 8;
+            launch_reduce();
+        },
+        8 => {
+            rho_v[0] = reduce_buf[0];
+            partial_r_r();
+            state = 9;
+            launch_reduce();
+        },
+        9 => {
+            xi_v[0] = reduce_buf[0];
+            beta_v = (rho_v[0] / rho_old_v) * (alpha_v / omega_v);
+            update_p();
+            iter += 1;
+            state = 2;
+            @activate(STATE);
+        },
+        else => {
+            @activate(EXIT_T);
+        },
+    }
+}
+
+// ----------------------------------------------------------------------------
+// exit: unblock cmd stream so host launch returns
+// ----------------------------------------------------------------------------
+task exit_task() void {
+    sys_mod.unblock_cmd_stream();
+}
+
+// ----------------------------------------------------------------------------
+// Entry point: f_bicgstab(size, tol, max_ite)
+// ----------------------------------------------------------------------------
+fn f_bicgstab(size: i16, tol: f32, mite: i16) void {
+    zDim = size;
+    tol_v = tol;
+    max_ite = mite;
+    iter = 0;
+
+    set_all_dsd_lengths(size);
+
+    // Setup: r = b (x0 = 0), r0 = r, p = r, x = 0
+    var i: i16 = 0;
+    while (i < size) : (i += 1) {
+        x[i]  = 0.0;
+        r[i]  = b[i];
+        r0[i] = b[i];
+        p[i]  = b[i];
+    }
+
+    state = 0;
+    @activate(STATE);
+}
+
+// ----------------------------------------------------------------------------
+// timing entrypoints (canonical bodies)
+// ----------------------------------------------------------------------------
+fn f_enable_timer() void {
+    timestamp.enable_tsc();
+    sys_mod.unblock_cmd_stream();
+}
+
+fn f_tic() void {
+    timestamp.get_timestamp(&tscStartBuffer);
+    sys_mod.unblock_cmd_stream();
+}
+
+fn f_toc() void {
+    timestamp.get_timestamp(&tscEndBuffer);
+    sys_mod.unblock_cmd_stream();
+}
+
+fn f_memcpy_timestamps() void {
+    var k: i16 = 0;
+    while (k < timestamp.tsc_size_words) : (k += 1) {
+        time_buf_u16[k] = tscStartBuffer[k];
+        time_buf_u16[k + timestamp.tsc_size_words] = tscEndBuffer[k];
+    }
+    sys_mod.unblock_cmd_stream();
+}
+
+// f_sync: allreduce a dummy to synchronize all PEs before timing.
+// Reuses reduce_mod; its callback (reduce_callback) activates STATE, but
+// during sync STATE is not in a meaningful state — so we gate sync separately.
+var in_sync: bool = false;
+var sync_buf = @zeros([1]f32);
+
+fn f_sync() void {
+    in_sync = true;
+    sync_buf[0] = 1.0;
+    reduce_mod.allreduce(1, @ptrcast([*]f32, &sync_buf), reduce_mod.TYPE_BINARY_OP.ADD);
+}
+
+fn f_reference_timestamps() void {
+    timestamp.get_timestamp(&time_ref_u16);
+    sys_mod.unblock_cmd_stream();
+}
+
+// ----------------------------------------------------------------------------
+// comptime: bindings + symbol exports
+// ----------------------------------------------------------------------------
+comptime {
+    @bind_local_task(state_task, STATE);
+    @bind_local_task(exit_task,  EXIT_T);
+}
+
+comptime {
+    @export_symbol(ptr_b, "b");
+    @export_symbol(ptr_x, "x");
+    @export_symbol(ptr_stencil_coeff, "stencil_coeff");
+    @export_symbol(ptr_time_buf_u16, "time_buf_u16");
+    @export_symbol(ptr_time_ref, "time_ref");
+    @export_symbol(ptr_rho, "rho");
+    @export_symbol(ptr_xi, "xi");
+
+    @export_symbol(f_enable_timer);
+    @export_symbol(f_tic);
+    @export_symbol(f_toc);
+    @export_symbol(f_memcpy_timestamps);
+    @export_symbol(f_bicgstab);
+    @export_symbol(f_sync);
+    @export_symbol(f_reference_timestamps);
+}

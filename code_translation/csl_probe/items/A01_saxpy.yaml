@@ -1,0 +1,26 @@
+id: A01_saxpy
+group: A_syntax
+prompt: "You are writing Cerebras CSL for the WSE-3 (SDK 2.10). Write the complete compute file `pe.csl`\nfor the\
+  \ FIXED layout below. The host fills the input arrays through the exported symbols, calls\n`compute()` once, then\
+  \ reads the output arrays. Requirements: declare `param memcpy_params;`\n(untyped) and `param n: u16;`, import\
+  \ `<memcpy/memcpy>` with the params, allocate every exported\narray with @zeros, export each with `@export_symbol(ptr,\
+  \ \"name\")` where `ptr` is a `var` pointer\n`[*]T`, export `compute`, and end `compute()` by unblocking the command\
+  \ stream (activate a local\ntask that calls `sys_mod.unblock_cmd_stream()`). Reply with ONLY one ```csl fenced\
+  \ block.\n\nTask: y[i] = a[0] * x[i] + y[i] for i in 0..n (a is a one-element array).\n\nFixed layout.csl:\n```csl\n\
+  // FIXED layout (do not change): one PE; the host writes a, x, y and reads y.\nparam n: u16;\n\nconst memcpy =\
+  \ @import_module(\"<memcpy/get_params>\", .{ .width = 1, .height = 1 });\n\nlayout {\n  @set_rectangle(1, 1);\n\
+  \  const memcpy_params = memcpy.get_params(0);\n  @set_tile_code(0, 0, \"pe.csl\", .{ .memcpy_params = memcpy_params,\
+  \ .n = n });\n  @export_name(\"a\", [*]f32, true);\n  @export_name(\"x\", [*]f32, true);\n  @export_name(\"y\"\
+  , [*]f32, true);\n  @export_name(\"y\", [*]f32, true);\n  @export_name(\"compute\", fn()void);\n}\n```"
+fixed_layout: "// FIXED layout (do not change): one PE; the host writes a, x, y and reads y.\nparam n: u16;\n\n\
+  const memcpy = @import_module(\"<memcpy/get_params>\", .{ .width = 1, .height = 1 });\n\nlayout {\n  @set_rectangle(1,\
+  \ 1);\n  const memcpy_params = memcpy.get_params(0);\n  @set_tile_code(0, 0, \"pe.csl\", .{ .memcpy_params = memcpy_params,\
+  \ .n = n });\n  @export_name(\"a\", [*]f32, true);\n  @export_name(\"x\", [*]f32, true);\n  @export_name(\"y\"\
+  , [*]f32, true);\n  @export_name(\"y\", [*]f32, true);\n  @export_name(\"compute\", fn()void);\n}\n"
+compile_params:
+  n: 64
+cslc_args: --arch=wse3 --fabric-dims=8,3 --fabric-offsets=4,1 --memcpy --channels=1 --width-west-buf=0 --width-east-buf=0
+expected:
+  compiles: true
+scoring: cslc exit status 0 on the fixed layout + the reply's pe.csl (compile only)
+source_citation: toy kernel written for the probe; not a benchmark task

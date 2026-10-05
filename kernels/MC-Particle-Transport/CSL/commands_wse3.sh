@@ -22,7 +22,7 @@ TILE_HEIGHT=1
 
 # This increases the length of sevearl device particle buffers, so as
 # to accomodate the case where the random distribution of particles results in
-# some PEs needing to process more particles than they started with. A value
+# some PEs needing to process more particles than they started with. A value 
 # of "1" indicates that perfect load balancing is applied, while a value of
 # e.g., "5" means that a single PE has room to store 5x more particles than it
 # started with.

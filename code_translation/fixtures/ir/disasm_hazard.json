@@ -1,0 +1,3829 @@
+{
+ "schema": "csdisasm/1",
+ "evidence": "compiled",
+ "source_elf": "microbench/iremit/out/bin/out_0_0.elf (excerpt)",
+ "records": [
+  {
+   "pc": 320,
+   "instruction": "eq32.and cflag0 = d0, 0x0",
+   "source": "rpc_server(&(sys_mod.stack_u32));",
+   "source_file": "/cb/toolchains/cslang/rel-sdk-2.10.0/202604012315-1813-1394a6ea/csl-libs/memcpy/wse3/memcpy.csl",
+   "raw": "    rpc_server(&(sys_mod.stack_u32)); (eq32.and cflag0 = d0, 0x0)"
+  },
+  {
+   "pc": 322,
+   "instruction": "cflag0 ? jmp 0x146",
+   "source": "rpc_server(&(sys_mod.stack_u32));",
+   "source_file": "/cb/toolchains/cslang/rel-sdk-2.10.0/202604012315-1813-1394a6ea/csl-libs/memcpy/wse3/memcpy.csl",
+   "raw": "    rpc_server(&(sys_mod.stack_u32)); (cflag0 ? jmp 0x146)"
+  },
+  {
+   "pc": 324,
+   "instruction": "brk 0x2",
+   "source": "rpc_server(&(sys_mod.stack_u32));",
+   "source_file": "/cb/toolchains/cslang/rel-sdk-2.10.0/202604012315-1813-1394a6ea/csl-libs/memcpy/wse3/memcpy.csl",
+   "raw": "    rpc_server(&(sys_mod.stack_u32)); (brk 0x2)"
+  },
+  {
+   "pc": 326,
+   "instruction": "movri r5 = 0x7008",
+   "source": "<no source>",
+   "source_file": "/cb/toolchains/cslang/rel-sdk-2.10.0/202604012315-1813-1394a6ea/csl-libs/memcpy/wse3/memcpy.csl",
+   "raw": "<no source> (movri r5 = 0x7008)"
+  },
+  {
+   "pc": 328,
+   "instruction": "st16 [0xc38] = r5",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (st16 [0xc38] = r5)"
+  },
+  {
+   "pc": 330,
+   "instruction": "ld16rp d0 = [0xb88]",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (ld16rp d0 = [0xb88])"
+  },
+  {
+   "pc": 332,
+   "instruction": "movri r5 = 0x40",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (movri r5 = 0x40)"
+  },
+  {
+   "pc": 334,
+   "instruction": "st16 [0x7e84] = r5",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (st16 [0x7e84] = r5)"
+  },
+  {
+   "pc": 336,
+   "instruction": "movri r5 = 0xa38",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (movri r5 = 0xa38)"
+  },
+  {
+   "pc": 338,
+   "instruction": "st16 [0x7e85] = r5",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (st16 [0x7e85] = r5)"
+  },
+  {
+   "pc": 340,
+   "instruction": "movri r5 = 0x8f",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (movri r5 = 0x8f)"
+  },
+  {
+   "pc": 342,
+   "instruction": "st16 [0x7e86] = r5",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (st16 [0x7e86] = r5)"
+  },
+  {
+   "pc": 344,
+   "instruction": "movri r5 = 0x10",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (movri r5 = 0x10)"
+  },
+  {
+   "pc": 346,
+   "instruction": "st16 [0x7e87] = r5",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (st16 [0x7e87] = r5)"
+  },
+  {
+   "pc": 348,
+   "instruction": "nop 0x0",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (nop 0x0)"
+  },
+  {
+   "pc": 350,
+   "instruction": "nop 0x0",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (nop 0x0)"
+  },
+  {
+   "pc": 352,
+   "instruction": "fadds d0 = d0, [s1ds1]",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (fadds d0 = d0, [s1ds1])"
+  },
+  {
+   "pc": 354,
+   "instruction": "movri r5 = 0x7009",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (movri r5 = 0x7009)"
+  },
+  {
+   "pc": 356,
+   "instruction": "st16 [0xc39] = r5",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (st16 [0xc39] = r5)"
+  },
+  {
+   "pc": 358,
+   "instruction": "st32 [0xb8c] = d0",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (st32 [0xb8c] = d0)"
+  },
+  {
+   "pc": 360,
+   "instruction": "jmp 0x480",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (jmp 0x480)"
+  },
+  {
+   "pc": 362,
+   "instruction": "imov32.nf d6 = 0x13",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (imov32.nf d6 = 0x13)"
+  },
+  {
+   "pc": 364,
+   "instruction": "eq32.and cflag0 = d2, d6",
+   "source": "rpc_server(&(sys_mod.stack_u32));",
+   "source_file": "/cb/toolchains/cslang/rel-sdk-2.10.0/202604012315-1813-1394a6ea/csl-libs/memcpy/wse3/memcpy.csl",
+   "raw": "    rpc_server(&(sys_mod.stack_u32)); (eq32.and cflag0 = d2, d6)"
+  },
+  {
+   "pc": 366,
+   "instruction": "cflag0 ? jmp 0x368",
+   "source": "rpc_server(&(sys_mod.stack_u32));",
+   "source_file": "/cb/toolchains/cslang/rel-sdk-2.10.0/202604012315-1813-1394a6ea/csl-libs/memcpy/wse3/memcpy.csl",
+   "raw": "    rpc_server(&(sys_mod.stack_u32)); (cflag0 ? jmp 0x368)"
+  },
+  {
+   "pc": 368,
+   "instruction": "imov32.nf d6 = 0x14",
+   "source": "<no source>",
+   "source_file": "/cb/toolchains/cslang/rel-sdk-2.10.0/202604012315-1813-1394a6ea/csl-libs/memcpy/wse3/memcpy.csl",
+   "raw": "<no source> (imov32.nf d6 = 0x14)"
+  },
+  {
+   "pc": 370,
+   "instruction": "eq32.and cflag0 = d2, d6",
+   "source": "rpc_server(&(sys_mod.stack_u32));",
+   "source_file": "/cb/toolchains/cslang/rel-sdk-2.10.0/202604012315-1813-1394a6ea/csl-libs/memcpy/wse3/memcpy.csl",
+   "raw": "    rpc_server(&(sys_mod.stack_u32)); (eq32.and cflag0 = d2, d6)"
+  },
+  {
+   "pc": 372,
+   "instruction": "cflag0 ? jmp 0x3d6",
+   "source": "rpc_server(&(sys_mod.stack_u32));",
+   "source_file": "/cb/toolchains/cslang/rel-sdk-2.10.0/202604012315-1813-1394a6ea/csl-libs/memcpy/wse3/memcpy.csl",
+   "raw": "    rpc_server(&(sys_mod.stack_u32)); (cflag0 ? jmp 0x3d6)"
+  },
+  {
+   "pc": 374,
+   "instruction": "eq32.and cflag0 = d2, d4",
+   "source": "rpc_server(&(sys_mod.stack_u32));",
+   "source_file": "/cb/toolchains/cslang/rel-sdk-2.10.0/202604012315-1813-1394a6ea/csl-libs/memcpy/wse3/memcpy.csl",
+   "raw": "    rpc_server(&(sys_mod.stack_u32)); (eq32.and cflag0 = d2, d4)"
+  },
+  {
+   "pc": 376,
+   "instruction": "!cflag0 ? jmp 0x482",
+   "source": "rpc_server(&(sys_mod.stack_u32));",
+   "source_file": "/cb/toolchains/cslang/rel-sdk-2.10.0/202604012315-1813-1394a6ea/csl-libs/memcpy/wse3/memcpy.csl",
+   "raw": "    rpc_server(&(sys_mod.stack_u32)); (!cflag0 ? jmp 0x482)"
+  },
+  {
+   "pc": 378,
+   "instruction": "eq32.and cflag0 = d0, 0x0",
+   "source": "rpc_server(&(sys_mod.stack_u32));",
+   "source_file": "/cb/toolchains/cslang/rel-sdk-2.10.0/202604012315-1813-1394a6ea/csl-libs/memcpy/wse3/memcpy.csl",
+   "raw": "    rpc_server(&(sys_mod.stack_u32)); (eq32.and cflag0 = d0, 0x0)"
+  },
+  {
+   "pc": 380,
+   "instruction": "cflag0 ? jmp 0x180",
+   "source": "rpc_server(&(sys_mod.stack_u32));",
+   "source_file": "/cb/toolchains/cslang/rel-sdk-2.10.0/202604012315-1813-1394a6ea/csl-libs/memcpy/wse3/memcpy.csl",
+   "raw": "    rpc_server(&(sys_mod.stack_u32)); (cflag0 ? jmp 0x180)"
+  },
+  {
+   "pc": 382,
+   "instruction": "brk 0x2",
+   "source": "rpc_server(&(sys_mod.stack_u32));",
+   "source_file": "/cb/toolchains/cslang/rel-sdk-2.10.0/202604012315-1813-1394a6ea/csl-libs/memcpy/wse3/memcpy.csl",
+   "raw": "    rpc_server(&(sys_mod.stack_u32)); (brk 0x2)"
+  },
+  {
+   "pc": 384,
+   "instruction": "movri r5 = 0x7004",
+   "source": "<no source>",
+   "source_file": "/cb/toolchains/cslang/rel-sdk-2.10.0/202604012315-1813-1394a6ea/csl-libs/memcpy/wse3/memcpy.csl",
+   "raw": "<no source> (movri r5 = 0x7004)"
+  },
+  {
+   "pc": 386,
+   "instruction": "st16 [0xc34] = r5",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (st16 [0xc34] = r5)"
+  },
+  {
+   "pc": 388,
+   "instruction": "movri r8 = 0x0",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (movri r8 = 0x0)"
+  },
+  {
+   "pc": 390,
+   "instruction": "movri r5 = 0x1450",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (movri r5 = 0x1450)"
+  },
+  {
+   "pc": 392,
+   "instruction": "st16 sp[0x6] = r5",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (st16 sp[0x6] = r5)"
+  },
+  {
+   "pc": 394,
+   "instruction": "movri r5 = 0x138c",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (movri r5 = 0x138c)"
+  },
+  {
+   "pc": 396,
+   "instruction": "st16 sp[0x5] = r5",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (st16 sp[0x5] = r5)"
+  },
+  {
+   "pc": 398,
+   "instruction": "movri r5 = 0x1430",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (movri r5 = 0x1430)"
+  },
+  {
+   "pc": 400,
+   "instruction": "st16 sp[0x4] = r5",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (st16 sp[0x4] = r5)"
+  },
+  {
+   "pc": 402,
+   "instruction": "movri r5 = 0xb68",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (movri r5 = 0xb68)"
+  },
+  {
+   "pc": 404,
+   "instruction": "st16 sp[0x3] = r5",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (st16 sp[0x3] = r5)"
+  },
+  {
+   "pc": 406,
+   "instruction": "movri r15 = 0xa38",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (movri r15 = 0xa38)"
+  },
+  {
+   "pc": 408,
+   "instruction": "movri r2 = 0x8f",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (movri r2 = 0x8f)"
+  },
+  {
+   "pc": 410,
+   "instruction": "movri r3 = 0x10",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (movri r3 = 0x10)"
+  },
+  {
+   "pc": 412,
+   "instruction": "movri r4 = 0xab8",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (movri r4 = 0xab8)"
+  },
+  {
+   "pc": 414,
+   "instruction": "movri r5 = 0x17a0",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (movri r5 = 0x17a0)"
+  },
+  {
+   "pc": 416,
+   "instruction": "movri r14 = 0xf",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (movri r14 = 0xf)"
+  },
+  {
+   "pc": 418,
+   "instruction": "movri r10 = 0x16d0",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (movri r10 = 0x16d0)"
+  },
+  {
+   "pc": 420,
+   "instruction": "fmov16.nf r11 = r8",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (fmov16.nf r11 = r8)"
+  },
+  {
+   "pc": 422,
+   "instruction": "jmp 0x1b8",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (jmp 0x1b8)"
+  },
+  {
+   "pc": 424,
+   "instruction": "fmov32.nf d0 = d8",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (fmov32.nf d0 = d8)"
+  },
+  {
+   "pc": 426,
+   "instruction": "sll16.nf r6 = r11, 0x2",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (sll16.nf r6 = r11, 0x2)"
+  },
+  {
+   "pc": 428,
+   "instruction": "add16.nf r6 = r6, r5",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (add16.nf r6 = r6, r5)"
+  },
+  {
+   "pc": 430,
+   "instruction": "slr16.nf r6 = r6, 0x1",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (slr16.nf r6 = r6, 0x1)"
+  },
+  {
+   "pc": 432,
+   "instruction": "fmov32.nf [r6] = d0",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (fmov32.nf [r6] = d0)"
+  },
+  {
+   "pc": 434,
+   "instruction": "ltu16.and cflag0 = r11, r14",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (ltu16.and cflag0 = r11, r14)"
+  },
+  {
+   "pc": 436,
+   "instruction": "add16.nf r11 = r11, 0x1",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (add16.nf r11 = r11, 0x1)"
+  },
+  {
+   "pc": 438,
+   "instruction": "!cflag0 ? jmp 0x444",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (!cflag0 ? jmp 0x444)"
+  },
+  {
+   "pc": 440,
+   "instruction": "sll16.nf r0 = r11, 0x1",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (sll16.nf r0 = r11, 0x1)"
+  },
+  {
+   "pc": 442,
+   "instruction": "ld16 r1 = sp[0x6]",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (ld16 r1 = sp[0x6])"
+  },
+  {
+   "pc": 444,
+   "instruction": "add16.nf r1 = r0, r1",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (add16.nf r1 = r0, r1)"
+  },
+  {
+   "pc": 446,
+   "instruction": "ld16 r6 = sp[0x5]",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (ld16 r6 = sp[0x5])"
+  },
+  {
+   "pc": 448,
+   "instruction": "add16.nf r12 = r0, r6",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (add16.nf r12 = r0, r6)"
+  },
+  {
+   "pc": 450,
+   "instruction": "ld16 r6 = sp[0x4]",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (ld16 r6 = sp[0x4])"
+  },
+  {
+   "pc": 452,
+   "instruction": "add16.nf r0 = r0, r6",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (add16.nf r0 = r0, r6)"
+  },
+  {
+   "pc": 454,
+   "instruction": "slr16.nf r6 = r0, 0x1",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (slr16.nf r6 = r0, 0x1)"
+  },
+  {
+   "pc": 456,
+   "instruction": "imov16.nf r0 = [r6]",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (imov16.nf r0 = [r6])"
+  },
+  {
+   "pc": 458,
+   "instruction": "slr16.nf r6 = r12, 0x1",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (slr16.nf r6 = r12, 0x1)"
+  },
+  {
+   "pc": 460,
+   "instruction": "imov16.nf r6 = [r6]",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (imov16.nf r6 = [r6])"
+  },
+  {
+   "pc": 462,
+   "instruction": "slr16.nf r7 = r1, 0x1",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (slr16.nf r7 = r1, 0x1)"
+  },
+  {
+   "pc": 464,
+   "instruction": "imov16.nf r12 = [r7]",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (imov16.nf r12 = [r7])"
+  },
+  {
+   "pc": 466,
+   "instruction": "st16 [0x7ec4] = r12",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (st16 [0x7ec4] = r12)"
+  },
+  {
+   "pc": 468,
+   "instruction": "ld16 r1 = sp[0x3]",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (ld16 r1 = sp[0x3])"
+  },
+  {
+   "pc": 470,
+   "instruction": "st16 [0x7ec5] = r1",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (st16 [0x7ec5] = r1)"
+  },
+  {
+   "pc": 472,
+   "instruction": "sll16.nf r1 = r6, 0x1",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (sll16.nf r1 = r6, 0x1)"
+  },
+  {
+   "pc": 474,
+   "instruction": "add16.nf r1 = r1, r15",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (add16.nf r1 = r1, r15)"
+  },
+  {
+   "pc": 476,
+   "instruction": "st16 [0x7ec6] = r2",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (st16 [0x7ec6] = r2)"
+  },
+  {
+   "pc": 478,
+   "instruction": "st16 [0x7ec7] = r3",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (st16 [0x7ec7] = r3)"
+  },
+  {
+   "pc": 480,
+   "instruction": "nop 0x0",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (nop 0x0)"
+  },
+  {
+   "pc": 482,
+   "instruction": "nop 0x0",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (nop 0x0)"
+  },
+  {
+   "pc": 484,
+   "instruction": "st16 [0x7e44] = r12",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (st16 [0x7e44] = r12)"
+  },
+  {
+   "pc": 486,
+   "instruction": "st16 [0x7e45] = r1",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (st16 [0x7e45] = r1)"
+  },
+  {
+   "pc": 488,
+   "instruction": "sll16.nf r0 = r0, 0x1",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (sll16.nf r0 = r0, 0x1)"
+  },
+  {
+   "pc": 490,
+   "instruction": "add16.nf r0 = r0, r4",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (add16.nf r0 = r0, r4)"
+  },
+  {
+   "pc": 492,
+   "instruction": "st16 [0x7e46] = r2",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (st16 [0x7e46] = r2)"
+  },
+  {
+   "pc": 494,
+   "instruction": "st16 [0x7e47] = r3",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (st16 [0x7e47] = r3)"
+  },
+  {
+   "pc": 496,
+   "instruction": "nop 0x0",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (nop 0x0)"
+  },
+  {
+   "pc": 498,
+   "instruction": "nop 0x0",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (nop 0x0)"
+  },
+  {
+   "pc": 500,
+   "instruction": "st16 [0x7e84] = r12",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (st16 [0x7e84] = r12)"
+  },
+  {
+   "pc": 502,
+   "instruction": "st16 [0x7e85] = r0",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (st16 [0x7e85] = r0)"
+  },
+  {
+   "pc": 504,
+   "instruction": "st16 [0x7e86] = r2",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (st16 [0x7e86] = r2)"
+  },
+  {
+   "pc": 506,
+   "instruction": "st16 [0x7e87] = r3",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (st16 [0x7e87] = r3)"
+  },
+  {
+   "pc": 508,
+   "instruction": "fmov16.nf r9 = r8",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (fmov16.nf r9 = r8)"
+  },
+  {
+   "pc": 510,
+   "instruction": "eq16.and cflag0 = r12, 0x0",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (eq16.and cflag0 = r12, 0x0)"
+  },
+  {
+   "pc": 512,
+   "instruction": "nop 0x0",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (nop 0x0)"
+  },
+  {
+   "pc": 514,
+   "instruction": "nop 0x0",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (nop 0x0)"
+  },
+  {
+   "pc": 516,
+   "instruction": "fmuls [dds1] = [s0ds1], [s1ds1]",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (fmuls [dds1] = [s0ds1], [s1ds1])"
+  },
+  {
+   "pc": 518,
+   "instruction": "cflag0 ? jmp 0x1a8",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (cflag0 ? jmp 0x1a8)"
+  },
+  {
+   "pc": 520,
+   "instruction": "fmov16.nf r13 = r8",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (fmov16.nf r13 = r8)"
+  },
+  {
+   "pc": 522,
+   "instruction": "fmov32.nf d0 = d8",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (fmov32.nf d0 = d8)"
+  },
+  {
+   "pc": 524,
+   "instruction": "sll16.nf r6 = r13, 0x2",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (sll16.nf r6 = r13, 0x2)"
+  },
+  {
+   "pc": 526,
+   "instruction": "add16.nf r6 = r6, r10",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (add16.nf r6 = r6, r10)"
+  },
+  {
+   "pc": 528,
+   "instruction": "slr16.nf r6 = r6, 0x1",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (slr16.nf r6 = r6, 0x1)"
+  },
+  {
+   "pc": 530,
+   "instruction": "fmov32.nf d6 = [r6]",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (fmov32.nf d6 = [r6])"
+  },
+  {
+   "pc": 532,
+   "instruction": "fadds d0 = d0, d6",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (fadds d0 = d0, d6)"
+  },
+  {
+   "pc": 534,
+   "instruction": "add16.nf r13 = r13, 0x1",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (add16.nf r13 = r13, 0x1)"
+  },
+  {
+   "pc": 536,
+   "instruction": "ltu16.and cflag0 = r13, r12",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (ltu16.and cflag0 = r13, r12)"
+  },
+  {
+   "pc": 538,
+   "instruction": "cflag0 ? jmp 0x20c",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (cflag0 ? jmp 0x20c)"
+  },
+  {
+   "pc": 540,
+   "instruction": "jmp 0x1aa",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (jmp 0x1aa)"
+  },
+  {
+   "pc": 542,
+   "instruction": "imov32.nf d4 = 0x18",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (imov32.nf d4 = 0x18)"
+  },
+  {
+   "pc": 544,
+   "instruction": "eq32.and cflag0 = d2, d4",
+   "source": "rpc_server(&(sys_mod.stack_u32));",
+   "source_file": "/cb/toolchains/cslang/rel-sdk-2.10.0/202604012315-1813-1394a6ea/csl-libs/memcpy/wse3/memcpy.csl",
+   "raw": "    rpc_server(&(sys_mod.stack_u32)); (eq32.and cflag0 = d2, d4)"
+  },
+  {
+   "pc": 546,
+   "instruction": "cflag0 ? jmp 0x44a",
+   "source": "rpc_server(&(sys_mod.stack_u32));",
+   "source_file": "/cb/toolchains/cslang/rel-sdk-2.10.0/202604012315-1813-1394a6ea/csl-libs/memcpy/wse3/memcpy.csl",
+   "raw": "    rpc_server(&(sys_mod.stack_u32)); (cflag0 ? jmp 0x44a)"
+  },
+  {
+   "pc": 548,
+   "instruction": "imov32.nf d4 = 0x19",
+   "source": "<no source>",
+   "source_file": "/cb/toolchains/cslang/rel-sdk-2.10.0/202604012315-1813-1394a6ea/csl-libs/memcpy/wse3/memcpy.csl",
+   "raw": "<no source> (imov32.nf d4 = 0x19)"
+  },
+  {
+   "pc": 550,
+   "instruction": "eq32.and cflag0 = d2, d4",
+   "source": "rpc_server(&(sys_mod.stack_u32));",
+   "source_file": "/cb/toolchains/cslang/rel-sdk-2.10.0/202604012315-1813-1394a6ea/csl-libs/memcpy/wse3/memcpy.csl",
+   "raw": "    rpc_server(&(sys_mod.stack_u32)); (eq32.and cflag0 = d2, d4)"
+  },
+  {
+   "pc": 552,
+   "instruction": "!cflag0 ? jmp 0x482",
+   "source": "rpc_server(&(sys_mod.stack_u32));",
+   "source_file": "/cb/toolchains/cslang/rel-sdk-2.10.0/202604012315-1813-1394a6ea/csl-libs/memcpy/wse3/memcpy.csl",
+   "raw": "    rpc_server(&(sys_mod.stack_u32)); (!cflag0 ? jmp 0x482)"
+  },
+  {
+   "pc": 554,
+   "instruction": "eq32.and cflag0 = d0, 0x0",
+   "source": "rpc_server(&(sys_mod.stack_u32));",
+   "source_file": "/cb/toolchains/cslang/rel-sdk-2.10.0/202604012315-1813-1394a6ea/csl-libs/memcpy/wse3/memcpy.csl",
+   "raw": "    rpc_server(&(sys_mod.stack_u32)); (eq32.and cflag0 = d0, 0x0)"
+  },
+  {
+   "pc": 556,
+   "instruction": "cflag0 ? jmp 0x230",
+   "source": "rpc_server(&(sys_mod.stack_u32));",
+   "source_file": "/cb/toolchains/cslang/rel-sdk-2.10.0/202604012315-1813-1394a6ea/csl-libs/memcpy/wse3/memcpy.csl",
+   "raw": "    rpc_server(&(sys_mod.stack_u32)); (cflag0 ? jmp 0x230)"
+  },
+  {
+   "pc": 558,
+   "instruction": "brk 0x2",
+   "source": "rpc_server(&(sys_mod.stack_u32));",
+   "source_file": "/cb/toolchains/cslang/rel-sdk-2.10.0/202604012315-1813-1394a6ea/csl-libs/memcpy/wse3/memcpy.csl",
+   "raw": "    rpc_server(&(sys_mod.stack_u32)); (brk 0x2)"
+  },
+  {
+   "pc": 560,
+   "instruction": "movri r0 = 0x0",
+   "source": "<no source>",
+   "source_file": "/cb/toolchains/cslang/rel-sdk-2.10.0/202604012315-1813-1394a6ea/csl-libs/memcpy/wse3/memcpy.csl",
+   "raw": "<no source> (movri r0 = 0x0)"
+  },
+  {
+   "pc": 562,
+   "instruction": "movri r5 = 0x700c",
+   "source": "<no source>",
+   "source_file": "/cb/toolchains/cslang/rel-sdk-2.10.0/202604012315-1813-1394a6ea/csl-libs/memcpy/wse3/memcpy.csl",
+   "raw": "<no source> (movri r5 = 0x700c)"
+  },
+  {
+   "pc": 564,
+   "instruction": "st16 [0xc3c] = r5",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (st16 [0xc3c] = r5)"
+  },
+  {
+   "pc": 566,
+   "instruction": "movri r5 = 0x138c",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (movri r5 = 0x138c)"
+  },
+  {
+   "pc": 568,
+   "instruction": "st16 sp[0x6] = r5",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (st16 sp[0x6] = r5)"
+  },
+  {
+   "pc": 570,
+   "instruction": "movri r8 = 0x1430",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (movri r8 = 0x1430)"
+  },
+  {
+   "pc": 572,
+   "instruction": "movri r9 = 0x1450",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (movri r9 = 0x1450)"
+  },
+  {
+   "pc": 574,
+   "instruction": "movri r14 = 0xab8",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (movri r14 = 0xab8)"
+  },
+  {
+   "pc": 576,
+   "instruction": "movri r15 = 0xa38",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (movri r15 = 0xa38)"
+  },
+  {
+   "pc": 578,
+   "instruction": "movri r2 = 0x1820",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (movri r2 = 0x1820)"
+  },
+  {
+   "pc": 580,
+   "instruction": "movri r3 = 0xb68",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (movri r3 = 0xb68)"
+  },
+  {
+   "pc": 582,
+   "instruction": "movri r4 = 0x8f",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (movri r4 = 0x8f)"
+  },
+  {
+   "pc": 584,
+   "instruction": "movri r5 = 0x10",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (movri r5 = 0x10)"
+  },
+  {
+   "pc": 586,
+   "instruction": "movri r11 = 0xf",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (movri r11 = 0xf)"
+  },
+  {
+   "pc": 588,
+   "instruction": "fmov16.nf r10 = r0",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (fmov16.nf r10 = r0)"
+  },
+  {
+   "pc": 590,
+   "instruction": "sll16.nf r7 = r10, 0x1",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (sll16.nf r7 = r10, 0x1)"
+  },
+  {
+   "pc": 592,
+   "instruction": "ld16 r6 = sp[0x6]",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (ld16 r6 = sp[0x6])"
+  },
+  {
+   "pc": 594,
+   "instruction": "add16.nf r12 = r7, r6",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (add16.nf r12 = r7, r6)"
+  },
+  {
+   "pc": 596,
+   "instruction": "add16.nf r13 = r7, r8",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (add16.nf r13 = r7, r8)"
+  },
+  {
+   "pc": 598,
+   "instruction": "add16.nf r7 = r7, r9",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (add16.nf r7 = r7, r9)"
+  },
+  {
+   "pc": 600,
+   "instruction": "slr16.nf r6 = r13, 0x1",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (slr16.nf r6 = r13, 0x1)"
+  },
+  {
+   "pc": 602,
+   "instruction": "imov16.nf r6 = [r6]",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (imov16.nf r6 = [r6])"
+  },
+  {
+   "pc": 604,
+   "instruction": "sll16.nf r6 = r6, 0x1",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (sll16.nf r6 = r6, 0x1)"
+  },
+  {
+   "pc": 606,
+   "instruction": "add16.nf r13 = r6, r14",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (add16.nf r13 = r6, r14)"
+  },
+  {
+   "pc": 608,
+   "instruction": "slr16.nf r6 = r12, 0x1",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (slr16.nf r6 = r12, 0x1)"
+  },
+  {
+   "pc": 610,
+   "instruction": "imov16.nf r6 = [r6]",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (imov16.nf r6 = [r6])"
+  },
+  {
+   "pc": 612,
+   "instruction": "sll16.nf r6 = r6, 0x1",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (sll16.nf r6 = r6, 0x1)"
+  },
+  {
+   "pc": 614,
+   "instruction": "add16.nf r6 = r6, r15",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (add16.nf r6 = r6, r15)"
+  },
+  {
+   "pc": 616,
+   "instruction": "sll16.nf r12 = r10, 0x2",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (sll16.nf r12 = r10, 0x2)"
+  },
+  {
+   "pc": 618,
+   "instruction": "add16.nf r12 = r12, r2",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (add16.nf r12 = r12, r2)"
+  },
+  {
+   "pc": 620,
+   "instruction": "slr16.nf r7 = r7, 0x1",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (slr16.nf r7 = r7, 0x1)"
+  },
+  {
+   "pc": 622,
+   "instruction": "imov16.nf r7 = [r7]",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (imov16.nf r7 = [r7])"
+  },
+  {
+   "pc": 624,
+   "instruction": "st16 [0x7ec4] = r7",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (st16 [0x7ec4] = r7)"
+  },
+  {
+   "pc": 626,
+   "instruction": "st16 [0x7ec5] = r3",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (st16 [0x7ec5] = r3)"
+  },
+  {
+   "pc": 628,
+   "instruction": "st16 [0x7ec6] = r4",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (st16 [0x7ec6] = r4)"
+  },
+  {
+   "pc": 630,
+   "instruction": "st16 [0x7ec7] = r5",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (st16 [0x7ec7] = r5)"
+  },
+  {
+   "pc": 632,
+   "instruction": "nop 0x0",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (nop 0x0)"
+  },
+  {
+   "pc": 634,
+   "instruction": "nop 0x0",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (nop 0x0)"
+  },
+  {
+   "pc": 636,
+   "instruction": "st16 [0x7e44] = r7",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (st16 [0x7e44] = r7)"
+  },
+  {
+   "pc": 638,
+   "instruction": "st16 [0x7e45] = r6",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (st16 [0x7e45] = r6)"
+  },
+  {
+   "pc": 640,
+   "instruction": "st16 [0x7e46] = r4",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (st16 [0x7e46] = r4)"
+  },
+  {
+   "pc": 642,
+   "instruction": "st16 [0x7e47] = r5",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (st16 [0x7e47] = r5)"
+  },
+  {
+   "pc": 644,
+   "instruction": "nop 0x0",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (nop 0x0)"
+  },
+  {
+   "pc": 646,
+   "instruction": "nop 0x0",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (nop 0x0)"
+  },
+  {
+   "pc": 648,
+   "instruction": "st16 [0x7e84] = r7",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (st16 [0x7e84] = r7)"
+  },
+  {
+   "pc": 650,
+   "instruction": "st16 [0x7e85] = r13",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (st16 [0x7e85] = r13)"
+  },
+  {
+   "pc": 652,
+   "instruction": "st16 [0x7e86] = r4",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (st16 [0x7e86] = r4)"
+  },
+  {
+   "pc": 654,
+   "instruction": "st16 [0x7e87] = r5",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (st16 [0x7e87] = r5)"
+  },
+  {
+   "pc": 656,
+   "instruction": "nop 0x0",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (nop 0x0)"
+  },
+  {
+   "pc": 658,
+   "instruction": "nop 0x0",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (nop 0x0)"
+  },
+  {
+   "pc": 660,
+   "instruction": "fmuls [dds1] = [s0ds1], [s1ds1]",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (fmuls [dds1] = [s0ds1], [s1ds1])"
+  },
+  {
+   "pc": 662,
+   "instruction": "st16 [0x7e84] = r7",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (st16 [0x7e84] = r7)"
+  },
+  {
+   "pc": 664,
+   "instruction": "st16 [0x7e85] = r3",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (st16 [0x7e85] = r3)"
+  },
+  {
+   "pc": 666,
+   "instruction": "st16 [0x7e86] = r4",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (st16 [0x7e86] = r4)"
+  },
+  {
+   "pc": 668,
+   "instruction": "st16 [0x7e87] = r5",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (st16 [0x7e87] = r5)"
+  },
+  {
+   "pc": 670,
+   "instruction": "slr16.nf r7 = r12, 0x1",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (slr16.nf r7 = r12, 0x1)"
+  },
+  {
+   "pc": 672,
+   "instruction": "fmov16.nf r1 = r0",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (fmov16.nf r1 = r0)"
+  },
+  {
+   "pc": 674,
+   "instruction": "nop 0x0",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (nop 0x0)"
+  },
+  {
+   "pc": 676,
+   "instruction": "nop 0x0",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (nop 0x0)"
+  },
+  {
+   "pc": 678,
+   "instruction": "fadds d12 = d0, [s1ds1]",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (fadds d12 = d0, [s1ds1])"
+  },
+  {
+   "pc": 680,
+   "instruction": "fmov32.nf [r7] = d12",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (fmov32.nf [r7] = d12)"
+  },
+  {
+   "pc": 682,
+   "instruction": "ltu16.and cflag0 = r10, r11",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (ltu16.and cflag0 = r10, r11)"
+  },
+  {
+   "pc": 684,
+   "instruction": "add16.nf r10 = r10, 0x1",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (add16.nf r10 = r10, 0x1)"
+  },
+  {
+   "pc": 686,
+   "instruction": "cflag0 ? jmp 0x24e",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (cflag0 ? jmp 0x24e)"
+  },
+  {
+   "pc": 688,
+   "instruction": "movri r5 = 0x700d",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (movri r5 = 0x700d)"
+  },
+  {
+   "pc": 690,
+   "instruction": "st16 [0xc3d] = r5",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (st16 [0xc3d] = r5)"
+  },
+  {
+   "pc": 692,
+   "instruction": "jmp 0x480",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (jmp 0x480)"
+  },
+  {
+   "pc": 694,
+   "instruction": "eq32.and cflag0 = d0, 0x0",
+   "source": "rpc_server(&(sys_mod.stack_u32));",
+   "source_file": "/cb/toolchains/cslang/rel-sdk-2.10.0/202604012315-1813-1394a6ea/csl-libs/memcpy/wse3/memcpy.csl",
+   "raw": "    rpc_server(&(sys_mod.stack_u32)); (eq32.and cflag0 = d0, 0x0)"
+  },
+  {
+   "pc": 696,
+   "instruction": "cflag0 ? jmp 0x2bc",
+   "source": "rpc_server(&(sys_mod.stack_u32));",
+   "source_file": "/cb/toolchains/cslang/rel-sdk-2.10.0/202604012315-1813-1394a6ea/csl-libs/memcpy/wse3/memcpy.csl",
+   "raw": "    rpc_server(&(sys_mod.stack_u32)); (cflag0 ? jmp 0x2bc)"
+  },
+  {
+   "pc": 698,
+   "instruction": "brk 0x2",
+   "source": "rpc_server(&(sys_mod.stack_u32));",
+   "source_file": "/cb/toolchains/cslang/rel-sdk-2.10.0/202604012315-1813-1394a6ea/csl-libs/memcpy/wse3/memcpy.csl",
+   "raw": "    rpc_server(&(sys_mod.stack_u32)); (brk 0x2)"
+  },
+  {
+   "pc": 700,
+   "instruction": "movri r5 = 0x7006",
+   "source": "<no source>",
+   "source_file": "/cb/toolchains/cslang/rel-sdk-2.10.0/202604012315-1813-1394a6ea/csl-libs/memcpy/wse3/memcpy.csl",
+   "raw": "<no source> (movri r5 = 0x7006)"
+  },
+  {
+   "pc": 702,
+   "instruction": "st16 [0xc36] = r5",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (st16 [0xc36] = r5)"
+  },
+  {
+   "pc": 704,
+   "instruction": "lddwds dds1 = [0x0]",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (lddwds dds1 = [0x0])"
+  },
+  {
+   "pc": 706,
+   "instruction": "movri r0 = 0x0",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (movri r0 = 0x0)"
+  },
+  {
+   "pc": 708,
+   "instruction": "fmov16.nf r1 = r0",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (fmov16.nf r1 = r0)"
+  },
+  {
+   "pc": 710,
+   "instruction": "fmov32.nf [dds1] = d0",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (fmov32.nf [dds1] = d0)"
+  },
+  {
+   "pc": 712,
+   "instruction": "movri r5 = 0x16c8",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (movri r5 = 0x16c8)"
+  },
+  {
+   "pc": 714,
+   "instruction": "st16 sp[0x6] = r5",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (st16 sp[0x6] = r5)"
+  },
+  {
+   "pc": 716,
+   "instruction": "movri r5 = 0xab8",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (movri r5 = 0xab8)"
+  },
+  {
+   "pc": 718,
+   "instruction": "st16 sp[0x5] = r5",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (st16 sp[0x5] = r5)"
+  },
+  {
+   "pc": 720,
+   "instruction": "movri r5 = 0x16b8",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (movri r5 = 0x16b8)"
+  },
+  {
+   "pc": 722,
+   "instruction": "st16 sp[0x4] = r5",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (st16 sp[0x4] = r5)"
+  },
+  {
+   "pc": 724,
+   "instruction": "movri r14 = 0x16b0",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (movri r14 = 0x16b0)"
+  },
+  {
+   "pc": 726,
+   "instruction": "movri r15 = 0x16c0",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (movri r15 = 0x16c0)"
+  },
+  {
+   "pc": 728,
+   "instruction": "movri r2 = 0xad8",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (movri r2 = 0xad8)"
+  },
+  {
+   "pc": 730,
+   "instruction": "movri r3 = 0xbf0",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (movri r3 = 0xbf0)"
+  },
+  {
+   "pc": 732,
+   "instruction": "movri r4 = 0x8f",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (movri r4 = 0x8f)"
+  },
+  {
+   "pc": 734,
+   "instruction": "movri r9 = 0x10",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (movri r9 = 0x10)"
+  },
+  {
+   "pc": 736,
+   "instruction": "movri r12 = 0xb68",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (movri r12 = 0xb68)"
+  },
+  {
+   "pc": 738,
+   "instruction": "sll16.nf r10 = r0, 0x1",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (sll16.nf r10 = r0, 0x1)"
+  },
+  {
+   "pc": 740,
+   "instruction": "ld16 r5 = sp[0x6]",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (ld16 r5 = sp[0x6])"
+  },
+  {
+   "pc": 742,
+   "instruction": "add16.nf r11 = r10, r5",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (add16.nf r11 = r10, r5)"
+  },
+  {
+   "pc": 744,
+   "instruction": "slr16.nf r7 = r11, 0x1",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (slr16.nf r7 = r11, 0x1)"
+  },
+  {
+   "pc": 746,
+   "instruction": "imov16.nf r7 = [r7]",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (imov16.nf r7 = [r7])"
+  },
+  {
+   "pc": 748,
+   "instruction": "sll16.nf r7 = r7, 0x1",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (sll16.nf r7 = r7, 0x1)"
+  },
+  {
+   "pc": 750,
+   "instruction": "ld16 r5 = sp[0x5]",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (ld16 r5 = sp[0x5])"
+  },
+  {
+   "pc": 752,
+   "instruction": "add16.nf r5 = r7, r5",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (add16.nf r5 = r7, r5)"
+  },
+  {
+   "pc": 754,
+   "instruction": "ld16 r8 = sp[0x4]",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (ld16 r8 = sp[0x4])"
+  },
+  {
+   "pc": 756,
+   "instruction": "add16.nf r11 = r10, r8",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (add16.nf r11 = r10, r8)"
+  },
+  {
+   "pc": 758,
+   "instruction": "add16.nf r13 = r10, r14",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (add16.nf r13 = r10, r14)"
+  },
+  {
+   "pc": 760,
+   "instruction": "add16.nf r10 = r10, r15",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (add16.nf r10 = r10, r15)"
+  },
+  {
+   "pc": 762,
+   "instruction": "slr16.nf r7 = r10, 0x1",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (slr16.nf r7 = r10, 0x1)"
+  },
+  {
+   "pc": 764,
+   "instruction": "imov16.nf r8 = [r7]",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (imov16.nf r8 = [r7])"
+  },
+  {
+   "pc": 766,
+   "instruction": "slr16.nf r7 = r13, 0x1",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (slr16.nf r7 = r13, 0x1)"
+  },
+  {
+   "pc": 768,
+   "instruction": "imov16.nf r7 = [r7]",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (imov16.nf r7 = [r7])"
+  },
+  {
+   "pc": 770,
+   "instruction": "slr16.nf r6 = r11, 0x1",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (slr16.nf r6 = r11, 0x1)"
+  },
+  {
+   "pc": 772,
+   "instruction": "imov16.nf r10 = [r6]",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (imov16.nf r10 = [r6])"
+  },
+  {
+   "pc": 774,
+   "instruction": "st16 [0x7e84] = r10",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (st16 [0x7e84] = r10)"
+  },
+  {
+   "pc": 776,
+   "instruction": "st16 [0x7e85] = r5",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (st16 [0x7e85] = r5)"
+  },
+  {
+   "pc": 778,
+   "instruction": "sll16.nf r5 = r7, 0x1",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (sll16.nf r5 = r7, 0x1)"
+  },
+  {
+   "pc": 780,
+   "instruction": "add16.nf r5 = r5, r2",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (add16.nf r5 = r5, r2)"
+  },
+  {
+   "pc": 782,
+   "instruction": "sll16.nf r8 = r8, 0x1",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (sll16.nf r8 = r8, 0x1)"
+  },
+  {
+   "pc": 784,
+   "instruction": "add16.nf r8 = r8, r3",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (add16.nf r8 = r8, r3)"
+  },
+  {
+   "pc": 786,
+   "instruction": "st16 [0x7e86] = r4",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (st16 [0x7e86] = r4)"
+  },
+  {
+   "pc": 788,
+   "instruction": "st16 [0x7e87] = r9",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (st16 [0x7e87] = r9)"
+  },
+  {
+   "pc": 790,
+   "instruction": "nop 0x0",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (nop 0x0)"
+  },
+  {
+   "pc": 792,
+   "instruction": "nop 0x0",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (nop 0x0)"
+  },
+  {
+   "pc": 794,
+   "instruction": "st16 [0x7ec4] = r10",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (st16 [0x7ec4] = r10)"
+  },
+  {
+   "pc": 796,
+   "instruction": "st16 [0x7ec5] = r12",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (st16 [0x7ec5] = r12)"
+  },
+  {
+   "pc": 798,
+   "instruction": "st16 [0x7ec6] = r4",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (st16 [0x7ec6] = r4)"
+  },
+  {
+   "pc": 800,
+   "instruction": "st16 [0x7ec7] = r9",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (st16 [0x7ec7] = r9)"
+  },
+  {
+   "pc": 802,
+   "instruction": "nop 0x0",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (nop 0x0)"
+  },
+  {
+   "pc": 804,
+   "instruction": "nop 0x0",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (nop 0x0)"
+  },
+  {
+   "pc": 806,
+   "instruction": "st16 [0x7e44] = r10",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (st16 [0x7e44] = r10)"
+  },
+  {
+   "pc": 808,
+   "instruction": "st16 [0x7e45] = r5",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (st16 [0x7e45] = r5)"
+  },
+  {
+   "pc": 810,
+   "instruction": "st16 [0x7e46] = r4",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (st16 [0x7e46] = r4)"
+  },
+  {
+   "pc": 812,
+   "instruction": "st16 [0x7e47] = r9",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (st16 [0x7e47] = r9)"
+  },
+  {
+   "pc": 814,
+   "instruction": "nop 0x0",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (nop 0x0)"
+  },
+  {
+   "pc": 816,
+   "instruction": "nop 0x0",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (nop 0x0)"
+  },
+  {
+   "pc": 818,
+   "instruction": "fmuls [dds1] = [s0ds1], [s1ds1]",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (fmuls [dds1] = [s0ds1], [s1ds1])"
+  },
+  {
+   "pc": 820,
+   "instruction": "st16 [0x7e84] = r10",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (st16 [0x7e84] = r10)"
+  },
+  {
+   "pc": 822,
+   "instruction": "st16 [0x7e85] = r12",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (st16 [0x7e85] = r12)"
+  },
+  {
+   "pc": 824,
+   "instruction": "st16 [0x7e86] = r4",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (st16 [0x7e86] = r4)"
+  },
+  {
+   "pc": 826,
+   "instruction": "st16 [0x7e87] = r9",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (st16 [0x7e87] = r9)"
+  },
+  {
+   "pc": 828,
+   "instruction": "nop 0x0",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (nop 0x0)"
+  },
+  {
+   "pc": 830,
+   "instruction": "nop 0x0",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (nop 0x0)"
+  },
+  {
+   "pc": 832,
+   "instruction": "st16 [0x7ec4] = r10",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (st16 [0x7ec4] = r10)"
+  },
+  {
+   "pc": 834,
+   "instruction": "st16 [0x7ec5] = r8",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (st16 [0x7ec5] = r8)"
+  },
+  {
+   "pc": 836,
+   "instruction": "st16 [0x7ec6] = r4",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (st16 [0x7ec6] = r4)"
+  },
+  {
+   "pc": 838,
+   "instruction": "st16 [0x7ec7] = r9",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (st16 [0x7ec7] = r9)"
+  },
+  {
+   "pc": 840,
+   "instruction": "nop 0x0",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (nop 0x0)"
+  },
+  {
+   "pc": 842,
+   "instruction": "nop 0x0",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (nop 0x0)"
+  },
+  {
+   "pc": 844,
+   "instruction": "st16 [0x7e44] = r10",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (st16 [0x7e44] = r10)"
+  },
+  {
+   "pc": 846,
+   "instruction": "st16 [0x7e45] = r8",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (st16 [0x7e45] = r8)"
+  },
+  {
+   "pc": 848,
+   "instruction": "st16 [0x7e46] = r4",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (st16 [0x7e46] = r4)"
+  },
+  {
+   "pc": 850,
+   "instruction": "st16 [0x7e47] = r9",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (st16 [0x7e47] = r9)"
+  },
+  {
+   "pc": 852,
+   "instruction": "add16.nf r5 = r0, 0x1",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (add16.nf r5 = r0, 0x1)"
+  },
+  {
+   "pc": 854,
+   "instruction": "ltu16.and cflag0 = r0, 0x3",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (ltu16.and cflag0 = r0, 0x3)"
+  },
+  {
+   "pc": 856,
+   "instruction": "nop 0x0",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (nop 0x0)"
+  },
+  {
+   "pc": 858,
+   "instruction": "nop 0x0",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (nop 0x0)"
+  },
+  {
+   "pc": 860,
+   "instruction": "fadds [dds1] = [s0ds1], [s1ds1]",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (fadds [dds1] = [s0ds1], [s1ds1])"
+  },
+  {
+   "pc": 862,
+   "instruction": "fmov16.nf r0 = r5",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (fmov16.nf r0 = r5)"
+  },
+  {
+   "pc": 864,
+   "instruction": "cflag0 ? jmp 0x2e2",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (cflag0 ? jmp 0x2e2)"
+  },
+  {
+   "pc": 866,
+   "instruction": "movri r5 = 0x7007",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (movri r5 = 0x7007)"
+  },
+  {
+   "pc": 868,
+   "instruction": "st16 [0xc37] = r5",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (st16 [0xc37] = r5)"
+  },
+  {
+   "pc": 870,
+   "instruction": "jmp 0x480",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (jmp 0x480)"
+  },
+  {
+   "pc": 872,
+   "instruction": "eq32.and cflag0 = d0, 0x0",
+   "source": "rpc_server(&(sys_mod.stack_u32));",
+   "source_file": "/cb/toolchains/cslang/rel-sdk-2.10.0/202604012315-1813-1394a6ea/csl-libs/memcpy/wse3/memcpy.csl",
+   "raw": "    rpc_server(&(sys_mod.stack_u32)); (eq32.and cflag0 = d0, 0x0)"
+  },
+  {
+   "pc": 874,
+   "instruction": "cflag0 ? jmp 0x36e",
+   "source": "rpc_server(&(sys_mod.stack_u32));",
+   "source_file": "/cb/toolchains/cslang/rel-sdk-2.10.0/202604012315-1813-1394a6ea/csl-libs/memcpy/wse3/memcpy.csl",
+   "raw": "    rpc_server(&(sys_mod.stack_u32)); (cflag0 ? jmp 0x36e)"
+  },
+  {
+   "pc": 876,
+   "instruction": "brk 0x2",
+   "source": "rpc_server(&(sys_mod.stack_u32));",
+   "source_file": "/cb/toolchains/cslang/rel-sdk-2.10.0/202604012315-1813-1394a6ea/csl-libs/memcpy/wse3/memcpy.csl",
+   "raw": "    rpc_server(&(sys_mod.stack_u32)); (brk 0x2)"
+  },
+  {
+   "pc": 878,
+   "instruction": "movri r5 = 0x7000",
+   "source": "<no source>",
+   "source_file": "/cb/toolchains/cslang/rel-sdk-2.10.0/202604012315-1813-1394a6ea/csl-libs/memcpy/wse3/memcpy.csl",
+   "raw": "<no source> (movri r5 = 0x7000)"
+  },
+  {
+   "pc": 880,
+   "instruction": "st16 [0xc30] = r5",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (st16 [0xc30] = r5)"
+  },
+  {
+   "pc": 882,
+   "instruction": "movri r0 = 0x0",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (movri r0 = 0x0)"
+  },
+  {
+   "pc": 884,
+   "instruction": "ld16 r3 = [0x9c6]",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (ld16 r3 = [0x9c6])"
+  },
+  {
+   "pc": 886,
+   "instruction": "movri r5 = 0x138c",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (movri r5 = 0x138c)"
+  },
+  {
+   "pc": 888,
+   "instruction": "st16 sp[0x5] = r5",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (st16 sp[0x5] = r5)"
+  },
+  {
+   "pc": 890,
+   "instruction": "movri r8 = 0x13b0",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (movri r8 = 0x13b0)"
+  },
+  {
+   "pc": 892,
+   "instruction": "movri r9 = 0x1570",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (movri r9 = 0x1570)"
+  },
+  {
+   "pc": 894,
+   "instruction": "movri r14 = 0x1470",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (movri r14 = 0x1470)"
+  },
+  {
+   "pc": 896,
+   "instruction": "movri r15 = 0x1720",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (movri r15 = 0x1720)"
+  },
+  {
+   "pc": 898,
+   "instruction": "movri r2 = 0xf",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (movri r2 = 0xf)"
+  },
+  {
+   "pc": 900,
+   "instruction": "st32 sp[0x6] = d0",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (st32 sp[0x6] = d0)"
+  },
+  {
+   "pc": 902,
+   "instruction": "fmov16.nf r4 = r0",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (fmov16.nf r4 = r0)"
+  },
+  {
+   "pc": 904,
+   "instruction": "jmp 0x39a",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (jmp 0x39a)"
+  },
+  {
+   "pc": 906,
+   "instruction": "sll16.nf r0 = r4, 0x2",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (sll16.nf r0 = r4, 0x2)"
+  },
+  {
+   "pc": 908,
+   "instruction": "add16.nf r0 = r0, r15",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (add16.nf r0 = r0, r15)"
+  },
+  {
+   "pc": 910,
+   "instruction": "slr16.nf r6 = r0, 0x1",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (slr16.nf r6 = r0, 0x1)"
+  },
+  {
+   "pc": 912,
+   "instruction": "fmov32.nf [r6] = d10",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (fmov32.nf [r6] = d10)"
+  },
+  {
+   "pc": 914,
+   "instruction": "ltu16.and cflag0 = r4, r2",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (ltu16.and cflag0 = r4, r2)"
+  },
+  {
+   "pc": 916,
+   "instruction": "fmov16.nf r3 = r5",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (fmov16.nf r3 = r5)"
+  },
+  {
+   "pc": 918,
+   "instruction": "fmov16.nf r4 = r13",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (fmov16.nf r4 = r13)"
+  },
+  {
+   "pc": 920,
+   "instruction": "!cflag0 ? jmp 0x476",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (!cflag0 ? jmp 0x476)"
+  },
+  {
+   "pc": 922,
+   "instruction": "add16.nf r13 = r4, 0x1",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (add16.nf r13 = r4, 0x1)"
+  },
+  {
+   "pc": 924,
+   "instruction": "sll16.nf r7 = r13, 0x1",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (sll16.nf r7 = r13, 0x1)"
+  },
+  {
+   "pc": 926,
+   "instruction": "ld16 r5 = sp[0x5]",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (ld16 r5 = sp[0x5])"
+  },
+  {
+   "pc": 928,
+   "instruction": "add16.nf r7 = r7, r5",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (add16.nf r7 = r7, r5)"
+  },
+  {
+   "pc": 930,
+   "instruction": "ld16rp d10 = sp[0x6]",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (ld16rp d10 = sp[0x6])"
+  },
+  {
+   "pc": 932,
+   "instruction": "fmov16.nf r11 = r10",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (fmov16.nf r11 = r10)"
+  },
+  {
+   "pc": 934,
+   "instruction": "slr16.nf r7 = r7, 0x1",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (slr16.nf r7 = r7, 0x1)"
+  },
+  {
+   "pc": 936,
+   "instruction": "imov16.nf r5 = [r7]",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (imov16.nf r5 = [r7])"
+  },
+  {
+   "pc": 938,
+   "instruction": "lteu16.and cflag0 = r5, r3",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (lteu16.and cflag0 = r5, r3)"
+  },
+  {
+   "pc": 940,
+   "instruction": "st32 sp[0x6] = d10",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (st32 sp[0x6] = d10)"
+  },
+  {
+   "pc": 942,
+   "instruction": "cflag0 ? jmp 0x38a",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (cflag0 ? jmp 0x38a)"
+  },
+  {
+   "pc": 944,
+   "instruction": "ld16rp d10 = sp[0x6]",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (ld16rp d10 = sp[0x6])"
+  },
+  {
+   "pc": 946,
+   "instruction": "sll16.nf r12 = r3, 0x1",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (sll16.nf r12 = r3, 0x1)"
+  },
+  {
+   "pc": 948,
+   "instruction": "add16.nf r12 = r12, r8",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (add16.nf r12 = r12, r8)"
+  },
+  {
+   "pc": 950,
+   "instruction": "slr16.nf r6 = r12, 0x1",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (slr16.nf r6 = r12, 0x1)"
+  },
+  {
+   "pc": 952,
+   "instruction": "imov16.nf r6 = [r6]",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (imov16.nf r6 = [r6])"
+  },
+  {
+   "pc": 954,
+   "instruction": "sll16.nf r6 = r6, 0x2",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (sll16.nf r6 = r6, 0x2)"
+  },
+  {
+   "pc": 956,
+   "instruction": "add16.nf r6 = r6, r9",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (add16.nf r6 = r6, r9)"
+  },
+  {
+   "pc": 958,
+   "instruction": "sll16.nf r12 = r3, 0x2",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (sll16.nf r12 = r3, 0x2)"
+  },
+  {
+   "pc": 960,
+   "instruction": "add16.nf r12 = r12, r14",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (add16.nf r12 = r12, r14)"
+  },
+  {
+   "pc": 962,
+   "instruction": "slr16.nf r7 = r12, 0x1",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (slr16.nf r7 = r12, 0x1)"
+  },
+  {
+   "pc": 964,
+   "instruction": "fmov32.nf d0 = [r7]",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (fmov32.nf d0 = [r7])"
+  },
+  {
+   "pc": 966,
+   "instruction": "slr16.nf r6 = r6, 0x1",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (slr16.nf r6 = r6, 0x1)"
+  },
+  {
+   "pc": 968,
+   "instruction": "fmov32.nf d6 = [r6]",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (fmov32.nf d6 = [r6])"
+  },
+  {
+   "pc": 970,
+   "instruction": "fmuls d0 = d0, d6",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (fmuls d0 = d0, d6)"
+  },
+  {
+   "pc": 972,
+   "instruction": "fadds d10 = d10, d0",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (fadds d10 = d10, d0)"
+  },
+  {
+   "pc": 974,
+   "instruction": "add16.nf r3 = r3, 0x1",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (add16.nf r3 = r3, 0x1)"
+  },
+  {
+   "pc": 976,
+   "instruction": "ltu16.and cflag0 = r3, r5",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (ltu16.and cflag0 = r3, r5)"
+  },
+  {
+   "pc": 978,
+   "instruction": "cflag0 ? jmp 0x3b2",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (cflag0 ? jmp 0x3b2)"
+  },
+  {
+   "pc": 980,
+   "instruction": "jmp 0x38a",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (jmp 0x38a)"
+  },
+  {
+   "pc": 982,
+   "instruction": "eq32.and cflag0 = d0, 0x0",
+   "source": "rpc_server(&(sys_mod.stack_u32));",
+   "source_file": "/cb/toolchains/cslang/rel-sdk-2.10.0/202604012315-1813-1394a6ea/csl-libs/memcpy/wse3/memcpy.csl",
+   "raw": "    rpc_server(&(sys_mod.stack_u32)); (eq32.and cflag0 = d0, 0x0)"
+  },
+  {
+   "pc": 984,
+   "instruction": "cflag0 ? jmp 0x3dc",
+   "source": "rpc_server(&(sys_mod.stack_u32));",
+   "source_file": "/cb/toolchains/cslang/rel-sdk-2.10.0/202604012315-1813-1394a6ea/csl-libs/memcpy/wse3/memcpy.csl",
+   "raw": "    rpc_server(&(sys_mod.stack_u32)); (cflag0 ? jmp 0x3dc)"
+  },
+  {
+   "pc": 986,
+   "instruction": "brk 0x2",
+   "source": "rpc_server(&(sys_mod.stack_u32));",
+   "source_file": "/cb/toolchains/cslang/rel-sdk-2.10.0/202604012315-1813-1394a6ea/csl-libs/memcpy/wse3/memcpy.csl",
+   "raw": "    rpc_server(&(sys_mod.stack_u32)); (brk 0x2)"
+  },
+  {
+   "pc": 988,
+   "instruction": "movri r5 = 0x7002",
+   "source": "<no source>",
+   "source_file": "/cb/toolchains/cslang/rel-sdk-2.10.0/202604012315-1813-1394a6ea/csl-libs/memcpy/wse3/memcpy.csl",
+   "raw": "<no source> (movri r5 = 0x7002)"
+  },
+  {
+   "pc": 990,
+   "instruction": "st16 [0xc32] = r5",
+   "source": "rpc_server(&(sys_mod.stack_u32));",
+   "source_file": "/cb/toolchains/cslang/rel-sdk-2.10.0/202604012315-1813-1394a6ea/csl-libs/memcpy/wse3/memcpy.csl",
+   "raw": "    rpc_server(&(sys_mod.stack_u32)); (st16 [0xc32] = r5)"
+  },
+  {
+   "pc": 992,
+   "instruction": "movri r0 = 0x0",
+   "source": "rpc_server(&(sys_mod.stack_u32));",
+   "source_file": "/cb/toolchains/cslang/rel-sdk-2.10.0/202604012315-1813-1394a6ea/csl-libs/memcpy/wse3/memcpy.csl",
+   "raw": "    rpc_server(&(sys_mod.stack_u32)); (movri r0 = 0x0)"
+  },
+  {
+   "pc": 994,
+   "instruction": "ld16 r3 = [0x9c6]",
+   "source": "rpc_server(&(sys_mod.stack_u32));",
+   "source_file": "/cb/toolchains/cslang/rel-sdk-2.10.0/202604012315-1813-1394a6ea/csl-libs/memcpy/wse3/memcpy.csl",
+   "raw": "    rpc_server(&(sys_mod.stack_u32)); (ld16 r3 = [0x9c6])"
+  },
+  {
+   "pc": 996,
+   "instruction": "movri r5 = 0x138c",
+   "source": "rpc_server(&(sys_mod.stack_u32));",
+   "source_file": "/cb/toolchains/cslang/rel-sdk-2.10.0/202604012315-1813-1394a6ea/csl-libs/memcpy/wse3/memcpy.csl",
+   "raw": "    rpc_server(&(sys_mod.stack_u32)); (movri r5 = 0x138c)"
+  },
+  {
+   "pc": 998,
+   "instruction": "st16 sp[0x5] = r5",
+   "source": "rpc_server(&(sys_mod.stack_u32));",
+   "source_file": "/cb/toolchains/cslang/rel-sdk-2.10.0/202604012315-1813-1394a6ea/csl-libs/memcpy/wse3/memcpy.csl",
+   "raw": "    rpc_server(&(sys_mod.stack_u32)); (st16 sp[0x5] = r5)"
+  },
+  {
+   "pc": 1000,
+   "instruction": "movri r8 = 0x13b0",
+   "source": "rpc_server(&(sys_mod.stack_u32));",
+   "source_file": "/cb/toolchains/cslang/rel-sdk-2.10.0/202604012315-1813-1394a6ea/csl-libs/memcpy/wse3/memcpy.csl",
+   "raw": "    rpc_server(&(sys_mod.stack_u32)); (movri r8 = 0x13b0)"
+  },
+  {
+   "pc": 1002,
+   "instruction": "movri r9 = 0x1570",
+   "source": "rpc_server(&(sys_mod.stack_u32));",
+   "source_file": "/cb/toolchains/cslang/rel-sdk-2.10.0/202604012315-1813-1394a6ea/csl-libs/memcpy/wse3/memcpy.csl",
+   "raw": "    rpc_server(&(sys_mod.stack_u32)); (movri r9 = 0x1570)"
+  },
+  {
+   "pc": 1004,
+   "instruction": "movri r14 = 0x1470",
+   "source": "rpc_server(&(sys_mod.stack_u32));",
+   "source_file": "/cb/toolchains/cslang/rel-sdk-2.10.0/202604012315-1813-1394a6ea/csl-libs/memcpy/wse3/memcpy.csl",
+   "raw": "    rpc_server(&(sys_mod.stack_u32)); (movri r14 = 0x1470)"
+  },
+  {
+   "pc": 1006,
+   "instruction": "movri r15 = 0x1760",
+   "source": "rpc_server(&(sys_mod.stack_u32));",
+   "source_file": "/cb/toolchains/cslang/rel-sdk-2.10.0/202604012315-1813-1394a6ea/csl-libs/memcpy/wse3/memcpy.csl",
+   "raw": "    rpc_server(&(sys_mod.stack_u32)); (movri r15 = 0x1760)"
+  },
+  {
+   "pc": 1008,
+   "instruction": "movri r2 = 0xf",
+   "source": "rpc_server(&(sys_mod.stack_u32));",
+   "source_file": "/cb/toolchains/cslang/rel-sdk-2.10.0/202604012315-1813-1394a6ea/csl-libs/memcpy/wse3/memcpy.csl",
+   "raw": "    rpc_server(&(sys_mod.stack_u32)); (movri r2 = 0xf)"
+  },
+  {
+   "pc": 1010,
+   "instruction": "st32 sp[0x6] = d0",
+   "source": "rpc_server(&(sys_mod.stack_u32));",
+   "source_file": "/cb/toolchains/cslang/rel-sdk-2.10.0/202604012315-1813-1394a6ea/csl-libs/memcpy/wse3/memcpy.csl",
+   "raw": "    rpc_server(&(sys_mod.stack_u32)); (st32 sp[0x6] = d0)"
+  },
+  {
+   "pc": 1012,
+   "instruction": "fmov16.nf r4 = r0",
+   "source": "rpc_server(&(sys_mod.stack_u32));",
+   "source_file": "/cb/toolchains/cslang/rel-sdk-2.10.0/202604012315-1813-1394a6ea/csl-libs/memcpy/wse3/memcpy.csl",
+   "raw": "    rpc_server(&(sys_mod.stack_u32)); (fmov16.nf r4 = r0)"
+  },
+  {
+   "pc": 1014,
+   "instruction": "jmp 0x408",
+   "source": "rpc_server(&(sys_mod.stack_u32));",
+   "source_file": "/cb/toolchains/cslang/rel-sdk-2.10.0/202604012315-1813-1394a6ea/csl-libs/memcpy/wse3/memcpy.csl",
+   "raw": "    rpc_server(&(sys_mod.stack_u32)); (jmp 0x408)"
+  },
+  {
+   "pc": 1016,
+   "instruction": "sll16.nf r0 = r4, 0x2",
+   "source": "rpc_server(&(sys_mod.stack_u32));",
+   "source_file": "/cb/toolchains/cslang/rel-sdk-2.10.0/202604012315-1813-1394a6ea/csl-libs/memcpy/wse3/memcpy.csl",
+   "raw": "    rpc_server(&(sys_mod.stack_u32)); (sll16.nf r0 = r4, 0x2)"
+  },
+  {
+   "pc": 1018,
+   "instruction": "add16.nf r0 = r0, r15",
+   "source": "rpc_server(&(sys_mod.stack_u32));",
+   "source_file": "/cb/toolchains/cslang/rel-sdk-2.10.0/202604012315-1813-1394a6ea/csl-libs/memcpy/wse3/memcpy.csl",
+   "raw": "    rpc_server(&(sys_mod.stack_u32)); (add16.nf r0 = r0, r15)"
+  },
+  {
+   "pc": 1020,
+   "instruction": "slr16.nf r6 = r0, 0x1",
+   "source": "rpc_server(&(sys_mod.stack_u32));",
+   "source_file": "/cb/toolchains/cslang/rel-sdk-2.10.0/202604012315-1813-1394a6ea/csl-libs/memcpy/wse3/memcpy.csl",
+   "raw": "    rpc_server(&(sys_mod.stack_u32)); (slr16.nf r6 = r0, 0x1)"
+  },
+  {
+   "pc": 1022,
+   "instruction": "fmov32.nf [r6] = d10",
+   "source": "rpc_server(&(sys_mod.stack_u32));",
+   "source_file": "/cb/toolchains/cslang/rel-sdk-2.10.0/202604012315-1813-1394a6ea/csl-libs/memcpy/wse3/memcpy.csl",
+   "raw": "    rpc_server(&(sys_mod.stack_u32)); (fmov32.nf [r6] = d10)"
+  },
+  {
+   "pc": 1024,
+   "instruction": "ltu16.and cflag0 = r4, r2",
+   "source": "rpc_server(&(sys_mod.stack_u32));",
+   "source_file": "/cb/toolchains/cslang/rel-sdk-2.10.0/202604012315-1813-1394a6ea/csl-libs/memcpy/wse3/memcpy.csl",
+   "raw": "    rpc_server(&(sys_mod.stack_u32)); (ltu16.and cflag0 = r4, r2)"
+  },
+  {
+   "pc": 1026,
+   "instruction": "fmov16.nf r3 = r5",
+   "source": "rpc_server(&(sys_mod.stack_u32));",
+   "source_file": "/cb/toolchains/cslang/rel-sdk-2.10.0/202604012315-1813-1394a6ea/csl-libs/memcpy/wse3/memcpy.csl",
+   "raw": "    rpc_server(&(sys_mod.stack_u32)); (fmov16.nf r3 = r5)"
+  },
+  {
+   "pc": 1028,
+   "instruction": "fmov16.nf r4 = r13",
+   "source": "rpc_server(&(sys_mod.stack_u32));",
+   "source_file": "/cb/toolchains/cslang/rel-sdk-2.10.0/202604012315-1813-1394a6ea/csl-libs/memcpy/wse3/memcpy.csl",
+   "raw": "    rpc_server(&(sys_mod.stack_u32)); (fmov16.nf r4 = r13)"
+  },
+  {
+   "pc": 1030,
+   "instruction": "!cflag0 ? jmp 0x47c",
+   "source": "rpc_server(&(sys_mod.stack_u32));",
+   "source_file": "/cb/toolchains/cslang/rel-sdk-2.10.0/202604012315-1813-1394a6ea/csl-libs/memcpy/wse3/memcpy.csl",
+   "raw": "    rpc_server(&(sys_mod.stack_u32)); (!cflag0 ? jmp 0x47c)"
+  },
+  {
+   "pc": 1032,
+   "instruction": "add16.nf r13 = r4, 0x1",
+   "source": "rpc_server(&(sys_mod.stack_u32));",
+   "source_file": "/cb/toolchains/cslang/rel-sdk-2.10.0/202604012315-1813-1394a6ea/csl-libs/memcpy/wse3/memcpy.csl",
+   "raw": "    rpc_server(&(sys_mod.stack_u32)); (add16.nf r13 = r4, 0x1)"
+  },
+  {
+   "pc": 1034,
+   "instruction": "sll16.nf r7 = r13, 0x1",
+   "source": "rpc_server(&(sys_mod.stack_u32));",
+   "source_file": "/cb/toolchains/cslang/rel-sdk-2.10.0/202604012315-1813-1394a6ea/csl-libs/memcpy/wse3/memcpy.csl",
+   "raw": "    rpc_server(&(sys_mod.stack_u32)); (sll16.nf r7 = r13, 0x1)"
+  },
+  {
+   "pc": 1036,
+   "instruction": "ld16 r5 = sp[0x5]",
+   "source": "rpc_server(&(sys_mod.stack_u32));",
+   "source_file": "/cb/toolchains/cslang/rel-sdk-2.10.0/202604012315-1813-1394a6ea/csl-libs/memcpy/wse3/memcpy.csl",
+   "raw": "    rpc_server(&(sys_mod.stack_u32)); (ld16 r5 = sp[0x5])"
+  },
+  {
+   "pc": 1038,
+   "instruction": "add16.nf r7 = r7, r5",
+   "source": "rpc_server(&(sys_mod.stack_u32));",
+   "source_file": "/cb/toolchains/cslang/rel-sdk-2.10.0/202604012315-1813-1394a6ea/csl-libs/memcpy/wse3/memcpy.csl",
+   "raw": "    rpc_server(&(sys_mod.stack_u32)); (add16.nf r7 = r7, r5)"
+  },
+  {
+   "pc": 1040,
+   "instruction": "ld16rp d10 = sp[0x6]",
+   "source": "rpc_server(&(sys_mod.stack_u32));",
+   "source_file": "/cb/toolchains/cslang/rel-sdk-2.10.0/202604012315-1813-1394a6ea/csl-libs/memcpy/wse3/memcpy.csl",
+   "raw": "    rpc_server(&(sys_mod.stack_u32)); (ld16rp d10 = sp[0x6])"
+  },
+  {
+   "pc": 1042,
+   "instruction": "fmov16.nf r11 = r10",
+   "source": "rpc_server(&(sys_mod.stack_u32));",
+   "source_file": "/cb/toolchains/cslang/rel-sdk-2.10.0/202604012315-1813-1394a6ea/csl-libs/memcpy/wse3/memcpy.csl",
+   "raw": "    rpc_server(&(sys_mod.stack_u32)); (fmov16.nf r11 = r10)"
+  },
+  {
+   "pc": 1044,
+   "instruction": "slr16.nf r7 = r7, 0x1",
+   "source": "rpc_server(&(sys_mod.stack_u32));",
+   "source_file": "/cb/toolchains/cslang/rel-sdk-2.10.0/202604012315-1813-1394a6ea/csl-libs/memcpy/wse3/memcpy.csl",
+   "raw": "    rpc_server(&(sys_mod.stack_u32)); (slr16.nf r7 = r7, 0x1)"
+  },
+  {
+   "pc": 1046,
+   "instruction": "imov16.nf r5 = [r7]",
+   "source": "rpc_server(&(sys_mod.stack_u32));",
+   "source_file": "/cb/toolchains/cslang/rel-sdk-2.10.0/202604012315-1813-1394a6ea/csl-libs/memcpy/wse3/memcpy.csl",
+   "raw": "    rpc_server(&(sys_mod.stack_u32)); (imov16.nf r5 = [r7])"
+  },
+  {
+   "pc": 1048,
+   "instruction": "lteu16.and cflag0 = r5, r3",
+   "source": "rpc_server(&(sys_mod.stack_u32));",
+   "source_file": "/cb/toolchains/cslang/rel-sdk-2.10.0/202604012315-1813-1394a6ea/csl-libs/memcpy/wse3/memcpy.csl",
+   "raw": "    rpc_server(&(sys_mod.stack_u32)); (lteu16.and cflag0 = r5, r3)"
+  },
+  {
+   "pc": 1050,
+   "instruction": "st32 sp[0x6] = d10",
+   "source": "rpc_server(&(sys_mod.stack_u32));",
+   "source_file": "/cb/toolchains/cslang/rel-sdk-2.10.0/202604012315-1813-1394a6ea/csl-libs/memcpy/wse3/memcpy.csl",
+   "raw": "    rpc_server(&(sys_mod.stack_u32)); (st32 sp[0x6] = d10)"
+  },
+  {
+   "pc": 1052,
+   "instruction": "cflag0 ? jmp 0x3f8",
+   "source": "rpc_server(&(sys_mod.stack_u32));",
+   "source_file": "/cb/toolchains/cslang/rel-sdk-2.10.0/202604012315-1813-1394a6ea/csl-libs/memcpy/wse3/memcpy.csl",
+   "raw": "    rpc_server(&(sys_mod.stack_u32)); (cflag0 ? jmp 0x3f8)"
+  },
+  {
+   "pc": 1054,
+   "instruction": "ld16rp d10 = sp[0x6]",
+   "source": "<no source>",
+   "source_file": "/cb/toolchains/cslang/rel-sdk-2.10.0/202604012315-1813-1394a6ea/csl-libs/memcpy/wse3/memcpy.csl",
+   "raw": "<no source> (ld16rp d10 = sp[0x6])"
+  },
+  {
+   "pc": 1056,
+   "instruction": "sll16.nf r12 = r3, 0x1",
+   "source": "rpc_server(&(sys_mod.stack_u32));",
+   "source_file": "/cb/toolchains/cslang/rel-sdk-2.10.0/202604012315-1813-1394a6ea/csl-libs/memcpy/wse3/memcpy.csl",
+   "raw": "    rpc_server(&(sys_mod.stack_u32)); (sll16.nf r12 = r3, 0x1)"
+  },
+  {
+   "pc": 1058,
+   "instruction": "add16.nf r12 = r12, r8",
+   "source": "rpc_server(&(sys_mod.stack_u32));",
+   "source_file": "/cb/toolchains/cslang/rel-sdk-2.10.0/202604012315-1813-1394a6ea/csl-libs/memcpy/wse3/memcpy.csl",
+   "raw": "    rpc_server(&(sys_mod.stack_u32)); (add16.nf r12 = r12, r8)"
+  },
+  {
+   "pc": 1060,
+   "instruction": "slr16.nf r6 = r12, 0x1",
+   "source": "rpc_server(&(sys_mod.stack_u32));",
+   "source_file": "/cb/toolchains/cslang/rel-sdk-2.10.0/202604012315-1813-1394a6ea/csl-libs/memcpy/wse3/memcpy.csl",
+   "raw": "    rpc_server(&(sys_mod.stack_u32)); (slr16.nf r6 = r12, 0x1)"
+  },
+  {
+   "pc": 1062,
+   "instruction": "imov16.nf r6 = [r6]",
+   "source": "rpc_server(&(sys_mod.stack_u32));",
+   "source_file": "/cb/toolchains/cslang/rel-sdk-2.10.0/202604012315-1813-1394a6ea/csl-libs/memcpy/wse3/memcpy.csl",
+   "raw": "    rpc_server(&(sys_mod.stack_u32)); (imov16.nf r6 = [r6])"
+  },
+  {
+   "pc": 1064,
+   "instruction": "sll16.nf r6 = r6, 0x2",
+   "source": "rpc_server(&(sys_mod.stack_u32));",
+   "source_file": "/cb/toolchains/cslang/rel-sdk-2.10.0/202604012315-1813-1394a6ea/csl-libs/memcpy/wse3/memcpy.csl",
+   "raw": "    rpc_server(&(sys_mod.stack_u32)); (sll16.nf r6 = r6, 0x2)"
+  },
+  {
+   "pc": 1066,
+   "instruction": "add16.nf r6 = r6, r9",
+   "source": "rpc_server(&(sys_mod.stack_u32));",
+   "source_file": "/cb/toolchains/cslang/rel-sdk-2.10.0/202604012315-1813-1394a6ea/csl-libs/memcpy/wse3/memcpy.csl",
+   "raw": "    rpc_server(&(sys_mod.stack_u32)); (add16.nf r6 = r6, r9)"
+  },
+  {
+   "pc": 1068,
+   "instruction": "sll16.nf r12 = r3, 0x2",
+   "source": "rpc_server(&(sys_mod.stack_u32));",
+   "source_file": "/cb/toolchains/cslang/rel-sdk-2.10.0/202604012315-1813-1394a6ea/csl-libs/memcpy/wse3/memcpy.csl",
+   "raw": "    rpc_server(&(sys_mod.stack_u32)); (sll16.nf r12 = r3, 0x2)"
+  },
+  {
+   "pc": 1070,
+   "instruction": "add16.nf r12 = r12, r14",
+   "source": "rpc_server(&(sys_mod.stack_u32));",
+   "source_file": "/cb/toolchains/cslang/rel-sdk-2.10.0/202604012315-1813-1394a6ea/csl-libs/memcpy/wse3/memcpy.csl",
+   "raw": "    rpc_server(&(sys_mod.stack_u32)); (add16.nf r12 = r12, r14)"
+  },
+  {
+   "pc": 1072,
+   "instruction": "slr16.nf r7 = r12, 0x1",
+   "source": "rpc_server(&(sys_mod.stack_u32));",
+   "source_file": "/cb/toolchains/cslang/rel-sdk-2.10.0/202604012315-1813-1394a6ea/csl-libs/memcpy/wse3/memcpy.csl",
+   "raw": "    rpc_server(&(sys_mod.stack_u32)); (slr16.nf r7 = r12, 0x1)"
+  },
+  {
+   "pc": 1074,
+   "instruction": "fmov32.nf d0 = [r7]",
+   "source": "rpc_server(&(sys_mod.stack_u32));",
+   "source_file": "/cb/toolchains/cslang/rel-sdk-2.10.0/202604012315-1813-1394a6ea/csl-libs/memcpy/wse3/memcpy.csl",
+   "raw": "    rpc_server(&(sys_mod.stack_u32)); (fmov32.nf d0 = [r7])"
+  },
+  {
+   "pc": 1076,
+   "instruction": "slr16.nf r6 = r6, 0x1",
+   "source": "rpc_server(&(sys_mod.stack_u32));",
+   "source_file": "/cb/toolchains/cslang/rel-sdk-2.10.0/202604012315-1813-1394a6ea/csl-libs/memcpy/wse3/memcpy.csl",
+   "raw": "    rpc_server(&(sys_mod.stack_u32)); (slr16.nf r6 = r6, 0x1)"
+  },
+  {
+   "pc": 1078,
+   "instruction": "fmov32.nf d6 = [r6]",
+   "source": "rpc_server(&(sys_mod.stack_u32));",
+   "source_file": "/cb/toolchains/cslang/rel-sdk-2.10.0/202604012315-1813-1394a6ea/csl-libs/memcpy/wse3/memcpy.csl",
+   "raw": "    rpc_server(&(sys_mod.stack_u32)); (fmov32.nf d6 = [r6])"
+  },
+  {
+   "pc": 1080,
+   "instruction": "fmuls d0 = d0, d6",
+   "source": "rpc_server(&(sys_mod.stack_u32));",
+   "source_file": "/cb/toolchains/cslang/rel-sdk-2.10.0/202604012315-1813-1394a6ea/csl-libs/memcpy/wse3/memcpy.csl",
+   "raw": "    rpc_server(&(sys_mod.stack_u32)); (fmuls d0 = d0, d6)"
+  },
+  {
+   "pc": 1082,
+   "instruction": "fadds d10 = d10, d0",
+   "source": "rpc_server(&(sys_mod.stack_u32));",
+   "source_file": "/cb/toolchains/cslang/rel-sdk-2.10.0/202604012315-1813-1394a6ea/csl-libs/memcpy/wse3/memcpy.csl",
+   "raw": "    rpc_server(&(sys_mod.stack_u32)); (fadds d10 = d10, d0)"
+  },
+  {
+   "pc": 1084,
+   "instruction": "add16.nf r3 = r3, 0x1",
+   "source": "rpc_server(&(sys_mod.stack_u32));",
+   "source_file": "/cb/toolchains/cslang/rel-sdk-2.10.0/202604012315-1813-1394a6ea/csl-libs/memcpy/wse3/memcpy.csl",
+   "raw": "    rpc_server(&(sys_mod.stack_u32)); (add16.nf r3 = r3, 0x1)"
+  },
+  {
+   "pc": 1086,
+   "instruction": "ltu16.and cflag0 = r3, r5",
+   "source": "rpc_server(&(sys_mod.stack_u32));",
+   "source_file": "/cb/toolchains/cslang/rel-sdk-2.10.0/202604012315-1813-1394a6ea/csl-libs/memcpy/wse3/memcpy.csl",
+   "raw": "    rpc_server(&(sys_mod.stack_u32)); (ltu16.and cflag0 = r3, r5)"
+  },
+  {
+   "pc": 1088,
+   "instruction": "cflag0 ? jmp 0x420",
+   "source": "rpc_server(&(sys_mod.stack_u32));",
+   "source_file": "/cb/toolchains/cslang/rel-sdk-2.10.0/202604012315-1813-1394a6ea/csl-libs/memcpy/wse3/memcpy.csl",
+   "raw": "    rpc_server(&(sys_mod.stack_u32)); (cflag0 ? jmp 0x420)"
+  },
+  {
+   "pc": 1090,
+   "instruction": "jmp 0x3f8",
+   "source": "rpc_server(&(sys_mod.stack_u32));",
+   "source_file": "/cb/toolchains/cslang/rel-sdk-2.10.0/202604012315-1813-1394a6ea/csl-libs/memcpy/wse3/memcpy.csl",
+   "raw": "    rpc_server(&(sys_mod.stack_u32)); (jmp 0x3f8)"
+  },
+  {
+   "pc": 1092,
+   "instruction": "movri r5 = 0x7005",
+   "source": "<no source>",
+   "source_file": "/cb/toolchains/cslang/rel-sdk-2.10.0/202604012315-1813-1394a6ea/csl-libs/memcpy/wse3/memcpy.csl",
+   "raw": "<no source> (movri r5 = 0x7005)"
+  },
+  {
+   "pc": 1094,
+   "instruction": "st16 [0xc35] = r5",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (st16 [0xc35] = r5)"
+  },
+  {
+   "pc": 1096,
+   "instruction": "jmp 0x480",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (jmp 0x480)"
+  },
+  {
+   "pc": 1098,
+   "instruction": "eq32.and cflag0 = d0, 0x0",
+   "source": "rpc_server(&(sys_mod.stack_u32));",
+   "source_file": "/cb/toolchains/cslang/rel-sdk-2.10.0/202604012315-1813-1394a6ea/csl-libs/memcpy/wse3/memcpy.csl",
+   "raw": "    rpc_server(&(sys_mod.stack_u32)); (eq32.and cflag0 = d0, 0x0)"
+  },
+  {
+   "pc": 1100,
+   "instruction": "cflag0 ? jmp 0x450",
+   "source": "rpc_server(&(sys_mod.stack_u32));",
+   "source_file": "/cb/toolchains/cslang/rel-sdk-2.10.0/202604012315-1813-1394a6ea/csl-libs/memcpy/wse3/memcpy.csl",
+   "raw": "    rpc_server(&(sys_mod.stack_u32)); (cflag0 ? jmp 0x450)"
+  },
+  {
+   "pc": 1102,
+   "instruction": "brk 0x2",
+   "source": "rpc_server(&(sys_mod.stack_u32));",
+   "source_file": "/cb/toolchains/cslang/rel-sdk-2.10.0/202604012315-1813-1394a6ea/csl-libs/memcpy/wse3/memcpy.csl",
+   "raw": "    rpc_server(&(sys_mod.stack_u32)); (brk 0x2)"
+  },
+  {
+   "pc": 1104,
+   "instruction": "movri r5 = 0x700a",
+   "source": "<no source>",
+   "source_file": "/cb/toolchains/cslang/rel-sdk-2.10.0/202604012315-1813-1394a6ea/csl-libs/memcpy/wse3/memcpy.csl",
+   "raw": "<no source> (movri r5 = 0x700a)"
+  },
+  {
+   "pc": 1106,
+   "instruction": "st16 [0xc3a] = r5",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (st16 [0xc3a] = r5)"
+  },
+  {
+   "pc": 1108,
+   "instruction": "movri r5 = 0x40",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (movri r5 = 0x40)"
+  },
+  {
+   "pc": 1110,
+   "instruction": "st16 [0x7e84] = r5",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (st16 [0x7e84] = r5)"
+  },
+  {
+   "pc": 1112,
+   "instruction": "movri r5 = 0xa38",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (movri r5 = 0xa38)"
+  },
+  {
+   "pc": 1114,
+   "instruction": "st16 [0x7e85] = r5",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (st16 [0x7e85] = r5)"
+  },
+  {
+   "pc": 1116,
+   "instruction": "movri r5 = 0x8f",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (movri r5 = 0x8f)"
+  },
+  {
+   "pc": 1118,
+   "instruction": "st16 [0x7e86] = r5",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (st16 [0x7e86] = r5)"
+  },
+  {
+   "pc": 1120,
+   "instruction": "movri r5 = 0x10",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (movri r5 = 0x10)"
+  },
+  {
+   "pc": 1122,
+   "instruction": "st16 [0x7e87] = r5",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (st16 [0x7e87] = r5)"
+  },
+  {
+   "pc": 1124,
+   "instruction": "nop 0x0",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (nop 0x0)"
+  },
+  {
+   "pc": 1126,
+   "instruction": "nop 0x0",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (nop 0x0)"
+  },
+  {
+   "pc": 1128,
+   "instruction": "movri r0 = 0x0",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (movri r0 = 0x0)"
+  },
+  {
+   "pc": 1130,
+   "instruction": "fmov16.nf r1 = r0",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (fmov16.nf r1 = r0)"
+  },
+  {
+   "pc": 1132,
+   "instruction": "fadds d0 = d0, [s1ds1]",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (fadds d0 = d0, [s1ds1])"
+  },
+  {
+   "pc": 1134,
+   "instruction": "movri r5 = 0x700b",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (movri r5 = 0x700b)"
+  },
+  {
+   "pc": 1136,
+   "instruction": "st16 [0xc3b] = r5",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (st16 [0xc3b] = r5)"
+  },
+  {
+   "pc": 1138,
+   "instruction": "st32 [0xb8e] = d0",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (st32 [0xb8e] = d0)"
+  },
+  {
+   "pc": 1140,
+   "instruction": "jmp 0x480",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (jmp 0x480)"
+  },
+  {
+   "pc": 1142,
+   "instruction": "movri r5 = 0x7001",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (movri r5 = 0x7001)"
+  },
+  {
+   "pc": 1144,
+   "instruction": "st16 [0xc31] = r5",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (st16 [0xc31] = r5)"
+  },
+  {
+   "pc": 1146,
+   "instruction": "jmp 0x480",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (jmp 0x480)"
+  },
+  {
+   "pc": 1148,
+   "instruction": "movri r5 = 0x7003",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (movri r5 = 0x7003)"
+  },
+  {
+   "pc": 1150,
+   "instruction": "st16 [0xc33] = r5",
+   "source": "rpc_server(&(sys_mod.stack_u32));",
+   "source_file": "/cb/toolchains/cslang/rel-sdk-2.10.0/202604012315-1813-1394a6ea/csl-libs/memcpy/wse3/memcpy.csl",
+   "raw": "    rpc_server(&(sys_mod.stack_u32)); (st16 [0xc33] = r5)"
+  },
+  {
+   "pc": 1152,
+   "instruction": "actvt 0x9",
+   "source": "rpc_server(&(sys_mod.stack_u32));",
+   "source_file": "/cb/toolchains/cslang/rel-sdk-2.10.0/202604012315-1813-1394a6ea/csl-libs/memcpy/wse3/memcpy.csl",
+   "raw": "    rpc_server(&(sys_mod.stack_u32)); (actvt 0x9)"
+  },
+  {
+   "pc": 1536,
+   "instruction": "eq16.and cflag0 = r2, 0x5",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (eq16.and cflag0 = r2, 0x5)"
+  },
+  {
+   "pc": 1538,
+   "instruction": "cflag0 ? jmp 0x646",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (cflag0 ? jmp 0x646)"
+  },
+  {
+   "pc": 1540,
+   "instruction": "eq16.and cflag0 = r2, 0x6",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (eq16.and cflag0 = r2, 0x6)"
+  },
+  {
+   "pc": 1542,
+   "instruction": "!cflag0 ? jmp 0x652",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (!cflag0 ? jmp 0x652)"
+  },
+  {
+   "pc": 1544,
+   "instruction": "movri r0 = 0x1570",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (movri r0 = 0x1570)"
+  },
+  {
+   "pc": 1546,
+   "instruction": "jmp r15",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (jmp r15)"
+  },
+  {
+   "pc": 1548,
+   "instruction": "movri r8 = 0xf",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (movri r8 = 0xf)"
+  },
+  {
+   "pc": 1550,
+   "instruction": "eq16.and cflag0 = r2, r8",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (eq16.and cflag0 = r2, r8)"
+  },
+  {
+   "pc": 1552,
+   "instruction": "cflag0 ? jmp 0x64a",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (cflag0 ? jmp 0x64a)"
+  },
+  {
+   "pc": 1554,
+   "instruction": "eq16.and cflag0 = r2, r5",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (eq16.and cflag0 = r2, r5)"
+  },
+  {
+   "pc": 1556,
+   "instruction": "!cflag0 ? jmp 0x652",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (!cflag0 ? jmp 0x652)"
+  },
+  {
+   "pc": 1558,
+   "instruction": "movri r0 = 0x17a0",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (movri r0 = 0x17a0)"
+  },
+  {
+   "pc": 1560,
+   "instruction": "jmp r15",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (jmp r15)"
+  },
+  {
+   "pc": 1562,
+   "instruction": "eq16.and cflag0 = r2, 0x3",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (eq16.and cflag0 = r2, 0x3)"
+  },
+  {
+   "pc": 1564,
+   "instruction": "cflag0 ? jmp 0x64e",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (cflag0 ? jmp 0x64e)"
+  },
+  {
+   "pc": 1566,
+   "instruction": "eq16.and cflag0 = r2, 0x4",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (eq16.and cflag0 = r2, 0x4)"
+  },
+  {
+   "pc": 1568,
+   "instruction": "!cflag0 ? jmp 0x652",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (!cflag0 ? jmp 0x652)"
+  },
+  {
+   "pc": 1570,
+   "instruction": "movri r0 = 0x1450",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (movri r0 = 0x1450)"
+  },
+  {
+   "pc": 1572,
+   "instruction": "jmp r15",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (jmp r15)"
+  },
+  {
+   "pc": 1574,
+   "instruction": "movri r0 = 0x1710",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (movri r0 = 0x1710)"
+  },
+  {
+   "pc": 1576,
+   "instruction": "jmp r15",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (jmp r15)"
+  },
+  {
+   "pc": 1578,
+   "instruction": "movri r0 = 0x1718",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (movri r0 = 0x1718)"
+  },
+  {
+   "pc": 1580,
+   "instruction": "jmp r15",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (jmp r15)"
+  },
+  {
+   "pc": 1582,
+   "instruction": "movri r0 = 0x15b0",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (movri r0 = 0x15b0)"
+  },
+  {
+   "pc": 1584,
+   "instruction": "jmp r15",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (jmp r15)"
+  },
+  {
+   "pc": 1586,
+   "instruction": "movri r0 = 0x16b0",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (movri r0 = 0x16b0)"
+  },
+  {
+   "pc": 1588,
+   "instruction": "jmp r15",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (jmp r15)"
+  },
+  {
+   "pc": 1590,
+   "instruction": "movri r0 = 0x17e0",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (movri r0 = 0x17e0)"
+  },
+  {
+   "pc": 1592,
+   "instruction": "jmp r15",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (jmp r15)"
+  },
+  {
+   "pc": 1594,
+   "instruction": "movri r0 = 0x1860",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (movri r0 = 0x1860)"
+  },
+  {
+   "pc": 1596,
+   "instruction": "jmp r15",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (jmp r15)"
+  },
+  {
+   "pc": 1598,
+   "instruction": "movri r0 = 0x138c",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (movri r0 = 0x138c)"
+  },
+  {
+   "pc": 1600,
+   "instruction": "jmp r15",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (jmp r15)"
+  },
+  {
+   "pc": 1602,
+   "instruction": "movri r0 = 0x16c0",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (movri r0 = 0x16c0)"
+  },
+  {
+   "pc": 1604,
+   "instruction": "jmp r15",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (jmp r15)"
+  },
+  {
+   "pc": 1606,
+   "instruction": "movri r0 = 0x1470",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (movri r0 = 0x1470)"
+  },
+  {
+   "pc": 1608,
+   "instruction": "jmp r15",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (jmp r15)"
+  },
+  {
+   "pc": 1610,
+   "instruction": "movri r0 = 0x1760",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (movri r0 = 0x1760)"
+  },
+  {
+   "pc": 1612,
+   "instruction": "jmp r15",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (jmp r15)"
+  },
+  {
+   "pc": 1614,
+   "instruction": "movri r0 = 0x1430",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (movri r0 = 0x1430)"
+  },
+  {
+   "pc": 1616,
+   "instruction": "jmp r15",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (jmp r15)"
+  },
+  {
+   "pc": 1618,
+   "instruction": "movri r0 = 0x1860",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (movri r0 = 0x1860)"
+  },
+  {
+   "pc": 1620,
+   "instruction": "brk 0x2",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (brk 0x2)"
+  },
+  {
+   "pc": 1622,
+   "instruction": "jmp r15",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (jmp r15)"
+  },
+  {
+   "pc": 1624,
+   "instruction": "addsp sp = sp, -0xc",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (addsp sp = sp, -0xc)"
+  },
+  {
+   "pc": 1626,
+   "instruction": "ld16 r5 = [0x7c42]",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (ld16 r5 = [0x7c42])"
+  },
+  {
+   "pc": 1628,
+   "instruction": "movri r1 = 0x0",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (movri r1 = 0x0)"
+  },
+  {
+   "pc": 1630,
+   "instruction": "ld16 r0 = [0x7c43]",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (ld16 r0 = [0x7c43])"
+  },
+  {
+   "pc": 1632,
+   "instruction": "imov32.nf d2 = 0x80",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (imov32.nf d2 = 0x80)"
+  },
+  {
+   "pc": 1634,
+   "instruction": "and32 d2 = d0, d2",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (and32 d2 = d0, d2)"
+  },
+  {
+   "pc": 1636,
+   "instruction": "eq32.and cflag0 = d2, 0x0",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (eq32.and cflag0 = d2, 0x0)"
+  },
+  {
+   "pc": 1638,
+   "instruction": "cflag0 ? jmp 0x66a",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (cflag0 ? jmp 0x66a)"
+  },
+  {
+   "pc": 1640,
+   "instruction": "actvt 0x1b",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (actvt 0x1b)"
+  },
+  {
+   "pc": 1642,
+   "instruction": "imov32.nf d2 = 0x20",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (imov32.nf d2 = 0x20)"
+  },
+  {
+   "pc": 1644,
+   "instruction": "and32 d2 = d0, d2",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (and32 d2 = d0, d2)"
+  },
+  {
+   "pc": 1646,
+   "instruction": "eq32.and cflag0 = d2, 0x0",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (eq32.and cflag0 = d2, 0x0)"
+  },
+  {
+   "pc": 1648,
+   "instruction": "cflag0 ? jmp 0x676",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (cflag0 ? jmp 0x676)"
+  },
+  {
+   "pc": 1650,
+   "instruction": "blk 0x0",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (blk 0x0)"
+  },
+  {
+   "pc": 1652,
+   "instruction": "actvt 0x1c",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (actvt 0x1c)"
+  },
+  {
+   "pc": 1654,
+   "instruction": "ld16 r5 = [0x7b92]",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (ld16 r5 = [0x7b92])"
+  },
+  {
+   "pc": 1656,
+   "instruction": "and16 r5 = r5, 0x1",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (and16 r5 = r5, 0x1)"
+  },
+  {
+   "pc": 1658,
+   "instruction": "eq16.and cflag0 = r5, 0x0",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (eq16.and cflag0 = r5, 0x0)"
+  },
+  {
+   "pc": 1660,
+   "instruction": "cflag0 ? jmp 0x800",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (cflag0 ? jmp 0x800)"
+  },
+  {
+   "pc": 1662,
+   "instruction": "ld16 r5 = [0xc40]",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (ld16 r5 = [0xc40])"
+  },
+  {
+   "pc": 1664,
+   "instruction": "and16 r5 = r5, 0x1",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (and16 r5 = r5, 0x1)"
+  },
+  {
+   "pc": 1666,
+   "instruction": "eq16.and cflag0 = r5, 0x1",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (eq16.and cflag0 = r5, 0x1)"
+  },
+  {
+   "pc": 1668,
+   "instruction": "!cflag0 ? jmp 0x714",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (!cflag0 ? jmp 0x714)"
+  },
+  {
+   "pc": 1670,
+   "instruction": "ld16 r5 = [0xc42]",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (ld16 r5 = [0xc42])"
+  },
+  {
+   "pc": 1672,
+   "instruction": "nop 0x0",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (nop 0x0)"
+  },
+  {
+   "pc": 1674,
+   "instruction": "nop 0x0",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (nop 0x0)"
+  },
+  {
+   "pc": 1676,
+   "instruction": "nop 0x0",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (nop 0x0)"
+  },
+  {
+   "pc": 1678,
+   "instruction": "nop 0x0",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (nop 0x0)"
+  },
+  {
+   "pc": 1680,
+   "instruction": "movri r8 = 0xe0f",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (movri r8 = 0xe0f)"
+  },
+  {
+   "pc": 1682,
+   "instruction": "ld16 r9 = [0x7b80]",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (ld16 r9 = [0x7b80])"
+  },
+  {
+   "pc": 1684,
+   "instruction": "and16 r8 = r9, r8",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (and16 r8 = r9, r8)"
+  },
+  {
+   "pc": 1686,
+   "instruction": "add16.nf r5 = r8, r5",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (add16.nf r5 = r8, r5)"
+  },
+  {
+   "pc": 1688,
+   "instruction": "sll16.nf r5 = r5, 0x4",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (sll16.nf r5 = r5, 0x4)"
+  },
+  {
+   "pc": 1690,
+   "instruction": "st16 [0x7b80] = r5",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (st16 [0x7b80] = r5)"
+  },
+  {
+   "pc": 1692,
+   "instruction": "nop 0x0",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (nop 0x0)"
+  },
+  {
+   "pc": 1694,
+   "instruction": "nop 0x0",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (nop 0x0)"
+  },
+  {
+   "pc": 1696,
+   "instruction": "nop 0x0",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (nop 0x0)"
+  },
+  {
+   "pc": 1698,
+   "instruction": "nop 0x0",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (nop 0x0)"
+  },
+  {
+   "pc": 1700,
+   "instruction": "ld16rp d12 = [0xc5a]",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (ld16rp d12 = [0xc5a])"
+  },
+  {
+   "pc": 1702,
+   "instruction": "ld16rp d0 = [0xc58]",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (ld16rp d0 = [0xc58])"
+  },
+  {
+   "pc": 1704,
+   "instruction": "ld16 r6 = [0xc56]",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (ld16 r6 = [0xc56])"
+  },
+  {
+   "pc": 1706,
+   "instruction": "ld16 r4 = [0xc54]",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (ld16 r4 = [0xc54])"
+  },
+  {
+   "pc": 1708,
+   "instruction": "ld16 r11 = [0xc50]",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (ld16 r11 = [0xc50])"
+  },
+  {
+   "pc": 1710,
+   "instruction": "ld16 r2 = [0xc4e]",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (ld16 r2 = [0xc4e])"
+  },
+  {
+   "pc": 1712,
+   "instruction": "ld16 r5 = [0xc4c]",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (ld16 r5 = [0xc4c])"
+  },
+  {
+   "pc": 1714,
+   "instruction": "st16 sp[0x5] = r5",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (st16 sp[0x5] = r5)"
+  },
+  {
+   "pc": 1716,
+   "instruction": "ld16 r5 = [0xc4a]",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (ld16 r5 = [0xc4a])"
+  },
+  {
+   "pc": 1718,
+   "instruction": "st16 sp[0x7] = r5",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (st16 sp[0x7] = r5)"
+  },
+  {
+   "pc": 1720,
+   "instruction": "ld16 r8 = [0xc48]",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (ld16 r8 = [0xc48])"
+  },
+  {
+   "pc": 1722,
+   "instruction": "ld16 r15 = [0xc46]",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (ld16 r15 = [0xc46])"
+  },
+  {
+   "pc": 1724,
+   "instruction": "ld16 r14 = [0xc42]",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (ld16 r14 = [0xc42])"
+  },
+  {
+   "pc": 1726,
+   "instruction": "ld16 r9 = [0xc52]",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (ld16 r9 = [0xc52])"
+  },
+  {
+   "pc": 1728,
+   "instruction": "ld16 r7 = [0xc44]",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (ld16 r7 = [0xc44])"
+  },
+  {
+   "pc": 1730,
+   "instruction": "nop 0x0",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (nop 0x0)"
+  },
+  {
+   "pc": 1732,
+   "instruction": "nop 0x0",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (nop 0x0)"
+  },
+  {
+   "pc": 1734,
+   "instruction": "movri r3 = 0x7ff",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (movri r3 = 0x7ff)"
+  },
+  {
+   "pc": 1736,
+   "instruction": "ld16 r10 = [0x7c46]",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (ld16 r10 = [0x7c46])"
+  },
+  {
+   "pc": 1738,
+   "instruction": "and16 r10 = r10, r3",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (and16 r10 = r10, r3)"
+  },
+  {
+   "pc": 1740,
+   "instruction": "nop 0x0",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (nop 0x0)"
+  },
+  {
+   "pc": 1742,
+   "instruction": "nop 0x0",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (nop 0x0)"
+  },
+  {
+   "pc": 1744,
+   "instruction": "ld16 r5 = [0x7c45]",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (ld16 r5 = [0x7c45])"
+  },
+  {
+   "pc": 1746,
+   "instruction": "and16 r3 = r5, r3",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (and16 r3 = r5, r3)"
+  },
+  {
+   "pc": 1748,
+   "instruction": "sub16.nf r5 = r10, r7",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (sub16.nf r5 = r10, r7)"
+  },
+  {
+   "pc": 1750,
+   "instruction": "add16.nf r7 = r5, -0x4",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (add16.nf r7 = r5, -0x4)"
+  },
+  {
+   "pc": 1752,
+   "instruction": "eq16.and cflag0 = r9, 0x3",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (eq16.and cflag0 = r9, 0x3)"
+  },
+  {
+   "pc": 1754,
+   "instruction": "st16 sp[0x6] = r14",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (st16 sp[0x6] = r14)"
+  },
+  {
+   "pc": 1756,
+   "instruction": "st32 sp[0x2] = d0",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (st32 sp[0x2] = d0)"
+  },
+  {
+   "pc": 1758,
+   "instruction": "!cflag0 ? jmp 0x7ba",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (!cflag0 ? jmp 0x7ba)"
+  },
+  {
+   "pc": 1760,
+   "instruction": "fmov16.nf r14 = r2",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (fmov16.nf r14 = r2)"
+  },
+  {
+   "pc": 1762,
+   "instruction": "fmov16.nf r2 = r11",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (fmov16.nf r2 = r11)"
+  },
+  {
+   "pc": 1764,
+   "instruction": "xp162fs d10 = r7",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (xp162fs d10 = r7)"
+  },
+  {
+   "pc": 1766,
+   "instruction": "fmuls d10 = d0, d10",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (fmuls d10 = d0, d10)"
+  },
+  {
+   "pc": 1768,
+   "instruction": "not16 r5 = r15",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (not16 r5 = r15)"
+  },
+  {
+   "pc": 1770,
+   "instruction": "add16.nf r5 = r3, r5",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (add16.nf r5 = r3, r5)"
+  },
+  {
+   "pc": 1772,
+   "instruction": "xp162fs d0 = r5",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (xp162fs d0 = r5)"
+  },
+  {
+   "pc": 1774,
+   "instruction": "fmuls d0 = d12, d0",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (fmuls d0 = d12, d0)"
+  },
+  {
+   "pc": 1776,
+   "instruction": "fs2xp16.zero r0 = d0",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (fs2xp16.zero r0 = d0)"
+  },
+  {
+   "pc": 1778,
+   "instruction": "imul16 r0 = r6, r0",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (imul16 r0 = r6, r0)"
+  },
+  {
+   "pc": 1780,
+   "instruction": "eq16.and cflag1 = r5, r0",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (eq16.and cflag1 = r5, r0)"
+  },
+  {
+   "pc": 1782,
+   "instruction": "fs2xp16.zero r6 = d10",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (fs2xp16.zero r6 = d10)"
+  },
+  {
+   "pc": 1784,
+   "instruction": "fmov16.nf r11 = r2",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (fmov16.nf r11 = r2)"
+  },
+  {
+   "pc": 1786,
+   "instruction": "fmov16.nf r2 = r14",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (fmov16.nf r2 = r14)"
+  },
+  {
+   "pc": 1788,
+   "instruction": "imul16 r5 = r4, r6",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (imul16 r5 = r4, r6)"
+  },
+  {
+   "pc": 1790,
+   "instruction": "eq16.and cflag2 = r7, r5",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (eq16.and cflag2 = r7, r5)"
+  },
+  {
+   "pc": 1792,
+   "instruction": "!cflag2 ? imov16.nf r6 = -0x1",
+   "source": "",
+   "source_file": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/./pe.csl",
+   "raw": "<cannot obtain source line> (!cflag2 ? imov16.nf r6 = -0x1)"
+  }
+ ]
+}

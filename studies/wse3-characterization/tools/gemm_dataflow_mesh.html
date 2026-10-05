@@ -1,0 +1,61 @@
+<h2>Across the mesh, from host to host</h2>
+<p>Step through a whole run, from where the data comes from to where the result is checked. Each PE is drawn as what it is: a <b>router</b>, a <b>ramp</b> into its core, and the core's <b>SRAM</b>. Inside a router every line is one route, rx port → tx port, as <code>@set_color_config</code> states it. Between routers, each arrow is one hop on one link, labelled with its colour and hop number. On the ramp, every tap passes a hardware <b>queue</b> (OQ out, IQ in). In SRAM, each buffer is shown at its compiled address, with the role the trace gives it in that phase. MeshGEMM double-buffers X and W in SRAM; MeshGEMV adds straight from the input queue. <strong>Tap any buffer</strong> to open its numbers from the run the host checked.</p>
+<p class="mini">The same verified values in 3D, one layer per step with every value as a cube: <a href="https://claude.ai/artifact/4Jg15mJovQ8VJ4NXcPVcqA" target="_blank" rel="noopener">open the WebGL view ↗</a></p>
+<div class="tabs" id="mtabs"></div>
+<div class="life" id="life"></div>
+<div id="cycfig" hidden>
+  <p>This tab follows the manner of <a href="https://github.com/qin00162/Cerebras" target="_blank" rel="noopener">qin00162/Cerebras</a>
+  (<code>profiling/animate_native.py</code>): <b>one frame per simulator cycle</b> on the 4 × 4 physical grid, with transfers drawn per
+  physical hop as batch envelopes from the first upstream observation to the last downstream arrival, and the instructions each PE
+  dispatched in that cycle tagged underneath it. The instance is a new traced run of the unmodified MeshGEMM at its smallest faithful size:
+  <b>X and W 8 × 8 with small integers, 2 × 2 tiles on 16 PEs</b> (P = 2 is not possible: the folded two-hop ring is defined for P ≥ 3),
+  one checked repeat, from the first host word to the last C word. Each PE is a pie: the left half is the X tile it holds, the right half the
+  W tile, with the same darkness for the same k-block, so a matching pair reads as a symmetric pie; the centre fills as C accumulates.
+  Counters show how long each tile has been on the PE and what it is doing (⚙ computing, ↗ being sent, · resident). <strong>Click a PE</strong>
+  to zoom in: the two tiles' places in X and W, their values, and C so far at that cycle.</p>
+  <div class="card meshcard">
+    <div class="ctl">
+      <button class="p" id="cycplay">Play</button><button id="cycprev">&larr; cycle</button><button id="cycnext">cycle &rarr;</button><button id="cycevent">next event</button>
+      <select id="cycspeed" aria-label="playback speed"><option value="1">1 cycle/s</option><option value="5">5</option><option value="10">10 cycles/s</option><option value="30" selected>30 cycles/s</option><option value="60">60</option><option value="120">120</option><option value="400">400</option></select>
+      <span class="tfilter" id="cycjump"></span>
+      <span class="phase"><b id="cyclabel"></b></span>
+    </div>
+    <input id="cycslider" type="range" style="width:100%" aria-label="cycle">
+    <canvas id="cyc" width="1260" height="770" role="img" aria-label="per-cycle animation of the 4 by 4 mesh"></canvas>
+    <div class="mkey"><span><i style="background:#a7e6b0;display:inline-block;width:11px;height:11px;border-radius:50%;margin-right:6px"></i>ring = FMACH span of a step (measured)</span>
+      <span>pie: <b style="color:var(--x)">X tile</b> left · <b style="color:var(--w)">W tile</b> right · <b style="color:var(--c)">C</b> centre fills per step</span>
+      <span>darkness = k-block, k = 0 … 3</span><span>arrow = one tile on one hop · <b style="color:var(--io)">host in</b> / <b style="color:var(--c)">host out</b> at the edges</span>
+      <span>tags: FMAC · ASYNC TX/RX · COMM DSD · CLEAR C · CTRL · ADDR · MEMCPY</span></div>
+  </div>
+  <div class="card detail" id="cyczoom"></div>
+  <div class="below">
+    <div class="card cap"><p class="eyebrow">Dispatched in this cycle, per PE (tag | instruction | function | run)</p><pre class="cycpre" id="cycops"></pre></div>
+    <div class="card cap"><p class="eyebrow">Transfers in flight in this cycle</p><pre class="cycpre" id="cyclinks"></pre><p class="mini" id="cycnote"></p></div>
+  </div>
+</div>
+<div class="card meshcard" id="meshfig">
+  <div class="ctl">
+    <button class="p" id="play">Play</button><button id="back">&larr;</button><button id="fwd">&rarr;</button>
+    <span class="viewtag" id="viewtag"></span>
+    <span class="tfilter" id="tfilter"></span>
+    <span class="phase" id="phase"></span>
+  </div>
+  <svg id="mesh" viewBox="0 0 1020 930" role="img" aria-label=""></svg>
+  <div class="mkey" id="mkey"></div>
+</div>
+<div class="below">
+  <div class="card cap">
+    <p class="eyebrow" id="capev"></p>
+    <h3 id="captitle"></h3>
+    <p id="captext"></p>
+    <ul class="checks" id="checks"></ul>
+    <p class="form" id="capform"></p>
+    <div id="code"></div>
+  </div>
+  <div class="card detail" id="detail"></div>
+</div>
+<div class="note" id="repeats">
+  <h3>Measured: only repeat 1 multiplies matched blocks</h3>
+  <p>The skew runs at the start of every repeat. In all 7 repeats of the trace the order on every PE is skew → C cleared → first FMACH, and each PE sends the same 256 skew packets and issues the same 1,024 FMACHs. The skew's pointer swaps, however, depend on <code>x_shift_step</code>. That counter is set only by <code>init_task</code> and counts down during the skew, so later repeats swap differently.</p>
+  <p>Identified by content, every tile multiplied in every repeat is one of the verified tiles, but X's and W's k-blocks match on all 64 PE-steps only in <b>repeat 1</b>, the run the host reads back and checks. Repeat 2 is the timing run's warm-up: <code>init_task</code> reset the counter, but X had already been skewed once, so it matches on 32 of 64. Repeats 3–7 match on 16 of 64. Timing is unaffected: the instruction stream and traffic are identical, and consecutive repeats start 9,663–9,692 cycles apart. The timed repeats' values, though, are not X·W. The device launcher uses the same pattern (1 checked repeat, then 5 + 50 timed); that is not checked on silicon here.</p>
+</div>

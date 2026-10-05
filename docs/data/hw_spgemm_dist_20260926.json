@@ -1,0 +1,227 @@
+[
+  {
+    "kernel_dir": "<path>",
+    "arms": {
+      "sim": {
+        "status": "pass",
+        "cycles_send": 3649,
+        "success_marker": true,
+        "returncode": 0,
+        "wall_s": 180.6,
+        "reason": null,
+        "stdout_tail": "7e834b1d4a8fe45', 'B': '7e2967fcea3826400e618dd285fa7a79de53670f9f2aba326e16e3278b7e9ef8'}} mode 0 root 6172 local_max 3907\nPASS strong-m16-k16-n16-p16-d3-full {'pattern': 'skewed', 'policy': 'product_balanced', 'changed': False, 'matrix_hashes': {'A': '2fe6166c51a712116c9b33c161c8d3f6b7e2f13596a0d8ae67e834b1d4a8fe45', 'B': '7e2967fcea3826400e618dd285fa7a79de53670f9f2aba326e16e3278b7e9ef8'}} mode 1 root 5948 local_max 3907\nCOMPLETE strong-m16-k16-n16-p16-d3-full 48 verified distributed launches\nsession banded broadcast changed=False root spans [3558, 3558, 3558] median 3558\nsession banded resident changed=False root spans [3334, 3334, 3334] median 3334\nsession uniform broadcast changed=False root spans [3649, 3649, 3649] median 3649\nsession uniform resident changed=False root spans [3425, 3425, 3425] median 3425\nsession skewed broadcast changed=False root spans [6172, 6172, 6172] median 6172\nsession skewed resident changed=False root spans [5948, 5948, 5948] median 5948\nsession skewed broadcast changed=False root spans [6172, 6172, 6172] median 6172\nsession skewed resident changed=False root spans [5948, 5948, 5948] median 5948\nsession skewed broadcast changed=True root spans [6172, 6172, 6172] median 6172\nsession skewed resident changed=True root spans [5948, 5948, 5948] median 5948\nsession skewed broadcast changed=False root spans [6172, 6172, 6172] median 6172\nsession skewed resident changed=False root spans [5948, 5948, 5948] median 5948\ncycles_send = 3649 cycles\nSUCCESS\n",
+        "stderr_tail": "Event 2026-09-26 22:58:05 +0000 UTC reason=InconsistentVersion wsjob=wsjob-REDACTED message='Warning: client semantic version 1.14.0 is inconsistent with cluster server semantic version 1.20.2, there's a risk job could fail due to inconsistent setup.'\nEmpty ingress service url. Falling back to default server: 0.0.0.0:443\n"
+      },
+      "hw": {
+        "status": "pass",
+        "cycles_send": 3680,
+        "success_marker": true,
+        "returncode": 0,
+        "wall_s": 190.6,
+        "reason": null,
+        "stdout_tail": "7e834b1d4a8fe45', 'B': '7e2967fcea3826400e618dd285fa7a79de53670f9f2aba326e16e3278b7e9ef8'}} mode 0 root 6158 local_max 3774\nPASS strong-m16-k16-n16-p16-d3-full {'pattern': 'skewed', 'policy': 'product_balanced', 'changed': False, 'matrix_hashes': {'A': '2fe6166c51a712116c9b33c161c8d3f6b7e2f13596a0d8ae67e834b1d4a8fe45', 'B': '7e2967fcea3826400e618dd285fa7a79de53670f9f2aba326e16e3278b7e9ef8'}} mode 1 root 5896 local_max 3774\nCOMPLETE strong-m16-k16-n16-p16-d3-full 48 verified distributed launches\nsession banded broadcast changed=False root spans [3597, 3597, 3597] median 3597\nsession banded resident changed=False root spans [3335, 3335, 3335] median 3335\nsession uniform broadcast changed=False root spans [3680, 3680, 3680] median 3680\nsession uniform resident changed=False root spans [3418, 3418, 3418] median 3418\nsession skewed broadcast changed=False root spans [6158, 6158, 6158] median 6158\nsession skewed resident changed=False root spans [5896, 5896, 5896] median 5896\nsession skewed broadcast changed=False root spans [6158, 6158, 6158] median 6158\nsession skewed resident changed=False root spans [5896, 5896, 5896] median 5896\nsession skewed broadcast changed=True root spans [6158, 6158, 6158] median 6158\nsession skewed resident changed=True root spans [5896, 5896, 5896] median 5896\nsession skewed broadcast changed=False root spans [6158, 6158, 6158] median 6158\nsession skewed resident changed=False root spans [5896, 5896, 5896] median 5896\ncycles_send = 3680 cycles\nSUCCESS\n",
+        "stderr_tail": "Event 2026-09-26 23:02:06 +0000 UTC reason=InconsistentVersion wsjob=wsjob-REDACTED message='Warning: client semantic version 1.14.0 is inconsistent with cluster server semantic version 1.20.2, there's a risk job could fail due to inconsistent setup.'\nCould not find coordinator IP:port in cluster details\nEmpty ingress service url. Falling back to default server: 0.0.0.0:443\n"
+      }
+    },
+    "csl_main": "layout.csl",
+    "params": {
+      "S": "4",
+      "N": "16",
+      "K": "16",
+      "R": "1",
+      "AC": "16",
+      "BC": "48",
+      "OC": "16",
+      "W": "16"
+    },
+    "timing_method": "device_internal",
+    "hw_comparable": true,
+    "hw_vs_sim": {
+      "sim_cycles": 3649,
+      "hw_cycles": 3680,
+      "ratio": 1.0085
+    },
+    "case": "strong-m16-k16-n16-p16-d3-full",
+    "wall_s": 501.8
+  },
+  {
+    "kernel_dir": "<path>",
+    "arms": {
+      "sim": {
+        "status": "pass",
+        "cycles_send": 7684,
+        "success_marker": true,
+        "returncode": 0,
+        "wall_s": 170.6,
+        "reason": null,
+        "stdout_tail": "1d4a8fe45', 'B': '7e2967fcea3826400e618dd285fa7a79de53670f9f2aba326e16e3278b7e9ef8'}} mode 0 root 7942 local_max 5764\nPASS strong-m16-k16-n16-p4-d3-full {'pattern': 'skewed', 'policy': 'product_balanced', 'changed': False, 'matrix_hashes': {'A': '2fe6166c51a712116c9b33c161c8d3f6b7e2f13596a0d8ae67e834b1d4a8fe45', 'B': '7e2967fcea3826400e618dd285fa7a79de53670f9f2aba326e16e3278b7e9ef8'}} mode 1 root 7718 local_max 5764\nCOMPLETE strong-m16-k16-n16-p4-d3-full 48 verified distributed launches\nsession banded broadcast changed=False root spans [7360, 7360, 7360] median 7360\nsession banded resident changed=False root spans [7136, 7136, 7136] median 7136\nsession uniform broadcast changed=False root spans [7684, 7684, 7684] median 7684\nsession uniform resident changed=False root spans [7460, 7460, 7460] median 7460\nsession skewed broadcast changed=False root spans [11187, 11187, 11187] median 11187\nsession skewed resident changed=False root spans [10963, 10963, 10963] median 10963\nsession skewed broadcast changed=False root spans [7942, 7942, 7942] median 7942\nsession skewed resident changed=False root spans [7718, 7718, 7718] median 7718\nsession skewed broadcast changed=True root spans [7942, 7942, 7942] median 7942\nsession skewed resident changed=True root spans [7718, 7718, 7718] median 7718\nsession skewed broadcast changed=False root spans [7942, 7942, 7942] median 7942\nsession skewed resident changed=False root spans [7718, 7718, 7718] median 7718\ncycles_send = 7684 cycles\nSUCCESS\n",
+        "stderr_tail": "Event 2026-09-26 23:06:06 +0000 UTC reason=InconsistentVersion wsjob=wsjob-REDACTED message='Warning: client semantic version 1.14.0 is inconsistent with cluster server semantic version 1.20.2, there's a risk job could fail due to inconsistent setup.'\nEmpty ingress service url. Falling back to default server: 0.0.0.0:443\n"
+      },
+      "hw": {
+        "status": "pass",
+        "cycles_send": 7411,
+        "success_marker": true,
+        "returncode": 0,
+        "wall_s": 240.5,
+        "reason": null,
+        "stdout_tail": "1d4a8fe45', 'B': '7e2967fcea3826400e618dd285fa7a79de53670f9f2aba326e16e3278b7e9ef8'}} mode 0 root 7692 local_max 5392\nPASS strong-m16-k16-n16-p4-d3-full {'pattern': 'skewed', 'policy': 'product_balanced', 'changed': False, 'matrix_hashes': {'A': '2fe6166c51a712116c9b33c161c8d3f6b7e2f13596a0d8ae67e834b1d4a8fe45', 'B': '7e2967fcea3826400e618dd285fa7a79de53670f9f2aba326e16e3278b7e9ef8'}} mode 1 root 7430 local_max 5392\nCOMPLETE strong-m16-k16-n16-p4-d3-full 48 verified distributed launches\nsession banded broadcast changed=False root spans [7129, 7129, 7129] median 7129\nsession banded resident changed=False root spans [6867, 6867, 6867] median 6867\nsession uniform broadcast changed=False root spans [7411, 7411, 7411] median 7411\nsession uniform resident changed=False root spans [7149, 7149, 7149] median 7149\nsession skewed broadcast changed=False root spans [10881, 10881, 10881] median 10881\nsession skewed resident changed=False root spans [10619, 10619, 10619] median 10619\nsession skewed broadcast changed=False root spans [7692, 7692, 7692] median 7692\nsession skewed resident changed=False root spans [7430, 7430, 7430] median 7430\nsession skewed broadcast changed=True root spans [7692, 7692, 7692] median 7692\nsession skewed resident changed=True root spans [7430, 7430, 7430] median 7430\nsession skewed broadcast changed=False root spans [7692, 7692, 7692] median 7692\nsession skewed resident changed=False root spans [7430, 7430, 7430] median 7430\ncycles_send = 7411 cycles\nSUCCESS\n",
+        "stderr_tail": "Event 2026-09-26 23:10:07 +0000 UTC reason=InconsistentVersion wsjob=wsjob-REDACTED message='Warning: client semantic version 1.14.0 is inconsistent with cluster server semantic version 1.20.2, there's a risk job could fail due to inconsistent setup.'\nCould not find coordinator IP:port in cluster details\nEmpty ingress service url. Falling back to default server: 0.0.0.0:443\n"
+      }
+    },
+    "csl_main": "layout.csl",
+    "params": {
+      "S": "2",
+      "N": "16",
+      "K": "16",
+      "R": "4",
+      "AC": "32",
+      "BC": "48",
+      "OC": "36",
+      "W": "16"
+    },
+    "timing_method": "device_internal",
+    "hw_comparable": true,
+    "hw_vs_sim": {
+      "sim_cycles": 7684,
+      "hw_cycles": 7411,
+      "ratio": 0.9645
+    },
+    "case": "strong-m16-k16-n16-p4-d3-full",
+    "wall_s": 531.3
+  },
+  {
+    "kernel_dir": "<path>",
+    "arms": {
+      "sim": {
+        "status": "pass",
+        "cycles_send": 14853,
+        "success_marker": true,
+        "returncode": 0,
+        "wall_s": 630.6,
+        "reason": null,
+        "stdout_tail": "8d2b96c1c88659cab39f25da63921c05894'}} mode 0 root 15911 local_max 12952\nPASS strong-m64-k64-n64-p16-d3-full {'pattern': 'skewed', 'policy': 'product_balanced', 'changed': False, 'matrix_hashes': {'A': '7eabbd764da11b598349629d770d83568eb90f468003f387e40799bf6f8c3b2e', 'B': '05720ddab4ddd020c28a8cb8906678d2b96c1c88659cab39f25da63921c05894'}} mode 1 root 15013 local_max 12952\nCOMPLETE strong-m64-k64-n64-p16-d3-full 48 verified distributed launches\nsession banded broadcast changed=False root spans [14471, 14471, 14471] median 14471\nsession banded resident changed=False root spans [13573, 13573, 13573] median 13573\nsession uniform broadcast changed=False root spans [14853, 14853, 14853] median 14853\nsession uniform resident changed=False root spans [13955, 13955, 13955] median 13955\nsession skewed broadcast changed=False root spans [27607, 27607, 27607] median 27607\nsession skewed resident changed=False root spans [26709, 26709, 26709] median 26709\nsession skewed broadcast changed=False root spans [15911, 15911, 15911] median 15911\nsession skewed resident changed=False root spans [15013, 15013, 15013] median 15013\nsession skewed broadcast changed=True root spans [15920, 15920, 15920] median 15920\nsession skewed resident changed=True root spans [15022, 15022, 15022] median 15022\nsession skewed broadcast changed=False root spans [15911, 15911, 15911] median 15911\nsession skewed resident changed=False root spans [15013, 15013, 15013] median 15013\ncycles_send = 14853 cycles\nSUCCESS\n",
+        "stderr_tail": "Event 2026-09-26 23:15:08 +0000 UTC reason=InconsistentVersion wsjob=wsjob-REDACTED message='Warning: client semantic version 1.14.0 is inconsistent with cluster server semantic version 1.20.2, there's a risk job could fail due to inconsistent setup.'\nEmpty ingress service url. Falling back to default server: 0.0.0.0:443\n"
+      },
+      "hw": {
+        "status": "pass",
+        "cycles_send": 13772,
+        "success_marker": true,
+        "returncode": 0,
+        "wall_s": 70.7,
+        "reason": null,
+        "stdout_tail": "8d2b96c1c88659cab39f25da63921c05894'}} mode 0 root 14795 local_max 11576\nPASS strong-m64-k64-n64-p16-d3-full {'pattern': 'skewed', 'policy': 'product_balanced', 'changed': False, 'matrix_hashes': {'A': '7eabbd764da11b598349629d770d83568eb90f468003f387e40799bf6f8c3b2e', 'B': '05720ddab4ddd020c28a8cb8906678d2b96c1c88659cab39f25da63921c05894'}} mode 1 root 13729 local_max 11576\nCOMPLETE strong-m64-k64-n64-p16-d3-full 48 verified distributed launches\nsession banded broadcast changed=False root spans [13430, 13430, 13430] median 13430\nsession banded resident changed=False root spans [12364, 12364, 12364] median 12364\nsession uniform broadcast changed=False root spans [13772, 13772, 13772] median 13772\nsession uniform resident changed=False root spans [12706, 12706, 12706] median 12706\nsession skewed broadcast changed=False root spans [26201, 26201, 26201] median 26201\nsession skewed resident changed=False root spans [25135, 25135, 25135] median 25135\nsession skewed broadcast changed=False root spans [14795, 14795, 14795] median 14795\nsession skewed resident changed=False root spans [13729, 13729, 13729] median 13729\nsession skewed broadcast changed=True root spans [14802, 14802, 14802] median 14802\nsession skewed resident changed=True root spans [13736, 13736, 13736] median 13736\nsession skewed broadcast changed=False root spans [14795, 14795, 14795] median 14795\nsession skewed resident changed=False root spans [13729, 13729, 13729] median 13729\ncycles_send = 13772 cycles\nSUCCESS\n",
+        "stderr_tail": "Event 2026-09-26 23:26:19 +0000 UTC reason=InconsistentVersion wsjob=wsjob-REDACTED message='Warning: client semantic version 1.14.0 is inconsistent with cluster server semantic version 1.20.2, there's a risk job could fail due to inconsistent setup.'\nCould not find coordinator IP:port in cluster details\nEmpty ingress service url. Falling back to default server: 0.0.0.0:443\n"
+      }
+    },
+    "csl_main": "layout.csl",
+    "params": {
+      "S": "4",
+      "N": "64",
+      "K": "64",
+      "R": "4",
+      "AC": "68",
+      "BC": "192",
+      "OC": "204",
+      "W": "64"
+    },
+    "timing_method": "device_internal",
+    "hw_comparable": true,
+    "hw_vs_sim": {
+      "sim_cycles": 14853,
+      "hw_cycles": 13772,
+      "ratio": 0.9272
+    },
+    "case": "strong-m64-k64-n64-p16-d3-full",
+    "wall_s": 801.5
+  },
+  {
+    "kernel_dir": "<path>",
+    "arms": {
+      "sim": {
+        "status": "pass",
+        "cycles_send": 50464,
+        "success_marker": true,
+        "returncode": 0,
+        "wall_s": 730.7,
+        "reason": null,
+        "stdout_tail": "678d2b96c1c88659cab39f25da63921c05894'}} mode 0 root 50323 local_max 47475\nPASS strong-m64-k64-n64-p4-d3-full {'pattern': 'skewed', 'policy': 'product_balanced', 'changed': False, 'matrix_hashes': {'A': '7eabbd764da11b598349629d770d83568eb90f468003f387e40799bf6f8c3b2e', 'B': '05720ddab4ddd020c28a8cb8906678d2b96c1c88659cab39f25da63921c05894'}} mode 1 root 49425 local_max 47475\nCOMPLETE strong-m64-k64-n64-p4-d3-full 48 verified distributed launches\nsession banded broadcast changed=False root spans [48990, 48990, 48990] median 48990\nsession banded resident changed=False root spans [48092, 48092, 48092] median 48092\nsession uniform broadcast changed=False root spans [50464, 50464, 50464] median 50464\nsession uniform resident changed=False root spans [49566, 49566, 49566] median 49566\nsession skewed broadcast changed=False root spans [69790, 69790, 69790] median 69790\nsession skewed resident changed=False root spans [68892, 68892, 68892] median 68892\nsession skewed broadcast changed=False root spans [50323, 50323, 50323] median 50323\nsession skewed resident changed=False root spans [49425, 49425, 49425] median 49425\nsession skewed broadcast changed=True root spans [50448, 50448, 50448] median 50448\nsession skewed resident changed=True root spans [49550, 49550, 49550] median 49550\nsession skewed broadcast changed=False root spans [50323, 50323, 50323] median 50323\nsession skewed resident changed=False root spans [49425, 49425, 49425] median 49425\ncycles_send = 50464 cycles\nSUCCESS\n",
+        "stderr_tail": "Event 2026-09-26 23:28:09 +0000 UTC reason=InconsistentVersion wsjob=wsjob-REDACTED message='Warning: client semantic version 1.14.0 is inconsistent with cluster server semantic version 1.20.2, there's a risk job could fail due to inconsistent setup.'\nEmpty ingress service url. Falling back to default server: 0.0.0.0:443\n"
+      },
+      "hw": {
+        "status": "pass",
+        "cycles_send": 45333,
+        "success_marker": true,
+        "returncode": 0,
+        "wall_s": 80.6,
+        "reason": null,
+        "stdout_tail": "678d2b96c1c88659cab39f25da63921c05894'}} mode 0 root 45195 local_max 42103\nPASS strong-m64-k64-n64-p4-d3-full {'pattern': 'skewed', 'policy': 'product_balanced', 'changed': False, 'matrix_hashes': {'A': '7eabbd764da11b598349629d770d83568eb90f468003f387e40799bf6f8c3b2e', 'B': '05720ddab4ddd020c28a8cb8906678d2b96c1c88659cab39f25da63921c05894'}} mode 1 root 44129 local_max 42103\nCOMPLETE strong-m64-k64-n64-p4-d3-full 48 verified distributed launches\nsession banded broadcast changed=False root spans [43985, 43985, 43985] median 43985\nsession banded resident changed=False root spans [42919, 42919, 42919] median 42919\nsession uniform broadcast changed=False root spans [45333, 45333, 45333] median 45333\nsession uniform resident changed=False root spans [44267, 44267, 44267] median 44267\nsession skewed broadcast changed=False root spans [64175, 64175, 64175] median 64175\nsession skewed resident changed=False root spans [63109, 63109, 63109] median 63109\nsession skewed broadcast changed=False root spans [45195, 45195, 45195] median 45195\nsession skewed resident changed=False root spans [44129, 44129, 44129] median 44129\nsession skewed broadcast changed=True root spans [45309, 45309, 45309] median 45309\nsession skewed resident changed=True root spans [44243, 44243, 44243] median 44243\nsession skewed broadcast changed=False root spans [45195, 45195, 45195] median 45195\nsession skewed resident changed=False root spans [44129, 44129, 44129] median 44129\ncycles_send = 45333 cycles\nSUCCESS\n",
+        "stderr_tail": "Event 2026-09-26 23:41:10 +0000 UTC reason=InconsistentVersion wsjob=wsjob-REDACTED message='Warning: client semantic version 1.14.0 is inconsistent with cluster server semantic version 1.20.2, there's a risk job could fail due to inconsistent setup.'\nCould not find coordinator IP:port in cluster details\nEmpty ingress service url. Falling back to default server: 0.0.0.0:443\n"
+      }
+    },
+    "csl_main": "layout.csl",
+    "params": {
+      "S": "2",
+      "N": "64",
+      "K": "64",
+      "R": "16",
+      "AC": "136",
+      "BC": "192",
+      "OC": "408",
+      "W": "64"
+    },
+    "timing_method": "device_internal",
+    "hw_comparable": true,
+    "hw_vs_sim": {
+      "sim_cycles": 50464,
+      "hw_cycles": 45333,
+      "ratio": 0.8983
+    },
+    "case": "strong-m64-k64-n64-p4-d3-full",
+    "wall_s": 901.5
+  },
+  {
+    "kernel_dir": "<path>",
+    "arms": {
+      "sim": {
+        "status": "pass",
+        "cycles_send": 6017,
+        "success_marker": true,
+        "returncode": 0,
+        "wall_s": 570.6,
+        "reason": null,
+        "stdout_tail": "40799bf6f8c3b2e', 'B': '05720ddab4ddd020c28a8cb8906678d2b96c1c88659cab39f25da63921c05894'}} mode 0 root 9223 local_max 6307\nPASS strong-m64-k64-n64-p64-d3-full {'pattern': 'skewed', 'policy': 'product_balanced', 'changed': False, 'matrix_hashes': {'A': '7eabbd764da11b598349629d770d83568eb90f468003f387e40799bf6f8c3b2e', 'B': '05720ddab4ddd020c28a8cb8906678d2b96c1c88659cab39f25da63921c05894'}} mode 1 root 8325 local_max 6307\nCOMPLETE strong-m64-k64-n64-p64-d3-full 48 verified distributed launches\nsession banded broadcast changed=False root spans [5918, 5920, 5920] median 5920\nsession banded resident changed=False root spans [5022, 5022, 5022] median 5022\nsession uniform broadcast changed=False root spans [6017, 6017, 6017] median 6017\nsession uniform resident changed=False root spans [5119, 5119, 5119] median 5119\nsession skewed broadcast changed=False root spans [9223, 9223, 9223] median 9223\nsession skewed resident changed=False root spans [8325, 8325, 8325] median 8325\nsession skewed broadcast changed=False root spans [9223, 9223, 9223] median 9223\nsession skewed resident changed=False root spans [8325, 8325, 8325] median 8325\nsession skewed broadcast changed=True root spans [9232, 9232, 9232] median 9232\nsession skewed resident changed=True root spans [8334, 8334, 8334] median 8334\nsession skewed broadcast changed=False root spans [9223, 9223, 9223] median 9223\nsession skewed resident changed=False root spans [8325, 8325, 8325] median 8325\ncycles_send = 6017 cycles\nSUCCESS\n",
+        "stderr_tail": "Event 2026-09-26 23:43:11 +0000 UTC reason=InconsistentVersion wsjob=wsjob-REDACTED message='Warning: client semantic version 1.14.0 is inconsistent with cluster server semantic version 1.20.2, there's a risk job could fail due to inconsistent setup.'\nEmpty ingress service url. Falling back to default server: 0.0.0.0:443\n"
+      },
+      "hw": {
+        "status": "pass",
+        "cycles_send": 5961,
+        "success_marker": true,
+        "returncode": 0,
+        "wall_s": 70.6,
+        "reason": null,
+        "stdout_tail": "40799bf6f8c3b2e', 'B': '05720ddab4ddd020c28a8cb8906678d2b96c1c88659cab39f25da63921c05894'}} mode 0 root 9060 local_max 5881\nPASS strong-m64-k64-n64-p64-d3-full {'pattern': 'skewed', 'policy': 'product_balanced', 'changed': False, 'matrix_hashes': {'A': '7eabbd764da11b598349629d770d83568eb90f468003f387e40799bf6f8c3b2e', 'B': '05720ddab4ddd020c28a8cb8906678d2b96c1c88659cab39f25da63921c05894'}} mode 1 root 7994 local_max 5881\nCOMPLETE strong-m64-k64-n64-p64-d3-full 48 verified distributed launches\nsession banded broadcast changed=False root spans [5876, 5876, 5876] median 5876\nsession banded resident changed=False root spans [4810, 4810, 4810] median 4810\nsession uniform broadcast changed=False root spans [5961, 5961, 5961] median 5961\nsession uniform resident changed=False root spans [4895, 4895, 4895] median 4895\nsession skewed broadcast changed=False root spans [9060, 9060, 9060] median 9060\nsession skewed resident changed=False root spans [7994, 7994, 7994] median 7994\nsession skewed broadcast changed=False root spans [9060, 9060, 9060] median 9060\nsession skewed resident changed=False root spans [7994, 7994, 7994] median 7994\nsession skewed broadcast changed=True root spans [9073, 9073, 9073] median 9073\nsession skewed resident changed=True root spans [8007, 8007, 8007] median 8007\nsession skewed broadcast changed=False root spans [9060, 9060, 9060] median 9060\nsession skewed resident changed=False root spans [7994, 7994, 7994] median 7994\ncycles_send = 5961 cycles\nSUCCESS\n",
+        "stderr_tail": "Event 2026-09-26 23:53:21 +0000 UTC reason=InconsistentVersion wsjob=wsjob-REDACTED message='Warning: client semantic version 1.14.0 is inconsistent with cluster server semantic version 1.20.2, there's a risk job could fail due to inconsistent setup.'\nCould not find coordinator IP:port in cluster details\nEmpty ingress service url. Falling back to default server: 0.0.0.0:443\n"
+      }
+    },
+    "csl_main": "layout.csl",
+    "params": {
+      "S": "8",
+      "N": "64",
+      "K": "64",
+      "R": "1",
+      "AC": "17",
+      "BC": "192",
+      "OC": "51",
+      "W": "64"
+    },
+    "timing_method": "device_internal",
+    "hw_comparable": true,
+    "hw_vs_sim": {
+      "sim_cycles": 6017,
+      "hw_cycles": 5961,
+      "ratio": 0.9907
+    },
+    "case": "strong-m64-k64-n64-p64-d3-full",
+    "wall_s": 721.3
+  }
+]

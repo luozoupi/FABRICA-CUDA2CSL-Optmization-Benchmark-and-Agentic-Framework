@@ -110,6 +110,10 @@ def run_kernel(
     cmd += extra_args
 
     env = os.environ.copy()
+    env.setdefault("HTTPS_PROXY", "http://proxy.alcf.anl.gov:3128")
+    env.setdefault("https_proxy", "http://proxy.alcf.anl.gov:3128")
+    env.setdefault("HTTP_PROXY",  "http://proxy.alcf.anl.gov:3128")
+    env.setdefault("http_proxy",  "http://proxy.alcf.anl.gov:3128")
 
     t0 = time.time()
     try:

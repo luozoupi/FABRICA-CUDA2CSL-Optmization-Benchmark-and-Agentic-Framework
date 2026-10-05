@@ -1,0 +1,348 @@
+{
+ "tables": {
+  "theirs (WSE-2: hop 1, k 5)": [
+   {
+    "P": 8,
+    "B": 1,
+    "star": 16.0,
+    "chain": 43.0,
+    "tree": 25.0,
+    "two-phase": 28.7,
+    "auto-gen": 13.0,
+    "winner": "auto-gen"
+   },
+   {
+    "P": 8,
+    "B": 16,
+    "star": 117.0,
+    "chain": 58.0,
+    "tree": 70.0,
+    "two-phase": 54.4,
+    "auto-gen": 54.0,
+    "winner": "auto-gen"
+   },
+   {
+    "P": 8,
+    "B": 256,
+    "star": 1797.0,
+    "chain": 298.0,
+    "tree": 790.0,
+    "two-phase": 532.0,
+    "auto-gen": 534.0,
+    "winner": "chain"
+   },
+   {
+    "P": 8,
+    "B": 4096,
+    "star": 28677.0,
+    "chain": 4138.0,
+    "tree": 12310.0,
+    "two-phase": 8212.0,
+    "auto-gen": 8214.0,
+    "winner": "chain"
+   },
+   {
+    "P": 16,
+    "B": 1,
+    "star": 28.0,
+    "chain": 91.0,
+    "tree": 39.0,
+    "two-phase": 46.6,
+    "auto-gen": 21.0,
+    "winner": "auto-gen"
+   },
+   {
+    "P": 16,
+    "B": 16,
+    "star": 245.0,
+    "chain": 106.0,
+    "tree": 99.0,
+    "two-phase": 70.6,
+    "auto-gen": 65.2,
+    "winner": "auto-gen"
+   },
+   {
+    "P": 16,
+    "B": 256,
+    "star": 3845.0,
+    "chain": 346.0,
+    "tree": 1059.0,
+    "two-phase": 542.0,
+    "auto-gen": 783.0,
+    "winner": "chain"
+   },
+   {
+    "P": 16,
+    "B": 4096,
+    "star": 61445.0,
+    "chain": 4186.0,
+    "tree": 16419.0,
+    "two-phase": 8222.0,
+    "auto-gen": 12303.0,
+    "winner": "chain"
+   },
+   {
+    "P": 32,
+    "B": 1,
+    "star": 52.0,
+    "chain": 187.0,
+    "tree": 61.0,
+    "two-phase": 82.9,
+    "auto-gen": 37.0,
+    "winner": "auto-gen"
+   },
+   {
+    "P": 32,
+    "B": 16,
+    "star": 501.0,
+    "chain": 202.0,
+    "tree": 136.0,
+    "two-phase": 112.0,
+    "auto-gen": 84.7,
+    "winner": "auto-gen"
+   },
+   {
+    "P": 32,
+    "B": 256,
+    "star": 7941.0,
+    "chain": 442.0,
+    "tree": 1336.0,
+    "two-phase": 576.5,
+    "auto-gen": 819.0,
+    "winner": "chain"
+   },
+   {
+    "P": 32,
+    "B": 4096,
+    "star": 126981.0,
+    "chain": 4282.0,
+    "tree": 20536.0,
+    "two-phase": 8242.0,
+    "auto-gen": 12339.0,
+    "winner": "chain"
+   },
+   {
+    "P": 64,
+    "B": 1,
+    "star": 100.0,
+    "chain": 379.0,
+    "tree": 99.0,
+    "two-phase": 134.8,
+    "auto-gen": 69.0,
+    "winner": "auto-gen"
+   },
+   {
+    "P": 64,
+    "B": 16,
+    "star": 1013.0,
+    "chain": 394.0,
+    "tree": 189.0,
+    "two-phase": 161.4,
+    "auto-gen": 117.6,
+    "winner": "auto-gen"
+   },
+   {
+    "P": 64,
+    "B": 256,
+    "star": 16133.0,
+    "chain": 634.0,
+    "tree": 1629.0,
+    "two-phase": 588.1,
+    "auto-gen": 1044.0,
+    "winner": "two-phase"
+   },
+   {
+    "P": 64,
+    "B": 4096,
+    "star": 258053.0,
+    "chain": 4474.0,
+    "tree": 24669.0,
+    "two-phase": 8262.0,
+    "auto-gen": 16404.0,
+    "winner": "chain"
+   }
+  ],
+  "ours (WSE-3: hop 2, k 2.07)": [
+   {
+    "P": 8,
+    "B": 1,
+    "star": 20.1,
+    "chain": 29.5,
+    "tree": 23.2,
+    "two-phase": 24.0,
+    "auto-gen": 17.1,
+    "winner": "auto-gen"
+   },
+   {
+    "P": 8,
+    "B": 16,
+    "star": 114.1,
+    "chain": 44.5,
+    "tree": 68.2,
+    "two-phase": 49.7,
+    "auto-gen": 52.1,
+    "winner": "chain"
+   },
+   {
+    "P": 8,
+    "B": 256,
+    "star": 1794.1,
+    "chain": 284.5,
+    "tree": 788.2,
+    "two-phase": 520.3,
+    "auto-gen": 532.2,
+    "winner": "chain"
+   },
+   {
+    "P": 8,
+    "B": 4096,
+    "star": 28674.1,
+    "chain": 4124.5,
+    "tree": 12308.2,
+    "two-phase": 8200.3,
+    "auto-gen": 8212.2,
+    "winner": "chain"
+   },
+   {
+    "P": 16,
+    "B": 1,
+    "star": 40.1,
+    "chain": 62.0,
+    "tree": 42.3,
+    "two-phase": 44.0,
+    "auto-gen": 33.1,
+    "winner": "auto-gen"
+   },
+   {
+    "P": 16,
+    "B": 16,
+    "star": 242.1,
+    "chain": 77.0,
+    "tree": 102.3,
+    "two-phase": 68.0,
+    "auto-gen": 70.2,
+    "winner": "two-phase"
+   },
+   {
+    "P": 16,
+    "B": 256,
+    "star": 3842.1,
+    "chain": 317.1,
+    "tree": 1062.3,
+    "two-phase": 524.4,
+    "auto-gen": 774.2,
+    "winner": "chain"
+   },
+   {
+    "P": 16,
+    "B": 4096,
+    "star": 61442.1,
+    "chain": 4157.1,
+    "tree": 16422.3,
+    "two-phase": 8204.4,
+    "auto-gen": 12294.2,
+    "winner": "chain"
+   },
+   {
+    "P": 32,
+    "B": 1,
+    "star": 80.1,
+    "chain": 127.2,
+    "tree": 77.3,
+    "two-phase": 84.6,
+    "auto-gen": 65.1,
+    "winner": "auto-gen"
+   },
+   {
+    "P": 32,
+    "B": 16,
+    "star": 498.1,
+    "chain": 142.2,
+    "tree": 152.3,
+    "two-phase": 113.7,
+    "auto-gen": 102.2,
+    "winner": "auto-gen"
+   },
+   {
+    "P": 32,
+    "B": 256,
+    "star": 7938.1,
+    "chain": 382.2,
+    "tree": 1352.3,
+    "two-phase": 578.2,
+    "auto-gen": 838.3,
+    "winner": "chain"
+   },
+   {
+    "P": 32,
+    "B": 4096,
+    "star": 126978.1,
+    "chain": 4222.2,
+    "tree": 20552.3,
+    "two-phase": 8212.7,
+    "auto-gen": 12358.3,
+    "winner": "chain"
+   },
+   {
+    "P": 64,
+    "B": 1,
+    "star": 160.1,
+    "chain": 257.4,
+    "tree": 144.4,
+    "two-phase": 156.8,
+    "auto-gen": 129.1,
+    "winner": "auto-gen"
+   },
+   {
+    "P": 64,
+    "B": 16,
+    "star": 1010.1,
+    "chain": 272.4,
+    "tree": 234.4,
+    "two-phase": 183.4,
+    "auto-gen": 164.1,
+    "winner": "auto-gen"
+   },
+   {
+    "P": 64,
+    "B": 256,
+    "star": 16130.1,
+    "chain": 512.4,
+    "tree": 1674.4,
+    "two-phase": 610.1,
+    "auto-gen": 1032.3,
+    "winner": "chain"
+   },
+   {
+    "P": 64,
+    "B": 4096,
+    "star": 258050.1,
+    "chain": 4352.4,
+    "tree": 24714.4,
+    "two-phase": 8221.0,
+    "auto-gen": 16392.3,
+    "winner": "chain"
+   }
+  ]
+ },
+ "flips": [
+  [
+   8,
+   16,
+   "auto-gen",
+   "chain"
+  ],
+  [
+   16,
+   16,
+   "auto-gen",
+   "two-phase"
+  ],
+  [
+   64,
+   256,
+   "two-phase",
+   "chain"
+  ]
+ ]
+}

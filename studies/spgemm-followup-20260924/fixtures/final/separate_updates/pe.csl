@@ -1,0 +1,76 @@
+// Generated microbenchmark. FP32; one application PE; no fabric communication.
+param memcpy_params;
+const sys = @import_module("<memcpy/memcpy>", memcpy_params);
+const clock = @import_module("<time>");
+const M: u16 = 16;
+const K: u16 = 16;
+const N: u16 = 16;
+var A = @zeros([256]f32);
+var ptr_A: [*]f32 = &A;
+var B = @zeros([256]f32);
+var ptr_B: [*]f32 = &B;
+var C = @zeros([256]f32);
+var ptr_C: [*]f32 = &C;
+var row_ptr = @zeros([17]u32);
+var ptr_row_ptr: [*]u32 = &row_ptr;
+var col_idx = @zeros([256]u32);
+var ptr_col_idx: [*]u32 = &col_idx;
+var values = @zeros([256]f32);
+var ptr_values: [*]f32 = &values;
+var present = @zeros([256]u16);
+var ptr_present: [*]u16 = &present;
+var time_words = @zeros([6]u16);
+var ptr_time_words: [*]u16 = &time_words;
+var t0 = @zeros([3]u16);
+var t1 = @zeros([3]u16);
+const all_c = @get_dsd(mem1d_dsd, .{ .tensor_access = |x|{M*N} -> C[x] });
+fn kernel() void {
+@fmovs(all_c, @as(f32,0.0));
+var z: u16 = 0;
+while (z < M*N) : (z += 1) {
+present[z] = 0;
+}
+var j: u16 = 0;
+while (j < N) : (j += 1) {
+var slot: u16 = @as(u16,row_ptr[j]);
+while (slot < @as(u16,row_ptr[j+1])) : (slot += 1) {
+const i: u16 = @as(u16,col_idx[slot]);
+var p: u16 = @as(u16, row_ptr[i]);
+var q: u16 = @as(u16, row_ptr[j]);
+while (p < @as(u16,row_ptr[i+1]) and q < @as(u16,row_ptr[j+1])) {
+const ri: u16 = @as(u16,col_idx[p]);
+const rj: u16 = @as(u16,col_idx[q]);
+if (ri == rj) {
+C[i*N+j] += values[p] * values[q];
+present[i*N+j] = 1;
+
+p += 1; q += 1;
+continue;
+}
+if (ri < rj) { p += 1; continue; }
+q += 1;
+}
+}
+}
+}
+fn stamp_out() void {
+  time_words[0]=t0[0]; time_words[1]=t0[1]; time_words[2]=t0[2];
+  time_words[3]=t1[0]; time_words[4]=t1[1]; time_words[5]=t1[2];
+  sys.unblock_cmd_stream();
+}
+fn enable_timer() void { clock.enable_tsc(); sys.unblock_cmd_stream(); }
+fn compute() void { clock.get_timestamp(&t0); kernel(); clock.get_timestamp(&t1); stamp_out(); }
+fn timer_control() void { clock.get_timestamp(&t0); clock.get_timestamp(&t1); stamp_out(); }
+comptime {
+@export_symbol(ptr_A, "A");
+@export_symbol(ptr_B, "B");
+@export_symbol(ptr_C, "C");
+@export_symbol(ptr_row_ptr, "row_ptr");
+@export_symbol(ptr_col_idx, "col_idx");
+@export_symbol(ptr_values, "values");
+@export_symbol(ptr_present, "present");
+@export_symbol(ptr_time_words, "time_words");
+@export_symbol(compute);
+@export_symbol(enable_timer);
+@export_symbol(timer_control);
+}

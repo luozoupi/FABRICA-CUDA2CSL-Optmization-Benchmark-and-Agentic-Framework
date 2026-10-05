@@ -1,0 +1,263 @@
+{
+  "schema": "gemv-walkthrough-validation/1",
+  "date": "2026-09-15",
+  "evidence": "simulator",
+  "capture_root": "results/gemv-walkthrough/try-20260915a",
+  "gemv_bundle_sha256": "09c3d51b6b292e2713cf795243367ad0608e6d9e9ca88458301c55ff0c6a2028",
+  "time_bundle_sha256": "95917e5c2c4484de3cc5f1ae4c35bbc484b006575d3440f8a9274193f57528ef",
+  "scenes": [
+    {
+      "id": "v0",
+      "n": 4,
+      "p": 1,
+      "verification": {
+        "passed": true,
+        "checks": 97,
+        "contributions": 16,
+        "outputs": 4,
+        "replicas": 4,
+        "mismatches": []
+      },
+      "trace": {
+        "counts": {
+          "wavelet_trace_entry": 3319,
+          "hwm_dispatch_trace_entry": 32675,
+          "hwm_pipe_trace_entry": 130160
+        },
+        "discarded": 0,
+        "matched_terms": 16,
+        "matched_reductions": 0,
+        "matched_checkpoints": 3,
+        "binding": "complete"
+      },
+      "control_correct": true,
+      "output": [
+        41,
+        46,
+        51,
+        56
+      ],
+      "history_manifest_sha256": "355453f832700b85bc286668ac579ce3807fce0a981641d5d0ca8e4d8bb13958",
+      "control_manifest_sha256": "a3395e6e2af60cc1960b87e000164e083aa64843a7fdc4cd7fc15c56f11d35a1",
+      "history_pe_cycles": {
+        "0,0": 8515
+      },
+      "control_pe_cycles": {
+        "0,0": 1486
+      },
+      "phase_trace_cycles": {
+        "0,0": {
+          "inputs": 3137,
+          "local": 10730,
+          "final": 11228
+        }
+      }
+    },
+    {
+      "id": "v1",
+      "n": 4,
+      "p": 2,
+      "verification": {
+        "passed": true,
+        "checks": 144,
+        "contributions": 16,
+        "outputs": 4,
+        "replicas": 8,
+        "mismatches": []
+      },
+      "trace": {
+        "counts": {
+          "wavelet_trace_entry": 15461,
+          "hwm_dispatch_trace_entry": 179002,
+          "hwm_pipe_trace_entry": 714669
+        },
+        "discarded": 0,
+        "matched_terms": 16,
+        "matched_reductions": 4,
+        "matched_checkpoints": 18,
+        "binding": "complete"
+      },
+      "control_correct": true,
+      "output": [
+        41,
+        46,
+        51,
+        56
+      ],
+      "history_manifest_sha256": "306877b30622dd52a6de6c80e5e32515d26f27a1ac4842e90bc1424a32678b32",
+      "control_manifest_sha256": "dffbc5c1288df00376f37bbbe34f1309462c251c4d0a485d945cc76c1173c0b3",
+      "history_pe_cycles": {
+        "0,0": 4445,
+        "1,0": 4492,
+        "0,1": 4348,
+        "1,1": 4348
+      },
+      "control_pe_cycles": {
+        "0,0": 1218,
+        "1,0": 1265,
+        "0,1": 1121,
+        "1,1": 1121
+      },
+      "phase_trace_cycles": {
+        "0,0": {
+          "inputs": 8430,
+          "local": 10635,
+          "peer": 11249,
+          "final": 12438
+        },
+        "1,0": {
+          "inputs": 8432,
+          "local": 10637,
+          "peer": 11298,
+          "final": 12487
+        },
+        "0,1": {
+          "inputs": 8525,
+          "local": 10730,
+          "peer": 11315,
+          "reduced": 11831,
+          "final": 12436
+        },
+        "1,1": {
+          "inputs": 8574,
+          "local": 10779,
+          "peer": 11364,
+          "reduced": 11880,
+          "final": 12485
+        }
+      }
+    },
+    {
+      "id": "v2",
+      "n": 8,
+      "p": 2,
+      "verification": {
+        "passed": true,
+        "checks": 428,
+        "contributions": 64,
+        "outputs": 8,
+        "replicas": 16,
+        "mismatches": []
+      },
+      "trace": {
+        "counts": {
+          "wavelet_trace_entry": 21317,
+          "hwm_dispatch_trace_entry": 231801,
+          "hwm_pipe_trace_entry": 925889
+        },
+        "discarded": 0,
+        "matched_terms": 64,
+        "matched_reductions": 8,
+        "matched_checkpoints": 18,
+        "binding": "complete"
+      },
+      "control_correct": true,
+      "output": [
+        158,
+        164,
+        170,
+        176,
+        182,
+        188,
+        194,
+        200
+      ],
+      "history_manifest_sha256": "02c974cbf1fbfa659e5f2a6ae2ceefab45686513bfb91157357c2a9919e26e94",
+      "control_manifest_sha256": "8cfb593d13d1ed272828e923d906a4d63275209dcdbc1f069f6ccd3ab79885af",
+      "history_pe_cycles": {
+        "0,0": 10087,
+        "1,0": 10087,
+        "0,1": 9984,
+        "1,1": 9937
+      },
+      "control_pe_cycles": {
+        "0,0": 2276,
+        "1,0": 2276,
+        "0,1": 2173,
+        "1,1": 2126
+      },
+      "phase_trace_cycles": {
+        "0,0": {
+          "inputs": 8953,
+          "local": 16546,
+          "peer": 17320,
+          "final": 18603
+        },
+        "1,0": {
+          "inputs": 8955,
+          "local": 16548,
+          "peer": 17322,
+          "final": 18605
+        },
+        "0,1": {
+          "inputs": 9054,
+          "local": 16647,
+          "peer": 17322,
+          "reduced": 17996,
+          "final": 18601
+        },
+        "1,1": {
+          "inputs": 9103,
+          "local": 16696,
+          "peer": 17324,
+          "reduced": 17998,
+          "final": 18603
+        }
+      }
+    }
+  ],
+  "time_slices": [
+    {
+      "id": "v0",
+      "start": 3136,
+      "end": 11228,
+      "observations": 35,
+      "final_state_matches_readback": true
+    },
+    {
+      "id": "v1",
+      "start": 8429,
+      "end": 12487,
+      "observations": 54,
+      "final_state_matches_readback": true
+    },
+    {
+      "id": "v2",
+      "start": 8952,
+      "end": 18605,
+      "observations": 154,
+      "final_state_matches_readback": true
+    },
+    {
+      "id": "g0",
+      "start": 4015,
+      "end": 32093,
+      "observations": 128,
+      "final_state_matches_readback": true
+    },
+    {
+      "id": "g1",
+      "start": 9212,
+      "end": 17657,
+      "observations": 128,
+      "final_state_matches_readback": true
+    },
+    {
+      "id": "g2",
+      "start": 10999,
+      "end": 72398,
+      "observations": 1024,
+      "final_state_matches_readback": true
+    }
+  ],
+  "presentations": {
+    "gemv": {
+      "path": "results/gemv-walkthrough/gemv.html",
+      "sha256": "3d0dc7c1b0ae46d72da52bee9c39ea35ff152f27a1e1a1db09ccab5faef31ca8"
+    },
+    "time-slices": {
+      "path": "results/gemv-walkthrough/time-slices.html",
+      "sha256": "48a6d302884fbed956881aaf1bd4136ed4f1262bcf3aa91fa0b2ab5a54c08c1b"
+    }
+  }
+}

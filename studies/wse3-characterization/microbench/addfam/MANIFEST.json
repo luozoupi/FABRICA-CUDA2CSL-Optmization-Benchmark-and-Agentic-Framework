@@ -1,0 +1,2212 @@
+{
+ "hash_algorithm": "sha256",
+ "sdk": {
+  "root": "/software/cerebras/cs_sdk-2.10",
+  "container": "sdk-cbcore-2.10.1-sdk-202606181328-8faf87a26e.sif"
+ },
+ "capture_tool": {
+  "path": "tools/cslc_ir.py",
+  "algorithm": "sha256",
+  "hex": "6f3c9a6b4cdb24a3b2aec32122cfc71e208ca0bec952c452eabf1d74ff237bc8",
+  "bytes": 11596
+ },
+ "harness": {
+  "build": {
+   "algorithm": "sha256",
+   "hex": "d0d1bd26753df4862d28d059a72b4ed1369b8e4fda58a781d2023c4d2e7e60d9",
+   "bytes": 17048
+  },
+  "run": {
+   "algorithm": "sha256",
+   "hex": "bbb6bf33b6a0998f30744a8736eccae3c2ca50794aa877d3ada72eb096f4d562",
+   "bytes": 3924
+  }
+ },
+ "note": "An unmodified `cslc_ir.py rebuild <case>/ir/<program> -o x.elf` reproduces the ELF byte-for-byte; that is the control for every differential result here.",
+ "cases": {
+  "W_chain_in_loop": {
+   "factor": "withheld",
+   "compile_command": "cslc ./layout.csl --arch=wse3 --fabric-dims=8,3 --fabric-offsets=4,1 --memcpy --channels=1 --width-west-buf=0 --width-east-buf=0 --dump-dsr-alloc-graph -o out",
+   "backend_command": "cslc-backend schrodinger cs_sdr-cerebras-csos   (request on stdin)",
+   "linker_command": "cslc-linker -v   (request on stdin)",
+   "toolchain": {
+    "cslang_bin": "/cb/toolchains/cslang/rel-sdk-2.10.0/202604012315-1813-1394a6ea/bin",
+    "target_cpu": "schrodinger",
+    "triple": "cs_sdr-cerebras-csos",
+    "runtime_libraries": [
+     "/cb/toolchains/cslang/rel-sdk-2.10.0/202604012315-1813-1394a6ea/csl-rt/libcsl_rt_cs_sdr.a"
+    ]
+   },
+   "files": {
+    "layout.csl": {
+     "path": "cases/W_chain_in_loop/layout.csl",
+     "algorithm": "sha256",
+     "hex": "2a4d55eb5298450567a61a2993d5b323ab066669060285c61f987d77a482b52c",
+     "bytes": 405
+    },
+    "pe.csl": {
+     "path": "cases/W_chain_in_loop/pe.csl",
+     "algorithm": "sha256",
+     "hex": "f80ae79f4d5c337cea9f83593bc1628d6fb0d0c7c97d936f273e175f47994b16",
+     "bytes": 1103
+    },
+    "factor": {
+     "path": "cases/W_chain_in_loop/FACTOR.txt",
+     "algorithm": "sha256",
+     "hex": "d30361220622edf5bafad92afa55a4ac4885c2217fe841b535d678711154c084",
+     "bytes": 158
+    },
+    "captured_ir": {
+     "path": "cases/W_chain_in_loop/ir/out_out_0_0/program.ll",
+     "algorithm": "sha256",
+     "hex": "6afb2559f3ab12e4064463cd41e0961e6a59de9b606b32ee9989a9e1626fb425",
+     "bytes": 200015
+    },
+    "object": {
+     "path": "cases/W_chain_in_loop/ir/out_out_0_0/program.o",
+     "algorithm": "sha256",
+     "hex": "3db55ed3e4c77536c6b8eb4523d36f80349b1b1bd68820b3c4f608c23857fd43",
+     "bytes": 32936
+    },
+    "task_table": {
+     "path": "cases/W_chain_in_loop/ir/out_out_0_0/task.ld",
+     "algorithm": "sha256",
+     "hex": "280f4333fc1f65dc608cdc4142de7d98eeb8a5e06d091492118e441105631bb5",
+     "bytes": 3459
+    },
+    "link_script": {
+     "path": "cases/W_chain_in_loop/ir/out_out_0_0/link.ld",
+     "algorithm": "sha256",
+     "hex": "6b8e0e2573a34239540a521a6df0c37cf75da8d340add615050a27a27fecc67f",
+     "bytes": 9499
+    },
+    "backend_request": {
+     "path": "cases/W_chain_in_loop/ir/out_out_0_0/backend.request",
+     "algorithm": "sha256",
+     "hex": "ecaf6837fe281c620073128805548edb7b63e693ea5f20699fb3bbc362e4409c",
+     "bytes": 114
+    },
+    "linker_request": {
+     "path": "cases/W_chain_in_loop/ir/out_out_0_0/linker.request",
+     "algorithm": "sha256",
+     "hex": "e8b067f928858a7ee6c1f9bb3b287ef4fa6b27197bd02a9122470d6a8d7bb4b7",
+     "bytes": 303
+    },
+    "elf": {
+     "path": "cases/W_chain_in_loop/out/bin/out_0_0.elf",
+     "algorithm": "sha256",
+     "hex": "32ffd28af3b4109cb740928e80d0934e48728d24b062fd08260d1317e8c7866b",
+     "bytes": 22496
+    },
+    "disassembly": {
+     "path": "cases/W_chain_in_loop/disasm.json",
+     "algorithm": "sha256",
+     "hex": "b63a653fb6acda0207a4c669fab87578c937cf3a8e7b45747e437d18237bcc69",
+     "bytes": 219989
+    },
+    "verification": {
+     "path": "cases/W_chain_in_loop/verify.json",
+     "algorithm": "sha256",
+     "hex": "8242240028a265757b94c5a93aa7e5ff6fc5ee341267db3f565330352c59958d",
+     "bytes": 370
+    }
+   },
+   "correctness": {
+    "array": "c",
+    "inputs": {
+     "a[0:4]": [
+      -20,
+      -17,
+      -14,
+      -11
+     ],
+     "b[0:4]": [
+      7,
+      5,
+      3,
+      1
+     ],
+     "idx[0]": 5,
+     "k[0]": 6
+    },
+    "expected": {
+     "1": 5,
+     "2": 8,
+     "3": 9,
+     "4": 8,
+     "5": 5
+    },
+    "observed": {
+     "1": 5,
+     "2": 8,
+     "3": 9,
+     "4": 8,
+     "5": 5
+    },
+    "ok": true
+   }
+  },
+  "W_const_in_loop": {
+   "factor": "withheld",
+   "compile_command": "cslc ./layout.csl --arch=wse3 --fabric-dims=8,3 --fabric-offsets=4,1 --memcpy --channels=1 --width-west-buf=0 --width-east-buf=0 --dump-dsr-alloc-graph -o out",
+   "backend_command": "cslc-backend schrodinger cs_sdr-cerebras-csos   (request on stdin)",
+   "linker_command": "cslc-linker -v   (request on stdin)",
+   "toolchain": {
+    "cslang_bin": "/cb/toolchains/cslang/rel-sdk-2.10.0/202604012315-1813-1394a6ea/bin",
+    "target_cpu": "schrodinger",
+    "triple": "cs_sdr-cerebras-csos",
+    "runtime_libraries": [
+     "/cb/toolchains/cslang/rel-sdk-2.10.0/202604012315-1813-1394a6ea/csl-rt/libcsl_rt_cs_sdr.a"
+    ]
+   },
+   "files": {
+    "layout.csl": {
+     "path": "cases/W_const_in_loop/layout.csl",
+     "algorithm": "sha256",
+     "hex": "2a4d55eb5298450567a61a2993d5b323ab066669060285c61f987d77a482b52c",
+     "bytes": 405
+    },
+    "pe.csl": {
+     "path": "cases/W_const_in_loop/pe.csl",
+     "algorithm": "sha256",
+     "hex": "2780d81507897204fe77598d08803410310d08b7cd8fa87f46321d1487693254",
+     "bytes": 1047
+    },
+    "factor": {
+     "path": "cases/W_const_in_loop/FACTOR.txt",
+     "algorithm": "sha256",
+     "hex": "22182ddb9cc33fd46f8b24cbdb6d739df73951b43662319f1b88be9baa10e5c5",
+     "bytes": 102
+    },
+    "captured_ir": {
+     "path": "cases/W_const_in_loop/ir/out_out_0_0/program.ll",
+     "algorithm": "sha256",
+     "hex": "26cb5d6e6c248ef79d305c2e9c888ae5cc52479cfe34fc4693ff1d48d5ec18a9",
+     "bytes": 199877
+    },
+    "object": {
+     "path": "cases/W_const_in_loop/ir/out_out_0_0/program.o",
+     "algorithm": "sha256",
+     "hex": "440c8fdb59d5dd774c6ebe7733fc8b42a4365be1aa1fc5e28f35875d5d114b04",
+     "bytes": 32872
+    },
+    "task_table": {
+     "path": "cases/W_const_in_loop/ir/out_out_0_0/task.ld",
+     "algorithm": "sha256",
+     "hex": "280f4333fc1f65dc608cdc4142de7d98eeb8a5e06d091492118e441105631bb5",
+     "bytes": 3459
+    },
+    "link_script": {
+     "path": "cases/W_const_in_loop/ir/out_out_0_0/link.ld",
+     "algorithm": "sha256",
+     "hex": "6b8e0e2573a34239540a521a6df0c37cf75da8d340add615050a27a27fecc67f",
+     "bytes": 9499
+    },
+    "backend_request": {
+     "path": "cases/W_const_in_loop/ir/out_out_0_0/backend.request",
+     "algorithm": "sha256",
+     "hex": "a24e6bc2a89173d5a289e541efd4b9b2542c53aa3bae15fc25fede982a1c55c8",
+     "bytes": 114
+    },
+    "linker_request": {
+     "path": "cases/W_const_in_loop/ir/out_out_0_0/linker.request",
+     "algorithm": "sha256",
+     "hex": "981c51fac9e9786ae56b30663631424052b5872549bc60d721163a56136aff93",
+     "bytes": 303
+    },
+    "elf": {
+     "path": "cases/W_const_in_loop/out/bin/out_0_0.elf",
+     "algorithm": "sha256",
+     "hex": "f3a1fe674bc15e07f4480bbca2c9441979dd57b0906f59e2d991181e4f0dfaad",
+     "bytes": 22400
+    },
+    "disassembly": {
+     "path": "cases/W_const_in_loop/disasm.json",
+     "algorithm": "sha256",
+     "hex": "f822e78dfa5c54eac612839f10423a844efb06ee6adaf1563623c77419bf40e9",
+     "bytes": 217771
+    },
+    "verification": {
+     "path": "cases/W_const_in_loop/verify.json",
+     "algorithm": "sha256",
+     "hex": "d95e2e5cfde1ee594cf277d1e70902fdc411e98f02710a0c644a7142a620c4a6",
+     "bytes": 462
+    }
+   },
+   "correctness": {
+    "array": "c",
+    "inputs": {
+     "a[0:4]": [
+      -20,
+      -17,
+      -14,
+      -11
+     ],
+     "b[0:4]": [
+      7,
+      5,
+      3,
+      1
+     ],
+     "idx[0]": 5,
+     "k[0]": 6
+    },
+    "expected": {
+     "0": -15,
+     "1": -15,
+     "2": -15,
+     "3": -15,
+     "4": -15,
+     "5": -15,
+     "6": -15,
+     "7": -15
+    },
+    "observed": {
+     "0": -15,
+     "1": -15,
+     "2": -15,
+     "3": -15,
+     "4": -15,
+     "5": -15,
+     "6": -15,
+     "7": -15
+    },
+    "ok": true
+   }
+  },
+  "W_dsd_inplace": {
+   "factor": "withheld",
+   "compile_command": "cslc ./layout.csl --arch=wse3 --fabric-dims=8,3 --fabric-offsets=4,1 --memcpy --channels=1 --width-west-buf=0 --width-east-buf=0 --dump-dsr-alloc-graph -o out",
+   "backend_command": "cslc-backend schrodinger cs_sdr-cerebras-csos   (request on stdin)",
+   "linker_command": "cslc-linker -v   (request on stdin)",
+   "toolchain": {
+    "cslang_bin": "/cb/toolchains/cslang/rel-sdk-2.10.0/202604012315-1813-1394a6ea/bin",
+    "target_cpu": "schrodinger",
+    "triple": "cs_sdr-cerebras-csos",
+    "runtime_libraries": [
+     "/cb/toolchains/cslang/rel-sdk-2.10.0/202604012315-1813-1394a6ea/csl-rt/libcsl_rt_cs_sdr.a"
+    ]
+   },
+   "files": {
+    "layout.csl": {
+     "path": "cases/W_dsd_inplace/layout.csl",
+     "algorithm": "sha256",
+     "hex": "2a4d55eb5298450567a61a2993d5b323ab066669060285c61f987d77a482b52c",
+     "bytes": 405
+    },
+    "pe.csl": {
+     "path": "cases/W_dsd_inplace/pe.csl",
+     "algorithm": "sha256",
+     "hex": "89ab263ace9587106b5fa6b61374e09193d587f1efebbcc9c364582599526398",
+     "bytes": 1021
+    },
+    "factor": {
+     "path": "cases/W_dsd_inplace/FACTOR.txt",
+     "algorithm": "sha256",
+     "hex": "ca08c4be1a359e911e8247b0e3085809b95a40de4047c252bb1cf0cabf3234d2",
+     "bytes": 76
+    },
+    "captured_ir": {
+     "path": "cases/W_dsd_inplace/ir/out_out_0_0/program.ll",
+     "algorithm": "sha256",
+     "hex": "411caf13079ba17fa58fdf9c13d8eb4df5aa61362fe9499e52b40a0ef46c46d2",
+     "bytes": 197312
+    },
+    "object": {
+     "path": "cases/W_dsd_inplace/ir/out_out_0_0/program.o",
+     "algorithm": "sha256",
+     "hex": "8353a73f9a2ef7d230bc6e0c170e3cf6987515c172a194fdaaabe0382b0aae47",
+     "bytes": 32880
+    },
+    "task_table": {
+     "path": "cases/W_dsd_inplace/ir/out_out_0_0/task.ld",
+     "algorithm": "sha256",
+     "hex": "280f4333fc1f65dc608cdc4142de7d98eeb8a5e06d091492118e441105631bb5",
+     "bytes": 3459
+    },
+    "link_script": {
+     "path": "cases/W_dsd_inplace/ir/out_out_0_0/link.ld",
+     "algorithm": "sha256",
+     "hex": "6b8e0e2573a34239540a521a6df0c37cf75da8d340add615050a27a27fecc67f",
+     "bytes": 9499
+    },
+    "backend_request": {
+     "path": "cases/W_dsd_inplace/ir/out_out_0_0/backend.request",
+     "algorithm": "sha256",
+     "hex": "d6fbe4f64e8352ea1b8c9e4a808631ea92cdc95d0882a3ce5850f5a16bf9328b",
+     "bytes": 114
+    },
+    "linker_request": {
+     "path": "cases/W_dsd_inplace/ir/out_out_0_0/linker.request",
+     "algorithm": "sha256",
+     "hex": "c33d23ec6d25f712b41ddf38b1da2ee08adade428c84d94c26266a2686aa87a5",
+     "bytes": 301
+    },
+    "elf": {
+     "path": "cases/W_dsd_inplace/out/bin/out_0_0.elf",
+     "algorithm": "sha256",
+     "hex": "3ba008bfbc7f19099822c0810c65cebe70d144b50db91dd6ac9de0f0cc35c90b",
+     "bytes": 22472
+    },
+    "disassembly": {
+     "path": "cases/W_dsd_inplace/disasm.json",
+     "algorithm": "sha256",
+     "hex": "5d506a6334e0f7ecfd1d91f270f35c062ce7a6390f9b30e4c217933b29618836",
+     "bytes": 215792
+    },
+    "verification": {
+     "path": "cases/W_dsd_inplace/verify.json",
+     "algorithm": "sha256",
+     "hex": "b0ad127a7bf2fef37212b51f6f195ee62841b9fc840699fb675964a42cb6b0ea",
+     "bytes": 634
+    }
+   },
+   "correctness": {
+    "array": "a",
+    "inputs": {
+     "a[0:4]": [
+      -20,
+      -17,
+      -14,
+      -11
+     ],
+     "b[0:4]": [
+      7,
+      5,
+      3,
+      1
+     ],
+     "idx[0]": 5,
+     "k[0]": 6
+    },
+    "expected": {
+     "0": -13,
+     "1": -12,
+     "2": -11,
+     "3": -10,
+     "4": -9,
+     "5": -8,
+     "6": -7,
+     "7": -6,
+     "8": -5,
+     "9": -4,
+     "10": -3,
+     "11": -2,
+     "12": -1,
+     "13": 0,
+     "14": 1,
+     "15": 2
+    },
+    "observed": {
+     "0": -13,
+     "1": -12,
+     "2": -11,
+     "3": -10,
+     "4": -9,
+     "5": -8,
+     "6": -7,
+     "7": -6,
+     "8": -5,
+     "9": -4,
+     "10": -3,
+     "11": -2,
+     "12": -1,
+     "13": 0,
+     "14": 1,
+     "15": 2
+    },
+    "ok": true
+   }
+  },
+  "W_index_inplace": {
+   "factor": "withheld",
+   "compile_command": "cslc ./layout.csl --arch=wse3 --fabric-dims=8,3 --fabric-offsets=4,1 --memcpy --channels=1 --width-west-buf=0 --width-east-buf=0 --dump-dsr-alloc-graph -o out",
+   "backend_command": "cslc-backend schrodinger cs_sdr-cerebras-csos   (request on stdin)",
+   "linker_command": "cslc-linker -v   (request on stdin)",
+   "toolchain": {
+    "cslang_bin": "/cb/toolchains/cslang/rel-sdk-2.10.0/202604012315-1813-1394a6ea/bin",
+    "target_cpu": "schrodinger",
+    "triple": "cs_sdr-cerebras-csos",
+    "runtime_libraries": [
+     "/cb/toolchains/cslang/rel-sdk-2.10.0/202604012315-1813-1394a6ea/csl-rt/libcsl_rt_cs_sdr.a"
+    ]
+   },
+   "files": {
+    "layout.csl": {
+     "path": "cases/W_index_inplace/layout.csl",
+     "algorithm": "sha256",
+     "hex": "2a4d55eb5298450567a61a2993d5b323ab066669060285c61f987d77a482b52c",
+     "bytes": 405
+    },
+    "pe.csl": {
+     "path": "cases/W_index_inplace/pe.csl",
+     "algorithm": "sha256",
+     "hex": "c0dd19babe979e511a5e1444572f8c582dd56856ac30ff86883bb92a3e6888a2",
+     "bytes": 1054
+    },
+    "factor": {
+     "path": "cases/W_index_inplace/FACTOR.txt",
+     "algorithm": "sha256",
+     "hex": "b914dfcf893880cd0fd4025e8b9184608a330e2e97c88f2689d51c719c4659c3",
+     "bytes": 109
+    },
+    "captured_ir": {
+     "path": "cases/W_index_inplace/ir/out_out_0_0/program.ll",
+     "algorithm": "sha256",
+     "hex": "f9b8be1204706219efeafac3d50ab90742d88eddb666c9ebe1e05f5973ba674d",
+     "bytes": 197632
+    },
+    "object": {
+     "path": "cases/W_index_inplace/ir/out_out_0_0/program.o",
+     "algorithm": "sha256",
+     "hex": "7c45f6d9db36c9a6453f86338668755933c78d000224310e609680abc2372f99",
+     "bytes": 32752
+    },
+    "task_table": {
+     "path": "cases/W_index_inplace/ir/out_out_0_0/task.ld",
+     "algorithm": "sha256",
+     "hex": "280f4333fc1f65dc608cdc4142de7d98eeb8a5e06d091492118e441105631bb5",
+     "bytes": 3459
+    },
+    "link_script": {
+     "path": "cases/W_index_inplace/ir/out_out_0_0/link.ld",
+     "algorithm": "sha256",
+     "hex": "6b8e0e2573a34239540a521a6df0c37cf75da8d340add615050a27a27fecc67f",
+     "bytes": 9499
+    },
+    "backend_request": {
+     "path": "cases/W_index_inplace/ir/out_out_0_0/backend.request",
+     "algorithm": "sha256",
+     "hex": "9c2fcaaa5e6464ea272b3fe05315f41a66c72b0e31acffb4022013bb8db15f43",
+     "bytes": 114
+    },
+    "linker_request": {
+     "path": "cases/W_index_inplace/ir/out_out_0_0/linker.request",
+     "algorithm": "sha256",
+     "hex": "ed9ea7c878f0fbd0d2e7129060524bd9166057e9050d9b67e57dbd7bf1fe7db9",
+     "bytes": 303
+    },
+    "elf": {
+     "path": "cases/W_index_inplace/out/bin/out_0_0.elf",
+     "algorithm": "sha256",
+     "hex": "ca4206e8a527fcfc174433f7c56d37ecb6d0214b9835c1ae6435deadfccdc924",
+     "bytes": 22408
+    },
+    "disassembly": {
+     "path": "cases/W_index_inplace/disasm.json",
+     "algorithm": "sha256",
+     "hex": "c9dcd66c75bf50594c1b53244179900c14e41379fbc8dbf4ef13a3ae5c768fc0",
+     "bytes": 218283
+    },
+    "verification": {
+     "path": "cases/W_index_inplace/verify.json",
+     "algorithm": "sha256",
+     "hex": "bc123becf245c5b2e1ce9364386d17976cde9566466b9c04fe1494ace8753696",
+     "bytes": 292
+    }
+   },
+   "correctness": {
+    "array": "a",
+    "inputs": {
+     "a[0:4]": [
+      -20,
+      -17,
+      -14,
+      -11
+     ],
+     "b[0:4]": [
+      7,
+      5,
+      3,
+      1
+     ],
+     "idx[0]": 5,
+     "k[0]": 6
+    },
+    "expected": {
+     "5": -8
+    },
+    "observed": {
+     "5": -8
+    },
+    "ok": true
+   }
+  },
+  "base": {
+   "factor": "reference",
+   "compile_command": "cslc ./layout.csl --arch=wse3 --fabric-dims=8,3 --fabric-offsets=4,1 --memcpy --channels=1 --width-west-buf=0 --width-east-buf=0 --dump-dsr-alloc-graph -o out",
+   "backend_command": "cslc-backend schrodinger cs_sdr-cerebras-csos   (request on stdin)",
+   "linker_command": "cslc-linker -v   (request on stdin)",
+   "toolchain": {
+    "cslang_bin": "/cb/toolchains/cslang/rel-sdk-2.10.0/202604012315-1813-1394a6ea/bin",
+    "target_cpu": "schrodinger",
+    "triple": "cs_sdr-cerebras-csos",
+    "runtime_libraries": [
+     "/cb/toolchains/cslang/rel-sdk-2.10.0/202604012315-1813-1394a6ea/csl-rt/libcsl_rt_cs_sdr.a"
+    ]
+   },
+   "files": {
+    "layout.csl": {
+     "path": "cases/base/layout.csl",
+     "algorithm": "sha256",
+     "hex": "2a4d55eb5298450567a61a2993d5b323ab066669060285c61f987d77a482b52c",
+     "bytes": 405
+    },
+    "pe.csl": {
+     "path": "cases/base/pe.csl",
+     "algorithm": "sha256",
+     "hex": "010579533ff747a649b9f9895aa777dfb5ac19fcb290a8dd8785334d2a114116",
+     "bytes": 1021
+    },
+    "factor": {
+     "path": "cases/base/FACTOR.txt",
+     "algorithm": "sha256",
+     "hex": "f47f4d354c07ee878d7a430ec2fe7a92efdb820e319c560f3c4b7583ed6b5d86",
+     "bytes": 77
+    },
+    "captured_ir": {
+     "path": "cases/base/ir/out_out_0_0/program.ll",
+     "algorithm": "sha256",
+     "hex": "0d5969930a8003562ab1abf1d52947760070adc79a3366dcdee5bb849042519c",
+     "bytes": 196913
+    },
+    "object": {
+     "path": "cases/base/ir/out_out_0_0/program.o",
+     "algorithm": "sha256",
+     "hex": "d9d2a9f515e7e08b2dabebe1340371f4effdc11aff2b724576ec42e21a6271c5",
+     "bytes": 32704
+    },
+    "task_table": {
+     "path": "cases/base/ir/out_out_0_0/task.ld",
+     "algorithm": "sha256",
+     "hex": "280f4333fc1f65dc608cdc4142de7d98eeb8a5e06d091492118e441105631bb5",
+     "bytes": 3459
+    },
+    "link_script": {
+     "path": "cases/base/ir/out_out_0_0/link.ld",
+     "algorithm": "sha256",
+     "hex": "6b8e0e2573a34239540a521a6df0c37cf75da8d340add615050a27a27fecc67f",
+     "bytes": 9499
+    },
+    "backend_request": {
+     "path": "cases/base/ir/out_out_0_0/backend.request",
+     "algorithm": "sha256",
+     "hex": "d942c7d2c2a63037ac0a09bf0ad7787cdae944b37e5cd4e32e659c857a266bee",
+     "bytes": 114
+    },
+    "linker_request": {
+     "path": "cases/base/ir/out_out_0_0/linker.request",
+     "algorithm": "sha256",
+     "hex": "631475fbde11d0b4f1a6c43665ee49da2f04914a7a1d006ee25ccd36185c702a",
+     "bytes": 292
+    },
+    "elf": {
+     "path": "cases/base/out/bin/out_0_0.elf",
+     "algorithm": "sha256",
+     "hex": "d38cb46dff7d51bd21ee6c350ea14b492956a442c3052ffc8a1da8fff61b7aa2",
+     "bytes": 22328
+    },
+    "disassembly": {
+     "path": "cases/base/disasm.json",
+     "algorithm": "sha256",
+     "hex": "bb2ae62dfe547cec14a6ab0566cff10487a1303d3d1b169c49068552fbabe627",
+     "bytes": 215946
+    },
+    "verification": {
+     "path": "cases/base/verify.json",
+     "algorithm": "sha256",
+     "hex": "0087748f942e5a8af08cdbd8240abad823090ee06ec62a5dd80161ebda1ea9ab",
+     "bytes": 283
+    }
+   },
+   "correctness": {
+    "array": "c",
+    "inputs": {
+     "a[0:4]": [
+      -20,
+      -17,
+      -14,
+      -11
+     ],
+     "b[0:4]": [
+      7,
+      5,
+      3,
+      1
+     ],
+     "idx[0]": 5,
+     "k[0]": 6
+    },
+    "expected": {
+     "0": -13
+    },
+    "observed": {
+     "0": -13
+    },
+    "ok": true
+   }
+  },
+  "const_both": {
+   "factor": "constantness",
+   "compile_command": "cslc ./layout.csl --arch=wse3 --fabric-dims=8,3 --fabric-offsets=4,1 --memcpy --channels=1 --width-west-buf=0 --width-east-buf=0 --dump-dsr-alloc-graph -o out",
+   "backend_command": "cslc-backend schrodinger cs_sdr-cerebras-csos   (request on stdin)",
+   "linker_command": "cslc-linker -v   (request on stdin)",
+   "toolchain": {
+    "cslang_bin": "/cb/toolchains/cslang/rel-sdk-2.10.0/202604012315-1813-1394a6ea/bin",
+    "target_cpu": "schrodinger",
+    "triple": "cs_sdr-cerebras-csos",
+    "runtime_libraries": [
+     "/cb/toolchains/cslang/rel-sdk-2.10.0/202604012315-1813-1394a6ea/csl-rt/libcsl_rt_cs_sdr.a"
+    ]
+   },
+   "files": {
+    "layout.csl": {
+     "path": "cases/const_both/layout.csl",
+     "algorithm": "sha256",
+     "hex": "2a4d55eb5298450567a61a2993d5b323ab066669060285c61f987d77a482b52c",
+     "bytes": 405
+    },
+    "pe.csl": {
+     "path": "cases/const_both/pe.csl",
+     "algorithm": "sha256",
+     "hex": "bc8423013f8bf22d573bbdcb95880fb5e9a4a430310fdd618adacefa1fbc131c",
+     "bytes": 1015
+    },
+    "factor": {
+     "path": "cases/const_both/FACTOR.txt",
+     "algorithm": "sha256",
+     "hex": "ba0e4c94d00cf48c38538a841f1605c294a173b560b694816f6cc80234000488",
+     "bytes": 74
+    },
+    "captured_ir": {
+     "path": "cases/const_both/ir/out_out_0_0/program.ll",
+     "algorithm": "sha256",
+     "hex": "f0ba3d6b10633966a47dded2bae1e18059fb0bb0c3d4f8a344933266d39235e6",
+     "bytes": 196502
+    },
+    "object": {
+     "path": "cases/const_both/ir/out_out_0_0/program.o",
+     "algorithm": "sha256",
+     "hex": "95743d77bb16918d5ef262e3180718e7d2fa0e128b343152ff884b47a52b3c40",
+     "bytes": 32648
+    },
+    "task_table": {
+     "path": "cases/const_both/ir/out_out_0_0/task.ld",
+     "algorithm": "sha256",
+     "hex": "280f4333fc1f65dc608cdc4142de7d98eeb8a5e06d091492118e441105631bb5",
+     "bytes": 3459
+    },
+    "link_script": {
+     "path": "cases/const_both/ir/out_out_0_0/link.ld",
+     "algorithm": "sha256",
+     "hex": "6b8e0e2573a34239540a521a6df0c37cf75da8d340add615050a27a27fecc67f",
+     "bytes": 9499
+    },
+    "backend_request": {
+     "path": "cases/const_both/ir/out_out_0_0/backend.request",
+     "algorithm": "sha256",
+     "hex": "e68985b9a0895780e9671430cb9ea1341981e6cdc6abd77e51cb04eb1309378d",
+     "bytes": 114
+    },
+    "linker_request": {
+     "path": "cases/const_both/ir/out_out_0_0/linker.request",
+     "algorithm": "sha256",
+     "hex": "73b82041ba35874484ca1926cdf561efc59962b28f1cb6090fb578aeb87fa3cc",
+     "bytes": 298
+    },
+    "elf": {
+     "path": "cases/const_both/out/bin/out_0_0.elf",
+     "algorithm": "sha256",
+     "hex": "8c322e4ff08225b91586506e43eb1c1dbe2bae7d1cd5911c8b43f130504dd1c9",
+     "bytes": 22328
+    },
+    "disassembly": {
+     "path": "cases/const_both/disasm.json",
+     "algorithm": "sha256",
+     "hex": "03c1f8821351b01d8e1727fec94f951bc6153c7ff53653a5607a9aa982e63a1e",
+     "bytes": 215431
+    },
+    "verification": {
+     "path": "cases/const_both/verify.json",
+     "algorithm": "sha256",
+     "hex": "0bddbf5711fd9f4e44ac29fe2b141bb7bfabe16d12fc3af046999cb124676bd1",
+     "bytes": 287
+    }
+   },
+   "correctness": {
+    "array": "c",
+    "inputs": {
+     "a[0:4]": [
+      -20,
+      -17,
+      -14,
+      -11
+     ],
+     "b[0:4]": [
+      7,
+      5,
+      3,
+      1
+     ],
+     "idx[0]": 5,
+     "k[0]": 6
+    },
+    "expected": {
+     "0": 10
+    },
+    "observed": {
+     "0": 10
+    },
+    "ok": true
+   }
+  },
+  "const_one": {
+   "factor": "constantness",
+   "compile_command": "cslc ./layout.csl --arch=wse3 --fabric-dims=8,3 --fabric-offsets=4,1 --memcpy --channels=1 --width-west-buf=0 --width-east-buf=0 --dump-dsr-alloc-graph -o out",
+   "backend_command": "cslc-backend schrodinger cs_sdr-cerebras-csos   (request on stdin)",
+   "linker_command": "cslc-linker -v   (request on stdin)",
+   "toolchain": {
+    "cslang_bin": "/cb/toolchains/cslang/rel-sdk-2.10.0/202604012315-1813-1394a6ea/bin",
+    "target_cpu": "schrodinger",
+    "triple": "cs_sdr-cerebras-csos",
+    "runtime_libraries": [
+     "/cb/toolchains/cslang/rel-sdk-2.10.0/202604012315-1813-1394a6ea/csl-rt/libcsl_rt_cs_sdr.a"
+    ]
+   },
+   "files": {
+    "layout.csl": {
+     "path": "cases/const_one/layout.csl",
+     "algorithm": "sha256",
+     "hex": "2a4d55eb5298450567a61a2993d5b323ab066669060285c61f987d77a482b52c",
+     "bytes": 405
+    },
+    "pe.csl": {
+     "path": "cases/const_one/pe.csl",
+     "algorithm": "sha256",
+     "hex": "435b74838105f84f1184012a98d46c51177b729cce7b08ed252710da8e629310",
+     "bytes": 1018
+    },
+    "factor": {
+     "path": "cases/const_one/FACTOR.txt",
+     "algorithm": "sha256",
+     "hex": "ce602babe77548db7e44a0dda69b7aad1873816c69e2a0f21615ba7bd243c0f2",
+     "bytes": 77
+    },
+    "captured_ir": {
+     "path": "cases/const_one/ir/out_out_0_0/program.ll",
+     "algorithm": "sha256",
+     "hex": "b3dd58bf88cfe89e9a5deac6e318f19fa9ef7c0b74f0cef0c4c606fe303fd5e1",
+     "bytes": 196752
+    },
+    "object": {
+     "path": "cases/const_one/ir/out_out_0_0/program.o",
+     "algorithm": "sha256",
+     "hex": "bbbecea0b6167bf89df764d29b78bd69f4ef08b3b6964eab0853cfdbfc87dabb",
+     "bytes": 32680
+    },
+    "task_table": {
+     "path": "cases/const_one/ir/out_out_0_0/task.ld",
+     "algorithm": "sha256",
+     "hex": "280f4333fc1f65dc608cdc4142de7d98eeb8a5e06d091492118e441105631bb5",
+     "bytes": 3459
+    },
+    "link_script": {
+     "path": "cases/const_one/ir/out_out_0_0/link.ld",
+     "algorithm": "sha256",
+     "hex": "6b8e0e2573a34239540a521a6df0c37cf75da8d340add615050a27a27fecc67f",
+     "bytes": 9499
+    },
+    "backend_request": {
+     "path": "cases/const_one/ir/out_out_0_0/backend.request",
+     "algorithm": "sha256",
+     "hex": "1ebdc8122c8e7b49f186397b000174390b80f5daea25600ccd4404677ba4e172",
+     "bytes": 114
+    },
+    "linker_request": {
+     "path": "cases/const_one/ir/out_out_0_0/linker.request",
+     "algorithm": "sha256",
+     "hex": "7e6140f0370d497ee26c58f356c6062ff6fc50ee3dc95c1072d2429541f47231",
+     "bytes": 297
+    },
+    "elf": {
+     "path": "cases/const_one/out/bin/out_0_0.elf",
+     "algorithm": "sha256",
+     "hex": "ee97f466a12bb136221d72ef9dc909e218baeea9b08493a8f4386dc50889cb45",
+     "bytes": 22336
+    },
+    "disassembly": {
+     "path": "cases/const_one/disasm.json",
+     "algorithm": "sha256",
+     "hex": "aa1fd44c01a39ce490ad1e6a0a9d2353aa833652dddc5c21f11aa2a085f7531a",
+     "bytes": 215712
+    },
+    "verification": {
+     "path": "cases/const_one/verify.json",
+     "algorithm": "sha256",
+     "hex": "42cfa67bb1adc07a6455f1128442e6baee56e9427e27466f371caac8f1118cec",
+     "bytes": 288
+    }
+   },
+   "correctness": {
+    "array": "c",
+    "inputs": {
+     "a[0:4]": [
+      -20,
+      -17,
+      -14,
+      -11
+     ],
+     "b[0:4]": [
+      7,
+      5,
+      3,
+      1
+     ],
+     "idx[0]": 5,
+     "k[0]": 6
+    },
+    "expected": {
+     "0": -13
+    },
+    "observed": {
+     "0": -13
+    },
+    "ok": true
+   }
+  },
+  "dsd16": {
+   "factor": "execution form",
+   "compile_command": "cslc ./layout.csl --arch=wse3 --fabric-dims=8,3 --fabric-offsets=4,1 --memcpy --channels=1 --width-west-buf=0 --width-east-buf=0 --dump-dsr-alloc-graph -o out",
+   "backend_command": "cslc-backend schrodinger cs_sdr-cerebras-csos   (request on stdin)",
+   "linker_command": "cslc-linker -v   (request on stdin)",
+   "toolchain": {
+    "cslang_bin": "/cb/toolchains/cslang/rel-sdk-2.10.0/202604012315-1813-1394a6ea/bin",
+    "target_cpu": "schrodinger",
+    "triple": "cs_sdr-cerebras-csos",
+    "runtime_libraries": [
+     "/cb/toolchains/cslang/rel-sdk-2.10.0/202604012315-1813-1394a6ea/csl-rt/libcsl_rt_cs_sdr.a"
+    ]
+   },
+   "files": {
+    "layout.csl": {
+     "path": "cases/dsd16/layout.csl",
+     "algorithm": "sha256",
+     "hex": "2a4d55eb5298450567a61a2993d5b323ab066669060285c61f987d77a482b52c",
+     "bytes": 405
+    },
+    "pe.csl": {
+     "path": "cases/dsd16/pe.csl",
+     "algorithm": "sha256",
+     "hex": "319f970e81b27bbef28d8d9defdb3aa109e2bf0f6d9304c37caf0be728af415d",
+     "bytes": 1021
+    },
+    "factor": {
+     "path": "cases/dsd16/FACTOR.txt",
+     "algorithm": "sha256",
+     "hex": "90cbcbe157699a9bc49423bbc283a51897a7e470b1b9abe400baf1f33bdd7ae1",
+     "bytes": 82
+    },
+    "captured_ir": {
+     "path": "cases/dsd16/ir/out_out_0_0/program.ll",
+     "algorithm": "sha256",
+     "hex": "dfce4e21789edb75efe6de8aba1860da5e91e8d6e069b0b70066e9521764c7cb",
+     "bytes": 197673
+    },
+    "object": {
+     "path": "cases/dsd16/ir/out_out_0_0/program.o",
+     "algorithm": "sha256",
+     "hex": "4142cef94cc9cae93adf74722c7b4bd7d8e09902acabf5b07c8510483d99a9fd",
+     "bytes": 33000
+    },
+    "task_table": {
+     "path": "cases/dsd16/ir/out_out_0_0/task.ld",
+     "algorithm": "sha256",
+     "hex": "280f4333fc1f65dc608cdc4142de7d98eeb8a5e06d091492118e441105631bb5",
+     "bytes": 3459
+    },
+    "link_script": {
+     "path": "cases/dsd16/ir/out_out_0_0/link.ld",
+     "algorithm": "sha256",
+     "hex": "6b8e0e2573a34239540a521a6df0c37cf75da8d340add615050a27a27fecc67f",
+     "bytes": 9499
+    },
+    "backend_request": {
+     "path": "cases/dsd16/ir/out_out_0_0/backend.request",
+     "algorithm": "sha256",
+     "hex": "a4c85714b4dbc59a5b6a285df521d325913a6cc26b0b630c1505f413f3ebf3b7",
+     "bytes": 114
+    },
+    "linker_request": {
+     "path": "cases/dsd16/ir/out_out_0_0/linker.request",
+     "algorithm": "sha256",
+     "hex": "51703506ddf89bdcc3e747cf523128f093adf4810c9a72df0245c71dda28e543",
+     "bytes": 293
+    },
+    "elf": {
+     "path": "cases/dsd16/out/bin/out_0_0.elf",
+     "algorithm": "sha256",
+     "hex": "cd67d38442fb6a64586b2ce5e7a5e7838702a4bad5a7a6fea56008e01b5ad3e1",
+     "bytes": 22600
+    },
+    "disassembly": {
+     "path": "cases/dsd16/disasm.json",
+     "algorithm": "sha256",
+     "hex": "3e03e2619af9ec25424f3e15359e3d037d59eff90da0ad330f9731b7a80ec15b",
+     "bytes": 216021
+    },
+    "verification": {
+     "path": "cases/dsd16/verify.json",
+     "algorithm": "sha256",
+     "hex": "39945ebb2587236eac7906bc81c689b1cb82f056d34ba4e8386dbab09f32dd50",
+     "bytes": 626
+    }
+   },
+   "correctness": {
+    "array": "c",
+    "inputs": {
+     "a[0:4]": [
+      -20,
+      -17,
+      -14,
+      -11
+     ],
+     "b[0:4]": [
+      7,
+      5,
+      3,
+      1
+     ],
+     "idx[0]": 5,
+     "k[0]": 6
+    },
+    "expected": {
+     "0": -13,
+     "1": -12,
+     "2": -11,
+     "3": -10,
+     "4": -9,
+     "5": -8,
+     "6": -7,
+     "7": -6,
+     "8": -5,
+     "9": -4,
+     "10": -3,
+     "11": -2,
+     "12": -1,
+     "13": 0,
+     "14": 1,
+     "15": 2
+    },
+    "observed": {
+     "0": -13,
+     "1": -12,
+     "2": -11,
+     "3": -10,
+     "4": -9,
+     "5": -8,
+     "6": -7,
+     "7": -6,
+     "8": -5,
+     "9": -4,
+     "10": -3,
+     "11": -2,
+     "12": -1,
+     "13": 0,
+     "14": 1,
+     "15": 2
+    },
+    "ok": true
+   }
+  },
+  "index_runtime": {
+   "factor": "addressing",
+   "compile_command": "cslc ./layout.csl --arch=wse3 --fabric-dims=8,3 --fabric-offsets=4,1 --memcpy --channels=1 --width-west-buf=0 --width-east-buf=0 --dump-dsr-alloc-graph -o out",
+   "backend_command": "cslc-backend schrodinger cs_sdr-cerebras-csos   (request on stdin)",
+   "linker_command": "cslc-linker -v   (request on stdin)",
+   "toolchain": {
+    "cslang_bin": "/cb/toolchains/cslang/rel-sdk-2.10.0/202604012315-1813-1394a6ea/bin",
+    "target_cpu": "schrodinger",
+    "triple": "cs_sdr-cerebras-csos",
+    "runtime_libraries": [
+     "/cb/toolchains/cslang/rel-sdk-2.10.0/202604012315-1813-1394a6ea/csl-rt/libcsl_rt_cs_sdr.a"
+    ]
+   },
+   "files": {
+    "layout.csl": {
+     "path": "cases/index_runtime/layout.csl",
+     "algorithm": "sha256",
+     "hex": "2a4d55eb5298450567a61a2993d5b323ab066669060285c61f987d77a482b52c",
+     "bytes": 405
+    },
+    "pe.csl": {
+     "path": "cases/index_runtime/pe.csl",
+     "algorithm": "sha256",
+     "hex": "f613868c10a2be0ef8aedf5aeb778703a33cfeec110f17f141b1b1374c4b0df4",
+     "bytes": 1054
+    },
+    "factor": {
+     "path": "cases/index_runtime/FACTOR.txt",
+     "algorithm": "sha256",
+     "hex": "b85635b862814a5e8f087973f489abcc15de030cd1ca0f3f697e481a5c8af450",
+     "bytes": 111
+    },
+    "captured_ir": {
+     "path": "cases/index_runtime/ir/out_out_0_0/program.ll",
+     "algorithm": "sha256",
+     "hex": "bf3feba0defad77108ab58a0de4bb8479bc0fafbcdcd582bc1d7412cb5d57aec",
+     "bytes": 197445
+    },
+    "object": {
+     "path": "cases/index_runtime/ir/out_out_0_0/program.o",
+     "algorithm": "sha256",
+     "hex": "8faa00c4dc2bd786f93856155151b750c4f86c198dce8a53051460ead8adabde",
+     "bytes": 32784
+    },
+    "task_table": {
+     "path": "cases/index_runtime/ir/out_out_0_0/task.ld",
+     "algorithm": "sha256",
+     "hex": "280f4333fc1f65dc608cdc4142de7d98eeb8a5e06d091492118e441105631bb5",
+     "bytes": 3459
+    },
+    "link_script": {
+     "path": "cases/index_runtime/ir/out_out_0_0/link.ld",
+     "algorithm": "sha256",
+     "hex": "6b8e0e2573a34239540a521a6df0c37cf75da8d340add615050a27a27fecc67f",
+     "bytes": 9499
+    },
+    "backend_request": {
+     "path": "cases/index_runtime/ir/out_out_0_0/backend.request",
+     "algorithm": "sha256",
+     "hex": "46228a86dfa3360ba1a0aedff3e06e17a3e87faa736cc2e4acec276c71a0abc1",
+     "bytes": 114
+    },
+    "linker_request": {
+     "path": "cases/index_runtime/ir/out_out_0_0/linker.request",
+     "algorithm": "sha256",
+     "hex": "826ca42b5ef0e3a79e2de8b4b5bc2cd157907af133456a626aa60caf62c5383b",
+     "bytes": 301
+    },
+    "elf": {
+     "path": "cases/index_runtime/out/bin/out_0_0.elf",
+     "algorithm": "sha256",
+     "hex": "3bd32a1bd783c3bb68206d1a8a35521a9356d4073461508d659689379bec345b",
+     "bytes": 22416
+    },
+    "disassembly": {
+     "path": "cases/index_runtime/disasm.json",
+     "algorithm": "sha256",
+     "hex": "315ec2ccd2f56b8ab49778fbccbf8e777dd3199f1d340ae3ea5bca62348ab8c8",
+     "bytes": 218249
+    },
+    "verification": {
+     "path": "cases/index_runtime/verify.json",
+     "algorithm": "sha256",
+     "hex": "828fd3f6d554c5324b63528d9001cba87cbf77babea98d653adc336f6e2afaff",
+     "bytes": 290
+    }
+   },
+   "correctness": {
+    "array": "c",
+    "inputs": {
+     "a[0:4]": [
+      -20,
+      -17,
+      -14,
+      -11
+     ],
+     "b[0:4]": [
+      7,
+      5,
+      3,
+      1
+     ],
+     "idx[0]": 5,
+     "k[0]": 6
+    },
+    "expected": {
+     "0": -8
+    },
+    "observed": {
+     "0": -8
+    },
+    "ok": true
+   }
+  },
+  "inplace": {
+   "factor": "aliasing",
+   "compile_command": "cslc ./layout.csl --arch=wse3 --fabric-dims=8,3 --fabric-offsets=4,1 --memcpy --channels=1 --width-west-buf=0 --width-east-buf=0 --dump-dsr-alloc-graph -o out",
+   "backend_command": "cslc-backend schrodinger cs_sdr-cerebras-csos   (request on stdin)",
+   "linker_command": "cslc-linker -v   (request on stdin)",
+   "toolchain": {
+    "cslang_bin": "/cb/toolchains/cslang/rel-sdk-2.10.0/202604012315-1813-1394a6ea/bin",
+    "target_cpu": "schrodinger",
+    "triple": "cs_sdr-cerebras-csos",
+    "runtime_libraries": [
+     "/cb/toolchains/cslang/rel-sdk-2.10.0/202604012315-1813-1394a6ea/csl-rt/libcsl_rt_cs_sdr.a"
+    ]
+   },
+   "files": {
+    "layout.csl": {
+     "path": "cases/inplace/layout.csl",
+     "algorithm": "sha256",
+     "hex": "2a4d55eb5298450567a61a2993d5b323ab066669060285c61f987d77a482b52c",
+     "bytes": 405
+    },
+    "pe.csl": {
+     "path": "cases/inplace/pe.csl",
+     "algorithm": "sha256",
+     "hex": "c6ba887bbcb833ce03a0259c425e05facb06db6fcdfcf7a4b74e8430c907b2d3",
+     "bytes": 1021
+    },
+    "factor": {
+     "path": "cases/inplace/FACTOR.txt",
+     "algorithm": "sha256",
+     "hex": "efa579f26d63ece776b531adb1a7a782d31bbe8eacd5813d4118c2615b4df6e2",
+     "bytes": 76
+    },
+    "captured_ir": {
+     "path": "cases/inplace/ir/out_out_0_0/program.ll",
+     "algorithm": "sha256",
+     "hex": "f317c7009fac9771fde6579bcca37435ebc2edea9e39da1d36cc4095dd16aa9f",
+     "bytes": 196916
+    },
+    "object": {
+     "path": "cases/inplace/ir/out_out_0_0/program.o",
+     "algorithm": "sha256",
+     "hex": "dbad36ea59c396818f1c288c2639e993e318d5962902391759961804760cd75c",
+     "bytes": 32712
+    },
+    "task_table": {
+     "path": "cases/inplace/ir/out_out_0_0/task.ld",
+     "algorithm": "sha256",
+     "hex": "280f4333fc1f65dc608cdc4142de7d98eeb8a5e06d091492118e441105631bb5",
+     "bytes": 3459
+    },
+    "link_script": {
+     "path": "cases/inplace/ir/out_out_0_0/link.ld",
+     "algorithm": "sha256",
+     "hex": "6b8e0e2573a34239540a521a6df0c37cf75da8d340add615050a27a27fecc67f",
+     "bytes": 9499
+    },
+    "backend_request": {
+     "path": "cases/inplace/ir/out_out_0_0/backend.request",
+     "algorithm": "sha256",
+     "hex": "7a0603e5dfe537aa0d1a4aa9e534aa4df440d8716f16df599d42e8ec502bbefd",
+     "bytes": 114
+    },
+    "linker_request": {
+     "path": "cases/inplace/ir/out_out_0_0/linker.request",
+     "algorithm": "sha256",
+     "hex": "09d1e81d7dca8af1f706e9002571d5f2697f954126488cdcb9b28f3f998db220",
+     "bytes": 295
+    },
+    "elf": {
+     "path": "cases/inplace/out/bin/out_0_0.elf",
+     "algorithm": "sha256",
+     "hex": "2b7f73dd91b6eda75da9515e8b95ad13823931ef968cd6bb083ab39fe10f7eba",
+     "bytes": 22328
+    },
+    "disassembly": {
+     "path": "cases/inplace/disasm.json",
+     "algorithm": "sha256",
+     "hex": "738d8f4b958da499bdc6f76b8276ab0d57323a211f023ea662f629f632077615",
+     "bytes": 215967
+    },
+    "verification": {
+     "path": "cases/inplace/verify.json",
+     "algorithm": "sha256",
+     "hex": "bc5b05db5bf7bee28844d605917f99f856b5efedcd3290a1c06b18e01caff07b",
+     "bytes": 286
+    }
+   },
+   "correctness": {
+    "array": "a",
+    "inputs": {
+     "a[0:4]": [
+      -20,
+      -17,
+      -14,
+      -11
+     ],
+     "b[0:4]": [
+      7,
+      5,
+      3,
+      1
+     ],
+     "idx[0]": 5,
+     "k[0]": 6
+    },
+    "expected": {
+     "0": -13
+    },
+    "observed": {
+     "0": -13
+    },
+    "ok": true
+   }
+  },
+  "loop_comptime": {
+   "factor": "control",
+   "compile_command": "cslc ./layout.csl --arch=wse3 --fabric-dims=8,3 --fabric-offsets=4,1 --memcpy --channels=1 --width-west-buf=0 --width-east-buf=0 --dump-dsr-alloc-graph -o out",
+   "backend_command": "cslc-backend schrodinger cs_sdr-cerebras-csos   (request on stdin)",
+   "linker_command": "cslc-linker -v   (request on stdin)",
+   "toolchain": {
+    "cslang_bin": "/cb/toolchains/cslang/rel-sdk-2.10.0/202604012315-1813-1394a6ea/bin",
+    "target_cpu": "schrodinger",
+    "triple": "cs_sdr-cerebras-csos",
+    "runtime_libraries": [
+     "/cb/toolchains/cslang/rel-sdk-2.10.0/202604012315-1813-1394a6ea/csl-rt/libcsl_rt_cs_sdr.a"
+    ]
+   },
+   "files": {
+    "layout.csl": {
+     "path": "cases/loop_comptime/layout.csl",
+     "algorithm": "sha256",
+     "hex": "2a4d55eb5298450567a61a2993d5b323ab066669060285c61f987d77a482b52c",
+     "bytes": 405
+    },
+    "pe.csl": {
+     "path": "cases/loop_comptime/pe.csl",
+     "algorithm": "sha256",
+     "hex": "6ffe1198dd4a2fe165eabb964afe5fcd47eb651916d6c6b4fa234c37a952ed3b",
+     "bytes": 1051
+    },
+    "factor": {
+     "path": "cases/loop_comptime/FACTOR.txt",
+     "algorithm": "sha256",
+     "hex": "bc733f90827eae3f39d3155f5e84013e9b02324fd9daa62e19274a8306d2a8bc",
+     "bytes": 105
+    },
+    "captured_ir": {
+     "path": "cases/loop_comptime/ir/out_out_0_0/program.ll",
+     "algorithm": "sha256",
+     "hex": "c24138194becefc48253862614099e19b7a856372e5580bc2569f6864b29ea74",
+     "bytes": 200288
+    },
+    "object": {
+     "path": "cases/loop_comptime/ir/out_out_0_0/program.o",
+     "algorithm": "sha256",
+     "hex": "d9ed36aed632c342bbbff17adeb18def7d8d3e0ab822f272c6495d763a7f15c2",
+     "bytes": 34208
+    },
+    "task_table": {
+     "path": "cases/loop_comptime/ir/out_out_0_0/task.ld",
+     "algorithm": "sha256",
+     "hex": "280f4333fc1f65dc608cdc4142de7d98eeb8a5e06d091492118e441105631bb5",
+     "bytes": 3459
+    },
+    "link_script": {
+     "path": "cases/loop_comptime/ir/out_out_0_0/link.ld",
+     "algorithm": "sha256",
+     "hex": "6b8e0e2573a34239540a521a6df0c37cf75da8d340add615050a27a27fecc67f",
+     "bytes": 9499
+    },
+    "backend_request": {
+     "path": "cases/loop_comptime/ir/out_out_0_0/backend.request",
+     "algorithm": "sha256",
+     "hex": "df5c77871256f06ad8e365d9537050d6ea9e11236a17c0660f69bd71b58c9c48",
+     "bytes": 114
+    },
+    "linker_request": {
+     "path": "cases/loop_comptime/ir/out_out_0_0/linker.request",
+     "algorithm": "sha256",
+     "hex": "04c76fc347690b70dacc95b690c440c9e3627822ec531daefd7249ff5f8875f1",
+     "bytes": 301
+    },
+    "elf": {
+     "path": "cases/loop_comptime/out/bin/out_0_0.elf",
+     "algorithm": "sha256",
+     "hex": "5d76999e541c2ad95c895495405591c66b9572f70dce5d1edfd6c9f3cf4311ae",
+     "bytes": 22624
+    },
+    "disassembly": {
+     "path": "cases/loop_comptime/disasm.json",
+     "algorithm": "sha256",
+     "hex": "4595a2bcbcf74f0191e93e4df4400e85def0f8bebf96d22e97366919427ae4a8",
+     "bytes": 232615
+    },
+    "verification": {
+     "path": "cases/loop_comptime/verify.json",
+     "algorithm": "sha256",
+     "hex": "cfefa7a2a1e566e805f898f5ed6e19974d879e24b5d2845d79a7b9d656f67170",
+     "bytes": 634
+    }
+   },
+   "correctness": {
+    "array": "c",
+    "inputs": {
+     "a[0:4]": [
+      -20,
+      -17,
+      -14,
+      -11
+     ],
+     "b[0:4]": [
+      7,
+      5,
+      3,
+      1
+     ],
+     "idx[0]": 5,
+     "k[0]": 6
+    },
+    "expected": {
+     "0": -13,
+     "1": -12,
+     "2": -11,
+     "3": -10,
+     "4": -9,
+     "5": -8,
+     "6": -7,
+     "7": -6,
+     "8": -5,
+     "9": -4,
+     "10": -3,
+     "11": -2,
+     "12": -1,
+     "13": 0,
+     "14": 1,
+     "15": 2
+    },
+    "observed": {
+     "0": -13,
+     "1": -12,
+     "2": -11,
+     "3": -10,
+     "4": -9,
+     "5": -8,
+     "6": -7,
+     "7": -6,
+     "8": -5,
+     "9": -4,
+     "10": -3,
+     "11": -2,
+     "12": -1,
+     "13": 0,
+     "14": 1,
+     "15": 2
+    },
+    "ok": true
+   }
+  },
+  "loop_runtime": {
+   "factor": "control",
+   "compile_command": "cslc ./layout.csl --arch=wse3 --fabric-dims=8,3 --fabric-offsets=4,1 --memcpy --channels=1 --width-west-buf=0 --width-east-buf=0 --dump-dsr-alloc-graph -o out",
+   "backend_command": "cslc-backend schrodinger cs_sdr-cerebras-csos   (request on stdin)",
+   "linker_command": "cslc-linker -v   (request on stdin)",
+   "toolchain": {
+    "cslang_bin": "/cb/toolchains/cslang/rel-sdk-2.10.0/202604012315-1813-1394a6ea/bin",
+    "target_cpu": "schrodinger",
+    "triple": "cs_sdr-cerebras-csos",
+    "runtime_libraries": [
+     "/cb/toolchains/cslang/rel-sdk-2.10.0/202604012315-1813-1394a6ea/csl-rt/libcsl_rt_cs_sdr.a"
+    ]
+   },
+   "files": {
+    "layout.csl": {
+     "path": "cases/loop_runtime/layout.csl",
+     "algorithm": "sha256",
+     "hex": "2a4d55eb5298450567a61a2993d5b323ab066669060285c61f987d77a482b52c",
+     "bytes": 405
+    },
+    "pe.csl": {
+     "path": "cases/loop_runtime/pe.csl",
+     "algorithm": "sha256",
+     "hex": "1c2fcf7e2ed5ffe080b176c2d1c5e03bac4c4a784300e68ebe3477ad40061a2c",
+     "bytes": 1099
+    },
+    "factor": {
+     "path": "cases/loop_runtime/FACTOR.txt",
+     "algorithm": "sha256",
+     "hex": "1d6528c5eb02caf968d176b1d1d5586cc97d3f45a2ef899b0dfd8c71af6322d8",
+     "bytes": 153
+    },
+    "captured_ir": {
+     "path": "cases/loop_runtime/ir/out_out_0_0/program.ll",
+     "algorithm": "sha256",
+     "hex": "e5b1ced09cbb2657f773d34059b98742b17f5ade46b4489da0efef06d00ed662",
+     "bytes": 199923
+    },
+    "object": {
+     "path": "cases/loop_runtime/ir/out_out_0_0/program.o",
+     "algorithm": "sha256",
+     "hex": "587e0bf0bb6bd6c3f526f7b7c8fd1b243307c887ed15e7f9639f6da5b4ca01c1",
+     "bytes": 32936
+    },
+    "task_table": {
+     "path": "cases/loop_runtime/ir/out_out_0_0/task.ld",
+     "algorithm": "sha256",
+     "hex": "280f4333fc1f65dc608cdc4142de7d98eeb8a5e06d091492118e441105631bb5",
+     "bytes": 3459
+    },
+    "link_script": {
+     "path": "cases/loop_runtime/ir/out_out_0_0/link.ld",
+     "algorithm": "sha256",
+     "hex": "6b8e0e2573a34239540a521a6df0c37cf75da8d340add615050a27a27fecc67f",
+     "bytes": 9499
+    },
+    "backend_request": {
+     "path": "cases/loop_runtime/ir/out_out_0_0/backend.request",
+     "algorithm": "sha256",
+     "hex": "59fd6b02d05be3c5180fb75d87391499e51dd45015e649b98b95a74f8c30c8c2",
+     "bytes": 114
+    },
+    "linker_request": {
+     "path": "cases/loop_runtime/ir/out_out_0_0/linker.request",
+     "algorithm": "sha256",
+     "hex": "8134647183007db61000181c4d1327923fd88b09a54276445dc555faa9ef6552",
+     "bytes": 300
+    },
+    "elf": {
+     "path": "cases/loop_runtime/out/bin/out_0_0.elf",
+     "algorithm": "sha256",
+     "hex": "180bb4f392fdf1c988e28be32147f53c4438a0b424b74a7548cae5cbe8242848",
+     "bytes": 22496
+    },
+    "disassembly": {
+     "path": "cases/loop_runtime/disasm.json",
+     "algorithm": "sha256",
+     "hex": "dd269f036d699d785c4cffb1f1fc9f61425eb2df2ffd8f00f8b099faa6713dc9",
+     "bytes": 220813
+    },
+    "verification": {
+     "path": "cases/loop_runtime/verify.json",
+     "algorithm": "sha256",
+     "hex": "5e46f47511e38ab749cfd133cd16d49faa692ac6b5e0d6fffea5aee9e543e84d",
+     "bytes": 407
+    }
+   },
+   "correctness": {
+    "array": "c",
+    "inputs": {
+     "a[0:4]": [
+      -20,
+      -17,
+      -14,
+      -11
+     ],
+     "b[0:4]": [
+      7,
+      5,
+      3,
+      1
+     ],
+     "idx[0]": 5,
+     "k[0]": 6
+    },
+    "expected": {
+     "0": -13,
+     "1": -12,
+     "2": -11,
+     "3": -10,
+     "4": -9,
+     "5": -8
+    },
+    "observed": {
+     "0": -13,
+     "1": -12,
+     "2": -11,
+     "3": -10,
+     "4": -9,
+     "5": -8
+    },
+    "ok": true
+   }
+  },
+  "operand_shared": {
+   "factor": "result use",
+   "compile_command": "cslc ./layout.csl --arch=wse3 --fabric-dims=8,3 --fabric-offsets=4,1 --memcpy --channels=1 --width-west-buf=0 --width-east-buf=0 --dump-dsr-alloc-graph -o out",
+   "backend_command": "cslc-backend schrodinger cs_sdr-cerebras-csos   (request on stdin)",
+   "linker_command": "cslc-linker -v   (request on stdin)",
+   "toolchain": {
+    "cslang_bin": "/cb/toolchains/cslang/rel-sdk-2.10.0/202604012315-1813-1394a6ea/bin",
+    "target_cpu": "schrodinger",
+    "triple": "cs_sdr-cerebras-csos",
+    "runtime_libraries": [
+     "/cb/toolchains/cslang/rel-sdk-2.10.0/202604012315-1813-1394a6ea/csl-rt/libcsl_rt_cs_sdr.a"
+    ]
+   },
+   "files": {
+    "layout.csl": {
+     "path": "cases/operand_shared/layout.csl",
+     "algorithm": "sha256",
+     "hex": "2a4d55eb5298450567a61a2993d5b323ab066669060285c61f987d77a482b52c",
+     "bytes": 405
+    },
+    "pe.csl": {
+     "path": "cases/operand_shared/pe.csl",
+     "algorithm": "sha256",
+     "hex": "bb6d0a7880fd9e8982701f503158ae41e6c0e31deaac11885b5b5a86c0392944",
+     "bytes": 1043
+    },
+    "factor": {
+     "path": "cases/operand_shared/FACTOR.txt",
+     "algorithm": "sha256",
+     "hex": "cfcdb1b81bfae7f79677d604be0e7183c3eb101c30030f2143dc63d5d4ad4004",
+     "bytes": 100
+    },
+    "captured_ir": {
+     "path": "cases/operand_shared/ir/out_out_0_0/program.ll",
+     "algorithm": "sha256",
+     "hex": "35bf2d89c87137fccce8c292d232c64383d52c851d799897f1a3528c7c87fe0e",
+     "bytes": 197501
+    },
+    "object": {
+     "path": "cases/operand_shared/ir/out_out_0_0/program.o",
+     "algorithm": "sha256",
+     "hex": "0d5584aa87a59e6e64132727f68bff4816faf246a7dafbbbce919ab733dfe93a",
+     "bytes": 32784
+    },
+    "task_table": {
+     "path": "cases/operand_shared/ir/out_out_0_0/task.ld",
+     "algorithm": "sha256",
+     "hex": "280f4333fc1f65dc608cdc4142de7d98eeb8a5e06d091492118e441105631bb5",
+     "bytes": 3459
+    },
+    "link_script": {
+     "path": "cases/operand_shared/ir/out_out_0_0/link.ld",
+     "algorithm": "sha256",
+     "hex": "6b8e0e2573a34239540a521a6df0c37cf75da8d340add615050a27a27fecc67f",
+     "bytes": 9499
+    },
+    "backend_request": {
+     "path": "cases/operand_shared/ir/out_out_0_0/backend.request",
+     "algorithm": "sha256",
+     "hex": "7b01a7cf1953661a9b56ba02b86196919af1571bae8572dad0deac88c03d7b36",
+     "bytes": 114
+    },
+    "linker_request": {
+     "path": "cases/operand_shared/ir/out_out_0_0/linker.request",
+     "algorithm": "sha256",
+     "hex": "7e21bfb815118faeaaa2e2487f59187ebca37f2235564fbdd133063fab748fab",
+     "bytes": 302
+    },
+    "elf": {
+     "path": "cases/operand_shared/out/bin/out_0_0.elf",
+     "algorithm": "sha256",
+     "hex": "19aa78f98a184e801930383e7d0f55a6f76307b413572dc9b73321f785f06efb",
+     "bytes": 22344
+    },
+    "disassembly": {
+     "path": "cases/operand_shared/disasm.json",
+     "algorithm": "sha256",
+     "hex": "fc5eb5a4a891d973d176d5e0e8a2c9251d83be3da59771e5cfcd8911b3df8dd6",
+     "bytes": 216850
+    },
+    "verification": {
+     "path": "cases/operand_shared/verify.json",
+     "algorithm": "sha256",
+     "hex": "ddcdb6777ae31af5cb7af0c192c12639af817958c0907dd12a518f088e200794",
+     "bytes": 317
+    }
+   },
+   "correctness": {
+    "array": "c",
+    "inputs": {
+     "a[0:4]": [
+      -20,
+      -17,
+      -14,
+      -11
+     ],
+     "b[0:4]": [
+      7,
+      5,
+      3,
+      1
+     ],
+     "idx[0]": 5,
+     "k[0]": 6
+    },
+    "expected": {
+     "0": -13,
+     "1": -15
+    },
+    "observed": {
+     "0": -13,
+     "1": -15
+    },
+    "ok": true
+   }
+  },
+  "pair_dependent": {
+   "factor": "dependencies",
+   "compile_command": "cslc ./layout.csl --arch=wse3 --fabric-dims=8,3 --fabric-offsets=4,1 --memcpy --channels=1 --width-west-buf=0 --width-east-buf=0 --dump-dsr-alloc-graph -o out",
+   "backend_command": "cslc-backend schrodinger cs_sdr-cerebras-csos   (request on stdin)",
+   "linker_command": "cslc-linker -v   (request on stdin)",
+   "toolchain": {
+    "cslang_bin": "/cb/toolchains/cslang/rel-sdk-2.10.0/202604012315-1813-1394a6ea/bin",
+    "target_cpu": "schrodinger",
+    "triple": "cs_sdr-cerebras-csos",
+    "runtime_libraries": [
+     "/cb/toolchains/cslang/rel-sdk-2.10.0/202604012315-1813-1394a6ea/csl-rt/libcsl_rt_cs_sdr.a"
+    ]
+   },
+   "files": {
+    "layout.csl": {
+     "path": "cases/pair_dependent/layout.csl",
+     "algorithm": "sha256",
+     "hex": "2a4d55eb5298450567a61a2993d5b323ab066669060285c61f987d77a482b52c",
+     "bytes": 405
+    },
+    "pe.csl": {
+     "path": "cases/pair_dependent/pe.csl",
+     "algorithm": "sha256",
+     "hex": "0f70550054a678585f81100448fab1704660d9bf5ff8da1488b39fa26dab8a55",
+     "bytes": 1043
+    },
+    "factor": {
+     "path": "cases/pair_dependent/FACTOR.txt",
+     "algorithm": "sha256",
+     "hex": "67aa190e5123ee17134dce916f3e75c1c4818749c594389056707035538c6b64",
+     "bytes": 102
+    },
+    "captured_ir": {
+     "path": "cases/pair_dependent/ir/out_out_0_0/program.ll",
+     "algorithm": "sha256",
+     "hex": "d9af98050ece5781a44d7e57f2099b7a5525ae99a24f6664ec41801b5db9e8da",
+     "bytes": 197501
+    },
+    "object": {
+     "path": "cases/pair_dependent/ir/out_out_0_0/program.o",
+     "algorithm": "sha256",
+     "hex": "f62a7d6dc02ecce4aa2d8503758819aca3111c08ce5fb137064c087d00185b63",
+     "bytes": 32784
+    },
+    "task_table": {
+     "path": "cases/pair_dependent/ir/out_out_0_0/task.ld",
+     "algorithm": "sha256",
+     "hex": "280f4333fc1f65dc608cdc4142de7d98eeb8a5e06d091492118e441105631bb5",
+     "bytes": 3459
+    },
+    "link_script": {
+     "path": "cases/pair_dependent/ir/out_out_0_0/link.ld",
+     "algorithm": "sha256",
+     "hex": "6b8e0e2573a34239540a521a6df0c37cf75da8d340add615050a27a27fecc67f",
+     "bytes": 9499
+    },
+    "backend_request": {
+     "path": "cases/pair_dependent/ir/out_out_0_0/backend.request",
+     "algorithm": "sha256",
+     "hex": "21b0b7d22fe3f06c7971e18d0eb6df62d4e8f35c46b20f3bcfec5d575f657b0b",
+     "bytes": 114
+    },
+    "linker_request": {
+     "path": "cases/pair_dependent/ir/out_out_0_0/linker.request",
+     "algorithm": "sha256",
+     "hex": "ea54f5ef669e8532586eb6cb282c26594c1e8c50050c4f94309cdfdcdc02c0b2",
+     "bytes": 302
+    },
+    "elf": {
+     "path": "cases/pair_dependent/out/bin/out_0_0.elf",
+     "algorithm": "sha256",
+     "hex": "fe4e64ffb604d6e520f31326c41bea02bfa3fd4fd93ff01712e1491502a7b46a",
+     "bytes": 22352
+    },
+    "disassembly": {
+     "path": "cases/pair_dependent/disasm.json",
+     "algorithm": "sha256",
+     "hex": "db7e17bd84c4a8495aa993bef5f0c12916908b38eebed33a3b81ce03e826d8ec",
+     "bytes": 216850
+    },
+    "verification": {
+     "path": "cases/pair_dependent/verify.json",
+     "algorithm": "sha256",
+     "hex": "fe7f83c232b5e3e285d6c7a62a87cf8714cc29336588c5126128f8068ebe1e56",
+     "bytes": 315
+    }
+   },
+   "correctness": {
+    "array": "c",
+    "inputs": {
+     "a[0:4]": [
+      -20,
+      -17,
+      -14,
+      -11
+     ],
+     "b[0:4]": [
+      7,
+      5,
+      3,
+      1
+     ],
+     "idx[0]": 5,
+     "k[0]": 6
+    },
+    "expected": {
+     "0": -13,
+     "1": -8
+    },
+    "observed": {
+     "0": -13,
+     "1": -8
+    },
+    "ok": true
+   }
+  },
+  "pair_independent": {
+   "factor": "dependencies",
+   "compile_command": "cslc ./layout.csl --arch=wse3 --fabric-dims=8,3 --fabric-offsets=4,1 --memcpy --channels=1 --width-west-buf=0 --width-east-buf=0 --dump-dsr-alloc-graph -o out",
+   "backend_command": "cslc-backend schrodinger cs_sdr-cerebras-csos   (request on stdin)",
+   "linker_command": "cslc-linker -v   (request on stdin)",
+   "toolchain": {
+    "cslang_bin": "/cb/toolchains/cslang/rel-sdk-2.10.0/202604012315-1813-1394a6ea/bin",
+    "target_cpu": "schrodinger",
+    "triple": "cs_sdr-cerebras-csos",
+    "runtime_libraries": [
+     "/cb/toolchains/cslang/rel-sdk-2.10.0/202604012315-1813-1394a6ea/csl-rt/libcsl_rt_cs_sdr.a"
+    ]
+   },
+   "files": {
+    "layout.csl": {
+     "path": "cases/pair_independent/layout.csl",
+     "algorithm": "sha256",
+     "hex": "2a4d55eb5298450567a61a2993d5b323ab066669060285c61f987d77a482b52c",
+     "bytes": 405
+    },
+    "pe.csl": {
+     "path": "cases/pair_independent/pe.csl",
+     "algorithm": "sha256",
+     "hex": "d61b8360fa8b173ab3a06066d1a064b2731d49521872bafa0862e5486dc79655",
+     "bytes": 1043
+    },
+    "factor": {
+     "path": "cases/pair_independent/FACTOR.txt",
+     "algorithm": "sha256",
+     "hex": "bac15c8643afca2e960c73616bbcdf627274b520bdba3e6d8dea839e73e3cae3",
+     "bytes": 102
+    },
+    "captured_ir": {
+     "path": "cases/pair_independent/ir/out_out_0_0/program.ll",
+     "algorithm": "sha256",
+     "hex": "9b25adb87cfaa8e60324c11d2f1e6520f650937201e9f1aec313ec759d56f625",
+     "bytes": 197499
+    },
+    "object": {
+     "path": "cases/pair_independent/ir/out_out_0_0/program.o",
+     "algorithm": "sha256",
+     "hex": "393bdb314035560e0c35da7fbcd7f5742f2718be3ccef89a7266fa702be028b9",
+     "bytes": 32824
+    },
+    "task_table": {
+     "path": "cases/pair_independent/ir/out_out_0_0/task.ld",
+     "algorithm": "sha256",
+     "hex": "280f4333fc1f65dc608cdc4142de7d98eeb8a5e06d091492118e441105631bb5",
+     "bytes": 3459
+    },
+    "link_script": {
+     "path": "cases/pair_independent/ir/out_out_0_0/link.ld",
+     "algorithm": "sha256",
+     "hex": "6b8e0e2573a34239540a521a6df0c37cf75da8d340add615050a27a27fecc67f",
+     "bytes": 9499
+    },
+    "backend_request": {
+     "path": "cases/pair_independent/ir/out_out_0_0/backend.request",
+     "algorithm": "sha256",
+     "hex": "213bb98df62d3969dd86bec048cb108686d81e0a89c5bfe779610ca365f3f95f",
+     "bytes": 114
+    },
+    "linker_request": {
+     "path": "cases/pair_independent/ir/out_out_0_0/linker.request",
+     "algorithm": "sha256",
+     "hex": "c2d3e74ae94dd9a9d88c386ccc48b3d9cefa86015e07f49c633289dcd64543d3",
+     "bytes": 304
+    },
+    "elf": {
+     "path": "cases/pair_independent/out/bin/out_0_0.elf",
+     "algorithm": "sha256",
+     "hex": "c2caf6a06cf5376f6a68a27b5232e092637ac9f49fd0058554eabe0f871528d0",
+     "bytes": 22408
+    },
+    "disassembly": {
+     "path": "cases/pair_independent/disasm.json",
+     "algorithm": "sha256",
+     "hex": "8d8d11763c1768bb99a1e79feb2e15bed80e1378915c353b5af1df579dc401fa",
+     "bytes": 217148
+    },
+    "verification": {
+     "path": "cases/pair_independent/verify.json",
+     "algorithm": "sha256",
+     "hex": "60ad1df7cc4423c28c230b3297cc71e7e1a14dcccad3188bba46440f52acc5bb",
+     "bytes": 319
+    }
+   },
+   "correctness": {
+    "array": "c",
+    "inputs": {
+     "a[0:4]": [
+      -20,
+      -17,
+      -14,
+      -11
+     ],
+     "b[0:4]": [
+      7,
+      5,
+      3,
+      1
+     ],
+     "idx[0]": 5,
+     "k[0]": 6
+    },
+    "expected": {
+     "0": -13,
+     "1": -12
+    },
+    "observed": {
+     "0": -13,
+     "1": -12
+    },
+    "ok": true
+   }
+  },
+  "select_runtime": {
+   "factor": "control",
+   "compile_command": "cslc ./layout.csl --arch=wse3 --fabric-dims=8,3 --fabric-offsets=4,1 --memcpy --channels=1 --width-west-buf=0 --width-east-buf=0 --dump-dsr-alloc-graph -o out",
+   "backend_command": "cslc-backend schrodinger cs_sdr-cerebras-csos   (request on stdin)",
+   "linker_command": "cslc-linker -v   (request on stdin)",
+   "toolchain": {
+    "cslang_bin": "/cb/toolchains/cslang/rel-sdk-2.10.0/202604012315-1813-1394a6ea/bin",
+    "target_cpu": "schrodinger",
+    "triple": "cs_sdr-cerebras-csos",
+    "runtime_libraries": [
+     "/cb/toolchains/cslang/rel-sdk-2.10.0/202604012315-1813-1394a6ea/csl-rt/libcsl_rt_cs_sdr.a"
+    ]
+   },
+   "files": {
+    "layout.csl": {
+     "path": "cases/select_runtime/layout.csl",
+     "algorithm": "sha256",
+     "hex": "2a4d55eb5298450567a61a2993d5b323ab066669060285c61f987d77a482b52c",
+     "bytes": 405
+    },
+    "pe.csl": {
+     "path": "cases/select_runtime/pe.csl",
+     "algorithm": "sha256",
+     "hex": "e17b4003902b379e163aaeadcd1a1e611946771c0ab81f29508edebb26858884",
+     "bytes": 1068
+    },
+    "factor": {
+     "path": "cases/select_runtime/FACTOR.txt",
+     "algorithm": "sha256",
+     "hex": "06ff7a2c863013f02d8f37a900b46dec3e18a5a1f1f5be8c066421bbb2f4df1b",
+     "bytes": 122
+    },
+    "captured_ir": {
+     "path": "cases/select_runtime/ir/out_out_0_0/program.ll",
+     "algorithm": "sha256",
+     "hex": "9d03aefffd1507e0a7cdaf41e839a9dfb5209ba5195f60233f8145b88ae9cd14",
+     "bytes": 198067
+    },
+    "object": {
+     "path": "cases/select_runtime/ir/out_out_0_0/program.o",
+     "algorithm": "sha256",
+     "hex": "6674e4ee39ea264697c654ff7309807d90b3401e458a4670b96157a440dd23dd",
+     "bytes": 32952
+    },
+    "task_table": {
+     "path": "cases/select_runtime/ir/out_out_0_0/task.ld",
+     "algorithm": "sha256",
+     "hex": "280f4333fc1f65dc608cdc4142de7d98eeb8a5e06d091492118e441105631bb5",
+     "bytes": 3459
+    },
+    "link_script": {
+     "path": "cases/select_runtime/ir/out_out_0_0/link.ld",
+     "algorithm": "sha256",
+     "hex": "6b8e0e2573a34239540a521a6df0c37cf75da8d340add615050a27a27fecc67f",
+     "bytes": 9499
+    },
+    "backend_request": {
+     "path": "cases/select_runtime/ir/out_out_0_0/backend.request",
+     "algorithm": "sha256",
+     "hex": "9d9e71008e929f0c472ecfe6cd7685ae623953c0a60c0f03b06d806c3bfaa1ef",
+     "bytes": 114
+    },
+    "linker_request": {
+     "path": "cases/select_runtime/ir/out_out_0_0/linker.request",
+     "algorithm": "sha256",
+     "hex": "3d202092b4f4c7c4743ef7be60c369d61e3f8be4f1f9d8ac1cf12b88eeed80ff",
+     "bytes": 302
+    },
+    "elf": {
+     "path": "cases/select_runtime/out/bin/out_0_0.elf",
+     "algorithm": "sha256",
+     "hex": "e4df4bda6dad8e6310bef057613c221ae74abc08d6a6e1c1e0bc7e9f04c1074e",
+     "bytes": 22496
+    },
+    "disassembly": {
+     "path": "cases/select_runtime/disasm.json",
+     "algorithm": "sha256",
+     "hex": "0e89217b527b79c532125227efef888929fe37faef9cee3adbd7e7c888e39a2c",
+     "bytes": 217674
+    },
+    "verification": {
+     "path": "cases/select_runtime/verify.json",
+     "algorithm": "sha256",
+     "hex": "9423a61a5dbf1ba18be95cb0210de687e82524c69fc429848aae26511e957196",
+     "bytes": 293
+    }
+   },
+   "correctness": {
+    "array": "c",
+    "inputs": {
+     "a[0:4]": [
+      -20,
+      -17,
+      -14,
+      -11
+     ],
+     "b[0:4]": [
+      7,
+      5,
+      3,
+      1
+     ],
+     "idx[0]": 5,
+     "k[0]": 6
+    },
+    "expected": {
+     "0": -13
+    },
+    "observed": {
+     "0": -13
+    },
+    "ok": true
+   }
+  },
+  "use_expr_twice": {
+   "factor": "result use",
+   "compile_command": "cslc ./layout.csl --arch=wse3 --fabric-dims=8,3 --fabric-offsets=4,1 --memcpy --channels=1 --width-west-buf=0 --width-east-buf=0 --dump-dsr-alloc-graph -o out",
+   "backend_command": "cslc-backend schrodinger cs_sdr-cerebras-csos   (request on stdin)",
+   "linker_command": "cslc-linker -v   (request on stdin)",
+   "toolchain": {
+    "cslang_bin": "/cb/toolchains/cslang/rel-sdk-2.10.0/202604012315-1813-1394a6ea/bin",
+    "target_cpu": "schrodinger",
+    "triple": "cs_sdr-cerebras-csos",
+    "runtime_libraries": [
+     "/cb/toolchains/cslang/rel-sdk-2.10.0/202604012315-1813-1394a6ea/csl-rt/libcsl_rt_cs_sdr.a"
+    ]
+   },
+   "files": {
+    "layout.csl": {
+     "path": "cases/use_expr_twice/layout.csl",
+     "algorithm": "sha256",
+     "hex": "2a4d55eb5298450567a61a2993d5b323ab066669060285c61f987d77a482b52c",
+     "bytes": 405
+    },
+    "pe.csl": {
+     "path": "cases/use_expr_twice/pe.csl",
+     "algorithm": "sha256",
+     "hex": "9b15e6629f1cd8b5dcb6b39395df0fb22d717a86ee5c5aaa739c365f87037444",
+     "bytes": 1043
+    },
+    "factor": {
+     "path": "cases/use_expr_twice/FACTOR.txt",
+     "algorithm": "sha256",
+     "hex": "6953bee060c50a63787464505f3598e181991e5a33a5c9468493d7793f482873",
+     "bytes": 100
+    },
+    "captured_ir": {
+     "path": "cases/use_expr_twice/ir/out_out_0_0/program.ll",
+     "algorithm": "sha256",
+     "hex": "a464b96e431e1ab3083bd47b94dfc34fe6e3d1d106d0da866f51ea317e22ccc0",
+     "bytes": 197505
+    },
+    "object": {
+     "path": "cases/use_expr_twice/ir/out_out_0_0/program.o",
+     "algorithm": "sha256",
+     "hex": "e729bee6c1f0ffffd7fa604fc995f6023202340fcd6270042d1ecb33d07bbeb8",
+     "bytes": 32744
+    },
+    "task_table": {
+     "path": "cases/use_expr_twice/ir/out_out_0_0/task.ld",
+     "algorithm": "sha256",
+     "hex": "280f4333fc1f65dc608cdc4142de7d98eeb8a5e06d091492118e441105631bb5",
+     "bytes": 3459
+    },
+    "link_script": {
+     "path": "cases/use_expr_twice/ir/out_out_0_0/link.ld",
+     "algorithm": "sha256",
+     "hex": "6b8e0e2573a34239540a521a6df0c37cf75da8d340add615050a27a27fecc67f",
+     "bytes": 9499
+    },
+    "backend_request": {
+     "path": "cases/use_expr_twice/ir/out_out_0_0/backend.request",
+     "algorithm": "sha256",
+     "hex": "635a4922b805f760fa8919d669ddcf06c7b821022b8509ae8a6152efa5a47e25",
+     "bytes": 114
+    },
+    "linker_request": {
+     "path": "cases/use_expr_twice/ir/out_out_0_0/linker.request",
+     "algorithm": "sha256",
+     "hex": "9c9c2e88040af6de656c518ef31cfbe5352354e6a704a26611245f69e5218778",
+     "bytes": 302
+    },
+    "elf": {
+     "path": "cases/use_expr_twice/out/bin/out_0_0.elf",
+     "algorithm": "sha256",
+     "hex": "80a7725245861165181f7b86ba2a0e9be2663a54366a61efad211dafd22fc2da",
+     "bytes": 22344
+    },
+    "disassembly": {
+     "path": "cases/use_expr_twice/disasm.json",
+     "algorithm": "sha256",
+     "hex": "486eeede5eb11530aa72460600477e1303f321800b093e101d957c342bad609a",
+     "bytes": 216292
+    },
+    "verification": {
+     "path": "cases/use_expr_twice/verify.json",
+     "algorithm": "sha256",
+     "hex": "8fb3f62afcc8084cc0d94dfad1624194e9515b1c31c170c5f8e2af42fc455931",
+     "bytes": 317
+    }
+   },
+   "correctness": {
+    "array": "c",
+    "inputs": {
+     "a[0:4]": [
+      -20,
+      -17,
+      -14,
+      -11
+     ],
+     "b[0:4]": [
+      7,
+      5,
+      3,
+      1
+     ],
+     "idx[0]": 5,
+     "k[0]": 6
+    },
+    "expected": {
+     "0": -13,
+     "1": -13
+    },
+    "observed": {
+     "0": -13,
+     "1": -13
+    },
+    "ok": true
+   }
+  },
+  "use_value_twice": {
+   "factor": "result use",
+   "compile_command": "cslc ./layout.csl --arch=wse3 --fabric-dims=8,3 --fabric-offsets=4,1 --memcpy --channels=1 --width-west-buf=0 --width-east-buf=0 --dump-dsr-alloc-graph -o out",
+   "backend_command": "cslc-backend schrodinger cs_sdr-cerebras-csos   (request on stdin)",
+   "linker_command": "cslc-linker -v   (request on stdin)",
+   "toolchain": {
+    "cslang_bin": "/cb/toolchains/cslang/rel-sdk-2.10.0/202604012315-1813-1394a6ea/bin",
+    "target_cpu": "schrodinger",
+    "triple": "cs_sdr-cerebras-csos",
+    "runtime_libraries": [
+     "/cb/toolchains/cslang/rel-sdk-2.10.0/202604012315-1813-1394a6ea/csl-rt/libcsl_rt_cs_sdr.a"
+    ]
+   },
+   "files": {
+    "layout.csl": {
+     "path": "cases/use_value_twice/layout.csl",
+     "algorithm": "sha256",
+     "hex": "2a4d55eb5298450567a61a2993d5b323ab066669060285c61f987d77a482b52c",
+     "bytes": 405
+    },
+    "pe.csl": {
+     "path": "cases/use_value_twice/pe.csl",
+     "algorithm": "sha256",
+     "hex": "465fff87c876da6b512c7e6805849c0e68fbc73f09bcf78a0f33d17bc79cdcb6",
+     "bytes": 1058
+    },
+    "factor": {
+     "path": "cases/use_value_twice/FACTOR.txt",
+     "algorithm": "sha256",
+     "hex": "e4b3c41f008a4e67e6cac50b9c16d0feeb99001f327706cb299f18fd878f17c3",
+     "bytes": 115
+    },
+    "captured_ir": {
+     "path": "cases/use_value_twice/ir/out_out_0_0/program.ll",
+     "algorithm": "sha256",
+     "hex": "85672be87eb5d039ed0908c2dae9833a42db05bfb6a195756ab7b23faa9fe124",
+     "bytes": 197697
+    },
+    "object": {
+     "path": "cases/use_value_twice/ir/out_out_0_0/program.o",
+     "algorithm": "sha256",
+     "hex": "59efcaf36fc991964ec6b2da7717006402c2bd73b36f0d977c81cff18485da08",
+     "bytes": 32792
+    },
+    "task_table": {
+     "path": "cases/use_value_twice/ir/out_out_0_0/task.ld",
+     "algorithm": "sha256",
+     "hex": "280f4333fc1f65dc608cdc4142de7d98eeb8a5e06d091492118e441105631bb5",
+     "bytes": 3459
+    },
+    "link_script": {
+     "path": "cases/use_value_twice/ir/out_out_0_0/link.ld",
+     "algorithm": "sha256",
+     "hex": "6b8e0e2573a34239540a521a6df0c37cf75da8d340add615050a27a27fecc67f",
+     "bytes": 9499
+    },
+    "backend_request": {
+     "path": "cases/use_value_twice/ir/out_out_0_0/backend.request",
+     "algorithm": "sha256",
+     "hex": "9b20c3bf6178f2317014b09023cd3d93a5df12fbe36e6765eaf9701dde3082f9",
+     "bytes": 114
+    },
+    "linker_request": {
+     "path": "cases/use_value_twice/ir/out_out_0_0/linker.request",
+     "algorithm": "sha256",
+     "hex": "c1a6f8ab70cc44ac9958eae2d9dd67e5d02b22c1806db4812fbe2251576b0cf4",
+     "bytes": 303
+    },
+    "elf": {
+     "path": "cases/use_value_twice/out/bin/out_0_0.elf",
+     "algorithm": "sha256",
+     "hex": "92a463037397861492ec64addf5b7f938d43634772ed391e66cac9b575791366",
+     "bytes": 22360
+    },
+    "disassembly": {
+     "path": "cases/use_value_twice/disasm.json",
+     "algorithm": "sha256",
+     "hex": "1a63c78c5a12564ef9096d7ae9b23ac3573cc367acb590b13a1c16b9815051c7",
+     "bytes": 216860
+    },
+    "verification": {
+     "path": "cases/use_value_twice/verify.json",
+     "algorithm": "sha256",
+     "hex": "bbb2177c3bb86ec6780e614ab15f6a25047fc8e859cb50e0caf5e998e4057821",
+     "bytes": 316
+    }
+   },
+   "correctness": {
+    "array": "c",
+    "inputs": {
+     "a[0:4]": [
+      -20,
+      -17,
+      -14,
+      -11
+     ],
+     "b[0:4]": [
+      7,
+      5,
+      3,
+      1
+     ],
+     "idx[0]": 5,
+     "k[0]": 6
+    },
+    "expected": {
+     "0": -13,
+     "1": -8
+    },
+    "observed": {
+     "0": -13,
+     "1": -8
+    },
+    "ok": true
+   }
+  }
+ }
+}

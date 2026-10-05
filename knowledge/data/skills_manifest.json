@@ -1,6 +1,6 @@
 {
   "generated_at": "2026-05-31T01:05:53.298926+00:00",
-  "source_root": "cerebras-csl-skills",
+  "source_root": "/tmp/cerebras-csl-skills",
   "chunk_count": 328,
   "input_files": 24,
   "inputs_sha256": "7c6718d8fe2efb672c75bdabaf8c10c959496cdde374c0c56ef1b761ff19ebc9",

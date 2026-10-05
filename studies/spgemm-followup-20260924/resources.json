@@ -1,0 +1,14 @@
+{
+  "recorded_case_invocations": 19,
+  "phase_wall_seconds": {
+    "compile": 27.218758689989045,
+    "run": 3504.3048244670063,
+    "disassemble": 11.453368396003498
+  },
+  "queue_wait_seconds": 390.0531385980139,
+  "accepted_IR_capture_wall_seconds": 7.997251028005849,
+  "failed_IR_collection_wall_seconds": null,
+  "resource_coverage_note": "Phase totals include the three retained failed runtime/harness invocations. The rejected first selected IR collection did not persist its elapsed-time field; its raw artifacts and diagnostics are retained. No claimed complete total includes that unknown duration.",
+  "API_calls": 0,
+  "hardware_runs": 0
+}

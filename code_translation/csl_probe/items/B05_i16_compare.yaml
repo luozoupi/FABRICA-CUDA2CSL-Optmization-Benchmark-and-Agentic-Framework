@@ -1,0 +1,26 @@
+id: B05_i16_compare
+group: B_semantics
+prompt: 'Read this Cerebras CSL fragment (SDK 2.10, one PE) and answer the question. Assume every builtin behaves
+  as the SDK documents it. Reply with the answer first (one number), then one sentence of justification.
+
+
+  ```csl
+
+  var i: i16 = -1;
+
+  const n: u16 = 5;
+
+  var hits: u16 = 0;
+
+  while (i < @as(i16, n)) : (i += 1) { hits += 1; }
+
+  ```
+
+
+  Question: How many times does the loop body run?'
+expected:
+  values:
+  - 6
+scoring: trailing numbers within 1e-3 relative of the key, or the letter for choice items
+ground_truth: numpy/documented semantics; simulator confirmation of the numeric items pending (make_ground_truth.sh)
+source_citation: 'SDK builtins/DSD reference; B12: studies/wse3-characterization/FINDINGS.md section 10n (spmv_blk_dsdred)'

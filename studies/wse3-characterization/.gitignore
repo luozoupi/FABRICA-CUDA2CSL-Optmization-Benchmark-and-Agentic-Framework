@@ -1,0 +1,20 @@
+# Keep the study code, microbench sources and the small result JSON the paper
+# cites; drop bulk traces, campaign ledgers, rendered reports and job metadata.
+results/*
+!results/*.json
+!results/sram_sweep.txt
+!results/runtime_model/
+!results/isa-profiles/
+results/hazard_ilp.json
+*.jsonl.gz
+disasm*.json
+*.bak-*
+__pycache__/
+*.pyc
+wsjob-*-cluster-details.json
+run_meta.json
+.nfstmp/
+
+# Third-party material fetched for the study (xdslproject/wse-stencil clone, its venv,
+# the Hot Chips 34 slides, reference-page captures); not redistributed with the repo.
+external/

@@ -1,0 +1,91 @@
+param memcpy_params: comptime_struct;
+// === SLOT: EXTRA_PARAMS ===
+param n: u16;
+
+const EXIT: local_task_id = @get_local_task_id(9);
+const sys_mod = @import_module("<memcpy/memcpy>", memcpy_params);
+
+// === SLOT: EXTRA_IMPORTS ===
+const math = @import_module("<math>");
+const eps: f32 = 1e-6;
+
+const timestamp = @import_module("<time>");
+var tsc_start_buf = @zeros([timestamp.tsc_size_words]u16);
+var tsc_end_buf   = @zeros([timestamp.tsc_size_words]u16);
+var timer_buf = @zeros([3]f32);
+var ptr_timer_buf: [*]f32 = &timer_buf;
+
+// === SLOT: DATA_BUFFERS ===
+var x_array = @zeros([n]f32);
+var weight_array = @zeros([n]f32);
+var out_array = @zeros([n]f32);
+
+var ptr_x: [*]f32 = &x_array;
+var ptr_weight: [*]f32 = &weight_array;
+var ptr_out: [*]f32 = &out_array;
+
+// DSDs over the full vectors
+const x_dsd = @get_dsd(mem1d_dsd, .{ .tensor_access = |i|{n} -> x_array[i] });
+const weight_dsd = @get_dsd(mem1d_dsd, .{ .tensor_access = |i|{n} -> weight_array[i] });
+const out_dsd = @get_dsd(mem1d_dsd, .{ .tensor_access = |i|{n} -> out_array[i] });
+
+// === SLOT: KERNEL_FUNCTION ===
+fn rmsnorm() void {
+    // Pass 1: sum of squares.  out = x*x (temporary), then reduce.
+    // Use out_array as scratch for x^2 to avoid extra buffer.
+    @fmuls(out_dsd, x_dsd, x_dsd);
+
+    var sum_sq: f32 = 0.0;
+    var i: u16 = 0;
+    while (i < n) : (i += 1) {
+        sum_sq += out_array[i];
+    }
+
+    const mean_sq: f32 = sum_sq / @as(f32, n);
+    const rms: f32 = math.sqrt(mean_sq + eps);
+    const inv_rms: f32 = 1.0 / rms;
+
+    // Pass 2: out = (x * inv_rms) * weight
+    // First out = x * inv_rms (scalar broadcast)
+    @fmuls(out_dsd, x_dsd, inv_rms);
+    // Then out = out * weight
+    @fmuls(out_dsd, out_dsd, weight_dsd);
+}
+
+fn compute() void {
+    timestamp.enable_tsc();
+    timestamp.get_timestamp(&tsc_start_buf);
+
+    // === SLOT: KERNEL_CALL ===
+    rmsnorm();
+
+    timestamp.get_timestamp(&tsc_end_buf);
+    timestamp.disable_tsc();
+
+    var lo_: u16 = 0;
+    var hi_: u16 = 0;
+    lo_ = tsc_start_buf[0]; hi_ = tsc_start_buf[1];
+    timer_buf[0] = @bitcast(f32, (@as(u32, hi_) << @as(u16, 16)) | @as(u32, lo_));
+    lo_ = tsc_start_buf[2]; hi_ = tsc_end_buf[0];
+    timer_buf[1] = @bitcast(f32, (@as(u32, hi_) << @as(u16, 16)) | @as(u32, lo_));
+    lo_ = tsc_end_buf[1]; hi_ = tsc_end_buf[2];
+    timer_buf[2] = @bitcast(f32, (@as(u32, hi_) << @as(u16, 16)) | @as(u32, lo_));
+
+    @activate(EXIT);
+}
+
+task f_exit() void {
+    sys_mod.unblock_cmd_stream();
+}
+
+comptime {
+    @bind_local_task(f_exit, EXIT);
+
+    // === SLOT: EXPORT_SYMBOLS ===
+    @export_symbol(ptr_x, "x");
+    @export_symbol(ptr_weight, "weight");
+    @export_symbol(ptr_out, "out");
+
+    @export_symbol(ptr_timer_buf, "maxmin_time");
+    @export_symbol(compute);
+}

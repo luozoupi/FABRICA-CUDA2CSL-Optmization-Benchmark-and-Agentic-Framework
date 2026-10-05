@@ -1,0 +1,67 @@
+{
+  "kernel": "RowReduce-CSR",
+  "run_dir": "/tmp/scratch/sb_t0_view/RowReduce-CSR/seed_1/run_20261001_171807",
+  "status": "extracted",
+  "n_attempts": 3,
+  "model": "claude-opus-4-8",
+  "target_relpath": "pe.csl",
+  "reference_dir": "/home/USER/xkernel/kernels/RowReduce-CSR/CSL",
+  "fc_attempt_index": 3,
+  "fc_cycles_send": 36336,
+  "fc_cycles_send_runs": [
+    36336
+  ],
+  "fc_code_lines": 122,
+  "fc_heldout_eval": {
+    "passed": true,
+    "failing_seed": null,
+    "per_seed": [
+      {
+        "seed": 101,
+        "steps": [
+          {
+            "command": "cs_python run.py --name out",
+            "ok": true,
+            "returncode": 0
+          }
+        ],
+        "seed_echo": 101
+      },
+      {
+        "seed": 202,
+        "steps": [
+          {
+            "command": "cs_python run.py --name out",
+            "ok": true,
+            "returncode": 0
+          }
+        ],
+        "seed_echo": 202
+      },
+      {
+        "seed": 303,
+        "steps": [
+          {
+            "command": "cs_python run.py --name out",
+            "ok": true,
+            "returncode": 0
+          }
+        ],
+        "seed_echo": 303
+      }
+    ],
+    "reason": "passed all 3 held-out seeds"
+  },
+  "translated_path": "/home/USER/xkernel/code_translation/sandbox/cuda2csl/rowreduce-csr_at320np2/pe.csl",
+  "source": "sandbox",
+  "dest": "results/first_correct/sparse_sb_20261001/RowReduce-CSR/pe.csl",
+  "source_group": "seed_1",
+  "sibling_fc_cycles": {
+    "seed_1": 36336,
+    "seed_2": 41232,
+    "seed_3": 41067,
+    "seed_4": 45581,
+    "seed_5": 46226
+  },
+  "seed_choice_rule": "lowest-sorted run group that yielded an extraction (blind to cycle counts)"
+}

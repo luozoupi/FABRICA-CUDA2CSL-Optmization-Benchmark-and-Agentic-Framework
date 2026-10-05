@@ -1,0 +1,12 @@
+const memcpy = @import_module("<memcpy/get_params>", .{ .width = 1, .height = 1 });
+layout {
+  @set_rectangle(1, 1);
+  @set_tile_code(0, 0, "pe.csl", .{ .memcpy_params = memcpy.get_params(0) });
+  @export_name("iaL", [*]i16, true); @export_name("ibL", [*]i16, true);
+  @export_name("icA", [*]i16, true); @export_name("icC", [*]i16, true);
+  @export_name("ia", [*]i16, true);  @export_name("ib", [*]i16, true);
+  @export_name("outsc", [*]i16, true);
+  @export_name("region_a", fn()void);
+  @export_name("region_b", fn()void);
+  @export_name("region_c", fn()void);
+}

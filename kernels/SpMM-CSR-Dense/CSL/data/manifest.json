@@ -1,0 +1,40 @@
+{
+ "schema": 1,
+ "class": "hb_n256",
+ "train_seed": 7,
+ "values": "seeded_uniform",
+ "matrices": [
+  {
+   "id": "HB/dwt_234",
+   "file": "dwt_234.mtx",
+   "sha256": "00a4a599bf2cd9878e649e9d26005126ade6af2da7d24feee70ec2b0d45f494f",
+   "n": 234,
+   "m": 234,
+   "nnz": 834
+  },
+  {
+   "id": "HB/can_229",
+   "file": "can_229.mtx",
+   "sha256": "bc38134b9d126b31902e198880dc2e885a008d269a4e2185c790ae8189bc9326",
+   "n": 229,
+   "m": 229,
+   "nnz": 1777
+  },
+  {
+   "id": "HB/gre_216a",
+   "file": "gre_216a.mtx",
+   "sha256": "f5f99ec361a831356e02aef875da3190089950c5de0b311ea8b73f3be2a02feb",
+   "n": 216,
+   "m": 216,
+   "nnz": 876
+  },
+  {
+   "id": "HB/can_256",
+   "file": "can_256.mtx",
+   "sha256": "5dbbb02d7d596baed75ad63f920cf44872b6844242c79cf0cd99a4bba02796a5",
+   "n": 256,
+   "m": 256,
+   "nnz": 2916
+  }
+ ]
+}

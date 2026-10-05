@@ -1,0 +1,25 @@
+id: D09_increment_dsd_offset
+group: D_api
+prompt: 'Answer this Cerebras CSL / WSE-3 question with the single letter of the correct option, then one sentence
+  of justification.
+
+
+  What is the third argument of `@increment_dsd_offset(dsd, offset, ...)`?
+
+
+  A) the new length
+
+  B) the element type the offset is counted in (e.g. f32)
+
+  C) the stride
+
+  D) the output queue'
+choices:
+- A) the new length
+- B) the element type the offset is counted in (e.g. f32)
+- C) the stride
+- D) the output queue
+expected:
+  choice: B
+scoring: first standalone letter A-D in the reply equals the key
+source_citation: 'SDK builtins: @increment_dsd_offset(input_dsd, offset, elem_type)'

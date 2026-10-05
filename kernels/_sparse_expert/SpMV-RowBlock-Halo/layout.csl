@@ -1,0 +1,75 @@
+// SpMV-RowBlock, distributed x + halo exchange (expert headroom variant): a 1 x P strip, PE p owns
+// rows and x entries [p*nrows_pe, (p+1)*nrows_pe) of the RCM-ordered matrix. Neighbour exchange on
+// four colors: east pass on C_E0/C_E1, west pass on C_W0/C_W1, alternating by PE parity so that every
+// router sees each color in one role only (send: RAMP -> neighbour; receive: neighbour -> RAMP).
+
+param P: i16;
+param nrows_pe: u16;
+param halo: u16;          // neighbour blocks fetched on each side
+param max_nnz_pe: u16;
+param mode: u16;          // 0 = halo exchange on the fabric; 1 = window preloaded by the host
+param iters: u16;
+param structure_id: u16;  // host only: which data/manifest[_<id>].json to load
+param rcm: u16;           // host only: 1 = reverse Cuthill-McKee order
+
+const C_E0: color = @get_color(8);
+const C_E1: color = @get_color(9);
+const C_W0: color = @get_color(10);
+const C_W1: color = @get_color(11);
+
+const memcpy = @import_module("<memcpy/get_params>", .{
+  .width = P,
+  .height = 1,
+});
+
+layout {
+  @set_rectangle(P, 1);
+
+  var px: i16 = 0;
+  while (px < P) : (px += 1) {
+    @set_tile_code(px, 0, "pe.csl", .{
+      .memcpy_params = memcpy.get_params(px),
+      .P = P,
+      .px = px,
+      .nrows_pe = nrows_pe,
+      .halo = halo,
+      .max_nnz_pe = max_nnz_pe,
+      .mode = mode,
+      .iters = iters,
+      .C_E0 = C_E0,
+      .C_E1 = C_E1,
+      .C_W0 = C_W0,
+      .C_W1 = C_W1,
+    });
+  }
+
+  var q: i16 = 0;
+  while (q < P) : (q += 1) {
+    const ev: bool = (q % 2) == 0;
+    const es: color = if (ev) C_E0 else C_E1;
+    const er: color = if (ev) C_E1 else C_E0;
+    const ws: color = if (ev) C_W0 else C_W1;
+    const wr: color = if (ev) C_W1 else C_W0;
+    if (q < P - 1) {
+      @set_color_config(q, 0, es, .{ .routes = .{ .rx = .{ RAMP }, .tx = .{ EAST } } });
+      @set_color_config(q, 0, wr, .{ .routes = .{ .rx = .{ EAST }, .tx = .{ RAMP } } });
+    }
+    if (q > 0) {
+      @set_color_config(q, 0, er, .{ .routes = .{ .rx = .{ WEST }, .tx = .{ RAMP } } });
+      @set_color_config(q, 0, ws, .{ .routes = .{ .rx = .{ RAMP }, .tx = .{ WEST } } });
+    }
+  }
+
+  @export_name("row_ptr", [*]u32, true);
+  @export_name("col_idx", [*]u32, true);
+  @export_name("val",     [*]f32, true);
+  @export_name("x_win",   [*]f32, true);
+  @export_name("x_own",   [*]f32, true);
+  @export_name("y",       [*]f32, true);
+  @export_name("time_buf_u16", [*]u16, true);
+  @export_name("main", fn()void);
+  @export_name("f_enable_timer", fn()void);
+  @export_name("f_memcpy_timestamps", fn()void);
+  @export_name("f_tic", fn()void);
+  @export_name("f_toc", fn()void);
+}

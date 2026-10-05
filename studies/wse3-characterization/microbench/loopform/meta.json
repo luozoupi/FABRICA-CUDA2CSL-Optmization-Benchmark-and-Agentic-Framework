@@ -1,0 +1,13 @@
+{
+ "total_elements": 4096,
+ "tile": 16,
+ "outer": 256,
+ "l3_k": 16,
+ "l3_map": 16,
+ "variants": [
+  "L0",
+  "L1",
+  "L2",
+  "L3"
+ ]
+}

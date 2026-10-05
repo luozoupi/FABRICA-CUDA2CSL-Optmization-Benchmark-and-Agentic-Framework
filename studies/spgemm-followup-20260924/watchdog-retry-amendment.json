@@ -1,0 +1,34 @@
+{
+  "created_utc": "2026-09-24T21:08:13.060657+00:00",
+  "reason": "Tiled full SpGEMM suite exceeded 420-second wall-time watchdog; retain failed invocation and rerun unchanged ELF with 1800-second general-suite limit. Add output checkpoints outside device timing; prioritize selected merge and baseline before the nested final reference. Final suite limit remains 900 seconds for every variant.",
+  "prior_runner_sha256": "00c0af3cdd0644d6a59d2b3d2604ce6bbd5713ecb00abc686498a70d840c0151",
+  "amended_runner_sha256": "28bf968960d27fbc500a8e6c5260ff52df0f3bf11d7e280ecb2fc97da24f9e7f",
+  "failed_result_sha256": "2716fa623491ccd69b2a92ff6c4f5b2092c8ec352bfb2261e438310e33fb27a2",
+  "host_changes": [
+    {
+      "case": "general/tile4",
+      "old_host_sha256": "e40b13b4b7fdc78d533e278964a145a40b5dfb370a9738eb13943d0e92557692",
+      "new_host_sha256": "bf6553e48c04789400d11b671366f5d41ae0a8f055348e2677e4aa8644ec136e",
+      "elf_sha256": "8117b32838822eb1c13d8ccb23378f62fd532452088667e67b64d6c0f61357a9"
+    },
+    {
+      "case": "final/nested",
+      "old_host_sha256": "3f70fb619aeddac801474fcc793d09be546801ef88b1547d0ff5e8d28661bfcc",
+      "new_host_sha256": "485ad8e3b07112f8a1ec0b06ba63954ff6ee5eee8e68ae7d21171c8574e738de",
+      "elf_sha256": "f866c5154e9ebd0131c6776fa26247ffaaf61bd9184c7b09ff6637ec07ce5df4"
+    },
+    {
+      "case": "final/separate_updates",
+      "old_host_sha256": "3f70fb619aeddac801474fcc793d09be546801ef88b1547d0ff5e8d28661bfcc",
+      "new_host_sha256": "485ad8e3b07112f8a1ec0b06ba63954ff6ee5eee8e68ae7d21171c8574e738de",
+      "elf_sha256": "32e8bd9218187b36d32a40f36bed52bef9a04631338d4bcb34c2edb2b04e0e7b"
+    },
+    {
+      "case": "final/baseline",
+      "old_host_sha256": "3f70fb619aeddac801474fcc793d09be546801ef88b1547d0ff5e8d28661bfcc",
+      "new_host_sha256": "485ad8e3b07112f8a1ec0b06ba63954ff6ee5eee8e68ae7d21171c8574e738de",
+      "elf_sha256": "7657f3919ed286e58f61799405f3a1852782931878458fe9656f916cf4368e1b"
+    }
+  ],
+  "compiled_programs_changed": false
+}

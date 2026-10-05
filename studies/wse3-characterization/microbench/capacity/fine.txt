@@ -1,0 +1,11 @@
+20992 OK 46160 bytes
+21504 OK 47184 bytes
+22016 OK 48208 bytes
+22272 OK 48720 bytes
+22400 OK 48976 bytes
+22464 OK 49104 bytes
+22480 OK 49136 bytes
+22488 OK 49152 bytes
+22496 FAIL ld.lld: error: ran out of PE memory for task table ld.lld: error: ran out of PE memory for data (section .data.hi)  
+22512 FAIL ld.lld: error: ran out of PE memory for task table ld.lld: error: ran out of PE memory for data (section .data.hi)  
+FIN

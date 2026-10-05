@@ -1,0 +1,329 @@
+{
+  "passed": true,
+  "cases": [
+    {
+      "N": 16,
+      "degree": 3,
+      "pattern": "banded",
+      "changed": false,
+      "products": 144,
+      "output_nnz": 80,
+      "cancellation": 1
+    },
+    {
+      "N": 16,
+      "degree": 3,
+      "pattern": "banded",
+      "changed": true,
+      "products": 144,
+      "output_nnz": 80,
+      "cancellation": 7
+    },
+    {
+      "N": 16,
+      "degree": 3,
+      "pattern": "uniform",
+      "changed": false,
+      "products": 144,
+      "output_nnz": 124,
+      "cancellation": 0
+    },
+    {
+      "N": 16,
+      "degree": 3,
+      "pattern": "uniform",
+      "changed": true,
+      "products": 144,
+      "output_nnz": 122,
+      "cancellation": 0
+    },
+    {
+      "N": 16,
+      "degree": 3,
+      "pattern": "skewed",
+      "changed": false,
+      "products": 144,
+      "output_nnz": 76,
+      "cancellation": 1
+    },
+    {
+      "N": 16,
+      "degree": 3,
+      "pattern": "skewed",
+      "changed": true,
+      "products": 144,
+      "output_nnz": 75,
+      "cancellation": 2
+    },
+    {
+      "N": 16,
+      "degree": 8,
+      "pattern": "banded",
+      "changed": false,
+      "products": 1024,
+      "output_nnz": 240,
+      "cancellation": 11
+    },
+    {
+      "N": 16,
+      "degree": 8,
+      "pattern": "banded",
+      "changed": true,
+      "products": 1024,
+      "output_nnz": 240,
+      "cancellation": 22
+    },
+    {
+      "N": 16,
+      "degree": 8,
+      "pattern": "uniform",
+      "changed": false,
+      "products": 1024,
+      "output_nnz": 256,
+      "cancellation": 17
+    },
+    {
+      "N": 16,
+      "degree": 8,
+      "pattern": "uniform",
+      "changed": true,
+      "products": 1024,
+      "output_nnz": 255,
+      "cancellation": 11
+    },
+    {
+      "N": 16,
+      "degree": 8,
+      "pattern": "skewed",
+      "changed": false,
+      "products": 384,
+      "output_nnz": 126,
+      "cancellation": 0
+    },
+    {
+      "N": 16,
+      "degree": 8,
+      "pattern": "skewed",
+      "changed": true,
+      "products": 384,
+      "output_nnz": 127,
+      "cancellation": 2
+    },
+    {
+      "N": 64,
+      "degree": 3,
+      "pattern": "banded",
+      "changed": false,
+      "products": 576,
+      "output_nnz": 320,
+      "cancellation": 1
+    },
+    {
+      "N": 64,
+      "degree": 3,
+      "pattern": "banded",
+      "changed": true,
+      "products": 576,
+      "output_nnz": 320,
+      "cancellation": 23
+    },
+    {
+      "N": 64,
+      "degree": 3,
+      "pattern": "uniform",
+      "changed": false,
+      "products": 576,
+      "output_nnz": 549,
+      "cancellation": 0
+    },
+    {
+      "N": 64,
+      "degree": 3,
+      "pattern": "uniform",
+      "changed": true,
+      "products": 576,
+      "output_nnz": 558,
+      "cancellation": 0
+    },
+    {
+      "N": 64,
+      "degree": 3,
+      "pattern": "skewed",
+      "changed": false,
+      "products": 600,
+      "output_nnz": 469,
+      "cancellation": 3
+    },
+    {
+      "N": 64,
+      "degree": 3,
+      "pattern": "skewed",
+      "changed": true,
+      "products": 600,
+      "output_nnz": 486,
+      "cancellation": 3
+    },
+    {
+      "N": 64,
+      "degree": 8,
+      "pattern": "banded",
+      "changed": false,
+      "products": 4096,
+      "output_nnz": 960,
+      "cancellation": 59
+    },
+    {
+      "N": 64,
+      "degree": 8,
+      "pattern": "banded",
+      "changed": true,
+      "products": 4096,
+      "output_nnz": 960,
+      "cancellation": 70
+    },
+    {
+      "N": 64,
+      "degree": 8,
+      "pattern": "uniform",
+      "changed": false,
+      "products": 4096,
+      "output_nnz": 2686,
+      "cancellation": 22
+    },
+    {
+      "N": 64,
+      "degree": 8,
+      "pattern": "uniform",
+      "changed": true,
+      "products": 4096,
+      "output_nnz": 2691,
+      "cancellation": 27
+    },
+    {
+      "N": 64,
+      "degree": 8,
+      "pattern": "skewed",
+      "changed": false,
+      "products": 1600,
+      "output_nnz": 930,
+      "cancellation": 14
+    },
+    {
+      "N": 64,
+      "degree": 8,
+      "pattern": "skewed",
+      "changed": true,
+      "products": 1600,
+      "output_nnz": 944,
+      "cancellation": 20
+    },
+    {
+      "N": 256,
+      "degree": 3,
+      "pattern": "banded",
+      "changed": false,
+      "products": 2304,
+      "output_nnz": 1280,
+      "cancellation": 1
+    },
+    {
+      "N": 256,
+      "degree": 3,
+      "pattern": "banded",
+      "changed": true,
+      "products": 2304,
+      "output_nnz": 1280,
+      "cancellation": 87
+    },
+    {
+      "N": 256,
+      "degree": 3,
+      "pattern": "uniform",
+      "changed": false,
+      "products": 2304,
+      "output_nnz": 2268,
+      "cancellation": 0
+    },
+    {
+      "N": 256,
+      "degree": 3,
+      "pattern": "uniform",
+      "changed": true,
+      "products": 2304,
+      "output_nnz": 2276,
+      "cancellation": 0
+    },
+    {
+      "N": 256,
+      "degree": 3,
+      "pattern": "skewed",
+      "changed": false,
+      "products": 2400,
+      "output_nnz": 2244,
+      "cancellation": 1
+    },
+    {
+      "N": 256,
+      "degree": 3,
+      "pattern": "skewed",
+      "changed": true,
+      "products": 2400,
+      "output_nnz": 2238,
+      "cancellation": 4
+    },
+    {
+      "N": 256,
+      "degree": 8,
+      "pattern": "banded",
+      "changed": false,
+      "products": 16384,
+      "output_nnz": 3840,
+      "cancellation": 251
+    },
+    {
+      "N": 256,
+      "degree": 8,
+      "pattern": "banded",
+      "changed": true,
+      "products": 16384,
+      "output_nnz": 3840,
+      "cancellation": 262
+    },
+    {
+      "N": 256,
+      "degree": 8,
+      "pattern": "uniform",
+      "changed": false,
+      "products": 16384,
+      "output_nnz": 14684,
+      "cancellation": 6
+    },
+    {
+      "N": 256,
+      "degree": 8,
+      "pattern": "uniform",
+      "changed": true,
+      "products": 16384,
+      "output_nnz": 14745,
+      "cancellation": 8
+    },
+    {
+      "N": 256,
+      "degree": 8,
+      "pattern": "skewed",
+      "changed": false,
+      "products": 6400,
+      "output_nnz": 5391,
+      "cancellation": 9
+    },
+    {
+      "N": 256,
+      "degree": 8,
+      "pattern": "skewed",
+      "changed": true,
+      "products": 6400,
+      "output_nnz": 5467,
+      "cancellation": 9
+    }
+  ]
+}

@@ -1,0 +1,52 @@
+{
+  "created_utc": "2026-09-24T17:46:28.952575+00:00",
+  "hypothesis": "At fixed dimensions, nnz and output width, measured row-control and setup gaps predict a linear dependence on nonempty rows for these compiled simulator kernels.",
+  "calibration_inputs": [
+    "uniform8: 32 nonempty rows",
+    "skew8: 4 nonempty rows"
+  ],
+  "calibrated_models": {
+    "descriptor-n1": "11429 - 3*(nonempty_rows - 32)",
+    "scalar-n4": "18044 + 45*(nonempty_rows - 32)"
+  },
+  "predictions": [
+    {
+      "case": "descriptor-n1",
+      "nonempty_rows": 8,
+      "rows": 32,
+      "nnz": 256,
+      "predicted_cycles": 11501
+    },
+    {
+      "case": "descriptor-n1",
+      "nonempty_rows": 16,
+      "rows": 32,
+      "nnz": 256,
+      "predicted_cycles": 11477
+    },
+    {
+      "case": "scalar-n4",
+      "nonempty_rows": 8,
+      "rows": 32,
+      "nnz": 256,
+      "predicted_cycles": 16964
+    },
+    {
+      "case": "scalar-n4",
+      "nonempty_rows": 16,
+      "rows": 32,
+      "nnz": 256,
+      "predicted_cycles": 17324
+    }
+  ],
+  "acceptance": "All correct launches match the preregistered predicted cycle count exactly; otherwise retain discrepancy and revise only in a new experiment.",
+  "launches": 48,
+  "warmups_per_session": 1,
+  "timed_repetitions_per_session": 3,
+  "sessions": [
+    "original",
+    "changed values/indices/dense operand",
+    "restore original"
+  ],
+  "scope": "New controlled validation matrices; not real-matrix generalization, hardware validation, or final-test matrices for the agent study."
+}

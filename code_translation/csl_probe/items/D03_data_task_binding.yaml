@@ -1,0 +1,25 @@
+id: D03_data_task_binding
+group: D_api
+prompt: 'Answer this Cerebras CSL / WSE-3 question with the single letter of the correct option, then one sentence
+  of justification.
+
+
+  On the WSE-3, a wavelet-triggered (data) task is bound to what?
+
+
+  A) a color, with @get_data_task_id(color)
+
+  B) an input queue, with @get_data_task_id(@get_input_queue(q))
+
+  C) an output queue
+
+  D) a microthread id'
+choices:
+- A) a color, with @get_data_task_id(color)
+- B) an input queue, with @get_data_task_id(@get_input_queue(q))
+- C) an output queue
+- D) a microthread id
+expected:
+  choice: B
+scoring: first standalone letter A-D in the reply equals the key
+source_citation: 'docs/WSE3_PORTING.md rule: data tasks bind to input queues, not colors'

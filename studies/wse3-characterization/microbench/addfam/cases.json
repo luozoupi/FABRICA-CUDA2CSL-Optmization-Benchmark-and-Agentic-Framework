@@ -1,0 +1,2717 @@
+{
+ "cases": [
+  {
+   "name": "base",
+   "factor": "reference",
+   "withheld": false,
+   "csl": "c[0] = a[0] + b[0];",
+   "ok": true,
+   "identity": {
+    "cslang_bin": "/cb/toolchains/cslang/rel-sdk-2.10.0/202604012315-1813-1394a6ea/bin",
+    "backend_argv": [
+     "schrodinger",
+     "cs_sdr-cerebras-csos"
+    ],
+    "cslc_args": [
+     "./layout.csl",
+     "--arch=wse3",
+     "--fabric-dims=8,3",
+     "--fabric-offsets=4,1",
+     "--memcpy",
+     "--channels=1",
+     "--width-west-buf=0",
+     "--width-east-buf=0",
+     "--dump-dsr-alloc-graph",
+     "-o",
+     "out"
+    ],
+    "libs": [
+     "/cb/toolchains/cslang/rel-sdk-2.10.0/202604012315-1813-1394a6ea/csl-rt/libcsl_rt_cs_sdr.a"
+    ],
+    "elf_sha": "d38cb46dff7d51bd",
+    "o_sha": "d9d2a9f515e7e08b",
+    "ll_sha": "0d5969930a800356"
+   },
+   "ir": {
+    "n_lines": 6,
+    "hist": {
+     "load": 2,
+     "add": 1,
+     "store": 1,
+     "call": 1,
+     "ret": 1,
+     "call:llvm.sdr.actvt.r": 1
+    },
+    "body": "  %1 = load i16, i16* getelementptr inbounds ([64 x i16], [64 x i16]* @a, i16 0, i1 false), align 2, !dbg !7\n  %2 = load i16, i16* getelementptr inbounds ([64 x i16], [64 x i16]* @b, i16 0, i1 false), align 2, !dbg !9\n  %3 = add i16 %1, %2, !dbg !10\n  store i16 %3, i16* getelementptr inbounds ([64 x i16], [64 x i16]* @c, i16 0, i1 false), align 2, !dbg !11\n  call void @llvm.sdr.actvt.r(i16 9), !dbg !12\n  ret void, !dbg !13"
+   },
+   "machine": {
+    "n": 5,
+    "instrs": [
+     {
+      "pc": 302,
+      "text": "ld16 r5 = [0x5ca]"
+     },
+     {
+      "pc": 304,
+      "text": "ld16 r8 = [0x60a]"
+     },
+     {
+      "pc": 306,
+      "text": "add16.nf r5 = r8, r5"
+     },
+     {
+      "pc": 308,
+      "text": "st16 [0x64a] = r5"
+     },
+     {
+      "pc": 310,
+      "text": "actvt 0x9"
+     }
+    ],
+    "hist": {
+     "ld16": 2,
+     "add16.nf": 1,
+     "st16": 1,
+     "actvt": 1
+    },
+    "gprs": [
+     "r5",
+     "r8"
+    ],
+    "dsrs": [],
+    "n_after_activate": 1,
+    "pulled_in": [],
+    "contract": {
+     "body_rule": "pe.csl-attributed instructions up to and including @activate(EXIT)",
+     "init_rule": "nearest preceding definition of each register the body reads before defining (searched back 40 instructions)",
+     "entry_live_in": [],
+     "init_closure": [],
+     "unresolved_live_in": [],
+     "n_body": 5,
+     "n_init": 0,
+     "n_total": 5
+    },
+    "attributed_by": "explicit region contract: debug-attributed body plus the init closure of its live-in registers"
+   },
+   "dsr_graph": {
+    "out_0.greedy.dot": {
+     "nodes": [
+      {
+       "operand": "DEST, SRC1",
+       "dsr": 0,
+       "explicit": true,
+       "failed": false
+      }
+     ],
+     "edges": 0
+    }
+   }
+  },
+  {
+   "name": "const_one",
+   "factor": "constantness",
+   "withheld": false,
+   "csl": "c[0] = a[0] + 7;",
+   "ok": true,
+   "identity": {
+    "cslang_bin": "/cb/toolchains/cslang/rel-sdk-2.10.0/202604012315-1813-1394a6ea/bin",
+    "backend_argv": [
+     "schrodinger",
+     "cs_sdr-cerebras-csos"
+    ],
+    "cslc_args": [
+     "./layout.csl",
+     "--arch=wse3",
+     "--fabric-dims=8,3",
+     "--fabric-offsets=4,1",
+     "--memcpy",
+     "--channels=1",
+     "--width-west-buf=0",
+     "--width-east-buf=0",
+     "--dump-dsr-alloc-graph",
+     "-o",
+     "out"
+    ],
+    "libs": [
+     "/cb/toolchains/cslang/rel-sdk-2.10.0/202604012315-1813-1394a6ea/csl-rt/libcsl_rt_cs_sdr.a"
+    ],
+    "elf_sha": "ee97f466a12bb136",
+    "o_sha": "bbbecea0b6167bf8",
+    "ll_sha": "b3dd58bf88cfe89e"
+   },
+   "ir": {
+    "n_lines": 5,
+    "hist": {
+     "load": 1,
+     "add": 1,
+     "store": 1,
+     "call": 1,
+     "ret": 1,
+     "call:llvm.sdr.actvt.r": 1
+    },
+    "body": "  %1 = load i16, i16* getelementptr inbounds ([64 x i16], [64 x i16]* @a, i16 0, i1 false), align 2, !dbg !7\n  %2 = add i16 %1, 7, !dbg !9\n  store i16 %2, i16* getelementptr inbounds ([64 x i16], [64 x i16]* @c, i16 0, i1 false), align 2, !dbg !10\n  call void @llvm.sdr.actvt.r(i16 9), !dbg !11\n  ret void, !dbg !12"
+   },
+   "machine": {
+    "n": 4,
+    "instrs": [
+     {
+      "pc": 302,
+      "text": "ld16 r5 = [0x5c8]"
+     },
+     {
+      "pc": 304,
+      "text": "add16.nf r5 = r5, 0x7"
+     },
+     {
+      "pc": 306,
+      "text": "st16 [0x648] = r5"
+     },
+     {
+      "pc": 308,
+      "text": "actvt 0x9"
+     }
+    ],
+    "hist": {
+     "ld16": 1,
+     "add16.nf": 1,
+     "st16": 1,
+     "actvt": 1
+    },
+    "gprs": [
+     "r5"
+    ],
+    "dsrs": [],
+    "n_after_activate": 1,
+    "pulled_in": [],
+    "contract": {
+     "body_rule": "pe.csl-attributed instructions up to and including @activate(EXIT)",
+     "init_rule": "nearest preceding definition of each register the body reads before defining (searched back 40 instructions)",
+     "entry_live_in": [],
+     "init_closure": [],
+     "unresolved_live_in": [],
+     "n_body": 4,
+     "n_init": 0,
+     "n_total": 4
+    },
+    "attributed_by": "explicit region contract: debug-attributed body plus the init closure of its live-in registers"
+   },
+   "dsr_graph": {
+    "out_0.greedy.dot": {
+     "nodes": [
+      {
+       "operand": "DEST, SRC1",
+       "dsr": 0,
+       "explicit": true,
+       "failed": false
+      }
+     ],
+     "edges": 0
+    }
+   }
+  },
+  {
+   "name": "const_both",
+   "factor": "constantness",
+   "withheld": false,
+   "csl": "c[0] = 3 + 7;",
+   "ok": true,
+   "identity": {
+    "cslang_bin": "/cb/toolchains/cslang/rel-sdk-2.10.0/202604012315-1813-1394a6ea/bin",
+    "backend_argv": [
+     "schrodinger",
+     "cs_sdr-cerebras-csos"
+    ],
+    "cslc_args": [
+     "./layout.csl",
+     "--arch=wse3",
+     "--fabric-dims=8,3",
+     "--fabric-offsets=4,1",
+     "--memcpy",
+     "--channels=1",
+     "--width-west-buf=0",
+     "--width-east-buf=0",
+     "--dump-dsr-alloc-graph",
+     "-o",
+     "out"
+    ],
+    "libs": [
+     "/cb/toolchains/cslang/rel-sdk-2.10.0/202604012315-1813-1394a6ea/csl-rt/libcsl_rt_cs_sdr.a"
+    ],
+    "elf_sha": "8c322e4ff08225b9",
+    "o_sha": "95743d77bb16918d",
+    "ll_sha": "f0ba3d6b10633966"
+   },
+   "ir": {
+    "n_lines": 3,
+    "hist": {
+     "store": 1,
+     "call": 1,
+     "ret": 1,
+     "call:llvm.sdr.actvt.r": 1
+    },
+    "body": "  store i16 10, i16* getelementptr inbounds ([64 x i16], [64 x i16]* @c, i16 0, i1 false), align 2, !dbg !7\n  call void @llvm.sdr.actvt.r(i16 9), !dbg !9\n  ret void, !dbg !10"
+   },
+   "machine": {
+    "n": 3,
+    "instrs": [
+     {
+      "pc": 302,
+      "text": "movri r5 = 0xa"
+     },
+     {
+      "pc": 304,
+      "text": "st16 [0x646] = r5"
+     },
+     {
+      "pc": 306,
+      "text": "actvt 0x9"
+     }
+    ],
+    "hist": {
+     "movri": 1,
+     "st16": 1,
+     "actvt": 1
+    },
+    "gprs": [
+     "r5"
+    ],
+    "dsrs": [],
+    "n_after_activate": 1,
+    "pulled_in": [
+     {
+      "pc": 302,
+      "text": "movri r5 = 0xa",
+      "source_file": "memcpy.csl",
+      "defines": [
+       "r5"
+      ]
+     }
+    ],
+    "contract": {
+     "body_rule": "pe.csl-attributed instructions up to and including @activate(EXIT)",
+     "init_rule": "nearest preceding definition of each register the body reads before defining (searched back 40 instructions)",
+     "entry_live_in": [
+      "r5"
+     ],
+     "init_closure": [
+      {
+       "pc": 302,
+       "text": "movri r5 = 0xa",
+       "source_file": "memcpy.csl",
+       "defines": [
+        "r5"
+       ]
+      }
+     ],
+     "unresolved_live_in": [],
+     "n_body": 2,
+     "n_init": 1,
+     "n_total": 3
+    },
+    "attributed_by": "explicit region contract: debug-attributed body plus the init closure of its live-in registers"
+   },
+   "dsr_graph": {
+    "out_0.greedy.dot": {
+     "nodes": [
+      {
+       "operand": "DEST, SRC1",
+       "dsr": 0,
+       "explicit": true,
+       "failed": false
+      }
+     ],
+     "edges": 0
+    }
+   }
+  },
+  {
+   "name": "index_runtime",
+   "factor": "addressing",
+   "withheld": false,
+   "csl": "var i: u16 = @as(u16, idx[0]);\n  c[0] = a[i] + b[i];",
+   "ok": true,
+   "identity": {
+    "cslang_bin": "/cb/toolchains/cslang/rel-sdk-2.10.0/202604012315-1813-1394a6ea/bin",
+    "backend_argv": [
+     "schrodinger",
+     "cs_sdr-cerebras-csos"
+    ],
+    "cslc_args": [
+     "./layout.csl",
+     "--arch=wse3",
+     "--fabric-dims=8,3",
+     "--fabric-offsets=4,1",
+     "--memcpy",
+     "--channels=1",
+     "--width-west-buf=0",
+     "--width-east-buf=0",
+     "--dump-dsr-alloc-graph",
+     "-o",
+     "out"
+    ],
+    "libs": [
+     "/cb/toolchains/cslang/rel-sdk-2.10.0/202604012315-1813-1394a6ea/csl-rt/libcsl_rt_cs_sdr.a"
+    ],
+    "elf_sha": "3bd32a1bd783c3bb",
+    "o_sha": "8faa00c4dc2bd786",
+    "ll_sha": "bf3feba0defad771"
+   },
+   "ir": {
+    "n_lines": 13,
+    "hist": {
+     "alloca": 1,
+     "load": 5,
+     "store": 2,
+     "getelementptr": 2,
+     "add": 1,
+     "call": 1,
+     "ret": 1,
+     "call:llvm.sdr.actvt.r": 1
+    },
+    "body": "  %1 = alloca i16, i16 1, align 2, !dbg !7\n  %2 = load i16, i16* getelementptr inbounds ([4 x i16], [4 x i16]* @idx, i16 0, i1 false), align 2, !dbg !9\n  store i16 %2, i16* %1, align 2, !dbg !7\n  %3 = load i16, i16* %1, align 2, !dbg !10\n  %4 = getelementptr [64 x i16], [64 x i16]* @a, i16 0, i16 %3, !dbg !11\n  %5 = load i16, i16* %4, align 2, !dbg !11\n  %6 = load i16, i16* %1, align 2, !dbg !12\n  %7 = getelementptr [64 x i16], [64 x i16]* @b, i16 0, i16 %6, !dbg !13\n  %8 = load i16, i16* %7, align 2, !dbg !13\n  %9 = add i16 %5, %8, !dbg !14\n  store i16 %9, i16* getelementptr inbounds ([64 x i16], [64 x i16]* @c, i16 0, i1 false), align 2, !dbg !15\n  call void @llvm.sdr.actvt.r(i16 9), !dbg !16\n  ret void, !dbg !17"
+   },
+   "machine": {
+    "n": 13,
+    "instrs": [
+     {
+      "pc": 302,
+      "text": "ld16 r5 = [0x69a]"
+     },
+     {
+      "pc": 304,
+      "text": "sll16.nf r5 = r5, 0x1"
+     },
+     {
+      "pc": 306,
+      "text": "movri r8 = 0xc34"
+     },
+     {
+      "pc": 308,
+      "text": "add16.nf r8 = r5, r8"
+     },
+     {
+      "pc": 310,
+      "text": "movri r9 = 0xbb4"
+     },
+     {
+      "pc": 312,
+      "text": "add16.nf r5 = r5, r9"
+     },
+     {
+      "pc": 314,
+      "text": "slr16.nf r6 = r5, 0x1"
+     },
+     {
+      "pc": 316,
+      "text": "imov16.nf r5 = [r6]"
+     },
+     {
+      "pc": 318,
+      "text": "slr16.nf r6 = r8, 0x1"
+     },
+     {
+      "pc": 320,
+      "text": "imov16.nf r8 = [r6]"
+     },
+     {
+      "pc": 322,
+      "text": "add16.nf r5 = r8, r5"
+     },
+     {
+      "pc": 324,
+      "text": "st16 [0x65a] = r5"
+     },
+     {
+      "pc": 326,
+      "text": "actvt 0x9"
+     }
+    ],
+    "hist": {
+     "ld16": 1,
+     "sll16.nf": 1,
+     "movri": 2,
+     "add16.nf": 3,
+     "slr16.nf": 2,
+     "imov16.nf": 2,
+     "st16": 1,
+     "actvt": 1
+    },
+    "gprs": [
+     "r5",
+     "r6",
+     "r8",
+     "r9"
+    ],
+    "dsrs": [],
+    "n_after_activate": 1,
+    "pulled_in": [],
+    "contract": {
+     "body_rule": "pe.csl-attributed instructions up to and including @activate(EXIT)",
+     "init_rule": "nearest preceding definition of each register the body reads before defining (searched back 40 instructions)",
+     "entry_live_in": [],
+     "init_closure": [],
+     "unresolved_live_in": [],
+     "n_body": 13,
+     "n_init": 0,
+     "n_total": 13
+    },
+    "attributed_by": "explicit region contract: debug-attributed body plus the init closure of its live-in registers"
+   },
+   "dsr_graph": {
+    "out_0.greedy.dot": {
+     "nodes": [
+      {
+       "operand": "DEST, SRC1",
+       "dsr": 0,
+       "explicit": true,
+       "failed": false
+      }
+     ],
+     "edges": 0
+    }
+   }
+  },
+  {
+   "name": "use_expr_twice",
+   "factor": "result use",
+   "withheld": false,
+   "csl": "c[0] = a[0] + b[0];\n  c[1] = a[0] + b[0];",
+   "ok": true,
+   "identity": {
+    "cslang_bin": "/cb/toolchains/cslang/rel-sdk-2.10.0/202604012315-1813-1394a6ea/bin",
+    "backend_argv": [
+     "schrodinger",
+     "cs_sdr-cerebras-csos"
+    ],
+    "cslc_args": [
+     "./layout.csl",
+     "--arch=wse3",
+     "--fabric-dims=8,3",
+     "--fabric-offsets=4,1",
+     "--memcpy",
+     "--channels=1",
+     "--width-west-buf=0",
+     "--width-east-buf=0",
+     "--dump-dsr-alloc-graph",
+     "-o",
+     "out"
+    ],
+    "libs": [
+     "/cb/toolchains/cslang/rel-sdk-2.10.0/202604012315-1813-1394a6ea/csl-rt/libcsl_rt_cs_sdr.a"
+    ],
+    "elf_sha": "80a7725245861165",
+    "o_sha": "e729bee6c1f0ffff",
+    "ll_sha": "a464b96e431e1ab3"
+   },
+   "ir": {
+    "n_lines": 10,
+    "hist": {
+     "load": 4,
+     "add": 2,
+     "store": 2,
+     "call": 1,
+     "ret": 1,
+     "call:llvm.sdr.actvt.r": 1
+    },
+    "body": "  %1 = load i16, i16* getelementptr inbounds ([64 x i16], [64 x i16]* @a, i16 0, i1 false), align 2, !dbg !7\n  %2 = load i16, i16* getelementptr inbounds ([64 x i16], [64 x i16]* @b, i16 0, i1 false), align 2, !dbg !9\n  %3 = add i16 %1, %2, !dbg !10\n  store i16 %3, i16* getelementptr inbounds ([64 x i16], [64 x i16]* @c, i16 0, i1 false), align 2, !dbg !11\n  %4 = load i16, i16* getelementptr inbounds ([64 x i16], [64 x i16]* @a, i16 0, i1 false), align 2, !dbg !12\n  %5 = load i16, i16* getelementptr inbounds ([64 x i16], [64 x i16]* @b, i16 0, i1 false), align 2, !dbg !13\n  %6 = add i16 %4, %5, !dbg !14\n  store i16 %6, i16* getelementptr inbounds ([64 x i16], [64 x i16]* @c, i16 0, i2 1), align 2, !dbg !15\n  call void @llvm.sdr.actvt.r(i16 9), !dbg !16\n  ret void, !dbg !17"
+   },
+   "machine": {
+    "n": 6,
+    "instrs": [
+     {
+      "pc": 302,
+      "text": "ld16 r5 = [0x5cc]"
+     },
+     {
+      "pc": 304,
+      "text": "ld16 r8 = [0x60c]"
+     },
+     {
+      "pc": 306,
+      "text": "add16.nf r5 = r8, r5"
+     },
+     {
+      "pc": 308,
+      "text": "st16 [0x64d] = r5"
+     },
+     {
+      "pc": 310,
+      "text": "st16 [0x64c] = r5"
+     },
+     {
+      "pc": 312,
+      "text": "actvt 0x9"
+     }
+    ],
+    "hist": {
+     "ld16": 2,
+     "add16.nf": 1,
+     "st16": 2,
+     "actvt": 1
+    },
+    "gprs": [
+     "r5",
+     "r8"
+    ],
+    "dsrs": [],
+    "n_after_activate": 1,
+    "pulled_in": [],
+    "contract": {
+     "body_rule": "pe.csl-attributed instructions up to and including @activate(EXIT)",
+     "init_rule": "nearest preceding definition of each register the body reads before defining (searched back 40 instructions)",
+     "entry_live_in": [],
+     "init_closure": [],
+     "unresolved_live_in": [],
+     "n_body": 6,
+     "n_init": 0,
+     "n_total": 6
+    },
+    "attributed_by": "explicit region contract: debug-attributed body plus the init closure of its live-in registers"
+   },
+   "dsr_graph": {
+    "out_0.greedy.dot": {
+     "nodes": [
+      {
+       "operand": "DEST, SRC1",
+       "dsr": 0,
+       "explicit": true,
+       "failed": false
+      }
+     ],
+     "edges": 0
+    }
+   }
+  },
+  {
+   "name": "use_value_twice",
+   "factor": "result use",
+   "withheld": false,
+   "csl": "var t: i16 = a[0] + b[0];\n  c[0] = t;\n  c[1] = t + b[1];",
+   "ok": true,
+   "identity": {
+    "cslang_bin": "/cb/toolchains/cslang/rel-sdk-2.10.0/202604012315-1813-1394a6ea/bin",
+    "backend_argv": [
+     "schrodinger",
+     "cs_sdr-cerebras-csos"
+    ],
+    "cslc_args": [
+     "./layout.csl",
+     "--arch=wse3",
+     "--fabric-dims=8,3",
+     "--fabric-offsets=4,1",
+     "--memcpy",
+     "--channels=1",
+     "--width-west-buf=0",
+     "--width-east-buf=0",
+     "--dump-dsr-alloc-graph",
+     "-o",
+     "out"
+    ],
+    "libs": [
+     "/cb/toolchains/cslang/rel-sdk-2.10.0/202604012315-1813-1394a6ea/csl-rt/libcsl_rt_cs_sdr.a"
+    ],
+    "elf_sha": "92a4630373978614",
+    "o_sha": "59efcaf36fc99196",
+    "ll_sha": "85672be87eb5d039"
+   },
+   "ir": {
+    "n_lines": 13,
+    "hist": {
+     "alloca": 1,
+     "load": 5,
+     "add": 2,
+     "store": 3,
+     "call": 1,
+     "ret": 1,
+     "call:llvm.sdr.actvt.r": 1
+    },
+    "body": "  %1 = alloca i16, i16 1, align 2, !dbg !7\n  %2 = load i16, i16* getelementptr inbounds ([64 x i16], [64 x i16]* @a, i16 0, i1 false), align 2, !dbg !9\n  %3 = load i16, i16* getelementptr inbounds ([64 x i16], [64 x i16]* @b, i16 0, i1 false), align 2, !dbg !10\n  %4 = add i16 %2, %3, !dbg !11\n  store i16 %4, i16* %1, align 2, !dbg !7\n  %5 = load i16, i16* %1, align 2, !dbg !12\n  store i16 %5, i16* getelementptr inbounds ([64 x i16], [64 x i16]* @c, i16 0, i1 false), align 2, !dbg !13\n  %6 = load i16, i16* %1, align 2, !dbg !14\n  %7 = load i16, i16* getelementptr inbounds ([64 x i16], [64 x i16]* @b, i16 0, i2 1), align 2, !dbg !15\n  %8 = add i16 %6, %7, !dbg !16\n  store i16 %8, i16* getelementptr inbounds ([64 x i16], [64 x i16]* @c, i16 0, i2 1), align 2, !dbg !17\n  call void @llvm.sdr.actvt.r(i16 9), !dbg !18\n  ret void, !dbg !19"
+   },
+   "machine": {
+    "n": 8,
+    "instrs": [
+     {
+      "pc": 302,
+      "text": "ld16 r5 = [0x5d0]"
+     },
+     {
+      "pc": 304,
+      "text": "ld16 r8 = [0x610]"
+     },
+     {
+      "pc": 306,
+      "text": "add16.nf r5 = r8, r5"
+     },
+     {
+      "pc": 308,
+      "text": "st16 [0x650] = r5"
+     },
+     {
+      "pc": 310,
+      "text": "ld16 r8 = [0x611]"
+     },
+     {
+      "pc": 312,
+      "text": "add16.nf r5 = r8, r5"
+     },
+     {
+      "pc": 314,
+      "text": "st16 [0x651] = r5"
+     },
+     {
+      "pc": 316,
+      "text": "actvt 0x9"
+     }
+    ],
+    "hist": {
+     "ld16": 3,
+     "add16.nf": 2,
+     "st16": 2,
+     "actvt": 1
+    },
+    "gprs": [
+     "r5",
+     "r8"
+    ],
+    "dsrs": [],
+    "n_after_activate": 1,
+    "pulled_in": [],
+    "contract": {
+     "body_rule": "pe.csl-attributed instructions up to and including @activate(EXIT)",
+     "init_rule": "nearest preceding definition of each register the body reads before defining (searched back 40 instructions)",
+     "entry_live_in": [],
+     "init_closure": [],
+     "unresolved_live_in": [],
+     "n_body": 8,
+     "n_init": 0,
+     "n_total": 8
+    },
+    "attributed_by": "explicit region contract: debug-attributed body plus the init closure of its live-in registers"
+   },
+   "dsr_graph": {
+    "out_0.greedy.dot": {
+     "nodes": [
+      {
+       "operand": "DEST, SRC1",
+       "dsr": 0,
+       "explicit": true,
+       "failed": false
+      }
+     ],
+     "edges": 0
+    }
+   }
+  },
+  {
+   "name": "operand_shared",
+   "factor": "result use",
+   "withheld": false,
+   "csl": "c[0] = a[0] + b[0];\n  c[1] = a[0] + b[1];",
+   "ok": true,
+   "identity": {
+    "cslang_bin": "/cb/toolchains/cslang/rel-sdk-2.10.0/202604012315-1813-1394a6ea/bin",
+    "backend_argv": [
+     "schrodinger",
+     "cs_sdr-cerebras-csos"
+    ],
+    "cslc_args": [
+     "./layout.csl",
+     "--arch=wse3",
+     "--fabric-dims=8,3",
+     "--fabric-offsets=4,1",
+     "--memcpy",
+     "--channels=1",
+     "--width-west-buf=0",
+     "--width-east-buf=0",
+     "--dump-dsr-alloc-graph",
+     "-o",
+     "out"
+    ],
+    "libs": [
+     "/cb/toolchains/cslang/rel-sdk-2.10.0/202604012315-1813-1394a6ea/csl-rt/libcsl_rt_cs_sdr.a"
+    ],
+    "elf_sha": "19aa78f98a184e80",
+    "o_sha": "0d5584aa87a59e6e",
+    "ll_sha": "35bf2d89c87137fc"
+   },
+   "ir": {
+    "n_lines": 10,
+    "hist": {
+     "load": 4,
+     "add": 2,
+     "store": 2,
+     "call": 1,
+     "ret": 1,
+     "call:llvm.sdr.actvt.r": 1
+    },
+    "body": "  %1 = load i16, i16* getelementptr inbounds ([64 x i16], [64 x i16]* @a, i16 0, i1 false), align 2, !dbg !7\n  %2 = load i16, i16* getelementptr inbounds ([64 x i16], [64 x i16]* @b, i16 0, i1 false), align 2, !dbg !9\n  %3 = add i16 %1, %2, !dbg !10\n  store i16 %3, i16* getelementptr inbounds ([64 x i16], [64 x i16]* @c, i16 0, i1 false), align 2, !dbg !11\n  %4 = load i16, i16* getelementptr inbounds ([64 x i16], [64 x i16]* @a, i16 0, i1 false), align 2, !dbg !12\n  %5 = load i16, i16* getelementptr inbounds ([64 x i16], [64 x i16]* @b, i16 0, i2 1), align 2, !dbg !13\n  %6 = add i16 %4, %5, !dbg !14\n  store i16 %6, i16* getelementptr inbounds ([64 x i16], [64 x i16]* @c, i16 0, i2 1), align 2, !dbg !15\n  call void @llvm.sdr.actvt.r(i16 9), !dbg !16\n  ret void, !dbg !17"
+   },
+   "machine": {
+    "n": 8,
+    "instrs": [
+     {
+      "pc": 302,
+      "text": "ld16 r5 = [0x5d0]"
+     },
+     {
+      "pc": 304,
+      "text": "ld16 r8 = [0x610]"
+     },
+     {
+      "pc": 306,
+      "text": "add16.nf r8 = r8, r5"
+     },
+     {
+      "pc": 308,
+      "text": "st16 [0x650] = r8"
+     },
+     {
+      "pc": 310,
+      "text": "ld16 r8 = [0x611]"
+     },
+     {
+      "pc": 312,
+      "text": "add16.nf r5 = r8, r5"
+     },
+     {
+      "pc": 314,
+      "text": "st16 [0x651] = r5"
+     },
+     {
+      "pc": 316,
+      "text": "actvt 0x9"
+     }
+    ],
+    "hist": {
+     "ld16": 3,
+     "add16.nf": 2,
+     "st16": 2,
+     "actvt": 1
+    },
+    "gprs": [
+     "r5",
+     "r8"
+    ],
+    "dsrs": [],
+    "n_after_activate": 1,
+    "pulled_in": [],
+    "contract": {
+     "body_rule": "pe.csl-attributed instructions up to and including @activate(EXIT)",
+     "init_rule": "nearest preceding definition of each register the body reads before defining (searched back 40 instructions)",
+     "entry_live_in": [],
+     "init_closure": [],
+     "unresolved_live_in": [],
+     "n_body": 8,
+     "n_init": 0,
+     "n_total": 8
+    },
+    "attributed_by": "explicit region contract: debug-attributed body plus the init closure of its live-in registers"
+   },
+   "dsr_graph": {
+    "out_0.greedy.dot": {
+     "nodes": [
+      {
+       "operand": "DEST, SRC1",
+       "dsr": 0,
+       "explicit": true,
+       "failed": false
+      }
+     ],
+     "edges": 0
+    }
+   }
+  },
+  {
+   "name": "pair_independent",
+   "factor": "dependencies",
+   "withheld": false,
+   "csl": "c[0] = a[0] + b[0];\n  c[1] = a[1] + b[1];",
+   "ok": true,
+   "identity": {
+    "cslang_bin": "/cb/toolchains/cslang/rel-sdk-2.10.0/202604012315-1813-1394a6ea/bin",
+    "backend_argv": [
+     "schrodinger",
+     "cs_sdr-cerebras-csos"
+    ],
+    "cslc_args": [
+     "./layout.csl",
+     "--arch=wse3",
+     "--fabric-dims=8,3",
+     "--fabric-offsets=4,1",
+     "--memcpy",
+     "--channels=1",
+     "--width-west-buf=0",
+     "--width-east-buf=0",
+     "--dump-dsr-alloc-graph",
+     "-o",
+     "out"
+    ],
+    "libs": [
+     "/cb/toolchains/cslang/rel-sdk-2.10.0/202604012315-1813-1394a6ea/csl-rt/libcsl_rt_cs_sdr.a"
+    ],
+    "elf_sha": "c2caf6a06cf5376f",
+    "o_sha": "393bdb314035560e",
+    "ll_sha": "9b25adb87cfaa8e6"
+   },
+   "ir": {
+    "n_lines": 10,
+    "hist": {
+     "load": 4,
+     "add": 2,
+     "store": 2,
+     "call": 1,
+     "ret": 1,
+     "call:llvm.sdr.actvt.r": 1
+    },
+    "body": "  %1 = load i16, i16* getelementptr inbounds ([64 x i16], [64 x i16]* @a, i16 0, i1 false), align 2, !dbg !7\n  %2 = load i16, i16* getelementptr inbounds ([64 x i16], [64 x i16]* @b, i16 0, i1 false), align 2, !dbg !9\n  %3 = add i16 %1, %2, !dbg !10\n  store i16 %3, i16* getelementptr inbounds ([64 x i16], [64 x i16]* @c, i16 0, i1 false), align 2, !dbg !11\n  %4 = load i16, i16* getelementptr inbounds ([64 x i16], [64 x i16]* @a, i16 0, i2 1), align 2, !dbg !12\n  %5 = load i16, i16* getelementptr inbounds ([64 x i16], [64 x i16]* @b, i16 0, i2 1), align 2, !dbg !13\n  %6 = add i16 %4, %5, !dbg !14\n  store i16 %6, i16* getelementptr inbounds ([64 x i16], [64 x i16]* @c, i16 0, i2 1), align 2, !dbg !15\n  call void @llvm.sdr.actvt.r(i16 9), !dbg !16\n  ret void, !dbg !17"
+   },
+   "machine": {
+    "n": 9,
+    "instrs": [
+     {
+      "pc": 302,
+      "text": "ld16 r5 = [0x5d2]"
+     },
+     {
+      "pc": 304,
+      "text": "ld16 r8 = [0x612]"
+     },
+     {
+      "pc": 306,
+      "text": "add16.nf r5 = r8, r5"
+     },
+     {
+      "pc": 308,
+      "text": "st16 [0x652] = r5"
+     },
+     {
+      "pc": 310,
+      "text": "ld16 r5 = [0x5d3]"
+     },
+     {
+      "pc": 312,
+      "text": "ld16 r8 = [0x613]"
+     },
+     {
+      "pc": 314,
+      "text": "add16.nf r5 = r8, r5"
+     },
+     {
+      "pc": 316,
+      "text": "st16 [0x653] = r5"
+     },
+     {
+      "pc": 318,
+      "text": "actvt 0x9"
+     }
+    ],
+    "hist": {
+     "ld16": 4,
+     "add16.nf": 2,
+     "st16": 2,
+     "actvt": 1
+    },
+    "gprs": [
+     "r5",
+     "r8"
+    ],
+    "dsrs": [],
+    "n_after_activate": 1,
+    "pulled_in": [],
+    "contract": {
+     "body_rule": "pe.csl-attributed instructions up to and including @activate(EXIT)",
+     "init_rule": "nearest preceding definition of each register the body reads before defining (searched back 40 instructions)",
+     "entry_live_in": [],
+     "init_closure": [],
+     "unresolved_live_in": [],
+     "n_body": 9,
+     "n_init": 0,
+     "n_total": 9
+    },
+    "attributed_by": "explicit region contract: debug-attributed body plus the init closure of its live-in registers"
+   },
+   "dsr_graph": {
+    "out_0.greedy.dot": {
+     "nodes": [
+      {
+       "operand": "DEST, SRC1",
+       "dsr": 0,
+       "explicit": true,
+       "failed": false
+      }
+     ],
+     "edges": 0
+    }
+   }
+  },
+  {
+   "name": "pair_dependent",
+   "factor": "dependencies",
+   "withheld": false,
+   "csl": "c[0] = a[0] + b[0];\n  c[1] = c[0] + b[1];",
+   "ok": true,
+   "identity": {
+    "cslang_bin": "/cb/toolchains/cslang/rel-sdk-2.10.0/202604012315-1813-1394a6ea/bin",
+    "backend_argv": [
+     "schrodinger",
+     "cs_sdr-cerebras-csos"
+    ],
+    "cslc_args": [
+     "./layout.csl",
+     "--arch=wse3",
+     "--fabric-dims=8,3",
+     "--fabric-offsets=4,1",
+     "--memcpy",
+     "--channels=1",
+     "--width-west-buf=0",
+     "--width-east-buf=0",
+     "--dump-dsr-alloc-graph",
+     "-o",
+     "out"
+    ],
+    "libs": [
+     "/cb/toolchains/cslang/rel-sdk-2.10.0/202604012315-1813-1394a6ea/csl-rt/libcsl_rt_cs_sdr.a"
+    ],
+    "elf_sha": "fe4e64ffb604d6e5",
+    "o_sha": "f62a7d6dc02ecce4",
+    "ll_sha": "d9af98050ece5781"
+   },
+   "ir": {
+    "n_lines": 10,
+    "hist": {
+     "load": 4,
+     "add": 2,
+     "store": 2,
+     "call": 1,
+     "ret": 1,
+     "call:llvm.sdr.actvt.r": 1
+    },
+    "body": "  %1 = load i16, i16* getelementptr inbounds ([64 x i16], [64 x i16]* @a, i16 0, i1 false), align 2, !dbg !7\n  %2 = load i16, i16* getelementptr inbounds ([64 x i16], [64 x i16]* @b, i16 0, i1 false), align 2, !dbg !9\n  %3 = add i16 %1, %2, !dbg !10\n  store i16 %3, i16* getelementptr inbounds ([64 x i16], [64 x i16]* @c, i16 0, i1 false), align 2, !dbg !11\n  %4 = load i16, i16* getelementptr inbounds ([64 x i16], [64 x i16]* @c, i16 0, i1 false), align 2, !dbg !12\n  %5 = load i16, i16* getelementptr inbounds ([64 x i16], [64 x i16]* @b, i16 0, i2 1), align 2, !dbg !13\n  %6 = add i16 %4, %5, !dbg !14\n  store i16 %6, i16* getelementptr inbounds ([64 x i16], [64 x i16]* @c, i16 0, i2 1), align 2, !dbg !15\n  call void @llvm.sdr.actvt.r(i16 9), !dbg !16\n  ret void, !dbg !17"
+   },
+   "machine": {
+    "n": 8,
+    "instrs": [
+     {
+      "pc": 302,
+      "text": "ld16 r5 = [0x5d0]"
+     },
+     {
+      "pc": 304,
+      "text": "ld16 r8 = [0x610]"
+     },
+     {
+      "pc": 306,
+      "text": "add16.nf r5 = r8, r5"
+     },
+     {
+      "pc": 308,
+      "text": "st16 [0x650] = r5"
+     },
+     {
+      "pc": 310,
+      "text": "ld16 r8 = [0x611]"
+     },
+     {
+      "pc": 312,
+      "text": "add16.nf r5 = r8, r5"
+     },
+     {
+      "pc": 314,
+      "text": "st16 [0x651] = r5"
+     },
+     {
+      "pc": 316,
+      "text": "actvt 0x9"
+     }
+    ],
+    "hist": {
+     "ld16": 3,
+     "add16.nf": 2,
+     "st16": 2,
+     "actvt": 1
+    },
+    "gprs": [
+     "r5",
+     "r8"
+    ],
+    "dsrs": [],
+    "n_after_activate": 1,
+    "pulled_in": [],
+    "contract": {
+     "body_rule": "pe.csl-attributed instructions up to and including @activate(EXIT)",
+     "init_rule": "nearest preceding definition of each register the body reads before defining (searched back 40 instructions)",
+     "entry_live_in": [],
+     "init_closure": [],
+     "unresolved_live_in": [],
+     "n_body": 8,
+     "n_init": 0,
+     "n_total": 8
+    },
+    "attributed_by": "explicit region contract: debug-attributed body plus the init closure of its live-in registers"
+   },
+   "dsr_graph": {
+    "out_0.greedy.dot": {
+     "nodes": [
+      {
+       "operand": "DEST, SRC1",
+       "dsr": 0,
+       "explicit": true,
+       "failed": false
+      }
+     ],
+     "edges": 0
+    }
+   }
+  },
+  {
+   "name": "inplace",
+   "factor": "aliasing",
+   "withheld": false,
+   "csl": "a[0] = a[0] + b[0];",
+   "ok": true,
+   "identity": {
+    "cslang_bin": "/cb/toolchains/cslang/rel-sdk-2.10.0/202604012315-1813-1394a6ea/bin",
+    "backend_argv": [
+     "schrodinger",
+     "cs_sdr-cerebras-csos"
+    ],
+    "cslc_args": [
+     "./layout.csl",
+     "--arch=wse3",
+     "--fabric-dims=8,3",
+     "--fabric-offsets=4,1",
+     "--memcpy",
+     "--channels=1",
+     "--width-west-buf=0",
+     "--width-east-buf=0",
+     "--dump-dsr-alloc-graph",
+     "-o",
+     "out"
+    ],
+    "libs": [
+     "/cb/toolchains/cslang/rel-sdk-2.10.0/202604012315-1813-1394a6ea/csl-rt/libcsl_rt_cs_sdr.a"
+    ],
+    "elf_sha": "2b7f73dd91b6eda7",
+    "o_sha": "dbad36ea59c39681",
+    "ll_sha": "f317c7009fac9771"
+   },
+   "ir": {
+    "n_lines": 6,
+    "hist": {
+     "load": 2,
+     "add": 1,
+     "store": 1,
+     "call": 1,
+     "ret": 1,
+     "call:llvm.sdr.actvt.r": 1
+    },
+    "body": "  %1 = load i16, i16* getelementptr inbounds ([64 x i16], [64 x i16]* @a, i16 0, i1 false), align 2, !dbg !7\n  %2 = load i16, i16* getelementptr inbounds ([64 x i16], [64 x i16]* @b, i16 0, i1 false), align 2, !dbg !9\n  %3 = add i16 %1, %2, !dbg !10\n  store i16 %3, i16* getelementptr inbounds ([64 x i16], [64 x i16]* @a, i16 0, i1 false), align 2, !dbg !11\n  call void @llvm.sdr.actvt.r(i16 9), !dbg !12\n  ret void, !dbg !13"
+   },
+   "machine": {
+    "n": 5,
+    "instrs": [
+     {
+      "pc": 302,
+      "text": "ld16 r5 = [0x5ca]"
+     },
+     {
+      "pc": 304,
+      "text": "ld16 r8 = [0x60a]"
+     },
+     {
+      "pc": 306,
+      "text": "add16.nf r5 = r8, r5"
+     },
+     {
+      "pc": 308,
+      "text": "st16 [0x5ca] = r5"
+     },
+     {
+      "pc": 310,
+      "text": "actvt 0x9"
+     }
+    ],
+    "hist": {
+     "ld16": 2,
+     "add16.nf": 1,
+     "st16": 1,
+     "actvt": 1
+    },
+    "gprs": [
+     "r5",
+     "r8"
+    ],
+    "dsrs": [],
+    "n_after_activate": 1,
+    "pulled_in": [],
+    "contract": {
+     "body_rule": "pe.csl-attributed instructions up to and including @activate(EXIT)",
+     "init_rule": "nearest preceding definition of each register the body reads before defining (searched back 40 instructions)",
+     "entry_live_in": [],
+     "init_closure": [],
+     "unresolved_live_in": [],
+     "n_body": 5,
+     "n_init": 0,
+     "n_total": 5
+    },
+    "attributed_by": "explicit region contract: debug-attributed body plus the init closure of its live-in registers"
+   },
+   "dsr_graph": {
+    "out_0.greedy.dot": {
+     "nodes": [
+      {
+       "operand": "DEST, SRC1",
+       "dsr": 0,
+       "explicit": true,
+       "failed": false
+      }
+     ],
+     "edges": 0
+    }
+   }
+  },
+  {
+   "name": "select_runtime",
+   "factor": "control",
+   "withheld": false,
+   "csl": "if (k[0] > 0) { c[0] = a[0] + b[0]; } else { c[0] = a[1] + b[1]; }",
+   "ok": true,
+   "identity": {
+    "cslang_bin": "/cb/toolchains/cslang/rel-sdk-2.10.0/202604012315-1813-1394a6ea/bin",
+    "backend_argv": [
+     "schrodinger",
+     "cs_sdr-cerebras-csos"
+    ],
+    "cslc_args": [
+     "./layout.csl",
+     "--arch=wse3",
+     "--fabric-dims=8,3",
+     "--fabric-offsets=4,1",
+     "--memcpy",
+     "--channels=1",
+     "--width-west-buf=0",
+     "--width-east-buf=0",
+     "--dump-dsr-alloc-graph",
+     "-o",
+     "out"
+    ],
+    "libs": [
+     "/cb/toolchains/cslang/rel-sdk-2.10.0/202604012315-1813-1394a6ea/csl-rt/libcsl_rt_cs_sdr.a"
+    ],
+    "elf_sha": "e4df4bda6dad8e63",
+    "o_sha": "6674e4ee39ea2646",
+    "ll_sha": "9d03aefffd1507e0"
+   },
+   "ir": {
+    "n_lines": 21,
+    "hist": {
+     "load": 5,
+     "icmp": 1,
+     "br": 3,
+     "3": 1,
+     "add": 2,
+     "store": 2,
+     "7": 1,
+     "11": 1,
+     "call": 1,
+     "ret": 1,
+     "call:llvm.sdr.actvt.r": 1
+    },
+    "body": "  %1 = load i16, i16* getelementptr inbounds ([4 x i16], [4 x i16]* @k, i16 0, i1 false), align 2, !dbg !7\n  %2 = icmp sgt i16 %1, 0, !dbg !9\n  br i1 %2, label %3, label %7, !dbg !10\n\n3:                                                ; preds = %0\n  %4 = load i16, i16* getelementptr inbounds ([64 x i16], [64 x i16]* @a, i16 0, i1 false), align 2, !dbg !11\n  %5 = load i16, i16* getelementptr inbounds ([64 x i16], [64 x i16]* @b, i16 0, i1 false), align 2, !dbg !12\n  %6 = add i16 %4, %5, !dbg !13\n  store i16 %6, i16* getelementptr inbounds ([64 x i16], [64 x i16]* @c, i16 0, i1 false), align 2, !dbg !14\n  br label %11, !dbg !10\n\n7:                                                ; preds = %0\n  %8 = load i16, i16* getelementptr inbounds ([64 x i16], [64 x i16]* @a, i16 0, i2 1), align 2, !dbg !15\n  %9 = load i16, i16* getelementptr inbounds ([64 x i16], [64 x i16]* @b, i16 0, i2 1), align 2, !dbg !16\n  %10 = add i16 %8, %9, !dbg !17\n  store i16 %10, i16* getelementptr inbounds ([64 x i16], [64 x i16]* @c, i16 0, i1 false), align 2, !dbg !18\n  br label %11, !dbg !10\n\n11:                                               ; preds = %3, %7\n  call void @llvm.sdr.actvt.r(i16 9), !dbg !19\n  ret void, !dbg !10"
+   },
+   "machine": {
+    "n": 11,
+    "instrs": [
+     {
+      "pc": 302,
+      "text": "ld16 r5 = [0x69a]"
+     },
+     {
+      "pc": 304,
+      "text": "lt16.and cflag0 = r5, 0x1"
+     },
+     {
+      "pc": 306,
+      "text": "cflag0 ? jmp 0x13a"
+     },
+     {
+      "pc": 308,
+      "text": "ld16 r5 = [0x5d6]"
+     },
+     {
+      "pc": 310,
+      "text": "ld16 r8 = [0x616]"
+     },
+     {
+      "pc": 312,
+      "text": "jmp 0x13e"
+     },
+     {
+      "pc": 314,
+      "text": "ld16 r5 = [0x5d7]"
+     },
+     {
+      "pc": 316,
+      "text": "ld16 r8 = [0x617]"
+     },
+     {
+      "pc": 318,
+      "text": "add16.nf r5 = r8, r5"
+     },
+     {
+      "pc": 320,
+      "text": "st16 [0x656] = r5"
+     },
+     {
+      "pc": 322,
+      "text": "actvt 0x9"
+     }
+    ],
+    "hist": {
+     "ld16": 5,
+     "lt16.and": 1,
+     "jmp": 2,
+     "add16.nf": 1,
+     "st16": 1,
+     "actvt": 1
+    },
+    "gprs": [
+     "r5",
+     "r8"
+    ],
+    "dsrs": [],
+    "n_after_activate": 1,
+    "pulled_in": [],
+    "contract": {
+     "body_rule": "pe.csl-attributed instructions up to and including @activate(EXIT)",
+     "init_rule": "nearest preceding definition of each register the body reads before defining (searched back 40 instructions)",
+     "entry_live_in": [],
+     "init_closure": [],
+     "unresolved_live_in": [],
+     "n_body": 11,
+     "n_init": 0,
+     "n_total": 11
+    },
+    "attributed_by": "explicit region contract: debug-attributed body plus the init closure of its live-in registers"
+   },
+   "dsr_graph": {
+    "out_0.greedy.dot": {
+     "nodes": [
+      {
+       "operand": "DEST, SRC1",
+       "dsr": 0,
+       "explicit": true,
+       "failed": false
+      }
+     ],
+     "edges": 0
+    }
+   }
+  },
+  {
+   "name": "loop_comptime",
+   "factor": "control",
+   "withheld": false,
+   "csl": "for (@range(u16, 16)) |i| { c[i] = a[i] + b[i]; }",
+   "ok": true,
+   "identity": {
+    "cslang_bin": "/cb/toolchains/cslang/rel-sdk-2.10.0/202604012315-1813-1394a6ea/bin",
+    "backend_argv": [
+     "schrodinger",
+     "cs_sdr-cerebras-csos"
+    ],
+    "cslc_args": [
+     "./layout.csl",
+     "--arch=wse3",
+     "--fabric-dims=8,3",
+     "--fabric-offsets=4,1",
+     "--memcpy",
+     "--channels=1",
+     "--width-west-buf=0",
+     "--width-east-buf=0",
+     "--dump-dsr-alloc-graph",
+     "-o",
+     "out"
+    ],
+    "libs": [
+     "/cb/toolchains/cslang/rel-sdk-2.10.0/202604012315-1813-1394a6ea/csl-rt/libcsl_rt_cs_sdr.a"
+    ],
+    "elf_sha": "5d76999e541c2ad9",
+    "o_sha": "d9ed36aed632c342",
+    "ll_sha": "c24138194becefc4"
+   },
+   "ir": {
+    "n_lines": 80,
+    "hist": {
+     "alloca": 4,
+     "bitcast": 3,
+     "call": 3,
+     "store": 5,
+     "br": 14,
+     "8": 1,
+     "phi": 3,
+     "icmp": 4,
+     "11": 1,
+     "sub": 1,
+     "13": 1,
+     "14": 1,
+     "16": 1,
+     "18": 1,
+     "19": 1,
+     "load": 8,
+     "22": 1,
+     "24": 1,
+     "25": 1,
+     "getelementptr": 3,
+     "add": 3,
+     "39": 1,
+     "41": 1,
+     "42": 1,
+     "43": 1,
+     "ret": 1,
+     "call:llvm.memcpy.p0i8.p0i8.i32": 2,
+     "call:llvm.sdr.actvt.r": 1
+    },
+    "body": "  %1 = alloca i16, i16 1, align 2, !dbg !7\n  %2 = alloca i16, i16 1, align 2, !dbg !9\n  %3 = alloca [3 x i16], i16 1, align 2, !dbg !10\n  %4 = alloca [3 x i16], i16 1, align 2, !dbg !10\n  %5 = bitcast [3 x i16]* %3 to i8*, !dbg !10\n  call void @llvm.memcpy.p0i8.p0i8.i32(i8* %5, i8* bitcast ([3 x i16]* @cte.init to i8*), i32 6, i1 false), !dbg !10\n  %6 = bitcast [3 x i16]* %3 to i8*, !dbg !10\n  %7 = bitcast [3 x i16]* %4 to i8*, !dbg !10\n  call void @llvm.memcpy.p0i8.p0i8.i32(i8* %7, i8* %6, i32 6, i1 false), !dbg !10\n  store i16 0, i16* %2, align 2, !dbg !9\n  store i16 0, i16* %1, align 2, !dbg !7\n  br label %8, !dbg !7\n\n8:                                                ; preds = %25, %0\n  %9 = phi i16 [ 0, %25 ], [ 0, %0 ]\n  %10 = icmp sgt i16 %9, 0, !dbg !7\n  br i1 %10, label %11, label %13, !dbg !7\n\n11:                                               ; preds = %8\n  %12 = sub i16 %9, 1, !dbg !7\n  br label %14, !dbg !7\n\n13:                                               ; preds = %8\n  br label %14, !dbg !7\n\n14:                                               ; preds = %11, %13\n  %15 = phi i16 [ %9, %13 ], [ %12, %11 ]\n  br label %16, !dbg !7\n\n16:                                               ; preds = %14\n  %17 = icmp ne i16 %9, 0, !dbg !7\n  br i1 %17, label %18, label %19, !dbg !7\n\n18:                                               ; preds = %16\n  br label %22, !dbg !7\n\n19:                                               ; preds = %16\n  %20 = load i16, i16* %2, align 2, !dbg !9\n  %21 = icmp ult i16 %20, 16, !dbg !9\n  br label %22, !dbg !7\n\n22:                                               ; preds = %18, %19\n  %23 = phi i1 [ %21, %19 ], [ false, %18 ]\n  br label %24, !dbg !7\n\n24:                                               ; preds = %22\n  br i1 %23, label %25, label %39, !dbg !7\n\n25:                                               ; preds = %24\n  %26 = load i16, i16* %2, align 2, !dbg !11\n  %27 = getelementptr [64 x i16], [64 x i16]* @a, i16 0, i16 %26, !dbg !12\n  %28 = load i16, i16* %27, align 2, !dbg !12\n  %29 = load i16, i16* %2, align 2, !dbg !13\n  %30 = getelementptr [64 x i16], [64 x i16]* @b, i16 0, i16 %29, !dbg !14\n  %31 = load i16, i16* %30, align 2, !dbg !14\n  %32 = add i16 %28, %31, !dbg !15\n  %33 = load i16, i16* %2, align 2, !dbg !16\n  %34 = getelementptr [64 x i16], [64 x i16]* @c, i16 0, i16 %33, !dbg !17\n  store i16 %32, i16* %34, align 2, !dbg !18\n  %35 = load i16, i16* %1, align 2, !dbg !7\n  %36 = add i16 %35, 1, !dbg !7\n  store i16 %36, i16* %1, align 2, !dbg !7\n  %37 = load i16, i16* %2, align 2, !dbg !9\n  %38 = add i16 %37, 1, !dbg !9\n  store i16 %38, i16* %2, align 2, !dbg !9\n  br label %8, !dbg !7\n\n39:                                               ; preds = %24\n  %40 = icmp ne i16 %15, 0, !dbg !7\n  br i1 %40, label %41, label %42, !dbg !7\n\n41:                                               ; preds = %39\n  br label %43, !dbg !7\n\n42:                                               ; preds = %39\n  call void @llvm.sdr.actvt.r(i16 9), !dbg !19\n  br label %43, !dbg !7\n\n43:                                               ; preds = %41, %42\n  ret void, !dbg !7"
+   },
+   "machine": {
+    "n": 65,
+    "instrs": [
+     {
+      "pc": 302,
+      "text": "ld16 r5 = [0x645]"
+     },
+     {
+      "pc": 304,
+      "text": "ld16 r8 = [0x685]"
+     },
+     {
+      "pc": 306,
+      "text": "add16.nf r5 = r8, r5"
+     },
+     {
+      "pc": 308,
+      "text": "ld16 r8 = [0x644]"
+     },
+     {
+      "pc": 310,
+      "text": "ld16 r9 = [0x684]"
+     },
+     {
+      "pc": 312,
+      "text": "add16.nf r8 = r9, r8"
+     },
+     {
+      "pc": 314,
+      "text": "ld16 r9 = [0x643]"
+     },
+     {
+      "pc": 316,
+      "text": "ld16 r14 = [0x683]"
+     },
+     {
+      "pc": 318,
+      "text": "add16.nf r9 = r14, r9"
+     },
+     {
+      "pc": 320,
+      "text": "ld16 r14 = [0x642]"
+     },
+     {
+      "pc": 322,
+      "text": "ld16 r15 = [0x682]"
+     },
+     {
+      "pc": 324,
+      "text": "add16.nf r14 = r15, r14"
+     },
+     {
+      "pc": 326,
+      "text": "st16 [0x6c2] = r14"
+     },
+     {
+      "pc": 328,
+      "text": "st16 [0x6c3] = r9"
+     },
+     {
+      "pc": 330,
+      "text": "st16 [0x6c4] = r8"
+     },
+     {
+      "pc": 332,
+      "text": "st16 [0x6c5] = r5"
+     },
+     {
+      "pc": 334,
+      "text": "ld16 r5 = [0x646]"
+     },
+     {
+      "pc": 336,
+      "text": "ld16 r8 = [0x686]"
+     },
+     {
+      "pc": 338,
+      "text": "add16.nf r5 = r8, r5"
+     },
+     {
+      "pc": 340,
+      "text": "st16 [0x6c6] = r5"
+     },
+     {
+      "pc": 342,
+      "text": "ld16 r5 = [0x647]"
+     },
+     {
+      "pc": 344,
+      "text": "ld16 r8 = [0x687]"
+     },
+     {
+      "pc": 346,
+      "text": "add16.nf r5 = r8, r5"
+     },
+     {
+      "pc": 348,
+      "text": "st16 [0x6c7] = r5"
+     },
+     {
+      "pc": 350,
+      "text": "ld16 r5 = [0x648]"
+     },
+     {
+      "pc": 352,
+      "text": "ld16 r8 = [0x688]"
+     },
+     {
+      "pc": 354,
+      "text": "add16.nf r5 = r8, r5"
+     },
+     {
+      "pc": 356,
+      "text": "st16 [0x6c8] = r5"
+     },
+     {
+      "pc": 358,
+      "text": "ld16 r5 = [0x649]"
+     },
+     {
+      "pc": 360,
+      "text": "ld16 r8 = [0x689]"
+     },
+     {
+      "pc": 362,
+      "text": "add16.nf r5 = r8, r5"
+     },
+     {
+      "pc": 364,
+      "text": "st16 [0x6c9] = r5"
+     },
+     {
+      "pc": 366,
+      "text": "ld16 r5 = [0x64a]"
+     },
+     {
+      "pc": 368,
+      "text": "ld16 r8 = [0x68a]"
+     },
+     {
+      "pc": 370,
+      "text": "add16.nf r5 = r8, r5"
+     },
+     {
+      "pc": 372,
+      "text": "st16 [0x6ca] = r5"
+     },
+     {
+      "pc": 374,
+      "text": "ld16 r5 = [0x64b]"
+     },
+     {
+      "pc": 376,
+      "text": "ld16 r8 = [0x68b]"
+     },
+     {
+      "pc": 378,
+      "text": "add16.nf r5 = r8, r5"
+     },
+     {
+      "pc": 380,
+      "text": "st16 [0x6cb] = r5"
+     },
+     {
+      "pc": 382,
+      "text": "ld16 r5 = [0x64c]"
+     },
+     {
+      "pc": 384,
+      "text": "ld16 r8 = [0x68c]"
+     },
+     {
+      "pc": 386,
+      "text": "add16.nf r5 = r8, r5"
+     },
+     {
+      "pc": 388,
+      "text": "st16 [0x6cc] = r5"
+     },
+     {
+      "pc": 390,
+      "text": "ld16 r5 = [0x64d]"
+     },
+     {
+      "pc": 392,
+      "text": "ld16 r8 = [0x68d]"
+     },
+     {
+      "pc": 394,
+      "text": "add16.nf r5 = r8, r5"
+     },
+     {
+      "pc": 396,
+      "text": "st16 [0x6cd] = r5"
+     },
+     {
+      "pc": 398,
+      "text": "ld16 r5 = [0x64e]"
+     },
+     {
+      "pc": 400,
+      "text": "ld16 r8 = [0x68e]"
+     },
+     {
+      "pc": 402,
+      "text": "add16.nf r5 = r8, r5"
+     },
+     {
+      "pc": 404,
+      "text": "st16 [0x6ce] = r5"
+     },
+     {
+      "pc": 406,
+      "text": "ld16 r5 = [0x64f]"
+     },
+     {
+      "pc": 408,
+      "text": "ld16 r8 = [0x68f]"
+     },
+     {
+      "pc": 410,
+      "text": "add16.nf r5 = r8, r5"
+     },
+     {
+      "pc": 412,
+      "text": "st16 [0x6cf] = r5"
+     },
+     {
+      "pc": 414,
+      "text": "ld16 r5 = [0x650]"
+     },
+     {
+      "pc": 416,
+      "text": "ld16 r8 = [0x690]"
+     },
+     {
+      "pc": 418,
+      "text": "add16.nf r5 = r8, r5"
+     },
+     {
+      "pc": 420,
+      "text": "st16 [0x6d0] = r5"
+     },
+     {
+      "pc": 422,
+      "text": "ld16 r5 = [0x651]"
+     },
+     {
+      "pc": 424,
+      "text": "ld16 r8 = [0x691]"
+     },
+     {
+      "pc": 426,
+      "text": "add16.nf r5 = r8, r5"
+     },
+     {
+      "pc": 428,
+      "text": "st16 [0x6d1] = r5"
+     },
+     {
+      "pc": 430,
+      "text": "actvt 0x9"
+     }
+    ],
+    "hist": {
+     "ld16": 32,
+     "add16.nf": 16,
+     "st16": 16,
+     "actvt": 1
+    },
+    "gprs": [
+     "r14",
+     "r15",
+     "r5",
+     "r8",
+     "r9"
+    ],
+    "dsrs": [],
+    "n_after_activate": 1,
+    "pulled_in": [],
+    "contract": {
+     "body_rule": "pe.csl-attributed instructions up to and including @activate(EXIT)",
+     "init_rule": "nearest preceding definition of each register the body reads before defining (searched back 40 instructions)",
+     "entry_live_in": [],
+     "init_closure": [],
+     "unresolved_live_in": [],
+     "n_body": 65,
+     "n_init": 0,
+     "n_total": 65
+    },
+    "attributed_by": "explicit region contract: debug-attributed body plus the init closure of its live-in registers"
+   },
+   "dsr_graph": {
+    "out_0.greedy.dot": {
+     "nodes": [
+      {
+       "operand": "DEST, SRC1",
+       "dsr": 0,
+       "explicit": true,
+       "failed": false
+      }
+     ],
+     "edges": 0
+    }
+   }
+  },
+  {
+   "name": "loop_runtime",
+   "factor": "control",
+   "withheld": false,
+   "csl": "var n: u16 = @as(u16, k[0]);\n  var i: u16 = 0;\n  while (i < n) : (i += 1) { c[i] = a[i] + b[i]; }",
+   "ok": true,
+   "identity": {
+    "cslang_bin": "/cb/toolchains/cslang/rel-sdk-2.10.0/202604012315-1813-1394a6ea/bin",
+    "backend_argv": [
+     "schrodinger",
+     "cs_sdr-cerebras-csos"
+    ],
+    "cslc_args": [
+     "./layout.csl",
+     "--arch=wse3",
+     "--fabric-dims=8,3",
+     "--fabric-offsets=4,1",
+     "--memcpy",
+     "--channels=1",
+     "--width-west-buf=0",
+     "--width-east-buf=0",
+     "--dump-dsr-alloc-graph",
+     "-o",
+     "out"
+    ],
+    "libs": [
+     "/cb/toolchains/cslang/rel-sdk-2.10.0/202604012315-1813-1394a6ea/csl-rt/libcsl_rt_cs_sdr.a"
+    ],
+    "elf_sha": "180bb4f392fdf1c9",
+    "o_sha": "587e0bf0bb6bd6c3",
+    "ll_sha": "e5b1ced09cbb2657"
+   },
+   "ir": {
+    "n_lines": 72,
+    "hist": {
+     "alloca": 2,
+     "load": 9,
+     "store": 4,
+     "br": 14,
+     "4": 1,
+     "phi": 3,
+     "icmp": 4,
+     "7": 1,
+     "sub": 1,
+     "9": 1,
+     "10": 1,
+     "12": 1,
+     "14": 1,
+     "15": 1,
+     "19": 1,
+     "21": 1,
+     "22": 1,
+     "getelementptr": 3,
+     "add": 2,
+     "34": 1,
+     "36": 1,
+     "37": 1,
+     "call": 1,
+     "38": 1,
+     "ret": 1,
+     "call:llvm.sdr.actvt.r": 1
+    },
+    "body": "  %1 = alloca i16, i16 1, align 2, !dbg !7\n  %2 = alloca i16, i16 1, align 2, !dbg !9\n  %3 = load i16, i16* getelementptr inbounds ([4 x i16], [4 x i16]* @k, i16 0, i1 false), align 2, !dbg !10\n  store i16 %3, i16* %2, align 2, !dbg !9\n  store i16 0, i16* %1, align 2, !dbg !7\n  br label %4, !dbg !11\n\n4:                                                ; preds = %22, %0\n  %5 = phi i16 [ 0, %22 ], [ 0, %0 ]\n  %6 = icmp sgt i16 %5, 0, !dbg !11\n  br i1 %6, label %7, label %9, !dbg !11\n\n7:                                                ; preds = %4\n  %8 = sub i16 %5, 1, !dbg !11\n  br label %10, !dbg !11\n\n9:                                                ; preds = %4\n  br label %10, !dbg !11\n\n10:                                               ; preds = %7, %9\n  %11 = phi i16 [ %5, %9 ], [ %8, %7 ]\n  br label %12, !dbg !11\n\n12:                                               ; preds = %10\n  %13 = icmp ne i16 %5, 0, !dbg !11\n  br i1 %13, label %14, label %15, !dbg !11\n\n14:                                               ; preds = %12\n  br label %19, !dbg !11\n\n15:                                               ; preds = %12\n  %16 = load i16, i16* %1, align 2, !dbg !12\n  %17 = load i16, i16* %2, align 2, !dbg !13\n  %18 = icmp ult i16 %16, %17, !dbg !14\n  br label %19, !dbg !11\n\n19:                                               ; preds = %14, %15\n  %20 = phi i1 [ %18, %15 ], [ false, %14 ]\n  br label %21, !dbg !11\n\n21:                                               ; preds = %19\n  br i1 %20, label %22, label %34, !dbg !11\n\n22:                                               ; preds = %21\n  %23 = load i16, i16* %1, align 2, !dbg !15\n  %24 = getelementptr [64 x i16], [64 x i16]* @a, i16 0, i16 %23, !dbg !16\n  %25 = load i16, i16* %24, align 2, !dbg !16\n  %26 = load i16, i16* %1, align 2, !dbg !17\n  %27 = getelementptr [64 x i16], [64 x i16]* @b, i16 0, i16 %26, !dbg !18\n  %28 = load i16, i16* %27, align 2, !dbg !18\n  %29 = add i16 %25, %28, !dbg !19\n  %30 = load i16, i16* %1, align 2, !dbg !20\n  %31 = getelementptr [64 x i16], [64 x i16]* @c, i16 0, i16 %30, !dbg !21\n  store i16 %29, i16* %31, align 2, !dbg !22\n  %32 = load i16, i16* %1, align 2, !dbg !23\n  %33 = add i16 %32, 1, !dbg !24\n  store i16 %33, i16* %1, align 2, !dbg !24\n  br label %4, !dbg !11\n\n34:                                               ; preds = %21\n  %35 = icmp ne i16 %11, 0, !dbg !11\n  br i1 %35, label %36, label %37, !dbg !11\n\n36:                                               ; preds = %34\n  br label %38, !dbg !11\n\n37:                                               ; preds = %34\n  call void @llvm.sdr.actvt.r(i16 9), !dbg !25\n  br label %38, !dbg !11\n\n38:                                               ; preds = %36, %37\n  ret void, !dbg !11"
+   },
+   "machine": {
+    "n": 23,
+    "instrs": [
+     {
+      "pc": 294,
+      "text": "movri r5 = 0x0"
+     },
+     {
+      "pc": 304,
+      "text": "ld16 r8 = [0x6b0]"
+     },
+     {
+      "pc": 306,
+      "text": "eq16.and cflag0 = r8, 0x0"
+     },
+     {
+      "pc": 308,
+      "text": "cflag0 ? jmp 0x15a"
+     },
+     {
+      "pc": 310,
+      "text": "movri r9 = 0xbd8"
+     },
+     {
+      "pc": 312,
+      "text": "movri r14 = 0xc58"
+     },
+     {
+      "pc": 314,
+      "text": "movri r15 = 0xcd8"
+     },
+     {
+      "pc": 316,
+      "text": "fmov16.nf r0 = r5"
+     },
+     {
+      "pc": 318,
+      "text": "sll16.nf r1 = r0, 0x1"
+     },
+     {
+      "pc": 320,
+      "text": "add16.nf r2 = r1, r9"
+     },
+     {
+      "pc": 322,
+      "text": "slr16.nf r6 = r2, 0x1"
+     },
+     {
+      "pc": 324,
+      "text": "imov16.nf r2 = [r6]"
+     },
+     {
+      "pc": 326,
+      "text": "add16.nf r3 = r1, r14"
+     },
+     {
+      "pc": 328,
+      "text": "slr16.nf r6 = r3, 0x1"
+     },
+     {
+      "pc": 330,
+      "text": "imov16.nf r3 = [r6]"
+     },
+     {
+      "pc": 332,
+      "text": "add16.nf r2 = r3, r2"
+     },
+     {
+      "pc": 334,
+      "text": "add16.nf r1 = r1, r15"
+     },
+     {
+      "pc": 336,
+      "text": "slr16.nf r6 = r1, 0x1"
+     },
+     {
+      "pc": 338,
+      "text": "imov16.nf [r6] = r2"
+     },
+     {
+      "pc": 340,
+      "text": "add16.nf r0 = r0, 0x1"
+     },
+     {
+      "pc": 342,
+      "text": "ltu16.and cflag0 = r0, r8"
+     },
+     {
+      "pc": 344,
+      "text": "cflag0 ? jmp 0x13e"
+     },
+     {
+      "pc": 346,
+      "text": "actvt 0x9"
+     }
+    ],
+    "hist": {
+     "movri": 4,
+     "ld16": 1,
+     "eq16.and": 1,
+     "jmp": 2,
+     "fmov16.nf": 1,
+     "sll16.nf": 1,
+     "add16.nf": 5,
+     "slr16.nf": 3,
+     "imov16.nf": 3,
+     "ltu16.and": 1,
+     "actvt": 1
+    },
+    "gprs": [
+     "r0",
+     "r1",
+     "r14",
+     "r15",
+     "r2",
+     "r3",
+     "r5",
+     "r6",
+     "r8",
+     "r9"
+    ],
+    "dsrs": [],
+    "n_after_activate": 0,
+    "pulled_in": [
+     {
+      "pc": 294,
+      "text": "movri r5 = 0x0",
+      "source_file": "memcpy.csl",
+      "defines": [
+       "r5"
+      ]
+     }
+    ],
+    "contract": {
+     "body_rule": "pe.csl-attributed instructions up to and including @activate(EXIT)",
+     "init_rule": "nearest preceding definition of each register the body reads before defining (searched back 40 instructions)",
+     "entry_live_in": [
+      "r5"
+     ],
+     "init_closure": [
+      {
+       "pc": 294,
+       "text": "movri r5 = 0x0",
+       "source_file": "memcpy.csl",
+       "defines": [
+        "r5"
+       ]
+      }
+     ],
+     "unresolved_live_in": [],
+     "n_body": 22,
+     "n_init": 1,
+     "n_total": 23
+    },
+    "attributed_by": "explicit region contract: debug-attributed body plus the init closure of its live-in registers"
+   },
+   "dsr_graph": {
+    "out_0.greedy.dot": {
+     "nodes": [
+      {
+       "operand": "DEST, SRC1",
+       "dsr": 0,
+       "explicit": true,
+       "failed": false
+      }
+     ],
+     "edges": 0
+    }
+   }
+  },
+  {
+   "name": "dsd16",
+   "factor": "execution form",
+   "withheld": false,
+   "csl": "@add16(cd, ad, bd);",
+   "ok": true,
+   "identity": {
+    "cslang_bin": "/cb/toolchains/cslang/rel-sdk-2.10.0/202604012315-1813-1394a6ea/bin",
+    "backend_argv": [
+     "schrodinger",
+     "cs_sdr-cerebras-csos"
+    ],
+    "cslc_args": [
+     "./layout.csl",
+     "--arch=wse3",
+     "--fabric-dims=8,3",
+     "--fabric-offsets=4,1",
+     "--memcpy",
+     "--channels=1",
+     "--width-west-buf=0",
+     "--width-east-buf=0",
+     "--dump-dsr-alloc-graph",
+     "-o",
+     "out"
+    ],
+    "libs": [
+     "/cb/toolchains/cslang/rel-sdk-2.10.0/202604012315-1813-1394a6ea/csl-rt/libcsl_rt_cs_sdr.a"
+    ],
+    "elf_sha": "cd67d38442fb6a64",
+    "o_sha": "4142cef94cc9cae9",
+    "ll_sha": "dfce4e21789edb75"
+   },
+   "ir": {
+    "n_lines": 6,
+    "hist": {
+     "call": 5,
+     "ret": 1,
+     "call:llvm.sdr.lddwds": 1,
+     "call:llvm.sdr.lds0wds": 1,
+     "call:llvm.sdr.lds1wds": 1,
+     "call:llvm.sdr.add16.ds0s1": 1,
+     "call:llvm.sdr.actvt.r": 1
+    },
+    "body": "  call void @llvm.sdr.lddwds(i16 1, i8* bitcast (<{ i16, i16, i16, i16 }>* @__dsr_lowmeminit_ to i8*)), !dbg !7\n  call void @llvm.sdr.lds0wds(i16 1, i8* bitcast (<{ i16, i16, i16, i16 }>* @__dsr_lowmeminit__0 to i8*)), !dbg !7\n  call void @llvm.sdr.lds1wds(i16 1, i8* bitcast (<{ i16, i16, i16, i16 }>* @__dsr_lowmeminit__1 to i8*)), !dbg !7\n  call void @llvm.sdr.add16.ds0s1(i16 1, i16 1, i16 1), !dbg !7\n  call void @llvm.sdr.actvt.r(i16 9), !dbg !9\n  ret void, !dbg !10"
+   },
+   "machine": {
+    "n": 5,
+    "instrs": [
+     {
+      "pc": 314,
+      "text": "lddwds dds1 = [0x0]"
+     },
+     {
+      "pc": 316,
+      "text": "lds0wds s0ds1 = [0x4]"
+     },
+     {
+      "pc": 318,
+      "text": "lds1wds s1ds1 = [0x8]"
+     },
+     {
+      "pc": 320,
+      "text": "add16.nf [dds1] = [s0ds1], [s1ds1]"
+     },
+     {
+      "pc": 322,
+      "text": "actvt 0x9"
+     }
+    ],
+    "hist": {
+     "lddwds": 1,
+     "lds0wds": 1,
+     "lds1wds": 1,
+     "add16.nf": 1,
+     "actvt": 1
+    },
+    "gprs": [],
+    "dsrs": [
+     "dds1",
+     "s0ds1",
+     "s1ds1"
+    ],
+    "n_after_activate": 1,
+    "pulled_in": [],
+    "contract": {
+     "body_rule": "pe.csl-attributed instructions up to and including @activate(EXIT)",
+     "init_rule": "nearest preceding definition of each register the body reads before defining (searched back 40 instructions)",
+     "entry_live_in": [],
+     "init_closure": [],
+     "unresolved_live_in": [],
+     "n_body": 5,
+     "n_init": 0,
+     "n_total": 5
+    },
+    "attributed_by": "explicit region contract: debug-attributed body plus the init closure of its live-in registers"
+   },
+   "dsr_graph": {
+    "out_0.dsatur.dot": {
+     "nodes": [
+      {
+       "operand": "DEST, SRC0",
+       "dsr": 1,
+       "explicit": false,
+       "failed": false
+      },
+      {
+       "operand": "SRC1",
+       "dsr": 1,
+       "explicit": false,
+       "failed": false
+      },
+      {
+       "operand": "DEST, SRC1",
+       "dsr": 0,
+       "explicit": true,
+       "failed": false
+      }
+     ],
+     "edges": 2
+    },
+    "out_0.greedy.dot": {
+     "nodes": [
+      {
+       "operand": "DEST, SRC0",
+       "dsr": 0,
+       "explicit": false,
+       "failed": false
+      },
+      {
+       "operand": "SRC1",
+       "dsr": 0,
+       "explicit": false,
+       "failed": false
+      }
+     ],
+     "edges": 2
+    }
+   }
+  },
+  {
+   "name": "W_index_inplace",
+   "factor": "withheld",
+   "withheld": true,
+   "csl": "var i: u16 = @as(u16, idx[0]);\n  a[i] = a[i] + b[i];",
+   "ok": true,
+   "identity": {
+    "cslang_bin": "/cb/toolchains/cslang/rel-sdk-2.10.0/202604012315-1813-1394a6ea/bin",
+    "backend_argv": [
+     "schrodinger",
+     "cs_sdr-cerebras-csos"
+    ],
+    "cslc_args": [
+     "./layout.csl",
+     "--arch=wse3",
+     "--fabric-dims=8,3",
+     "--fabric-offsets=4,1",
+     "--memcpy",
+     "--channels=1",
+     "--width-west-buf=0",
+     "--width-east-buf=0",
+     "--dump-dsr-alloc-graph",
+     "-o",
+     "out"
+    ],
+    "libs": [
+     "/cb/toolchains/cslang/rel-sdk-2.10.0/202604012315-1813-1394a6ea/csl-rt/libcsl_rt_cs_sdr.a"
+    ],
+    "elf_sha": "ca4206e8a527fcfc",
+    "o_sha": "7c45f6d9db36c9a6",
+    "ll_sha": "f9b8be1204706219"
+   },
+   "ir": {
+    "n_lines": 15,
+    "hist": {
+     "alloca": 1,
+     "load": 6,
+     "store": 2,
+     "getelementptr": 3,
+     "add": 1,
+     "call": 1,
+     "ret": 1,
+     "call:llvm.sdr.actvt.r": 1
+    },
+    "body": "  %1 = alloca i16, i16 1, align 2, !dbg !7\n  %2 = load i16, i16* getelementptr inbounds ([4 x i16], [4 x i16]* @idx, i16 0, i1 false), align 2, !dbg !9\n  store i16 %2, i16* %1, align 2, !dbg !7\n  %3 = load i16, i16* %1, align 2, !dbg !10\n  %4 = getelementptr [64 x i16], [64 x i16]* @a, i16 0, i16 %3, !dbg !11\n  %5 = load i16, i16* %4, align 2, !dbg !11\n  %6 = load i16, i16* %1, align 2, !dbg !12\n  %7 = getelementptr [64 x i16], [64 x i16]* @b, i16 0, i16 %6, !dbg !13\n  %8 = load i16, i16* %7, align 2, !dbg !13\n  %9 = add i16 %5, %8, !dbg !14\n  %10 = load i16, i16* %1, align 2, !dbg !15\n  %11 = getelementptr [64 x i16], [64 x i16]* @a, i16 0, i16 %10, !dbg !16\n  store i16 %9, i16* %11, align 2, !dbg !17\n  call void @llvm.sdr.actvt.r(i16 9), !dbg !18\n  ret void, !dbg !19"
+   },
+   "machine": {
+    "n": 13,
+    "instrs": [
+     {
+      "pc": 302,
+      "text": "ld16 r5 = [0x69a]"
+     },
+     {
+      "pc": 304,
+      "text": "sll16.nf r5 = r5, 0x1"
+     },
+     {
+      "pc": 306,
+      "text": "movri r8 = 0xbb4"
+     },
+     {
+      "pc": 308,
+      "text": "add16.nf r8 = r5, r8"
+     },
+     {
+      "pc": 310,
+      "text": "movri r9 = 0xc34"
+     },
+     {
+      "pc": 312,
+      "text": "add16.nf r5 = r5, r9"
+     },
+     {
+      "pc": 314,
+      "text": "slr16.nf r6 = r5, 0x1"
+     },
+     {
+      "pc": 316,
+      "text": "imov16.nf r5 = [r6]"
+     },
+     {
+      "pc": 318,
+      "text": "slr16.nf r6 = r8, 0x1"
+     },
+     {
+      "pc": 320,
+      "text": "imov16.nf r8 = [r6]"
+     },
+     {
+      "pc": 322,
+      "text": "add16.nf r5 = r5, r8"
+     },
+     {
+      "pc": 324,
+      "text": "imov16.nf [r6] = r5"
+     },
+     {
+      "pc": 326,
+      "text": "actvt 0x9"
+     }
+    ],
+    "hist": {
+     "ld16": 1,
+     "sll16.nf": 1,
+     "movri": 2,
+     "add16.nf": 3,
+     "slr16.nf": 2,
+     "imov16.nf": 3,
+     "actvt": 1
+    },
+    "gprs": [
+     "r5",
+     "r6",
+     "r8",
+     "r9"
+    ],
+    "dsrs": [],
+    "n_after_activate": 1,
+    "pulled_in": [],
+    "contract": {
+     "body_rule": "pe.csl-attributed instructions up to and including @activate(EXIT)",
+     "init_rule": "nearest preceding definition of each register the body reads before defining (searched back 40 instructions)",
+     "entry_live_in": [],
+     "init_closure": [],
+     "unresolved_live_in": [],
+     "n_body": 13,
+     "n_init": 0,
+     "n_total": 13
+    },
+    "attributed_by": "explicit region contract: debug-attributed body plus the init closure of its live-in registers"
+   },
+   "dsr_graph": {
+    "out_0.greedy.dot": {
+     "nodes": [
+      {
+       "operand": "DEST, SRC1",
+       "dsr": 0,
+       "explicit": true,
+       "failed": false
+      }
+     ],
+     "edges": 0
+    }
+   }
+  },
+  {
+   "name": "W_const_in_loop",
+   "factor": "withheld",
+   "withheld": true,
+   "csl": "for (@range(u16, 8)) |i| { c[i] = a[0] + 5; }",
+   "ok": true,
+   "identity": {
+    "cslang_bin": "/cb/toolchains/cslang/rel-sdk-2.10.0/202604012315-1813-1394a6ea/bin",
+    "backend_argv": [
+     "schrodinger",
+     "cs_sdr-cerebras-csos"
+    ],
+    "cslc_args": [
+     "./layout.csl",
+     "--arch=wse3",
+     "--fabric-dims=8,3",
+     "--fabric-offsets=4,1",
+     "--memcpy",
+     "--channels=1",
+     "--width-west-buf=0",
+     "--width-east-buf=0",
+     "--dump-dsr-alloc-graph",
+     "-o",
+     "out"
+    ],
+    "libs": [
+     "/cb/toolchains/cslang/rel-sdk-2.10.0/202604012315-1813-1394a6ea/csl-rt/libcsl_rt_cs_sdr.a"
+    ],
+    "elf_sha": "f3a1fe674bc15e07",
+    "o_sha": "440c8fdb59d5dd77",
+    "ll_sha": "26cb5d6e6c248ef7"
+   },
+   "ir": {
+    "n_lines": 75,
+    "hist": {
+     "alloca": 4,
+     "bitcast": 3,
+     "call": 3,
+     "store": 5,
+     "br": 14,
+     "8": 1,
+     "phi": 3,
+     "icmp": 4,
+     "11": 1,
+     "sub": 1,
+     "13": 1,
+     "14": 1,
+     "16": 1,
+     "18": 1,
+     "19": 1,
+     "load": 5,
+     "22": 1,
+     "24": 1,
+     "25": 1,
+     "add": 3,
+     "getelementptr": 1,
+     "34": 1,
+     "36": 1,
+     "37": 1,
+     "38": 1,
+     "ret": 1,
+     "call:llvm.memcpy.p0i8.p0i8.i32": 2,
+     "call:llvm.sdr.actvt.r": 1
+    },
+    "body": "  %1 = alloca i16, i16 1, align 2, !dbg !7\n  %2 = alloca i16, i16 1, align 2, !dbg !9\n  %3 = alloca [3 x i16], i16 1, align 2, !dbg !10\n  %4 = alloca [3 x i16], i16 1, align 2, !dbg !10\n  %5 = bitcast [3 x i16]* %3 to i8*, !dbg !10\n  call void @llvm.memcpy.p0i8.p0i8.i32(i8* %5, i8* bitcast ([3 x i16]* @cte.init to i8*), i32 6, i1 false), !dbg !10\n  %6 = bitcast [3 x i16]* %3 to i8*, !dbg !10\n  %7 = bitcast [3 x i16]* %4 to i8*, !dbg !10\n  call void @llvm.memcpy.p0i8.p0i8.i32(i8* %7, i8* %6, i32 6, i1 false), !dbg !10\n  store i16 0, i16* %2, align 2, !dbg !9\n  store i16 0, i16* %1, align 2, !dbg !7\n  br label %8, !dbg !7\n\n8:                                                ; preds = %25, %0\n  %9 = phi i16 [ 0, %25 ], [ 0, %0 ]\n  %10 = icmp sgt i16 %9, 0, !dbg !7\n  br i1 %10, label %11, label %13, !dbg !7\n\n11:                                               ; preds = %8\n  %12 = sub i16 %9, 1, !dbg !7\n  br label %14, !dbg !7\n\n13:                                               ; preds = %8\n  br label %14, !dbg !7\n\n14:                                               ; preds = %11, %13\n  %15 = phi i16 [ %9, %13 ], [ %12, %11 ]\n  br label %16, !dbg !7\n\n16:                                               ; preds = %14\n  %17 = icmp ne i16 %9, 0, !dbg !7\n  br i1 %17, label %18, label %19, !dbg !7\n\n18:                                               ; preds = %16\n  br label %22, !dbg !7\n\n19:                                               ; preds = %16\n  %20 = load i16, i16* %2, align 2, !dbg !9\n  %21 = icmp ult i16 %20, 8, !dbg !9\n  br label %22, !dbg !7\n\n22:                                               ; preds = %18, %19\n  %23 = phi i1 [ %21, %19 ], [ false, %18 ]\n  br label %24, !dbg !7\n\n24:                                               ; preds = %22\n  br i1 %23, label %25, label %34, !dbg !7\n\n25:                                               ; preds = %24\n  %26 = load i16, i16* getelementptr inbounds ([64 x i16], [64 x i16]* @a, i16 0, i1 false), align 2, !dbg !11\n  %27 = add i16 %26, 5, !dbg !12\n  %28 = load i16, i16* %2, align 2, !dbg !13\n  %29 = getelementptr [64 x i16], [64 x i16]* @c, i16 0, i16 %28, !dbg !14\n  store i16 %27, i16* %29, align 2, !dbg !15\n  %30 = load i16, i16* %1, align 2, !dbg !7\n  %31 = add i16 %30, 1, !dbg !7\n  store i16 %31, i16* %1, align 2, !dbg !7\n  %32 = load i16, i16* %2, align 2, !dbg !9\n  %33 = add i16 %32, 1, !dbg !9\n  store i16 %33, i16* %2, align 2, !dbg !9\n  br label %8, !dbg !7\n\n34:                                               ; preds = %24\n  %35 = icmp ne i16 %15, 0, !dbg !7\n  br i1 %35, label %36, label %37, !dbg !7\n\n36:                                               ; preds = %34\n  br label %38, !dbg !7\n\n37:                                               ; preds = %34\n  call void @llvm.sdr.actvt.r(i16 9), !dbg !16\n  br label %38, !dbg !7\n\n38:                                               ; preds = %36, %37\n  ret void, !dbg !7"
+   },
+   "machine": {
+    "n": 11,
+    "instrs": [
+     {
+      "pc": 302,
+      "text": "ld16 r5 = [0x5d6]"
+     },
+     {
+      "pc": 304,
+      "text": "add16.nf r5 = r5, 0x5"
+     },
+     {
+      "pc": 306,
+      "text": "st16 [0x65d] = r5"
+     },
+     {
+      "pc": 308,
+      "text": "st16 [0x65c] = r5"
+     },
+     {
+      "pc": 310,
+      "text": "st16 [0x65b] = r5"
+     },
+     {
+      "pc": 312,
+      "text": "st16 [0x65a] = r5"
+     },
+     {
+      "pc": 314,
+      "text": "st16 [0x659] = r5"
+     },
+     {
+      "pc": 316,
+      "text": "st16 [0x658] = r5"
+     },
+     {
+      "pc": 318,
+      "text": "st16 [0x657] = r5"
+     },
+     {
+      "pc": 320,
+      "text": "st16 [0x656] = r5"
+     },
+     {
+      "pc": 322,
+      "text": "actvt 0x9"
+     }
+    ],
+    "hist": {
+     "ld16": 1,
+     "add16.nf": 1,
+     "st16": 8,
+     "actvt": 1
+    },
+    "gprs": [
+     "r5"
+    ],
+    "dsrs": [],
+    "n_after_activate": 1,
+    "pulled_in": [
+     {
+      "pc": 302,
+      "text": "ld16 r5 = [0x5d6]",
+      "source_file": "memcpy.csl",
+      "defines": [
+       "r5"
+      ]
+     },
+     {
+      "pc": 304,
+      "text": "add16.nf r5 = r5, 0x5",
+      "source_file": "memcpy.csl",
+      "defines": [
+       "r5"
+      ]
+     }
+    ],
+    "contract": {
+     "body_rule": "pe.csl-attributed instructions up to and including @activate(EXIT)",
+     "init_rule": "nearest preceding definition of each register the body reads before defining (searched back 40 instructions)",
+     "entry_live_in": [
+      "r5"
+     ],
+     "init_closure": [
+      {
+       "pc": 302,
+       "text": "ld16 r5 = [0x5d6]",
+       "source_file": "memcpy.csl",
+       "defines": [
+        "r5"
+       ]
+      },
+      {
+       "pc": 304,
+       "text": "add16.nf r5 = r5, 0x5",
+       "source_file": "memcpy.csl",
+       "defines": [
+        "r5"
+       ]
+      }
+     ],
+     "unresolved_live_in": [],
+     "n_body": 9,
+     "n_init": 2,
+     "n_total": 11
+    },
+    "attributed_by": "explicit region contract: debug-attributed body plus the init closure of its live-in registers"
+   },
+   "dsr_graph": {
+    "out_0.greedy.dot": {
+     "nodes": [
+      {
+       "operand": "DEST, SRC1",
+       "dsr": 0,
+       "explicit": true,
+       "failed": false
+      }
+     ],
+     "edges": 0
+    }
+   }
+  },
+  {
+   "name": "W_chain_in_loop",
+   "factor": "withheld",
+   "withheld": true,
+   "csl": "var n: u16 = @as(u16, k[0]);\n  var i: u16 = 1;\n  while (i < n) : (i += 1) { c[i] = c[i - 1] + b[i]; }",
+   "ok": true,
+   "identity": {
+    "cslang_bin": "/cb/toolchains/cslang/rel-sdk-2.10.0/202604012315-1813-1394a6ea/bin",
+    "backend_argv": [
+     "schrodinger",
+     "cs_sdr-cerebras-csos"
+    ],
+    "cslc_args": [
+     "./layout.csl",
+     "--arch=wse3",
+     "--fabric-dims=8,3",
+     "--fabric-offsets=4,1",
+     "--memcpy",
+     "--channels=1",
+     "--width-west-buf=0",
+     "--width-east-buf=0",
+     "--dump-dsr-alloc-graph",
+     "-o",
+     "out"
+    ],
+    "libs": [
+     "/cb/toolchains/cslang/rel-sdk-2.10.0/202604012315-1813-1394a6ea/csl-rt/libcsl_rt_cs_sdr.a"
+    ],
+    "elf_sha": "32ffd28af3b4109c",
+    "o_sha": "3db55ed3e4c77536",
+    "ll_sha": "6afb2559f3ab12e4"
+   },
+   "ir": {
+    "n_lines": 73,
+    "hist": {
+     "alloca": 2,
+     "load": 9,
+     "store": 4,
+     "br": 14,
+     "4": 1,
+     "phi": 3,
+     "icmp": 4,
+     "7": 1,
+     "sub": 2,
+     "9": 1,
+     "10": 1,
+     "12": 1,
+     "14": 1,
+     "15": 1,
+     "19": 1,
+     "21": 1,
+     "22": 1,
+     "getelementptr": 3,
+     "add": 2,
+     "35": 1,
+     "37": 1,
+     "38": 1,
+     "call": 1,
+     "39": 1,
+     "ret": 1,
+     "call:llvm.sdr.actvt.r": 1
+    },
+    "body": "  %1 = alloca i16, i16 1, align 2, !dbg !7\n  %2 = alloca i16, i16 1, align 2, !dbg !9\n  %3 = load i16, i16* getelementptr inbounds ([4 x i16], [4 x i16]* @k, i16 0, i1 false), align 2, !dbg !10\n  store i16 %3, i16* %2, align 2, !dbg !9\n  store i16 1, i16* %1, align 2, !dbg !7\n  br label %4, !dbg !11\n\n4:                                                ; preds = %22, %0\n  %5 = phi i16 [ 0, %22 ], [ 0, %0 ]\n  %6 = icmp sgt i16 %5, 0, !dbg !11\n  br i1 %6, label %7, label %9, !dbg !11\n\n7:                                                ; preds = %4\n  %8 = sub i16 %5, 1, !dbg !11\n  br label %10, !dbg !11\n\n9:                                                ; preds = %4\n  br label %10, !dbg !11\n\n10:                                               ; preds = %7, %9\n  %11 = phi i16 [ %5, %9 ], [ %8, %7 ]\n  br label %12, !dbg !11\n\n12:                                               ; preds = %10\n  %13 = icmp ne i16 %5, 0, !dbg !11\n  br i1 %13, label %14, label %15, !dbg !11\n\n14:                                               ; preds = %12\n  br label %19, !dbg !11\n\n15:                                               ; preds = %12\n  %16 = load i16, i16* %1, align 2, !dbg !12\n  %17 = load i16, i16* %2, align 2, !dbg !13\n  %18 = icmp ult i16 %16, %17, !dbg !14\n  br label %19, !dbg !11\n\n19:                                               ; preds = %14, %15\n  %20 = phi i1 [ %18, %15 ], [ false, %14 ]\n  br label %21, !dbg !11\n\n21:                                               ; preds = %19\n  br i1 %20, label %22, label %35, !dbg !11\n\n22:                                               ; preds = %21\n  %23 = load i16, i16* %1, align 2, !dbg !15\n  %24 = sub i16 %23, 1, !dbg !16\n  %25 = getelementptr [64 x i16], [64 x i16]* @c, i16 0, i16 %24, !dbg !17\n  %26 = load i16, i16* %25, align 2, !dbg !17\n  %27 = load i16, i16* %1, align 2, !dbg !18\n  %28 = getelementptr [64 x i16], [64 x i16]* @b, i16 0, i16 %27, !dbg !19\n  %29 = load i16, i16* %28, align 2, !dbg !19\n  %30 = add i16 %26, %29, !dbg !20\n  %31 = load i16, i16* %1, align 2, !dbg !21\n  %32 = getelementptr [64 x i16], [64 x i16]* @c, i16 0, i16 %31, !dbg !22\n  store i16 %30, i16* %32, align 2, !dbg !23\n  %33 = load i16, i16* %1, align 2, !dbg !24\n  %34 = add i16 %33, 1, !dbg !25\n  store i16 %34, i16* %1, align 2, !dbg !25\n  br label %4, !dbg !11\n\n35:                                               ; preds = %21\n  %36 = icmp ne i16 %11, 0, !dbg !11\n  br i1 %36, label %37, label %38, !dbg !11\n\n37:                                               ; preds = %35\n  br label %39, !dbg !11\n\n38:                                               ; preds = %35\n  call void @llvm.sdr.actvt.r(i16 9), !dbg !26\n  br label %39, !dbg !11\n\n39:                                               ; preds = %37, %38\n  ret void, !dbg !11"
+   },
+   "machine": {
+    "n": 19,
+    "instrs": [
+     {
+      "pc": 302,
+      "text": "ld16 r5 = [0x6aa]"
+     },
+     {
+      "pc": 304,
+      "text": "ltu16.and cflag0 = r5, 0x2"
+     },
+     {
+      "pc": 306,
+      "text": "cflag0 ? jmp 0x152"
+     },
+     {
+      "pc": 308,
+      "text": "movri r8 = 0x1"
+     },
+     {
+      "pc": 310,
+      "text": "ld16 r9 = [0x666]"
+     },
+     {
+      "pc": 312,
+      "text": "movri r14 = 0xc4c"
+     },
+     {
+      "pc": 314,
+      "text": "movri r15 = 0xccc"
+     },
+     {
+      "pc": 316,
+      "text": "sll16.nf r0 = r8, 0x1"
+     },
+     {
+      "pc": 318,
+      "text": "add16.nf r1 = r0, r14"
+     },
+     {
+      "pc": 320,
+      "text": "slr16.nf r6 = r1, 0x1"
+     },
+     {
+      "pc": 322,
+      "text": "imov16.nf r1 = [r6]"
+     },
+     {
+      "pc": 324,
+      "text": "add16.nf r9 = r1, r9"
+     },
+     {
+      "pc": 326,
+      "text": "add16.nf r0 = r0, r15"
+     },
+     {
+      "pc": 328,
+      "text": "slr16.nf r6 = r0, 0x1"
+     },
+     {
+      "pc": 330,
+      "text": "imov16.nf [r6] = r9"
+     },
+     {
+      "pc": 332,
+      "text": "add16.nf r8 = r8, 0x1"
+     },
+     {
+      "pc": 334,
+      "text": "ltu16.and cflag0 = r8, r5"
+     },
+     {
+      "pc": 336,
+      "text": "cflag0 ? jmp 0x13c"
+     },
+     {
+      "pc": 338,
+      "text": "actvt 0x9"
+     }
+    ],
+    "hist": {
+     "ld16": 2,
+     "ltu16.and": 2,
+     "jmp": 2,
+     "movri": 3,
+     "sll16.nf": 1,
+     "add16.nf": 4,
+     "slr16.nf": 2,
+     "imov16.nf": 2,
+     "actvt": 1
+    },
+    "gprs": [
+     "r0",
+     "r1",
+     "r14",
+     "r15",
+     "r5",
+     "r6",
+     "r8",
+     "r9"
+    ],
+    "dsrs": [],
+    "n_after_activate": 1,
+    "pulled_in": [],
+    "contract": {
+     "body_rule": "pe.csl-attributed instructions up to and including @activate(EXIT)",
+     "init_rule": "nearest preceding definition of each register the body reads before defining (searched back 40 instructions)",
+     "entry_live_in": [],
+     "init_closure": [],
+     "unresolved_live_in": [],
+     "n_body": 19,
+     "n_init": 0,
+     "n_total": 19
+    },
+    "attributed_by": "explicit region contract: debug-attributed body plus the init closure of its live-in registers"
+   },
+   "dsr_graph": {
+    "out_0.greedy.dot": {
+     "nodes": [
+      {
+       "operand": "DEST, SRC1",
+       "dsr": 0,
+       "explicit": true,
+       "failed": false
+      }
+     ],
+     "edges": 0
+    }
+   }
+  },
+  {
+   "name": "W_dsd_inplace",
+   "factor": "withheld",
+   "withheld": true,
+   "csl": "@add16(ad, ad, bd);",
+   "ok": true,
+   "identity": {
+    "cslang_bin": "/cb/toolchains/cslang/rel-sdk-2.10.0/202604012315-1813-1394a6ea/bin",
+    "backend_argv": [
+     "schrodinger",
+     "cs_sdr-cerebras-csos"
+    ],
+    "cslc_args": [
+     "./layout.csl",
+     "--arch=wse3",
+     "--fabric-dims=8,3",
+     "--fabric-offsets=4,1",
+     "--memcpy",
+     "--channels=1",
+     "--width-west-buf=0",
+     "--width-east-buf=0",
+     "--dump-dsr-alloc-graph",
+     "-o",
+     "out"
+    ],
+    "libs": [
+     "/cb/toolchains/cslang/rel-sdk-2.10.0/202604012315-1813-1394a6ea/csl-rt/libcsl_rt_cs_sdr.a"
+    ],
+    "elf_sha": "3ba008bfbc7f1909",
+    "o_sha": "8353a73f9a2ef7d2",
+    "ll_sha": "411caf13079ba17f"
+   },
+   "ir": {
+    "n_lines": 5,
+    "hist": {
+     "call": 4,
+     "ret": 1,
+     "call:llvm.sdr.lds0wds": 1,
+     "call:llvm.sdr.lds1wds": 1,
+     "call:llvm.sdr.add16.s0s0s1": 1,
+     "call:llvm.sdr.actvt.r": 1
+    },
+    "body": "  call void @llvm.sdr.lds0wds(i16 0, i8* bitcast (<{ i16, i16, i16, i16 }>* @__dsr_lowmeminit_ to i8*)), !dbg !7\n  call void @llvm.sdr.lds1wds(i16 1, i8* bitcast (<{ i16, i16, i16, i16 }>* @__dsr_lowmeminit__0 to i8*)), !dbg !7\n  call void @llvm.sdr.add16.s0s0s1(i16 0, i16 0, i16 1), !dbg !7\n  call void @llvm.sdr.actvt.r(i16 9), !dbg !9\n  ret void, !dbg !10"
+   },
+   "machine": {
+    "n": 4,
+    "instrs": [
+     {
+      "pc": 310,
+      "text": "lds0wds s0ds0 = [0x0]"
+     },
+     {
+      "pc": 312,
+      "text": "lds1wds s1ds1 = [0x4]"
+     },
+     {
+      "pc": 314,
+      "text": "add16.nf [s0ds0] = [s0ds0], [s1ds1]"
+     },
+     {
+      "pc": 316,
+      "text": "actvt 0x9"
+     }
+    ],
+    "hist": {
+     "lds0wds": 1,
+     "lds1wds": 1,
+     "add16.nf": 1,
+     "actvt": 1
+    },
+    "gprs": [],
+    "dsrs": [
+     "s0ds0",
+     "s1ds1"
+    ],
+    "n_after_activate": 1,
+    "pulled_in": [],
+    "contract": {
+     "body_rule": "pe.csl-attributed instructions up to and including @activate(EXIT)",
+     "init_rule": "nearest preceding definition of each register the body reads before defining (searched back 40 instructions)",
+     "entry_live_in": [],
+     "init_closure": [],
+     "unresolved_live_in": [],
+     "n_body": 4,
+     "n_init": 0,
+     "n_total": 4
+    },
+    "attributed_by": "explicit region contract: debug-attributed body plus the init closure of its live-in registers"
+   },
+   "dsr_graph": {
+    "out_0.dsatur.dot": {
+     "nodes": [
+      {
+       "operand": "SRC0",
+       "dsr": 0,
+       "explicit": false,
+       "failed": false
+      },
+      {
+       "operand": "SRC1",
+       "dsr": 1,
+       "explicit": false,
+       "failed": false
+      },
+      {
+       "operand": "DEST, SRC1",
+       "dsr": 0,
+       "explicit": true,
+       "failed": false
+      }
+     ],
+     "edges": 1
+    },
+    "out_0.greedy.dot": {
+     "nodes": [
+      {
+       "operand": "SRC0",
+       "dsr": 0,
+       "explicit": false,
+       "failed": false
+      },
+      {
+       "operand": "SRC1",
+       "dsr": 0,
+       "explicit": false,
+       "failed": false
+      }
+     ],
+     "edges": 1
+    }
+   }
+  }
+ ]
+}

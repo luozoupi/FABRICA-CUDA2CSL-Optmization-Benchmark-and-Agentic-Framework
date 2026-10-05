@@ -1,0 +1,13 @@
+{
+  "created_utc": "2026-09-26T20:18:46.869532+00:00",
+  "status": "pass",
+  "tests": 4,
+  "returncode": 0,
+  "stdout": "",
+  "stderr": "....\n----------------------------------------------------------------------\nRan 4 tests in 0.001s\n\nOK\n",
+  "source_sha256": {
+    "queue_retry.py": "3d5b6a5c1f03455f20ae77429e553cadc05e3c54c97ee8cfa37b73adbb307938",
+    "verify_queue_retry.py": "d4709b47709fc0ac05081969bcb8f7ce48d00bda308685c7c1ae7f38872691e0",
+    "supervise.py": "3d7609c28b2b24293c4931a4a17f6094e241ea92a794a1bee4bf31e456e239c1"
+  }
+}

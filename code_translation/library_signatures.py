@@ -208,7 +208,8 @@ def _extract_signatures_from_pe(pe_path: Path) -> str:
 def library_signatures_block(reference_dir: str,
                              layout_text: str,
                              enabled: Optional[bool] = None,
-                             arch: str = "wse3") -> str:
+                             arch: str = "wse3",
+                             allow_sdk_container: bool = True) -> str:
     """Build the injectable signature block for a kernel.
 
     Returns "" when disabled, when the layout imports no relevant libraries
@@ -244,7 +245,7 @@ def library_signatures_block(reference_dir: str,
             # from inside the cslc container (NOT hand-authored prose — that
             # would be benchmark-overfitting). Honestly skipped if the SIF isn't
             # available. Gate XKERNEL_SDK_SIG=0 to disable container extraction.
-            if os.getenv("XKERNEL_SDK_SIG", "1") == "0":
+            if not allow_sdk_container or os.getenv("XKERNEL_SDK_SIG", "1") == "0":
                 continue
             text = _read_sdk_module_text(t)
             if not text:

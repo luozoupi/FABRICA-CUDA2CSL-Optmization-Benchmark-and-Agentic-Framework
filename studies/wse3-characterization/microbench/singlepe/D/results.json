@@ -1,0 +1,136 @@
+{
+ "suite": "D",
+ "tag": "",
+ "rows": [
+  {
+   "name": "iadd16_8",
+   "family": "iadd16",
+   "elems": 8,
+   "reps": 1024,
+   "flop": 1,
+   "bytes": 6,
+   "cycles": 12299,
+   "total_elems": 8192,
+   "t_start": 5,
+   "t_end": 12304,
+   "cyc_per_elem": 1.50134,
+   "elem_per_cyc": 0.6661,
+   "sink": -98.0
+  },
+  {
+   "name": "iadd16_512",
+   "family": "iadd16",
+   "elems": 512,
+   "reps": 16,
+   "flop": 1,
+   "bytes": 6,
+   "cycles": 2154,
+   "total_elems": 8192,
+   "t_start": 12328,
+   "t_end": 14482,
+   "cyc_per_elem": 0.26294,
+   "elem_per_cyc": 3.8032,
+   "sink": -98.0
+  },
+  {
+   "name": "iadd16_2048",
+   "family": "iadd16",
+   "elems": 2048,
+   "reps": 4,
+   "flop": 1,
+   "bytes": 6,
+   "cycles": 2082,
+   "total_elems": 8192,
+   "t_start": 14505,
+   "t_end": 16587,
+   "cyc_per_elem": 0.25415,
+   "elem_per_cyc": 3.9347,
+   "sink": -98.0
+  },
+  {
+   "name": "idot16_8",
+   "family": "idot16",
+   "elems": 8,
+   "reps": 512,
+   "flop": 2,
+   "bytes": 4,
+   "cycles": 22557,
+   "total_elems": 4096,
+   "t_start": 16610,
+   "t_end": 39167,
+   "cyc_per_elem": 5.50708,
+   "elem_per_cyc": 0.1816,
+   "sink": 9912.0
+  },
+  {
+   "name": "idot16_256",
+   "family": "idot16",
+   "elems": 256,
+   "reps": 16,
+   "flop": 2,
+   "bytes": 4,
+   "cycles": 98429,
+   "total_elems": 4096,
+   "t_start": 39193,
+   "t_end": 137622,
+   "cyc_per_elem": 24.03052,
+   "elem_per_cyc": 0.0416,
+   "sink": -488.0
+  },
+  {
+   "name": "i8add_512",
+   "family": "i8",
+   "elems": 512,
+   "reps": 16,
+   "flop": 1,
+   "bytes": 1,
+   "cycles": 283154,
+   "total_elems": 8192,
+   "t_start": 137646,
+   "t_end": 420800,
+   "cyc_per_elem": 34.5647,
+   "elem_per_cyc": 0.0289,
+   "sink": -48.0
+  }
+ ],
+ "verification": {
+  "pass": true,
+  "report": [
+   {
+    "item": "ia",
+    "detail": "bit-exact",
+    "ok": true
+   },
+   {
+    "item": "ib",
+    "detail": "bit-exact",
+    "ok": true
+   },
+   {
+    "item": "ic",
+    "detail": "bit-exact",
+    "ok": true
+   },
+   {
+    "item": "q8",
+    "detail": "bit-exact",
+    "ok": true
+   },
+   {
+    "item": "sink:iadd16",
+    "detail": "worst iadd16_8: got -98 expected -98 (0.0 ulp)",
+    "ok": true
+   },
+   {
+    "item": "sink:idot16",
+    "detail": "worst idot16_8: got 9912 expected 9912 (0.0 ulp)",
+    "ok": true
+   },
+   {
+    "item": "sink:i8",
+    "detail": "worst i8add_512: got -48 expected -48 (0.0 ulp)",
+    "ok": true
+   }
+  ]
+ }
+}

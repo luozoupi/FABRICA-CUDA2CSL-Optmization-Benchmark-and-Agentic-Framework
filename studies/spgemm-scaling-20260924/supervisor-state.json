@@ -1,0 +1,9 @@
+{
+  "pid": 4135703,
+  "started_utc": "2026-09-26T20:16:27.645187+00:00",
+  "status": "executing_registered_case",
+  "execution_protocol_revision": "queue-admission-v2",
+  "active_case": "strong-m256-k256-n256-p1-d3-full",
+  "sdk_phase": "run",
+  "last_updated_utc": "2026-09-26T20:18:42.651116+00:00"
+}

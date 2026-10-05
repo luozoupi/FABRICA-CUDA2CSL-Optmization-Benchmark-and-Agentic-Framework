@@ -1,0 +1,67 @@
+{
+  "kernel": "SpMV-RowBlock",
+  "run_dir": "/tmp/scratch/t0_view/SpMV-RowBlock/seed_1/run_20260916_103452",
+  "status": "extracted",
+  "n_attempts": 4,
+  "model": "claude-opus-4-8",
+  "target_relpath": "pe.csl",
+  "reference_dir": "/home/USER/xkernel/kernels/SpMV-RowBlock/CSL",
+  "fc_attempt_index": 4,
+  "fc_cycles_send": 37012,
+  "fc_cycles_send_runs": [
+    37012
+  ],
+  "fc_code_lines": 161,
+  "fc_heldout_eval": {
+    "passed": true,
+    "failing_seed": null,
+    "per_seed": [
+      {
+        "seed": 101,
+        "steps": [
+          {
+            "command": "cs_python run.py --name out",
+            "ok": true,
+            "returncode": 0
+          }
+        ],
+        "seed_echo": 101
+      },
+      {
+        "seed": 202,
+        "steps": [
+          {
+            "command": "cs_python run.py --name out",
+            "ok": true,
+            "returncode": 0
+          }
+        ],
+        "seed_echo": 202
+      },
+      {
+        "seed": 303,
+        "steps": [
+          {
+            "command": "cs_python run.py --name out",
+            "ok": true,
+            "returncode": 0
+          }
+        ],
+        "seed_echo": 303
+      }
+    ],
+    "reason": "passed all 3 held-out seeds"
+  },
+  "translated_path": "/home/USER/xkernel/code_translation/sandbox/cuda2csl/spmv-rowblock_62t243ip/pe.csl",
+  "source": "sandbox",
+  "dest": "results/first_correct/sparse_20260920/SpMV-RowBlock/pe.csl",
+  "source_group": "seed_1",
+  "sibling_fc_cycles": {
+    "seed_1": 37012,
+    "seed_2": 36238,
+    "seed_3": 36242,
+    "seed_4": 37275,
+    "seed_5": 36238
+  },
+  "seed_choice_rule": "lowest-sorted run group that yielded an extraction (blind to cycle counts)"
+}

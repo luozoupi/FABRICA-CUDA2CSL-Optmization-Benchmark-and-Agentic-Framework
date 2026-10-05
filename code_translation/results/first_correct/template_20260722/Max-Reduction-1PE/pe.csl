@@ -1,0 +1,79 @@
+param memcpy_params: comptime_struct;
+// === SLOT: EXTRA_PARAMS ===
+param n: u16;
+
+const EXIT: local_task_id = @get_local_task_id(9);
+const sys_mod = @import_module("<memcpy/memcpy>", memcpy_params);
+
+// === SLOT: EXTRA_IMPORTS ===
+// (no extra imports needed)
+
+const timestamp = @import_module("<time>");
+var tsc_start_buf = @zeros([timestamp.tsc_size_words]u16);
+var tsc_end_buf   = @zeros([timestamp.tsc_size_words]u16);
+var timer_buf = @zeros([3]f32);
+var ptr_timer_buf: [*]f32 = &timer_buf;
+
+// === SLOT: DATA_BUFFERS ===
+var x_array = @zeros([n]f32);
+var ptr_x: [*]f32 = &x_array;
+
+var result_array = @zeros([1]f32);
+var ptr_result: [*]f32 = &result_array;
+
+// DSD over the input vector (correct mem1d_dsd idiom)
+const x_dsd = @get_dsd(mem1d_dsd, .{
+    .base_address = &x_array,
+    .extent = n,
+    .stride = 1,
+});
+
+// === SLOT: KERNEL_FUNCTION ===
+fn max_reduce() void {
+    // Identity element for max: -FLT_MAX
+    var mx: f32 = -3.4028235e38;
+
+    // DSD reduction: mx = max(mx, max over x_dsd)
+    // @fmaxs with a scalar destination performs an elementwise max-reduce
+    // accumulating into the scalar `mx`.
+    @fmaxs(&mx, mx, x_dsd);
+
+    result_array[0] = mx;
+}
+
+fn compute() void {
+    timestamp.enable_tsc();
+    timestamp.get_timestamp(&tsc_start_buf);
+
+    // === SLOT: KERNEL_CALL ===
+    max_reduce();
+
+    timestamp.get_timestamp(&tsc_end_buf);
+    timestamp.disable_tsc();
+
+    var lo_: u16 = 0;
+    var hi_: u16 = 0;
+    lo_ = tsc_start_buf[0]; hi_ = tsc_start_buf[1];
+    timer_buf[0] = @bitcast(f32, (@as(u32, hi_) << @as(u16, 16)) | @as(u32, lo_));
+    lo_ = tsc_start_buf[2]; hi_ = tsc_end_buf[0];
+    timer_buf[1] = @bitcast(f32, (@as(u32, hi_) << @as(u16, 16)) | @as(u32, lo_));
+    lo_ = tsc_end_buf[1]; hi_ = tsc_end_buf[2];
+    timer_buf[2] = @bitcast(f32, (@as(u32, hi_) << @as(u16, 16)) | @as(u32, lo_));
+
+    @activate(EXIT);
+}
+
+task f_exit() void {
+    sys_mod.unblock_cmd_stream();
+}
+
+comptime {
+    @bind_local_task(f_exit, EXIT);
+
+    // === SLOT: EXPORT_SYMBOLS ===
+    @export_symbol(ptr_x, "x");
+    @export_symbol(ptr_result, "result");
+
+    @export_symbol(ptr_timer_buf, "maxmin_time");
+    @export_symbol(compute);
+}

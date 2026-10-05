@@ -1,0 +1,223 @@
+[
+  {
+    "case": "general-full_row",
+    "group": "traces",
+    "queue_wait_s": 5.000557645005756,
+    "phases": [
+      {
+        "phase": "run",
+        "command": [
+          "/home/USER/cs_sdk/cs_python",
+          "host.py"
+        ],
+        "returncode": 0,
+        "wall_s": 17.998588090995327
+      },
+      {
+        "phase": "disassemble",
+        "command": [
+          "/home/USER/cs_sdk/cs_python",
+          "-c",
+          "import glob,subprocess\np=glob.glob('/cb/toolchains/llvm/cerebras/*/bin/elf2am')[0]\nsubprocess.run([p,'-o=traces/general-full_row/kernel.am','traces/general-full_row/out/bin/out_0_0.elf'],check=True)"
+        ],
+        "returncode": 0,
+        "wall_s": 0.6151147409982514
+      }
+    ],
+    "status": "pass",
+    "trace_enabled": true,
+    "hashes": {
+      "binding.json": "00ea7b9083305c5949744ecc40fd7d403307c63924411eea6b1074cbc32ee497",
+      "disassembly.json": "2427ead98af77273fb23cd5bc40539f9ac8749ae63a1e53ae300cf98e4665141",
+      "kernel.am": "4751f8a2e77a1154abdb8af1d6e0d0da23125a08215ecc1e63d581c0a0fab4ce",
+      "pe.csl": "df75cd1920cada5bcc52b91387f41b7da6d08d86ffb5a24d7a6af2c9db693bfb",
+      "case.json": "fe17fd380402617a60b23c1f9761aec486de2447d8a6ac4735e29e3379ba69fd",
+      "layout.csl": "e704accecebe9e2cf86b7e5895e300a96ac401c78f060552fc487284643c39c2",
+      "inputs.py": "38ca49cab7d4cae285ab234420d6f0ac5c3a2477f599a2643892af0de541f6fc",
+      "host.py": "68775b92bfcf81df72b2cd0e60c724eb9ce19a7bf5346431b16f7877f92ad71d",
+      "observations.json": "dd322d3ed53d44635a8e23a71212eb41383be2427556531f45ebbf61d1558c4c",
+      "sim_stats.json": "889716811646964352110f70f03635c99a8c872787ea019f08b7e594252e04ee",
+      "simconfig.json": "ac8861b1a0ab97042fb33484d83a4d3ef124877e9bef550a89a5efe1f6da2be3",
+      "out/out.json": "b67e94695ca5a56ae9ae1a4a78bc93d3cae5825997109038dd11891f3cab5bb1",
+      "simfab_traces/global_simdata.json": "232e1cc319c3f924a891c4456a10f6c7d88f5ee4c4bfb53e2716a0f87acf2b4b",
+      "out/bin/out_rpc.json": "36f79f3d742819ca133bb177ae96924cace4b721138874eb2710d97104b583a6",
+      "out/bin/out_0_0.elf": "cc86c2d432b6b9e4c1bd386bf892d24aa3cb85206b12e6c8def925bc341d5e06",
+      "out/west/out.json": "248ecbf17b2090e46e426ee7b905c25f2b9770e8f6a382868cd2e07ab91e7a3a",
+      "out/generated/default.elf": "1a4776e4e8ea2809c518b2e36632ed454f65a1b85b80172c13c8a616b46dafd1",
+      "out/generated/MEMCPY_XY_ROUTES.elf": "145cfdf2650e18ccdc7a3c92f7692e103dd9a03c2762a8f8e36727d7b9924b92",
+      "out/generated/coord.elf": "a8c0c8e70d82ceb0019009b65eb6883ffcbf91dc55b537bcc188343a08542a66",
+      "out/east/out.json": "46ea180801c589023f5daf7351fb473475b50f302d72cf40f86e4ce5f7d320b7",
+      "out/east/bin/out_1_0.elf": "ceaec0d944a6aab27e238890a6ba939b432fba4788be63c70b1012d9ea37be24",
+      "out/east/bin/out_0_0.elf": "f3a6926e08cfc09b009267b1704734e9a4c9c69e7a3f1a2e84dfeb9ba683443a",
+      "out/west/bin/out_1_0.elf": "f3e14e207bf62c669bdb5269208ffa2d9f342d433b7245c35bf3e194299f88cd",
+      "out/west/bin/out_2_0.elf": "603bac3d102d82db359a235d75d1432d914c2ebf234089bd6974cb6a5aa89d44",
+      "out/west/bin/out_0_0.elf": "3a73914d0f4e7dff0a8cdd28dddc9477f5d9aba57296ebf254e1e8e432d33271"
+    }
+  },
+  {
+    "case": "general-tile4",
+    "group": "traces",
+    "queue_wait_s": 7.33000342734158e-06,
+    "phases": [
+      {
+        "phase": "run",
+        "command": [
+          "/home/USER/cs_sdk/cs_python",
+          "host.py"
+        ],
+        "returncode": 0,
+        "wall_s": 16.947739830007777
+      },
+      {
+        "phase": "disassemble",
+        "command": [
+          "/home/USER/cs_sdk/cs_python",
+          "-c",
+          "import glob,subprocess\np=glob.glob('/cb/toolchains/llvm/cerebras/*/bin/elf2am')[0]\nsubprocess.run([p,'-o=traces/general-tile4/kernel.am','traces/general-tile4/out/bin/out_0_0.elf'],check=True)"
+        ],
+        "returncode": 0,
+        "wall_s": 0.7171700480103027
+      }
+    ],
+    "status": "pass",
+    "trace_enabled": true,
+    "hashes": {
+      "binding.json": "1fa274c1e8e44b9d5bca46e4ba1495af4f83af7cc3632e3792f944f66dec490c",
+      "partial-observations.json": "bae519847ae18508ed11dc16262099c43be8a22f86815b12ff6fceb781bfab81",
+      "disassembly.json": "451d25e84d0e55d7460a15e404ccb4a0b1963d9f823968f159684815fb4dda6c",
+      "kernel.am": "27f12e4b0f1a20cd54f62e90fa03c12b3a4bd77f8e405d074b13fdf3fd399f11",
+      "pe.csl": "d20c870bb52911516057b3972d06d17d2725d0b58d2494e5cc693028da83b691",
+      "case.json": "8a2764a0ef93601123f855ab2da9772906afecc8ed34d0558d7d0de037988302",
+      "layout.csl": "e704accecebe9e2cf86b7e5895e300a96ac401c78f060552fc487284643c39c2",
+      "inputs.py": "38ca49cab7d4cae285ab234420d6f0ac5c3a2477f599a2643892af0de541f6fc",
+      "host.py": "702551d2852c4d7996a4da724112565920ef4dc77b0925d6989ca22d2e658de5",
+      "observations.json": "3e78c3121c3981a4876f54cf8477b32f2002949346e889097d0ba415400e538a",
+      "sim_stats.json": "cc5c06a88fcc1252db9b6ae91d86501b57d55a306eeba16ab2d0044899a2057d",
+      "simconfig.json": "ac8861b1a0ab97042fb33484d83a4d3ef124877e9bef550a89a5efe1f6da2be3",
+      "out/out.json": "b67e94695ca5a56ae9ae1a4a78bc93d3cae5825997109038dd11891f3cab5bb1",
+      "simfab_traces/global_simdata.json": "f0f229d8fb4ebfa5d6dcdcdf4d0b830c9f90f8a4e421e63e1136cb3d0812a53b",
+      "out/bin/out_rpc.json": "36f79f3d742819ca133bb177ae96924cace4b721138874eb2710d97104b583a6",
+      "out/bin/out_0_0.elf": "8117b32838822eb1c13d8ccb23378f62fd532452088667e67b64d6c0f61357a9",
+      "out/west/out.json": "248ecbf17b2090e46e426ee7b905c25f2b9770e8f6a382868cd2e07ab91e7a3a",
+      "out/generated/default.elf": "1a4776e4e8ea2809c518b2e36632ed454f65a1b85b80172c13c8a616b46dafd1",
+      "out/generated/MEMCPY_XY_ROUTES.elf": "145cfdf2650e18ccdc7a3c92f7692e103dd9a03c2762a8f8e36727d7b9924b92",
+      "out/generated/coord.elf": "a8c0c8e70d82ceb0019009b65eb6883ffcbf91dc55b537bcc188343a08542a66",
+      "out/east/out.json": "46ea180801c589023f5daf7351fb473475b50f302d72cf40f86e4ce5f7d320b7",
+      "out/east/bin/out_1_0.elf": "ceaec0d944a6aab27e238890a6ba939b432fba4788be63c70b1012d9ea37be24",
+      "out/east/bin/out_0_0.elf": "f3a6926e08cfc09b009267b1704734e9a4c9c69e7a3f1a2e84dfeb9ba683443a",
+      "out/west/bin/out_1_0.elf": "f3e14e207bf62c669bdb5269208ffa2d9f342d433b7245c35bf3e194299f88cd",
+      "out/west/bin/out_2_0.elf": "603bac3d102d82db359a235d75d1432d914c2ebf234089bd6974cb6a5aa89d44",
+      "out/west/bin/out_0_0.elf": "3a73914d0f4e7dff0a8cdd28dddc9477f5d9aba57296ebf254e1e8e432d33271"
+    }
+  },
+  {
+    "case": "selection-baseline",
+    "group": "traces",
+    "queue_wait_s": 5.659996531903744e-06,
+    "phases": [
+      {
+        "phase": "run",
+        "command": [
+          "/home/USER/cs_sdk/cs_python",
+          "host.py"
+        ],
+        "returncode": 0,
+        "wall_s": 16.39812530200288
+      },
+      {
+        "phase": "disassemble",
+        "command": [
+          "/home/USER/cs_sdk/cs_python",
+          "-c",
+          "import glob,subprocess\np=glob.glob('/cb/toolchains/llvm/cerebras/*/bin/elf2am')[0]\nsubprocess.run([p,'-o=traces/selection-baseline/kernel.am','traces/selection-baseline/out/bin/out_0_0.elf'],check=True)"
+        ],
+        "returncode": 0,
+        "wall_s": 0.6151709700061474
+      }
+    ],
+    "status": "pass",
+    "trace_enabled": true,
+    "hashes": {
+      "binding.json": "c01632706b9c114c745658523e08e2421ec98310a645a40038a47952ba730405",
+      "disassembly.json": "8aab357142208e28a40b77fd5bbe74a88bf381429b7673e2cb395fe962dd6f88",
+      "kernel.am": "04003273c4105abe36acc7d438f9407d2bc1263eccd821c9b4d793d4776d0d52",
+      "pe.csl": "54b4dae2e63ec6c3960294d15b0f53352f61a7059ff1a3c8cf6bb561b6556470",
+      "case.json": "8037025f6da46e9238343b56fad294d10fa5564a819b1cb82315536f0d0a99c2",
+      "layout.csl": "f38893acbc18a506eed3e6b466963b9e03ef40b9e681416bfb0a240ad6624a7e",
+      "inputs.py": "38ca49cab7d4cae285ab234420d6f0ac5c3a2477f599a2643892af0de541f6fc",
+      "host.py": "6785edb68f53404e6ffaba9e4ad8846559639c0196884166fb9431f5a9876059",
+      "observations.json": "085564a59f407df8177d1003a5af3e930092292f75a99324fdcd220bd7d64af3",
+      "sim_stats.json": "1b8ddde8aa71a1a3f785942bebe8bc9c9ad1edde9cba138fe923963bbe751278",
+      "simconfig.json": "ac8861b1a0ab97042fb33484d83a4d3ef124877e9bef550a89a5efe1f6da2be3",
+      "out/out.json": "b67e94695ca5a56ae9ae1a4a78bc93d3cae5825997109038dd11891f3cab5bb1",
+      "simfab_traces/global_simdata.json": "8c07252e5d34e5585826854b71891816b6cb87dda0dea9c7ca4f27c4e8d6aaae",
+      "out/bin/out_rpc.json": "01561b599d52186632f2fd6c415a26e26aaa105cb8428af6367c07ccf61a2d17",
+      "out/bin/out_0_0.elf": "7657f3919ed286e58f61799405f3a1852782931878458fe9656f916cf4368e1b",
+      "out/west/out.json": "248ecbf17b2090e46e426ee7b905c25f2b9770e8f6a382868cd2e07ab91e7a3a",
+      "out/generated/default.elf": "1a4776e4e8ea2809c518b2e36632ed454f65a1b85b80172c13c8a616b46dafd1",
+      "out/generated/MEMCPY_XY_ROUTES.elf": "145cfdf2650e18ccdc7a3c92f7692e103dd9a03c2762a8f8e36727d7b9924b92",
+      "out/generated/coord.elf": "a8c0c8e70d82ceb0019009b65eb6883ffcbf91dc55b537bcc188343a08542a66",
+      "out/east/out.json": "46ea180801c589023f5daf7351fb473475b50f302d72cf40f86e4ce5f7d320b7",
+      "out/east/bin/out_1_0.elf": "ceaec0d944a6aab27e238890a6ba939b432fba4788be63c70b1012d9ea37be24",
+      "out/east/bin/out_0_0.elf": "f3a6926e08cfc09b009267b1704734e9a4c9c69e7a3f1a2e84dfeb9ba683443a",
+      "out/west/bin/out_1_0.elf": "f3e14e207bf62c669bdb5269208ffa2d9f342d433b7245c35bf3e194299f88cd",
+      "out/west/bin/out_2_0.elf": "603bac3d102d82db359a235d75d1432d914c2ebf234089bd6974cb6a5aa89d44",
+      "out/west/bin/out_0_0.elf": "3a73914d0f4e7dff0a8cdd28dddc9477f5d9aba57296ebf254e1e8e432d33271"
+    }
+  },
+  {
+    "case": "selection-separate_updates",
+    "group": "traces",
+    "queue_wait_s": 1.4099001418799162e-05,
+    "phases": [
+      {
+        "phase": "run",
+        "command": [
+          "/home/USER/cs_sdk/cs_python",
+          "host.py"
+        ],
+        "returncode": 0,
+        "wall_s": 12.738453377009137
+      },
+      {
+        "phase": "disassemble",
+        "command": [
+          "/home/USER/cs_sdk/cs_python",
+          "-c",
+          "import glob,subprocess\np=glob.glob('/cb/toolchains/llvm/cerebras/*/bin/elf2am')[0]\nsubprocess.run([p,'-o=traces/selection-separate_updates/kernel.am','traces/selection-separate_updates/out/bin/out_0_0.elf'],check=True)"
+        ],
+        "returncode": 0,
+        "wall_s": 0.8160189019981772
+      }
+    ],
+    "status": "pass",
+    "trace_enabled": true,
+    "hashes": {
+      "binding.json": "009a58188c57e8dfdf9ef91a91c3a9acef2c3e9a966913648b4bafd1c237737e",
+      "disassembly.json": "0b6f416595259ff4a762861cb903ced0e97ce88db98bc19f5715d6efb4e3781d",
+      "kernel.am": "6244364cd755ce5a4a7a6ddcf9e6bd57cd72df47aa557a7cee4bcaf5508652f7",
+      "pe.csl": "0172d22ec8edb523ab830b4304fddbc49c0f79cecd3d627a3d5bc4765dd2695d",
+      "case.json": "fdfeea8baa0ae8953a4b0bf1138d4f7564c98f1ba1cbabaf24e3baffecee193c",
+      "layout.csl": "f38893acbc18a506eed3e6b466963b9e03ef40b9e681416bfb0a240ad6624a7e",
+      "inputs.py": "38ca49cab7d4cae285ab234420d6f0ac5c3a2477f599a2643892af0de541f6fc",
+      "host.py": "6785edb68f53404e6ffaba9e4ad8846559639c0196884166fb9431f5a9876059",
+      "observations.json": "200e218293bb05d47f9412e646944f0dd1cd082fb1b40235b799b81f3e53361d",
+      "sim_stats.json": "0f7a63e4a3309d9861cb26e66e7060b1fd20d8f9ee5c90d5e2a334b5e1dea149",
+      "simconfig.json": "ac8861b1a0ab97042fb33484d83a4d3ef124877e9bef550a89a5efe1f6da2be3",
+      "out/out.json": "b67e94695ca5a56ae9ae1a4a78bc93d3cae5825997109038dd11891f3cab5bb1",
+      "simfab_traces/global_simdata.json": "82ebdbd32295ff8fde5d78f2b648c49479c92364b9e1dd41c7a68eff210e47e8",
+      "out/bin/out_rpc.json": "01561b599d52186632f2fd6c415a26e26aaa105cb8428af6367c07ccf61a2d17",
+      "out/bin/out_0_0.elf": "32e8bd9218187b36d32a40f36bed52bef9a04631338d4bcb34c2edb2b04e0e7b",
+      "out/west/out.json": "248ecbf17b2090e46e426ee7b905c25f2b9770e8f6a382868cd2e07ab91e7a3a",
+      "out/generated/default.elf": "1a4776e4e8ea2809c518b2e36632ed454f65a1b85b80172c13c8a616b46dafd1",
+      "out/generated/MEMCPY_XY_ROUTES.elf": "145cfdf2650e18ccdc7a3c92f7692e103dd9a03c2762a8f8e36727d7b9924b92",
+      "out/generated/coord.elf": "a8c0c8e70d82ceb0019009b65eb6883ffcbf91dc55b537bcc188343a08542a66",
+      "out/east/out.json": "46ea180801c589023f5daf7351fb473475b50f302d72cf40f86e4ce5f7d320b7",
+      "out/east/bin/out_1_0.elf": "ceaec0d944a6aab27e238890a6ba939b432fba4788be63c70b1012d9ea37be24",
+      "out/east/bin/out_0_0.elf": "f3a6926e08cfc09b009267b1704734e9a4c9c69e7a3f1a2e84dfeb9ba683443a",
+      "out/west/bin/out_1_0.elf": "f3e14e207bf62c669bdb5269208ffa2d9f342d433b7245c35bf3e194299f88cd",
+      "out/west/bin/out_2_0.elf": "603bac3d102d82db359a235d75d1432d914c2ebf234089bd6974cb6a5aa89d44",
+      "out/west/bin/out_0_0.elf": "3a73914d0f4e7dff0a8cdd28dddc9477f5d9aba57296ebf254e1e8e432d33271"
+    }
+  }
+]

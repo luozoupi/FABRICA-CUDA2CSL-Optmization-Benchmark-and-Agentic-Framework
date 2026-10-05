@@ -1,0 +1,14 @@
+{
+  "created_utc": "2026-09-24T23:57:59.996691+00:00",
+  "reason": "Precisely define use of complete validated timing records if a later session exceeds the unchanged whole-case wall-time limit.",
+  "accepted_partial_reason": "Only a run-phase watchdog exit code 124; compiler failures, numerical failures and other runtime failures are excluded from performance aggregation.",
+  "requirements": [
+    "The entire record contains one checked warmup and three checked timed launches.",
+    "All P numerical results, root acknowledgements, raw same-PE timestamp arithmetic and registered input/source/build identities validate.",
+    "The failed workflow remains a failure in case completion denominators.",
+    "Each table row and its one-PE baseline expose workflow status.",
+    "Missing inputs, incomplete repetition sets and missing communication controls are never imputed."
+  ],
+  "scope": "Postprocessing only. No change to registered configurations, code, repetitions, inputs or watchdogs.",
+  "evidence_status": "No registered N=256 run has emitted a checkpoint before this policy was saved."
+}

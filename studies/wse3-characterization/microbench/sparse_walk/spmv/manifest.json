@@ -1,0 +1,74 @@
+{
+ "schema": "sparse-walk/1",
+ "case": "spmv",
+ "task": "SpMV-RowBlock",
+ "fabric": "11,3",
+ "params": "P:4,nrows_pe:4,ncols:16,max_nnz_pe:12,iters:1,structure_id:0",
+ "sdk": "/software/cerebras/cs_sdk-2.10",
+ "sif": [
+  "/software/cerebras/cs_sdk-2.10/sdk-cbcore-2.10.1-sdk-202606181328-8faf87a26e.sif"
+ ],
+ "commands": [
+  [
+   "cslc",
+   "./layout.csl",
+   "--arch=wse3",
+   "--fabric-dims=11,3",
+   "--fabric-offsets=4,1",
+   "--params=P:4,nrows_pe:4,ncols:16,max_nnz_pe:12,iters:1,structure_id:0",
+   "-o",
+   "out",
+   "--memcpy",
+   "--channels=1",
+   "--width-west-buf=0",
+   "--width-east-buf=0"
+  ],
+  [
+   "cs_python",
+   "run.py",
+   "--name",
+   "out"
+  ],
+  [
+   "/home/USER/micromamba/envs/dev/bin/python",
+   "/home/USER/xkernel/studies/wse3-characterization/tools/decode_trace.py",
+   ".",
+   "-o",
+   "events.jsonl.gz"
+  ],
+  [
+   "/home/USER/micromamba/envs/dev/bin/python",
+   "/home/USER/xkernel/studies/wse3-characterization/tools/csdisasm.py",
+   "out/bin/out_0_0.elf",
+   "--json",
+   "disasm_out_0_0.json"
+  ],
+  [
+   "/home/USER/micromamba/envs/dev/bin/python",
+   "/home/USER/xkernel/studies/wse3-characterization/tools/csdisasm.py",
+   "out/bin/out_1_0.elf",
+   "--json",
+   "disasm_out_1_0.json"
+  ],
+  [
+   "/home/USER/micromamba/envs/dev/bin/python",
+   "/home/USER/xkernel/studies/wse3-characterization/tools/csdisasm.py",
+   "out/bin/out_2_0.elf",
+   "--json",
+   "disasm_out_2_0.json"
+  ],
+  [
+   "/home/USER/micromamba/envs/dev/bin/python",
+   "/home/USER/xkernel/studies/wse3-characterization/tools/csdisasm.py",
+   "out/bin/out_3_0.elf",
+   "--json",
+   "disasm_out_3_0.json"
+  ]
+ ],
+ "kernel_sources": {
+  "layout.csl": "4fe919466c373f1672dc2100812f958595bdd224a9e77e0a304aa959dadcc5d9",
+  "pe.csl": "e224447a94eb55658258572891f537565a3aa7af84947b009f1a833d45f3edb4"
+ },
+ "copied_sources_identical": true,
+ "result_exact": true
+}

@@ -1,0 +1,72 @@
+// Per-PE storage used by *kernel-specific full telemetry overrides*.
+//
+// This module does not configure colors, queues, routes, or clock
+// synchronization.  A full adapter must first run the unmodified SDK 2.10
+// bandwidth-test sync module and pass sync_mod.tscRefBuffer to
+// mark_sync_reference().  Importing this module alone is never evidence that
+// clocks are synchronized.
+
+param phase_count: i16;
+
+const time = @import_module("<time>");
+const words_per_timestamp: i16 = time.tsc_size_words;
+
+var timestamp_words = @zeros([phase_count * words_per_timestamp]u16);
+var phase_valid = @zeros([phase_count]u16);
+var perf_counter_words = @zeros([2 * words_per_timestamp]u16);
+
+var ptr_timestamp_words: [*]u16 = &timestamp_words;
+var ptr_phase_valid: [*]u16 = &phase_valid;
+var ptr_perf_counter_words: [*]u16 = &perf_counter_words;
+
+fn enable() void {
+  time.enable_tsc();
+}
+
+fn mark(phase: i16) void {
+  @assert(phase >= 0);
+  @assert(phase < phase_count);
+  var value = @zeros([time.tsc_size_words]u16);
+  time.get_timestamp(&value);
+  inline for (@range(i16, time.tsc_size_words)) |word| {
+    timestamp_words[phase * words_per_timestamp + word] = value[word];
+  }
+  phase_valid[phase] = 1;
+}
+
+// The reference is produced by the official bandwidth-test sync protocol; it
+// is copied rather than sampled here so phase 0 has the protocol's exact value.
+fn mark_sync_reference(reference: *[time.tsc_size_words]u16) void {
+  inline for (@range(i16, time.tsc_size_words)) |word| {
+    timestamp_words[word] = (reference.*)[word];
+  }
+  phase_valid[0] = 1;
+}
+
+fn sample_raw_perf_counters() void {
+  var value = @zeros([time.tsc_size_words]u16);
+  time.get_perf_cntr(&value, 0);
+  perf_counter_words[0] = value[0];
+  perf_counter_words[1] = value[1];
+  perf_counter_words[2] = value[2];
+  time.get_perf_cntr(&value, 1);
+  perf_counter_words[3] = value[0];
+  perf_counter_words[4] = value[1];
+  perf_counter_words[5] = value[2];
+}
+
+fn timestamp_ptr() [*]u16 {
+  return ptr_timestamp_words;
+}
+
+fn phase_valid_ptr() [*]u16 {
+  return ptr_phase_valid;
+}
+
+fn perf_counter_ptr() [*]u16 {
+  return ptr_perf_counter_words;
+}
+
+comptime {
+  @comptime_assert(phase_count > 0);
+}

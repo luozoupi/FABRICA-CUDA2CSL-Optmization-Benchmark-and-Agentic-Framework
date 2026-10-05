@@ -1,0 +1,25 @@
+import json,statistics
+from pathlib import Path
+ROOT=Path(__file__).resolve().parent
+x=json.loads((ROOT/'results.json').read_text());c=x['counts'];lines=['# Sparse comparison results','',f"Registered GPU workloads: **{c['gpu_cases']}**. Accepted primary implementation cases: **{c['gpu_primary_accepted']}**; rejected: **{c['gpu_primary_rejected']}**. WSE builds accepted: **{c['wse_passed']} / {c['wse_total']}**.",'','GPU numbers below are measured warm captured-graph microseconds per operation, median of nine samples. WSE numbers are one-PE simulator cycles. No architecture speedup is computed. All results and sample ranges are in [results.json](results.json), [GPU CSV](gpu-results.csv), and [WSE CSV](wse-results.csv).','', '## GPU implementation comparisons','','| A / family | Output width | GE plain | GE cache | GE merge ×2 | Best cuSPARSE (algorithm) |','|---|---:|---:|---:|---:|---:|']
+selected=['65536x65536-uniform8-n1','65536x65536-uniform8-n16','65536x65536-uniform8-n64','65536x65536-block8-n64','65536x65536-skew8-n64','262144x262144-uniform8-n64','262144x262144-block8-n64','262144x262144-uniform8-n128','262144x262144-block8-n128','HB-sherman1-n64','HB-bcspwr09-n64']
+for cid in selected:
+    group=[r for r in x['gpu']if r['case']==cid and r['status']=='pass'and r['batch']in ('gpu','gpu-capacity')];row={r['method']:r for r in group};cu=min([r for r in group if r['method'].startswith('cusparse')],key=lambda r:r['graph']['median'])
+    lines.append('| '+cid.rsplit('-n',1)[0]+' | '+cid.rsplit('-n',1)[1]+' | '+' | '.join(f"{row[m]['graph']['median']:.3f}"for m in ('ge_plain','ge_cache','ge_merge2'))+f" | {cu['graph']['median']:.3f} ({cu['method']}) |")
+lines+=['',f"Across {c['matched_gpu_comparisons']} accepted workload comparisons, the best of the three optimized GE variants is over 5% faster than the best tested cuSPARSE algorithm in {c['ge_faster_over_5pct']} cases; cuSPARSE is over 5% faster in {c['cusparse_faster_over_5pct']}. The remaining cases are within that descriptive band. This threshold is not a statistical significance test. These are retrospective selections and not a deployed selector. GE plain is reported separately; its wins must not be credited to caching or merging.",'','## Exact same inputs on the WSE simulator','','A is 32 × 64. Columns below use uniform degree 8 (256 nonzeros); outputs are exactly checked against the same frozen oracle as CUDA. A dash means the full registered build did not complete and was not accepted.','','| Output width | Scalar | Row descriptor | Descriptor constructed once per row |','|---:|---:|---:|---:|']
+for n in (1,4,16,64):
+    def val(v):
+        r=next((r for r in x['wse']if r['case']==f'32x64-uniform8-n{n}'and r['variant']==v),None)
+        return str(int(r['cycles']['median']))if r else '—'
+    lines.append(f'| {n} | '+ ' | '.join(val(v)for v in ('scalar','descriptor','hoisted'))+' |')
+lines+=['','| Registered WSE build | Compilation | Acceptance |','|---|---|---|']
+for b in x['wse_builds']:lines.append(f"| {b['id']} | {'compiled'if b['compiled']else'not compiled'} | {b.get('failure_reason',b['status'])} |")
+lines+=['','## Independent GPU replay','','Seven selected workloads were rerun in two additional processes. The table gives the range of the three run medians, not a confidence interval. The selected set was registered after the original results, as a stability check, not independent final-test evidence.','','| Workload | GE merge ×2, µs | cuSPARSE CSR 3, µs |','|---|---:|---:|']
+for cid in json.loads((ROOT/'replay-registration.json').read_text())['cases']:
+    values=[]
+    for method in ('ge_merge2','cusparse_alg3_row'):
+        v=[r['graph']['median']for r in x['gpu']if r['case']==cid and r['method']==method and r['status']=='pass'];values.append(f'{min(v):.3f}–{max(v):.3f} ({len(v)} runs)')
+    lines.append('| '+cid+' | '+' | '.join(values)+' |')
+lines+=['','## Numerical failure retained','','All 41 tested implementations on the six HB/bcsstk08 widths fail the fixed componentwise gate on at least one validation session. The gate is unchanged and their timing results are excluded. See [numerical-diagnostic.json](numerical-diagnostic.json). This is not a claim that both libraries contain the same bug. A representative changed-value SpMV row has reference 2106.1337890625, result 2106.25, error 0.1162109375, and allowed error 0.105356689453125. Its absolute product sum is about 8.15 million: strong cancellation makes the requested componentwise relative accuracy harder than the overall scale suggests.','', '## Cost scope','','The explorer shows device preparation plus 1, 10 or 100 resident graph operations, graph construction, CPU layout packing and raw single-call measurements separately. The preparation interval is event-bracketed and can include submission/event overhead even for a no-op preparation API. These values do not include a complete application distribution or host-device transfer path.','']
+(ROOT/'RESULTS.md').write_text('\n'.join(lines))
+print('Wrote result tables')

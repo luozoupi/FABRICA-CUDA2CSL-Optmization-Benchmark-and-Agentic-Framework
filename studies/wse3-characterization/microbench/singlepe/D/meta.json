@@ -1,0 +1,75 @@
+{
+ "suite": "D",
+ "exports": [
+  {
+   "name": "ia",
+   "dtype": "i16",
+   "len": 2048
+  },
+  {
+   "name": "ib",
+   "dtype": "i16",
+   "len": 2048
+  },
+  {
+   "name": "ic",
+   "dtype": "i16",
+   "len": 2048
+  },
+  {
+   "name": "q8",
+   "dtype": "i8",
+   "len": 512
+  }
+ ],
+ "variants": [
+  {
+   "name": "iadd16_8",
+   "family": "iadd16",
+   "elems": 8,
+   "reps": 1024,
+   "flop": 1,
+   "bytes": 6
+  },
+  {
+   "name": "iadd16_512",
+   "family": "iadd16",
+   "elems": 512,
+   "reps": 16,
+   "flop": 1,
+   "bytes": 6
+  },
+  {
+   "name": "iadd16_2048",
+   "family": "iadd16",
+   "elems": 2048,
+   "reps": 4,
+   "flop": 1,
+   "bytes": 6
+  },
+  {
+   "name": "idot16_8",
+   "family": "idot16",
+   "elems": 8,
+   "reps": 512,
+   "flop": 2,
+   "bytes": 4
+  },
+  {
+   "name": "idot16_256",
+   "family": "idot16",
+   "elems": 256,
+   "reps": 16,
+   "flop": 2,
+   "bytes": 4
+  },
+  {
+   "name": "i8add_512",
+   "family": "i8",
+   "elems": 512,
+   "reps": 16,
+   "flop": 1,
+   "bytes": 1
+  }
+ ]
+}

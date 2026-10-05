@@ -1,0 +1,6 @@
+// True reduction: scalar dest + scalar src0 + DSD src1. If this compiles and
+// sums, dot product = fmulh + this, with no @fdph needed.
+var A = @zeros([64]f16);
+var acc: f16 = 0.0;
+const A_dsd = @get_dsd(mem1d_dsd, .{ .tensor_access = |i|{64} -> A[i] });
+fn f() void { @faddh(&acc, acc, A_dsd); }

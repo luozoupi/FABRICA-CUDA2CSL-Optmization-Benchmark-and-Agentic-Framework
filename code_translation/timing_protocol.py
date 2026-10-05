@@ -99,6 +99,149 @@ def check_device_window_contract(src: str) -> Optional[str]:
     return "; ".join(problems) if problems else None
 
 
+# --- Template protocol -------------------------------------------------------
+# The scaffold that the template-completion translation route emits calls the
+# host-visible helpers ON DEVICE instead of defining f_tic_dev/f_toc_dev: f_tic()
+# is the first statement of every exported entry point, f_toc() is the last
+# statement before the completion signal (`@activate(EXIT)` or the host unblock),
+# and the task bound to that signal does nothing but unblock the host. A program
+# that merely EXPORTS f_tic/f_toc for the host to launch (the legacy protocol)
+# does not use it. Checked structurally, like the v2 protocol above: a variant
+# may end its computation in a different task than the start program.
+TIC_T, TOC_T = "f_tic", "f_toc"
+_ACTIVATE_RE = re.compile(r"@activate\(\s*([^()]+?)\s*\)\s*;")
+_BIND_RE = re.compile(r"@bind_local_task\(\s*([A-Za-z_][A-Za-z0-9_]*)\s*,\s*([^()]+?)\s*\)")
+_ONLY_SIGNALS_RE = re.compile(r"^(?:\s*(?:@activate\(\s*[^()]+?\s*\)\s*;|[A-Za-z_][A-Za-z0-9_]*\.unblock_cmd_stream\(\)\s*;|\}))*\s*$")
+_ONLY_UNBLOCK_RE = re.compile(r"^\s*(?:[A-Za-z_][A-Za-z0-9_]*\.unblock_cmd_stream\(\)\s*;\s*)+$")
+# formatting-independent (the v2 regex above anchors at a line start because the instrumenter reuses its indentation)
+_UNBLOCK_ANY_RE = re.compile(r"\b[A-Za-z_][A-Za-z0-9_]*\.unblock_cmd_stream\(\)\s*;")
+
+
+def _defines(clean: str, name: str) -> bool:
+    return bool(re.search(rf"\bfn\s+{name}\s*\(", clean))
+
+
+def uses_template_protocol(src: str) -> bool:
+    clean = strip_comments(src)
+    if uses_protocol(clean) or not (_defines(clean, TIC_T) and _defines(clean, TOC_T)):
+        return False
+    call = re.compile(rf"\b{TIC_T}\(\)\s*;")
+    return any(call.search(clean[start:end]) for kind, name, start, end in definitions(clean) if name not in HELPER_FNS)
+
+
+def check_template_window_contract(src: str) -> Optional[str]:
+    """None when the variant keeps the template window intact, else the violations.
+
+    The window is `f_tic()` as the first statement of every exported entry point and
+    `f_toc()` followed by nothing but completion signals; the tasks those signals
+    reach only unblock the host, and nothing else activates them or unblocks the host.
+    """
+    clean = strip_comments(src)
+    if not uses_template_protocol(clean):
+        return f"template window: {TIC_T}/{TOC_T} not defined and called on device"
+    defs = [d for d in definitions(clean) if d[1] not in HELPER_FNS]
+    entries = set(exported_entry_points(src))
+    problems: List[str] = []
+    tic_call = re.compile(rf"\b{TIC_T}\(\)\s*;")
+    toc_call = re.compile(rf"\b{TOC_T}\(\)\s*;")
+    binds = {name: ident for name, ident in _BIND_RE.findall(clean)}
+    completion_ids: set = set()
+    toc_calls = 0
+    for kind, name, start, end in defs:
+        body = clean[start:end]
+        brace = body.find("{")
+        inner = body[brace + 1:]
+        starts_with_tic = inner.lstrip().startswith(f"{TIC_T}(")
+        if kind == "fn" and name in entries and not starts_with_tic:
+            problems.append(f"entry point '{name}' must start with {TIC_T}()")
+        n_tic = len(tic_call.findall(body))
+        if n_tic > (1 if (kind == "fn" and name in entries and starts_with_tic) else 0):
+            problems.append(f"{TIC_T}() called in '{name}' other than as an entry point's first statement")
+        for m in toc_call.finditer(body):
+            toc_calls += 1
+            ok, ids = _post_stamp_path(body[m.end():])
+            if not ok:
+                problems.append(f"work after {TOC_T}() in '{name}'")
+            completion_ids.update(ids)
+    if toc_calls == 0:
+        problems.append(f"{TOC_T}() is never called")
+    if not entries:
+        problems.append("no exported entry point found")
+    completion_tasks = {name for name, ident in binds.items() if ident.strip() in completion_ids}
+    for kind, name, start, end in defs:
+        body = clean[start:end]
+        brace = body.find("{")
+        inner = body[brace + 1:body.rfind("}")]
+        if name in completion_tasks and not _ONLY_UNBLOCK_RE.match(inner):
+            problems.append(f"completion task '{name}' must only unblock the host")
+        for m in _ACTIVATE_RE.finditer(body):
+            if m.group(1).strip() in completion_ids and not _TOC_T_BEFORE_RE.search(body[:m.start()]):
+                problems.append(f"@activate({m.group(1).strip()}) in '{name}' is not immediately preceded by {TOC_T}()")
+        if name in completion_tasks:
+            continue
+        for m in _UNBLOCK_ANY_RE.finditer(body):
+            if not _TOC_T_BEFORE_RE.search(body[:m.start()]):
+                problems.append(f"unblock_cmd_stream() in '{name}' is not immediately preceded by {TOC_T}()")
+    return "; ".join(problems) if problems else None
+
+
+_TOC_T_BEFORE_RE = re.compile(rf"{TOC_T}\(\)\s*;\s*$")
+_SIGNAL_RE = re.compile(r"\s*(?:@activate\(\s*([^()]+?)\s*\)\s*;|[A-Za-z_][A-Za-z0-9_]*\.unblock_cmd_stream\(\)\s*;|return\s*;)")
+
+
+def _skip_balanced(text: str, i: int, open_ch: str, close_ch: str) -> int:
+    """Index just past the group that opens at text[i] (text[i] == open_ch)."""
+    depth = 0
+    while i < len(text):
+        if text[i] == open_ch:
+            depth += 1
+        elif text[i] == close_ch:
+            depth -= 1
+            if depth == 0:
+                return i + 1
+        i += 1
+    return len(text)
+
+
+def _post_stamp_path(tail: str) -> Tuple[bool, set]:
+    """Follow the control-flow path from the end stamp to the end of its definition.
+
+    Only completion signals (@activate, unblock, return) may execute after the stamp; a
+    block may close, and an `else` (or `else if`) branch that follows a closing brace is a
+    different path and is skipped whole. Returns (ok, ids activated on the path)."""
+    ids: set = set()
+    i = 0
+    n = len(tail)
+    while i < n:
+        m = re.compile(r"\s*").match(tail, i)
+        i = m.end()
+        if i >= n:
+            break
+        sig = _SIGNAL_RE.match(tail, i)
+        if sig:
+            if sig.group(1):
+                ids.add(sig.group(1).strip())
+            i = sig.end()
+            continue
+        if tail[i] == "}":
+            i += 1
+            while True:
+                m = re.compile(r"\s*else\b").match(tail, i)
+                if not m:
+                    break
+                i = m.end()
+                m = re.compile(r"\s*if\s*\(").match(tail, i)
+                if m:
+                    i = _skip_balanced(tail, m.end() - 1, "(", ")")
+                m = re.compile(r"\s*\{").match(tail, i)
+                if not m:
+                    return False, ids
+                i = _skip_balanced(tail, m.end() - 1, "{", "}")
+            continue
+        return False, ids
+    return True, ids
+
+
 def instrument_device_window(src: str, time_module: Optional[str] = None,
                              start_buf: Optional[str] = None, end_buf: Optional[str] = None) -> str:
     """Add the v2 stamps to a program written for the host-launched protocol:

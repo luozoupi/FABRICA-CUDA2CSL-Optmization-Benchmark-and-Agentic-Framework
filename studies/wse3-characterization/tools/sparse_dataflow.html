@@ -1,0 +1,73 @@
+<div class="wrap">
+<header>
+<p class="eyebrow">Cerebras WSE-3 · SDK 2.10 · simulator traces of the reference sparse kernels, checked value by value</p>
+<h1>Sparse Products on the Mesh: SpMV, SpMM, SpGEMM</h1>
+<p>The dense pages followed MeshGEMM's tiles around a ring. Sparse products move differently: the matrix is a list of
+(row, column, value) triples, the work per PE follows the nonzero pattern, and what crosses the fabric is not the
+matrix but the dense operand. This page follows three reference kernels from the sparse study, traced in the simulator
+on small integer instances so that every product, sum, gathered value and packet can be checked by hand and, here,
+against the trace bit for bit. The same kernels run at benchmark size; those cycle counts are quoted from the study's records.</p>
+<div class="kpi" id="kpis"></div>
+<p class="mini" id="kpinote"></p>
+</header>
+
+<h2 id="formats">From a sparse matrix to PEs, wavelets and colours</h2>
+<p>Three storage decisions come before any dataflow: how the nonzeros are listed (CSR by row, CSC by column), how the list is
+cut across PEs, and what has to travel. The three kernels make three different choices.</p>
+<div class="tabs" id="ftabs"></div>
+<div class="card"><svg id="fmtfig" viewBox="0 0 1020 400" role="img" aria-label="Storage format and PE partition"></svg><p class="mini" id="fmtcap"></p></div>
+
+<h3>Wavelets and colours</h3>
+<div class="card"><svg id="wavefig" viewBox="0 0 1020 210" role="img" aria-label="32-bit values as wavelets"></svg></div>
+<div class="tw"><table class="res" id="coltab"></table></div>
+
+<h3>One-to-one or one-to-many?</h3>
+<div class="tw"><table class="res" id="fantab"></table></div>
+
+<h2 id="life">Across the mesh, from host to host</h2>
+<p>Step through each run. Each PE is drawn as its <b>router</b>, its <b>ramp</b> (with the hardware queues) and its
+<b>SRAM</b>, with every array at its role in that phase. <strong>Tap any array</strong> to see its exact values from the
+traced run and, for an output, every term that produced it with the cycle at which the trace shows it.</p>
+<div class="tabs" id="mtabs"></div>
+<div class="life" id="lifebar"></div>
+<div class="card meshcard" id="meshfig">
+  <div class="ctl">
+    <button class="p" id="play">Play</button><button id="back">&larr;</button><button id="fwd">&rarr;</button>
+    <span class="viewtag" id="viewtag"></span>
+    <span class="phase" id="phase"></span>
+  </div>
+  <svg id="mesh" viewBox="0 0 1020 400" role="img" aria-label=""></svg>
+  <div class="mkey" id="mkey"></div>
+</div>
+<div class="below">
+  <div class="card cap">
+    <p class="eyebrow" id="capev"></p>
+    <h3 id="captitle"></h3>
+    <p id="captext"></p>
+    <ul class="checks" id="checks"></ul>
+    <p class="form" id="capform"></p>
+    <div id="code"></div>
+  </div>
+  <div class="card detail" id="detail"></div>
+</div>
+
+<h2 id="hand">Check it by hand</h2>
+<p>Every instance is integers, so f32 arithmetic is exact and the trace values are the arithmetic you can do on paper.
+The tables below are the whole instance; the detail panel above shows the same numbers with their trace cycles.</p>
+<div class="tabs" id="htabs"></div>
+<div id="handbody"></div>
+
+<h2 id="cost">What the scalar loops cost</h2>
+<p>The kernels are the textbook scalar loops, so the trace also shows what a nonzero costs on this core: nearly all of it
+is addressing, indexing and branching around one multiply and one add. One inner-loop iteration, instruction by
+instruction, as dispatched:</p>
+<div class="tw"><table class="res" id="costtab"></table></div>
+<div class="tw"><table class="res" id="itertab"></table></div>
+
+<h2 id="hyper">Cerebras' own multi-PE SpMV, for comparison</h2>
+<div id="hyperbody"></div>
+
+<h2 id="evidence">Evidence</h2>
+<div class="tw"><table class="res" id="evtab"></table></div>
+<p class="mini" id="foot"></p>
+</div>

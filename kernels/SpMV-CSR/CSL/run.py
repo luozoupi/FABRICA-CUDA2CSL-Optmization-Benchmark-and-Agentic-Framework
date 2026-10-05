@@ -11,6 +11,7 @@ import json
 import os
 import struct
 import numpy as np
+from sparse_inputs import resolve_eval_seed
 
 from cerebras.sdk.runtime.sdkruntimepybind import SdkRuntime, MemcpyDataType  # pylint: disable=no-name-in-module
 from cerebras.sdk.runtime.sdkruntimepybind import MemcpyOrder  # pylint: disable=no-name-in-module
@@ -46,7 +47,8 @@ def sub_ts(words):
 # --- Build a random sparse matrix in CSR -------------------------------------------
 # INPUT-SPLIT: seed from XKERNEL_EVAL_SEED (default 7). The reference y=A@x is
 # recomputed from the drawn matrix every run, so a hardcoded output fails held-out seeds.
-SEED = int(os.environ.get("XKERNEL_EVAL_SEED", "7"))
+SEED = resolve_eval_seed(7, where=os.path.dirname(__file__))
+print(f"eval_seed = {SEED}")
 rng = np.random.default_rng(SEED)
 
 # ~density nonzeros per row, capped so total nnz <= max_nnz.
@@ -65,6 +67,13 @@ if nnz_total > max_nnz:
     A = flat.reshape(nrows, ncols)
     nnz_total = int(np.count_nonzero(A))
 print(f"generated sparse A: {nnz_total} nonzeros (cap {max_nnz})")
+# Structure line for the optimizer's readout (2026-10-04; stdout only, outside the timed window).
+import sys as _sys2
+_sys2.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import sparse_inputs as _si2
+_rr, _cc = np.nonzero(A)
+_si2.emit_structure_line(_si2.features(_si2.from_coo(nrows, ncols, _rr, _cc, A[_rr, _cc]),
+                                       caps={"nrows": nrows, "max_nnz": max_nnz}))
 
 x = rng.random(ncols).astype(np.float32)
 

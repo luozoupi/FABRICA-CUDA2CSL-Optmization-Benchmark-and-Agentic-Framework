@@ -1,0 +1,7 @@
+// Compile-only syntax probe for profile_timestamp.csl.
+
+layout {
+  @set_rectangle(1, 1);
+  @set_tile_code(0, 0, "pe.csl", .{});
+  @export_name("run_probe", fn()void);
+}

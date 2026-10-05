@@ -1,0 +1,47 @@
+[
+  {
+    "Kernel Name": "void spmm_test2<float>(int, int, int *, int *, T1 *, T1 *, T1 *)",
+    "dram__throughput.avg.pct_of_peak_sustained_elapsed": "52.79",
+    "gpu__time_duration.sum": "269344",
+    "launch__registers_per_thread": "28",
+    "lts__t_bytes.sum": "442777728",
+    "sm__throughput.avg.pct_of_peak_sustained_elapsed": "37.18",
+    "case": "262144x262144-block8-n128-ge_merge2"
+  },
+  {
+    "Kernel Name": "void spmm_test0<float>(int, int, int *, int *, T1 *, T1 *, T1 *)",
+    "dram__throughput.avg.pct_of_peak_sustained_elapsed": "2.80",
+    "gpu__time_duration.sum": "28032",
+    "launch__registers_per_thread": "38",
+    "lts__t_bytes.sum": "160491776",
+    "sm__throughput.avg.pct_of_peak_sustained_elapsed": "62.87",
+    "case": "65536x65536-uniform8-n64-ge_plain"
+  },
+  {
+    "Kernel Name": "void spmm_test2<float>(int, int, int *, int *, T1 *, T1 *, T1 *)",
+    "dram__throughput.avg.pct_of_peak_sustained_elapsed": "3.41",
+    "gpu__time_duration.sum": "24896",
+    "launch__registers_per_thread": "28",
+    "lts__t_bytes.sum": "155927584",
+    "sm__throughput.avg.pct_of_peak_sustained_elapsed": "50.52",
+    "case": "65536x65536-uniform8-n64-ge_merge2"
+  },
+  {
+    "Kernel Name": "void spmm_test1<float>(int, int, int *, int *, T1 *, T1 *, T1 *)",
+    "dram__throughput.avg.pct_of_peak_sustained_elapsed": "1.85",
+    "gpu__time_duration.sum": "35136",
+    "launch__registers_per_thread": "24",
+    "lts__t_bytes.sum": "160672480",
+    "sm__throughput.avg.pct_of_peak_sustained_elapsed": "56.73",
+    "case": "65536x65536-uniform8-n64-ge_cache"
+  },
+  {
+    "Kernel Name": "void spmm_test2<float>(int, int, int *, int *, T1 *, T1 *, T1 *)",
+    "dram__throughput.avg.pct_of_peak_sustained_elapsed": "62.64",
+    "gpu__time_duration.sum": "236768",
+    "launch__registers_per_thread": "28",
+    "lts__t_bytes.sum": "1247488800",
+    "sm__throughput.avg.pct_of_peak_sustained_elapsed": "43.03",
+    "case": "262144x262144-uniform8-n128-ge_merge2"
+  }
+]

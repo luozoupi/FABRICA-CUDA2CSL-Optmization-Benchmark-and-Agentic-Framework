@@ -1,0 +1,102 @@
+{
+ "suite": "C2",
+ "exports": [
+  {
+   "name": "a3",
+   "dtype": "f16",
+   "len": 6144
+  },
+  {
+   "name": "b3",
+   "dtype": "f16",
+   "len": 6144
+  },
+  {
+   "name": "c3",
+   "dtype": "f16",
+   "len": 6144
+  }
+ ],
+ "variants": [
+  {
+   "name": "ewmul_8",
+   "family": "ewmul",
+   "elems": 8,
+   "reps": 1024,
+   "flop": 1,
+   "bytes": 6
+  },
+  {
+   "name": "ewmul_64",
+   "family": "ewmul",
+   "elems": 64,
+   "reps": 128,
+   "flop": 1,
+   "bytes": 6
+  },
+  {
+   "name": "ewmul_512",
+   "family": "ewmul",
+   "elems": 512,
+   "reps": 16,
+   "flop": 1,
+   "bytes": 6
+  },
+  {
+   "name": "ewmul_2048",
+   "family": "ewmul",
+   "elems": 2048,
+   "reps": 4,
+   "flop": 1,
+   "bytes": 6
+  },
+  {
+   "name": "ewmul_6144",
+   "family": "ewmul",
+   "elems": 6144,
+   "reps": 1,
+   "flop": 1,
+   "bytes": 6
+  },
+  {
+   "name": "ewadd_8",
+   "family": "ewadd",
+   "elems": 8,
+   "reps": 1024,
+   "flop": 1,
+   "bytes": 6
+  },
+  {
+   "name": "ewadd_64",
+   "family": "ewadd",
+   "elems": 64,
+   "reps": 128,
+   "flop": 1,
+   "bytes": 6
+  },
+  {
+   "name": "ewadd_512",
+   "family": "ewadd",
+   "elems": 512,
+   "reps": 16,
+   "flop": 1,
+   "bytes": 6
+  },
+  {
+   "name": "ewadd_2048",
+   "family": "ewadd",
+   "elems": 2048,
+   "reps": 4,
+   "flop": 1,
+   "bytes": 6
+  },
+  {
+   "name": "ewadd_6144",
+   "family": "ewadd",
+   "elems": 6144,
+   "reps": 1,
+   "flop": 1,
+   "bytes": 6
+  }
+ ]
+}

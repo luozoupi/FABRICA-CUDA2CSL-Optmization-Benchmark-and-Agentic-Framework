@@ -1,0 +1,20 @@
+{
+  "status": "completed",
+  "steps": [
+    {
+      "step": "strong_measure",
+      "returncode": 0,
+      "elapsed_s": 953.0079123973846
+    },
+    {
+      "step": "weak_measure",
+      "returncode": 0,
+      "elapsed_s": 1444.9379835128784
+    },
+    {
+      "step": "training_export",
+      "returncode": 0,
+      "elapsed_s": 0.0832209587097168
+    }
+  ]
+}

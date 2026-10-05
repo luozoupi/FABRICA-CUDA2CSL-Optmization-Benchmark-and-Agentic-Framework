@@ -1,0 +1,44 @@
+[
+  {
+    "label": "dia_v2_small",
+    "script": "commands_wse3.sh",
+    "status": "pass",
+    "cycles": 72585,
+    "runs": [
+      72585,
+      72585,
+      72585
+    ],
+    "heldout_passed": true,
+    "failure": null,
+    "elapsed_s": 89.6
+  },
+  {
+    "label": "dia_v2_it10",
+    "script": "commands_wse3_it10.sh",
+    "status": "pass",
+    "cycles": 191462,
+    "runs": [
+      191462,
+      191462,
+      191462
+    ],
+    "heldout_passed": true,
+    "failure": null,
+    "elapsed_s": 162.2
+  },
+  {
+    "label": "dia_v1_it10",
+    "script": "commands_wse3_it10.sh",
+    "status": "pass",
+    "cycles": 290550,
+    "runs": [
+      290550,
+      290550,
+      290550
+    ],
+    "heldout_passed": true,
+    "failure": null,
+    "elapsed_s": 313.1
+  }
+]

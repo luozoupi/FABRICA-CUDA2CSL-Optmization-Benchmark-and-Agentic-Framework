@@ -1,0 +1,215 @@
+// SpMV-RowBlock-Iter compute file (pe.csl) for a 1 x P strip.
+//
+// Design note (deviation from architect's "single-PE" wiring facts): the layout
+// clearly ships a 1 x P strip with P=4 and per-PE CSR slices, so this file
+// implements the multi-PE strip: PE 0 injects x onto C_X (EAST), all PEs land a
+// full x_local copy, then each PE does `iters` local SpMV products with a
+// per-PE diagonal-block recurrence x_local[px*nrows_pe + r] = 0.25 * y[r].
+// No cross-PE reduction is needed (rows are disjoint per PE).
+
+param memcpy_params;
+param P: i16;
+param px: i16;
+param nrows_pe: u16;
+param ncols: u16;
+param max_nnz_pe: u16;
+param iters: u16;
+param structure_id: u16;
+param C_X: color;
+
+const sys_mod = @import_module("<memcpy/memcpy>", memcpy_params);
+const timestamp = @import_module("<time>");
+
+// ---------------------------------------------------------------------------
+// Host-visible buffers
+// ---------------------------------------------------------------------------
+var row_ptr = @zeros([nrows_pe + 1]u32);       // local CSR row offsets
+var col_idx = @zeros([max_nnz_pe]u32);         // global column indices
+var val     = @zeros([max_nnz_pe]f32);         // nonzero values
+var x       = @zeros([ncols]f32);              // host writes PE 0 only
+var y       = @zeros([nrows_pe]f32);           // output slice
+
+var x_local = @zeros([ncols]f32);              // per-PE working copy of x
+
+var ptr_row_ptr: [*]u32 = &row_ptr;
+var ptr_col_idx: [*]u32 = &col_idx;
+var ptr_val:     [*]f32 = &val;
+var ptr_x:       [*]f32 = &x;
+var ptr_y:       [*]f32 = &y;
+
+// ---------------------------------------------------------------------------
+// Timestamp buffers
+// ---------------------------------------------------------------------------
+var tscStartBuffer = @zeros([timestamp.tsc_size_words]u16);
+var tscEndBuffer   = @zeros([timestamp.tsc_size_words]u16);
+var time_buf_u16   = @zeros([6]u16);
+var ptr_time_buf_u16: [*]u16 = &time_buf_u16;
+
+// ---------------------------------------------------------------------------
+// Task IDs
+// ---------------------------------------------------------------------------
+const recv_x_iq:   input_queue = @get_input_queue(2);
+const recv_x_task: data_task_id =
+  if (@is_arch("wse3")) @get_data_task_id(recv_x_iq)
+  else @get_data_task_id(C_X);
+
+const compute_task: local_task_id = @get_local_task_id(9);
+
+// ---------------------------------------------------------------------------
+// Broadcast of x
+//   PE 0: inject x[0..ncols] onto C_X (RAMP -> EAST, per layout routing).
+//   PE >0: receive ncols wavelets from C_X into x_local via a data task.
+// ---------------------------------------------------------------------------
+
+// Output DSD for PE 0's injection onto C_X.
+const x_send_oq: output_queue = @get_output_queue(3);
+const x_out_dsd = @get_dsd(fabout_dsd, .{
+  .fabric_color = C_X,
+  .extent = ncols,
+  .output_queue = x_send_oq,
+});
+
+// Source DSD over x (PE 0's host-written copy).
+const x_src_dsd = @get_dsd(mem1d_dsd, .{
+  .tensor_access = |i|{ncols} -> x[i],
+});
+
+// Receive counter for PEs > 0.
+var recv_count: u16 = 0;
+
+// Data task: one wavelet of x arrives from the fabric on C_X.
+task recv_x_data(v: f32) void {
+  x_local[recv_count] = v;
+  recv_count += 1;
+  if (recv_count == ncols) {
+    @activate(compute_task);
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Local SpMV + recurrence (the timed body)
+// ---------------------------------------------------------------------------
+fn do_spmv() void {
+  // For each local row r: y[r] = sum_{p in [start,end)} val[p]*x_local[col_idx[p]]
+  var r: i16 = 0;
+  while (r < @as(i16, nrows_pe)) : (r += 1) {
+    const start: u32 = row_ptr[@as(u16, r)];
+    const end:   u32 = row_ptr[@as(u16, r) + 1];
+    var sum: f32 = 0.0;
+    var p: u32 = start;
+    while (p < end) : (p += 1) {
+      const c: u32 = col_idx[@as(u16, p)];
+      sum += val[@as(u16, p)] * x_local[@as(u16, c)];
+    }
+    y[@as(u16, r)] = sum;
+  }
+}
+
+fn do_recurrence() void {
+  // x_local[px*nrows_pe + r] = 0.25 * y[r]  for r in [0, nrows_pe)
+  const base: u16 = @as(u16, px) * nrows_pe;
+  var r: i16 = 0;
+  while (r < @as(i16, nrows_pe)) : (r += 1) {
+    x_local[base + @as(u16, r)] = 0.25 * y[@as(u16, r)];
+  }
+}
+
+// The compute task runs after x_local is fully populated. It stamps f_tic,
+// runs `iters` products with recurrence, stamps f_toc, then unblocks.
+task compute_fn() void {
+  f_tic();
+  var k: u16 = 0;
+  while (k < iters) : (k += 1) {
+    do_spmv();
+    if (k + 1 < iters) {
+      do_recurrence();
+    }
+  }
+  f_toc();
+  sys_mod.unblock_cmd_stream();
+}
+
+// ---------------------------------------------------------------------------
+// Timing entrypoints (canonical bodies)
+// ---------------------------------------------------------------------------
+fn f_tic() void {
+  timestamp.get_timestamp(&tscStartBuffer);
+  sys_mod.unblock_cmd_stream();
+}
+
+fn f_toc() void {
+  timestamp.get_timestamp(&tscEndBuffer);
+  sys_mod.unblock_cmd_stream();
+}
+
+fn f_enable_timer() void {
+  timestamp.enable_tsc();
+  sys_mod.unblock_cmd_stream();
+}
+
+fn f_memcpy_timestamps() void {
+  time_buf_u16[0] = tscStartBuffer[0];
+  time_buf_u16[1] = tscStartBuffer[1];
+  time_buf_u16[2] = tscStartBuffer[2];
+  time_buf_u16[3] = tscEndBuffer[0];
+  time_buf_u16[4] = tscEndBuffer[1];
+  time_buf_u16[5] = tscEndBuffer[2];
+  sys_mod.unblock_cmd_stream();
+}
+
+// ---------------------------------------------------------------------------
+// main entrypoint: kick off the broadcast, which leads to compute.
+// ---------------------------------------------------------------------------
+fn main() void {
+  if (px == 0) {
+    // PE 0 already has x locally (host wrote it). Copy x -> x_local, and
+    // inject x onto the fabric so PEs 1..P-1 receive their copies.
+    var i: i16 = 0;
+    while (i < @as(i16, ncols)) : (i += 1) {
+      x_local[@as(u16, i)] = x[@as(u16, i)];
+    }
+    if (P > 1) {
+      // Inject onto C_X; when the send drains, run compute.
+      @fmovs(x_out_dsd, x_src_dsd, .{ .async = true, .activate = compute_task });
+    } else {
+      @activate(compute_task);
+    }
+  } else {
+    // PEs > 0 wait for the recv_x_data task to populate x_local; it will
+    // @activate(compute_task) when ncols wavelets have arrived.
+    // Nothing to do here; the data task fires from fabric arrivals.
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Comptime: queue init, task bindings, symbol exports.
+// ---------------------------------------------------------------------------
+comptime {
+  if (@is_arch("wse3")) {
+    if (P > 1) {
+      @initialize_queue(recv_x_iq, .{ .color = C_X });
+      @initialize_queue(x_send_oq, .{ .color = C_X });
+    }
+  }
+}
+
+comptime {
+  if (P > 1) {
+    @bind_data_task(recv_x_data, recv_x_task);
+  }
+  @bind_local_task(compute_fn, compute_task);
+}
+
+comptime {
+  @export_symbol(ptr_row_ptr, "row_ptr");
+  @export_symbol(ptr_col_idx, "col_idx");
+  @export_symbol(ptr_val, "val");
+  @export_symbol(ptr_x, "x");
+  @export_symbol(ptr_y, "y");
+  @export_symbol(ptr_time_buf_u16, "time_buf_u16");
+  @export_symbol(main);
+  @export_symbol(f_enable_timer);
+  @export_symbol(f_memcpy_timestamps);
+  @export_symbol(f_tic);
+  @export_symbol(f_toc);
+}

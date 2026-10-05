@@ -1,0 +1,9 @@
+{
+  "nvcc": "nvcc: NVIDIA (R) Cuda compiler driver\nCopyright (c) 2005-2025 NVIDIA Corporation\nBuilt on Wed_Aug_20_01:58:59_PM_PDT_2025\nCuda compilation tools, release 13.0, V13.0.88\nBuild cuda_13.0.r13.0/compiler.36424714_0\n",
+  "linked_libraries": "\tlinux-vdso.so.1 (0x00007ffe7cf6f000)\n\tlibcusparse.so.12 => /usr/local/cuda/lib64/libcusparse.so.12 (0x00007fb4ba800000)\n\tlibstdc++.so.6 => /lib/x86_64-linux-gnu/libstdc++.so.6 (0x00007fb4ba5d4000)\n\tlibgcc_s.so.1 => /lib/x86_64-linux-gnu/libgcc_s.so.1 (0x00007fb4c4585000)\n\tlibc.so.6 => /lib/x86_64-linux-gnu/libc.so.6 (0x00007fb4ba3ab000)\n\t/lib64/ld-linux-x86-64.so.2 (0x00007fb4c469c000)\n\tlibnvJitLink.so.13 => /usr/local/cuda/lib64/libnvJitLink.so.13 (0x00007fb4b4468000)\n\tlibpthread.so.0 => /lib/x86_64-linux-gnu/libpthread.so.0 (0x00007fb4c457e000)\n\tlibrt.so.1 => /lib/x86_64-linux-gnu/librt.so.1 (0x00007fb4c4579000)\n\tlibdl.so.2 => /lib/x86_64-linux-gnu/libdl.so.2 (0x00007fb4c4574000)\n\tlibm.so.6 => /lib/x86_64-linux-gnu/libm.so.6 (0x00007fb4b4381000)\n",
+  "cusparse_library": "/usr/local/cuda-13.0/targets/x86_64-linux/lib/libcusparse.so.12.6.3.3",
+  "cusparse_library_sha256": "09339f848f60bb1111a61ee0fe91ed0c25132b7ff63298244d7ac14e61b58466",
+  "sdk_identity_source": "../wse-matmul-microbench/freeze.json",
+  "ge_source": "f62f51169eb26c0d4411f6d9744eb585854410e1",
+  "gpu_selection": "GPU 6, UUID recorded in gpu/gpu-before.csv; no fixed clocks; other GPUs have unrelated workloads"
+}

@@ -1,0 +1,25 @@
+id: D06_export_mutability
+group: D_api
+prompt: 'Answer this Cerebras CSL / WSE-3 question with the single letter of the correct option, then one sentence
+  of justification.
+
+
+  In the layout, `@export_name("y", [*]f32, true)`: what does the third argument mean?
+
+
+  A) the host may write the symbol (mutable), so the PE must expose it through a `var` pointer
+
+  B) the symbol is read-only for the host
+
+  C) the array is allocated in fabric memory
+
+  D) the export is comptime-only'
+choices:
+- A) the host may write the symbol (mutable), so the PE must expose it through a `var` pointer
+- B) the symbol is read-only for the host
+- C) the array is allocated in fabric memory
+- D) the export is comptime-only
+expected:
+  choice: A
+scoring: first standalone letter A-D in the reply equals the key
+source_citation: error_gotcha_retrieval export-mutability; docs/IPDPS_PREREG.md 2026-09-08 entry

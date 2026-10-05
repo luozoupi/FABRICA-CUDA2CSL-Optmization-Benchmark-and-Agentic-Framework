@@ -1,0 +1,135 @@
+{
+  "schema": 1,
+  "date": "2026-09-23",
+  "revisions": {
+    "v2_0": "313e8ab01919298527d4f069bed3419c9eb6541e",
+    "sparse_ipdps": "7413ed46fa0f572f4b46e7fd9b7056462a31a770",
+    "paper": "bb7f61ad30873f64ebca758101f5e03d313c37d9",
+    "local_followup": "84553eef29952ea909490a031a2dc517231d4772"
+  },
+  "evidence_level": "Independent arithmetic and completeness audit of committed summaries; not independent replay of remote source/binaries or hardware jobs.",
+  "files": {
+    "online/runs.csv": {
+      "sha256": "9a22530dadebf14205ab177aa8b6a0a922b57b71f0ae6394567a93b7a88d888a",
+      "source": {
+        "kind": "git",
+        "commit": "7413ed46fa0f572f4b46e7fd9b7056462a31a770",
+        "path": "docs/data/mg_sparse_luna_seeds_20260922_runs.csv",
+        "repository": "xkernel"
+      }
+    },
+    "online/tasks.csv": {
+      "sha256": "989448aba26ac86697bda58c02c321e2692c1da67802af81ad1c8f8bdeaa8d3e",
+      "source": {
+        "kind": "git",
+        "commit": "7413ed46fa0f572f4b46e7fd9b7056462a31a770",
+        "path": "docs/data/mg_sparse_luna_seeds_20260922_tasks.csv",
+        "repository": "xkernel"
+      }
+    },
+    "online/candidates.csv": {
+      "sha256": "0c3baa7d1e9b6ee3be21efb1f3ecb4eafef57a79404df6f52f56e02da410cf48",
+      "source": {
+        "kind": "git",
+        "commit": "7413ed46fa0f572f4b46e7fd9b7056462a31a770",
+        "path": "docs/data/mg_sparse_luna_seeds_20260922_candidates.csv",
+        "repository": "xkernel"
+      }
+    },
+    "online/hw_s2_retained_20260922.json": {
+      "sha256": "a6426a7e20c39f8597251fd633ffc0f12b5766c6953b8dfd559927046f160106",
+      "source": {
+        "kind": "git",
+        "commit": "7413ed46fa0f572f4b46e7fd9b7056462a31a770",
+        "path": "docs/data/hw_s2_retained_20260922.json",
+        "repository": "xkernel"
+      }
+    },
+    "online/transfer_20260922.json": {
+      "sha256": "c232fc6b027797fb7b8ad8f41bc7dfc3d168abb253e11ce181c74b3b57e3fc51",
+      "source": {
+        "kind": "git",
+        "commit": "7413ed46fa0f572f4b46e7fd9b7056462a31a770",
+        "path": "docs/data/transfer_20260922.json",
+        "repository": "xkernel"
+      }
+    },
+    "paper/ipdps_sparse_optimizer_runs.csv": {
+      "sha256": "9a22530dadebf14205ab177aa8b6a0a922b57b71f0ae6394567a93b7a88d888a",
+      "source": {
+        "kind": "git",
+        "commit": "bb7f61ad30873f64ebca758101f5e03d313c37d9",
+        "path": "figures/ipdps_sparse_optimizer_runs.csv",
+        "repository": "paper"
+      }
+    },
+    "paper/ipdps_sparse_hw_retained.csv": {
+      "sha256": "b25176250cd968ca4f262e5c55ed36c2a086708e98304be38ddfce57a8bb452b",
+      "source": {
+        "kind": "git",
+        "commit": "bb7f61ad30873f64ebca758101f5e03d313c37d9",
+        "path": "figures/ipdps_sparse_hw_retained.csv",
+        "repository": "paper"
+      }
+    },
+    "paper/ipdps_sparse_transfer.csv": {
+      "sha256": "dd8dd3465fd54d1ab72bd1d5fb9e456bf96c6cdf0cbcac7eb566e9c07eca0036",
+      "source": {
+        "kind": "git",
+        "commit": "bb7f61ad30873f64ebca758101f5e03d313c37d9",
+        "path": "figures/ipdps_sparse_transfer.csv",
+        "repository": "paper"
+      }
+    },
+    "paper/numbers.tex": {
+      "sha256": "23ae4fb37b108e926212d7e92b976b3fb9349b5709a07085667b67cb32737c7b",
+      "source": {
+        "kind": "git",
+        "commit": "bb7f61ad30873f64ebca758101f5e03d313c37d9",
+        "path": "ipdps2027_sparse-numbers.tex",
+        "repository": "paper"
+      }
+    },
+    "local/deepseek-smoke.csv": {
+      "sha256": "33e3b4d25c9e6c7e1699773bb25a0145ac8825e7884cbc7d586410fd9277db54",
+      "source": {
+        "kind": "local",
+        "path": "/home/USER/ipdps-results/deepseek-smoke-20260921-db482cd/summary.csv"
+      }
+    },
+    "local/scaling.json": {
+      "sha256": "dca26ac994c6e979c46548da38a0d46c37096aa601b2eaeb84346fbea8657aa7",
+      "source": {
+        "kind": "derived_local_summary",
+        "inputs": [
+          {
+            "path": "/home/USER/ipdps-results/strong-scaling-20260921-v1/measure_summary.json",
+            "sha256": "8104223e76ee356701c2acbe488ae9d1f8bc9272bfa5a1df03aa5a1cc224f173"
+          },
+          {
+            "path": "/home/USER/ipdps-results/weak-scaling-20260921-v1/measure_summary.json",
+            "sha256": "e3675971a2e67422d04adfc0c38852feea878f893da8cc9a2cf6c9fda04f93d7"
+          }
+        ],
+        "extraction": "Selected configuration, verdict, timing, seed echoes and diagnostic fields; no timing recomputation."
+      }
+    },
+    "local/training-export-summary.json": {
+      "sha256": "2eaf6ffc7c2201c79c36cafe1890d116fa0dea045a599d89a45094764aae2e11",
+      "source": {
+        "kind": "derived_local_summary",
+        "path": "/home/USER/ipdps-results/deepseek-smoke-20260921-db482cd/training_export_v1/manifest.json",
+        "sha256": "256b8469273b2feb6137e92a51d11d31a13315801988f425f12646c87cbf8503",
+        "raw_model_data_published": false
+      }
+    },
+    "local/followup-status.json": {
+      "sha256": "d0ea1a49bc264237dfe732314b8e29401f62dd46195f542a581b7f4943f0849a",
+      "source": {
+        "kind": "derived_local_summary",
+        "path": "/home/USER/ipdps-results/node-followup-20260921/progress.json",
+        "sha256": "81fe59b98c43668c5da4dafea1db37ad8ca642783fc801798a4aea91e389d7ed"
+      }
+    }
+  }
+}

@@ -1,0 +1,25 @@
+id: D10_comptime_struct
+group: D_api
+prompt: 'Answer this Cerebras CSL / WSE-3 question with the single letter of the correct option, then one sentence
+  of justification.
+
+
+  How is the memcpy parameter struct declared in a PE program written for SDK 2.10?
+
+
+  A) `param memcpy_params: comptime_struct;`
+
+  B) `param memcpy_params;` (untyped param; comptime_struct was removed)
+
+  C) `const memcpy_params = @import_module("<memcpy/memcpy>");`
+
+  D) `var memcpy_params: struct;`'
+choices:
+- 'A) `param memcpy_params: comptime_struct;`'
+- B) `param memcpy_params;` (untyped param; comptime_struct was removed)
+- C) `const memcpy_params = @import_module("<memcpy/memcpy>");`
+- 'D) `var memcpy_params: struct;`'
+expected:
+  choice: B
+scoring: first standalone letter A-D in the reply equals the key
+source_citation: "FINDINGS \xA712d; code_translation/sdk_compat.py"

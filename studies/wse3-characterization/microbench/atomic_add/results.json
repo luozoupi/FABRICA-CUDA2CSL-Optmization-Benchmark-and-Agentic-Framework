@@ -1,0 +1,52 @@
+{
+ "rows": [
+  {
+   "variant": "scalar_i16",
+   "cycles": 14,
+   "t_start": 5,
+   "t_end": 19,
+   "verified": true
+  },
+  {
+   "variant": "scalar_f16",
+   "cycles": 15,
+   "t_start": 40,
+   "t_end": 55,
+   "verified": true
+  },
+  {
+   "variant": "dsd8",
+   "cycles": 18,
+   "t_start": 77,
+   "t_end": 95,
+   "verified": true
+  },
+  {
+   "variant": "dsd16",
+   "cycles": 20,
+   "t_start": 117,
+   "t_end": 137,
+   "verified": true
+  },
+  {
+   "variant": "dsd64",
+   "cycles": 32,
+   "t_start": 159,
+   "t_end": 191,
+   "verified": true
+  }
+ ],
+ "inputs": {
+  "ai": 1234,
+  "bi": -4321,
+  "af": 1.5,
+  "bf": -0.25,
+  "a0": -3.0,
+  "b0": -1.0
+ },
+ "outputs": {
+  "ci": -3087,
+  "cf": 1.25,
+  "c0": -4.0
+ }
+}

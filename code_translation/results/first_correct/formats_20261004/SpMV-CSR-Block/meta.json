@@ -1,0 +1,31 @@
+{
+ "kernel": "SpMV-CSR-Block",
+ "status": "adapted",
+ "target_relpath": "pe.csl",
+ "size": "it10",
+ "fc_cycles_send": 467191,
+ "fc_cycles_send_runs": [
+  467191
+ ],
+ "fc_heldout_cycles": {
+  "101": 463471,
+  "202": 467191,
+  "303": 466571
+ },
+ "reference_cycles_send": 438091,
+ "reference_heldout_cycles": {
+  "101": 434611,
+  "202": 438091,
+  "303": 437511
+ },
+ "source": "first_correct/sparse_sb_20261001/SpMV-CSR (blind lowest-seed rule, model claude-opus-4-8, 2 attempts)",
+ "adaptation": "2026-10-04, for the ten-product size: added `param iters: u16;` and spliced the frozen reference compute() (contract_check.splice_frozen_functions), which repeats the kernel function iters times; the kernel function spmv_csr() is unchanged. The source program has no iters parameter, so the harness's splice would otherwise not compile.",
+ "fc_heldout_eval": {
+  "passed": true,
+  "seeds": [
+   101,
+   202,
+   303
+  ]
+ }
+}

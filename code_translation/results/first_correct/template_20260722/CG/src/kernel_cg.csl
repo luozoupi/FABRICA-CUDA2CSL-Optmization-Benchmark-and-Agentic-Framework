@@ -1,0 +1,356 @@
+// kernel_cg.csl — Conjugate Gradient on 5x5 mesh with 7-point stencil SpMV.
+//
+// Operator A is the bundled 7-point stencil (NOT the dense B^T B+10I of the
+// CUDA source): the reference bundle mandates stencil_3d_7pts + allreduce.
+// CG runs fully on-device as a task-chained state machine; no host in the loop.
+
+param memcpyParams: comptime_struct;
+param reduceParams: comptime_struct;
+param stencilParams: comptime_struct;
+
+param MAX_ZDIM: i16;   // length of local z-pencil
+param BLOCK_SIZE: i16; // comm staging buffer size
+param STATE: local_task_id; // state-machine entrypoint (owned by layout)
+
+const timestamp = @import_module("<time>");
+const math_lib  = @import_module("<math>");
+
+// ----------------------------------------------------------------------------
+// memcpy infra
+// ----------------------------------------------------------------------------
+const sys_mod = @import_module("<memcpy/memcpy>", memcpyParams);
+
+// ----------------------------------------------------------------------------
+// Host-visible buffers (per PE z-pencil)
+// ----------------------------------------------------------------------------
+var b      = @zeros([MAX_ZDIM]f32);   // right-hand side
+var x      = @zeros([MAX_ZDIM]f32);   // solution
+var r      = @zeros([MAX_ZDIM]f32);   // residual
+var p      = @zeros([MAX_ZDIM]f32);   // search direction
+var w      = @zeros([MAX_ZDIM]f32);   // A*p
+var tmp    = @zeros([MAX_ZDIM]f32);   // local dot partial / allreduce buffer
+
+var stencil_coeff = @zeros([7]f32);   // replicated 7-point coefficients
+
+var rho_buf = @zeros([1]f32);         // host-readable rho
+
+var ptr_b: [*]f32 = &b;
+var ptr_x: [*]f32 = &x;
+var ptr_stencil_coeff: [*]f32 = &stencil_coeff;
+var ptr_rho: [*]f32 = &rho_buf;
+
+// ----------------------------------------------------------------------------
+// Timestamp buffers
+// ----------------------------------------------------------------------------
+var tscStartBuffer = @zeros([timestamp.tsc_size_words]u16);
+var tscEndBuffer   = @zeros([timestamp.tsc_size_words]u16);
+var time_buf_u16   = @zeros([timestamp.tsc_size_words * 2]u16);
+var time_ref_buf   = @zeros([timestamp.tsc_size_words]u16);
+
+var ptr_time_buf_u16: [*]u16 = &time_buf_u16;
+var ptr_time_ref: [*]u16 = &time_ref_buf;
+
+// ----------------------------------------------------------------------------
+// CG scalars (identical on every PE after allreduce)
+// ----------------------------------------------------------------------------
+var rho:     f32 = 0.0;
+var rho_old: f32 = 0.0;
+var eta:     f32 = 0.0;
+var alpha:   f32 = 0.0;
+var beta:    f32 = 0.0;
+
+var cg_size:    i16 = 0;   // active z length (zDim)
+var cg_tol:     f32 = 0.0;
+var cg_max_ite: i16 = 0;
+var cg_iter:    i16 = 0;
+
+// State machine phase codes
+const PH_INIT_REDUCE : i16 = 0;  // finished rho0 reduction -> start loop
+const PH_SPMV        : i16 = 1;  // w = A*p done -> compute eta partial + reduce
+const PH_ETA_REDUCE  : i16 = 2;  // eta done -> updates + rr partial + reduce
+const PH_RR_REDUCE   : i16 = 3;  // new rho done -> beta, update p, next iter
+
+var phase: i16 = 0;
+
+// ----------------------------------------------------------------------------
+// Task IDs (free band 8..11,13,21..23)
+// ----------------------------------------------------------------------------
+const cg_done_task_id: local_task_id = @get_local_task_id(8);
+
+// ----------------------------------------------------------------------------
+// Callback fns (define BEFORE module imports that reference them).
+// The stencil / allreduce libraries call f_callback on completion. Both route
+// through the STATE task (the state machine dispatches on `phase`).
+// ----------------------------------------------------------------------------
+fn stencil_done() void {
+    // w = A*p finished
+    @activate(STATE);
+}
+
+fn reduce_done() void {
+    // an allreduce finished
+    @activate(STATE);
+}
+
+// ----------------------------------------------------------------------------
+// Stencil SpMV module
+// output_ut_id is a SCALAR microthread id (0..7) consumed by @get_ut_id inside
+// the library; it must be supplied or the library's @get_ut_id gets void.
+// ----------------------------------------------------------------------------
+const stencil_mod = @import_module(
+    "../../benchmark-libs/stencil_3d_7pts/pe.csl",
+    @concat_structs(stencilParams, .{
+        .f_callback    = stencil_done,
+        .input_queues  = [4]u16{ 2, 3, 4, 5 },
+        .output_queues = [4]u16{ 2, 3, 4, 5 },
+        .output_ut_id  = @as(u16, 0),
+        .BLOCK_SIZE    = BLOCK_SIZE,
+        .dest_dsr_ids  = [2]u16{ 1, 2 },
+        .src0_dsr_ids  = [1]u16{ 1 },
+        .src1_dsr_ids  = [2]u16{ 3, 4 },
+    }));
+
+// ----------------------------------------------------------------------------
+// Allreduce module
+// ----------------------------------------------------------------------------
+const reduce_mod = @import_module(
+    "../../benchmark-libs/allreduce/pe.csl",
+    @concat_structs(reduceParams, .{
+        .f_callback   = reduce_done,
+        .queues       = [1]u16{ 6 },
+        .dest_dsr_ids = [1]u16{ 5 },
+        .src0_dsr_ids = [1]u16{ 5 },
+        .src1_dsr_ids = [1]u16{ 6 },
+    }));
+
+// ----------------------------------------------------------------------------
+// Local DSDs over the z-pencils (built once, length reset per call)
+// ----------------------------------------------------------------------------
+var dsd_x   = @get_dsd(mem1d_dsd, .{ .base_address = &x,   .extent = MAX_ZDIM });
+var dsd_r   = @get_dsd(mem1d_dsd, .{ .base_address = &r,   .extent = MAX_ZDIM });
+var dsd_p   = @get_dsd(mem1d_dsd, .{ .base_address = &p,   .extent = MAX_ZDIM });
+var dsd_w   = @get_dsd(mem1d_dsd, .{ .base_address = &w,   .extent = MAX_ZDIM });
+var dsd_b   = @get_dsd(mem1d_dsd, .{ .base_address = &b,   .extent = MAX_ZDIM });
+var dsd_tmp = @get_dsd(mem1d_dsd, .{ .base_address = &tmp, .extent = MAX_ZDIM });
+
+fn set_dsd_lengths() void {
+    const n: u16 = @as(u16, cg_size);
+    dsd_x   = @set_dsd_length(dsd_x,   n);
+    dsd_r   = @set_dsd_length(dsd_r,   n);
+    dsd_p   = @set_dsd_length(dsd_p,   n);
+    dsd_w   = @set_dsd_length(dsd_w,   n);
+    dsd_b   = @set_dsd_length(dsd_b,   n);
+    dsd_tmp = @set_dsd_length(dsd_tmp, n);
+}
+
+// ----------------------------------------------------------------------------
+// Local vector helpers (operate over cg_size z-elements)
+// ----------------------------------------------------------------------------
+
+// r = b (copy)
+fn vec_copy_b_to_r() void {
+    @fmovs(dsd_r, dsd_b);
+}
+// p = r (copy)
+fn vec_copy_r_to_p() void {
+    @fmovs(dsd_p, dsd_r);
+}
+// x = 0
+fn vec_zero_x() void {
+    for (@range(i16, cg_size)) |i| {
+        x[i] = 0.0;
+    }
+}
+
+// tmp = p .* w  (elementwise), local partial for eta
+fn local_dot_pw() void {
+    @fmuls(dsd_tmp, dsd_p, dsd_w);
+}
+// tmp = r .* r  (elementwise), local partial for rho
+fn local_dot_rr() void {
+    @fmuls(dsd_tmp, dsd_r, dsd_r);
+}
+
+// x += alpha * p
+fn axpy_x() void {
+    @fmacs(dsd_x, dsd_x, dsd_p, alpha);
+}
+// r -= alpha * w   (== r += (-alpha)*w)
+fn axpy_r() void {
+    @fmacs(dsd_r, dsd_r, dsd_w, -alpha);
+}
+// p = r + beta*p
+fn update_p() void {
+    @fmuls(dsd_p, dsd_p, beta);   // p = beta*p
+    @fadds(dsd_p, dsd_p, dsd_r);  // p += r
+}
+
+// After allreduce over tmp, reduced sum is broadcast into tmp[0] on every PE.
+fn reduced_scalar() f32 {
+    return tmp[0];
+}
+
+// ----------------------------------------------------------------------------
+// State machine
+// ----------------------------------------------------------------------------
+fn start_spmv() void {
+    phase = PH_SPMV;
+    stencil_mod.spmv(cg_size, &stencil_coeff, &p, &w);
+}
+
+fn start_reduce_tmp(next_phase: i16) void {
+    phase = next_phase;
+    reduce_mod.allreduce(cg_size, &tmp, reduce_mod.TYPE_BINARY_OP.ADD);
+}
+
+fn finish_cg() void {
+    rho_buf[0] = rho;
+    @activate(cg_done_task_id);
+}
+
+task cg_done() void {
+    sys_mod.unblock_cmd_stream();
+}
+
+task state_task() void {
+    if (phase == PH_INIT_REDUCE) {
+        rho = reduced_scalar();
+        rho_buf[0] = rho;
+        if (math_lib.sqrt(rho) < cg_tol or cg_max_ite <= 0) {
+            finish_cg();
+            return;
+        }
+        start_spmv();
+        return;
+    }
+
+    if (phase == PH_SPMV) {
+        // w = A*p done -> eta = p^T w
+        local_dot_pw();
+        start_reduce_tmp(PH_ETA_REDUCE);
+        return;
+    }
+
+    if (phase == PH_ETA_REDUCE) {
+        eta = reduced_scalar();
+        alpha = rho / eta;
+        axpy_x();  // x += alpha*p
+        axpy_r();  // r -= alpha*w
+        rho_old = rho;
+        local_dot_rr();
+        start_reduce_tmp(PH_RR_REDUCE);
+        return;
+    }
+
+    if (phase == PH_RR_REDUCE) {
+        rho = reduced_scalar();
+        rho_buf[0] = rho;
+        cg_iter += 1;
+        if (math_lib.sqrt(rho) < cg_tol or cg_iter >= cg_max_ite) {
+            finish_cg();
+            return;
+        }
+        beta = rho / rho_old;
+        update_p();  // p = r + beta*p
+        start_spmv();
+        return;
+    }
+
+    // Unknown phase: unblock to avoid host hang.
+    finish_cg();
+}
+
+// ----------------------------------------------------------------------------
+// Entrypoint: f_cg(size, tol, max_ite)
+// ----------------------------------------------------------------------------
+fn f_cg(size: i16, tol: f32, max_ite: i16) void {
+    cg_size    = size;
+    cg_tol     = tol;
+    cg_max_ite = max_ite;
+    cg_iter    = 0;
+
+    set_dsd_lengths();
+
+    // x0 = 0  => r = b, p = r
+    vec_zero_x();
+    vec_copy_b_to_r();
+    vec_copy_r_to_p();
+
+    // rho0 = r^T r : local partial then allreduce
+    local_dot_rr();
+    start_reduce_tmp(PH_INIT_REDUCE);
+    // do NOT unblock here: the state machine finishes via cg_done -> unblock.
+}
+
+// ----------------------------------------------------------------------------
+// Sync / timing entrypoints
+// ----------------------------------------------------------------------------
+fn f_enable_timer() void {
+    timestamp.enable_tsc();
+    sys_mod.unblock_cmd_stream();
+}
+
+fn f_tic() void {
+    timestamp.get_timestamp(&tscStartBuffer);
+    sys_mod.unblock_cmd_stream();
+}
+
+fn f_toc() void {
+    timestamp.get_timestamp(&tscEndBuffer);
+    sys_mod.unblock_cmd_stream();
+}
+
+fn f_memcpy_timestamps() void {
+    // pack start (3 words) then end (3 words) into time_buf_u16
+    var i: i16 = 0;
+    while (i < timestamp.tsc_size_words) : (i += 1) {
+        time_buf_u16[i] = tscStartBuffer[i];
+    }
+    var j: i16 = 0;
+    while (j < timestamp.tsc_size_words) : (j += 1) {
+        time_buf_u16[timestamp.tsc_size_words + j] = tscEndBuffer[j];
+    }
+    sys_mod.unblock_cmd_stream();
+}
+
+// Reference timestamp for cross-PE clock alignment
+var tscRefBuffer = @zeros([timestamp.tsc_size_words]u16);
+
+fn f_reference_timestamps() void {
+    timestamp.get_timestamp(&tscRefBuffer);
+    var i: i16 = 0;
+    while (i < timestamp.tsc_size_words) : (i += 1) {
+        time_ref_buf[i] = tscRefBuffer[i];
+    }
+    sys_mod.unblock_cmd_stream();
+}
+
+// A no-op sync barrier: just release the cmd stream so host can proceed.
+fn f_sync() void {
+    sys_mod.unblock_cmd_stream();
+}
+
+// ----------------------------------------------------------------------------
+// Comptime: bindings + exports
+// ----------------------------------------------------------------------------
+comptime {
+    @bind_local_task(state_task, STATE);
+    @bind_local_task(cg_done, cg_done_task_id);
+}
+
+comptime {
+    @export_symbol(ptr_b, "b");
+    @export_symbol(ptr_x, "x");
+    @export_symbol(ptr_stencil_coeff, "stencil_coeff");
+    @export_symbol(ptr_rho, "rho");
+    @export_symbol(ptr_time_buf_u16, "time_buf_u16");
+    @export_symbol(ptr_time_ref, "time_ref");
+
+    @export_symbol(f_enable_timer);
+    @export_symbol(f_tic);
+    @export_symbol(f_toc);
+    @export_symbol(f_memcpy_timestamps);
+    @export_symbol(f_cg);
+    @export_symbol(f_sync);
+    @export_symbol(f_reference_timestamps);
+}

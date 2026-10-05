@@ -1,0 +1,111 @@
+# xkernel-bench spec -- see kernels/SPEC_SCHEMA.md for format.
+kernel_id: "SpMM-CSR-Dense"
+group: "sparse"
+difficulty: 3
+
+tasks:
+  - "Sparse-times-dense matrix product C = A*B on a P x P mesh: A (n x n, CSR) is split into P
+     row tiles (one per mesh row, replicated along the row, padded to Mt rows / max_nnz_pe
+     nonzeros), the dense B (K x N, row-major) into P column slices (one per mesh column,
+     replicated down the column); PE (px, py) computes its Mt x Nt tile: for every local row
+     r and stored a_rk, C[r,:] += a_rk * B[k,:]. No communication. entrypoint = main
+     (device-internal timing)."
+
+inputs:
+  - {name: "row_ptr", shape: "[P][P][Mt+1]", dtype: "u32"}
+  - {name: "col_idx", shape: "[P][P][max_nnz_pe]", dtype: "u32"}
+  - {name: "val", shape: "[P][P][max_nnz_pe]", dtype: "f32"}
+  - {name: "B_tile", shape: "[P][P][K*Nt]", dtype: "f32"}
+
+outputs:
+  - {name: "C_tile", shape: "[P][P][Mt*Nt]", dtype: "f32",
+     tolerance_abs: 1.0e-5, tolerance_rel: 1.0e-4,
+     description: "C = A*B on the real rows; verified in run.py against float64 numpy + SUCCESS"}
+
+sizes:
+  - name: small
+    role: correctness
+    structure_class: "hb_n256"               # dwt_234 (train); can_229, gre_216a, can_256
+    params: {P: 2, Mt: 128, K: 256, Nt: 8, max_nnz_pe: 2048, iters: 1, structure_id: 0}
+    commands_script: "commands_wse3.sh"
+    wse3_reference: {cycles_send: 106606, time_send_us: 125.4188}   # SDK 2.10 simulator, 2026-09-16, held-out passed
+  - name: p1
+    role: scaling
+    structure_class: "hb_n144"               # bcspwr03 (train); ash85, arc130, can_144
+    params: {P: 1, Mt: 144, K: 144, Nt: 16, max_nnz_pe: 1536, iters: 1, structure_id: 1}
+    commands_script: "commands_wse3_p1.sh"
+    wse3_reference: {cycles_send: 301132, time_send_us: 354.2729}   # SDK 2.10 simulator, 2026-09-16, held-out passed
+  - name: p4
+    role: scaling
+    structure_class: "hb_n512"               # 494_bus (train); bcspwr05, gre_512, west0479
+    params: {P: 4, Mt: 128, K: 512, Nt: 8, max_nnz_pe: 1024, iters: 1, structure_id: 2}
+    commands_script: "commands_wse3_p4.sh"
+    wse3_reference: {cycles_send: 103213, time_send_us: 121.4271}   # SDK 2.10 simulator, 2026-09-16, held-out passed
+  - name: n16
+    role: workload
+    structure_class: "hb_n256"               # same matrices and mesh as small; Nt 8 -> 16
+    params: {P: 2, Mt: 128, K: 256, Nt: 16, max_nnz_pe: 1536, iters: 1, structure_id: 0}
+    commands_script: "commands_wse3_n16.sh"
+    wse3_reference: {cycles_send: 289574, time_send_us: 340.6753}   # SDK 2.10 simulator, 2026-09-21, held-out passed
+
+task_class: "real-translation"
+split: "test"
+
+metric:
+  class: cycles
+  reason: "agent-written row-tile SpMM (CSR x dense); device-internal window (max end - min start over the mesh)"
+
+timing_protocol: device_internal_v2
+
+eval:
+  train_seed: 7
+  heldout_seeds: [101, 202, 303]
+  seed_env: "XKERNEL_EVAL_SEED"
+
+structure:
+  format: csr_tiles
+  class: "hb_n256"
+  manifest: "CSL/data/manifest.json"
+  partition: {scheme: row_tiles, mesh: "2x2"}
+  caps: {Mt: 128, max_nnz_pe: 2048}
+  readout: true
+
+build_command: "bash commands_wse3.sh"
+verify: "embedded in run.py -- float64 numpy C = A@B on the real rows (rtol=1e-4, atol=1e-5) + SUCCESS"
+
+hidden_from_optimize_only:
+  - "CSL/pe.csl"
+
+frozen_functions:
+  - "f_tic_dev"
+  - "f_toc_dev"
+  - "f_enable_timer"
+  - "f_memcpy_timestamps"
+  - "f_tic"
+  - "f_toc"
+frozen_params:
+  - "P"
+  - "Mt"
+  - "K"
+  - "Nt"
+  - "max_nnz_pe"
+  - "iters"
+  - "structure_id"
+
+# Provenance: CUDA source concretized from GraphBLAS CUDA/mxm/template/GB_cuda_jit_AxB_dot3_phase3_spdn.cuh
+# (A sparse, B full, full mask); the explore-track prototype knowledge/explored/successes/
+# spmm_csr_dense_distributed__20260604T042704Z (2x2 mesh, 1,486 cycles at 8x8x8) is its ancestor.
+# Reference authored 2026-09-16 (v2 sparse study, S suite).
+optimization_angles:
+  - "dsd_offset_chaining"
+  - "fmac_bulk"
+  - "stride_optimization"
+  - "comptime_hoist"
+
+tags:
+  - "multi_pe"
+  - "sparse"
+  - "csr"
+  - "spmm"
+  - "row_tiles"
+  - "communication_free"

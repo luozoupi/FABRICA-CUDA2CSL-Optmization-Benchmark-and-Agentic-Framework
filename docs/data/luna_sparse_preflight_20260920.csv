@@ -1,0 +1,5 @@
+kernel,reference_status,reference_cycles,timing_repeats,timing_runs_identical,heldout_passed,heldout_seed_count
+RowScale-CSR,pass,45868,3,True,True,3
+SpMV-CSR,pass,7429,3,True,True,3
+SpMM-CSR-Dense,pass,106606,3,True,True,3
+SpGEMM-Masked-Dot,pass,260903,3,True,True,3

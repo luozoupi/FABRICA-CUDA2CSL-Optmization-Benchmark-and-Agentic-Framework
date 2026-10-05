@@ -1,0 +1,68 @@
+[
+  {
+    "case": "scalar-n1",
+    "status": "pass",
+    "returncode": 0,
+    "queue_wait_s": 2.177999704144895e-05,
+    "execution_s": 23.662613874999806,
+    "diagnostic_errors": [],
+    "checked_launches": 24,
+    "traces_bytes": 192729103,
+    "trace_host_sha256": "201fea0e76a0082d857338cd2241f764383de19dd78157e30e26b62a72515cea"
+  },
+  {
+    "case": "descriptor-n1",
+    "status": "pass",
+    "returncode": 0,
+    "queue_wait_s": 7.108996214810759e-06,
+    "execution_s": 22.916996765998192,
+    "diagnostic_errors": [],
+    "checked_launches": 24,
+    "traces_bytes": 245967875,
+    "trace_host_sha256": "201fea0e76a0082d857338cd2241f764383de19dd78157e30e26b62a72515cea"
+  },
+  {
+    "case": "scalar-n4",
+    "status": "pass",
+    "returncode": 0,
+    "queue_wait_s": 1.4099998224992305e-05,
+    "execution_s": 35.896178126997256,
+    "diagnostic_errors": [],
+    "checked_launches": 24,
+    "traces_bytes": 405879347,
+    "trace_host_sha256": "201fea0e76a0082d857338cd2241f764383de19dd78157e30e26b62a72515cea"
+  },
+  {
+    "case": "descriptor-n4",
+    "status": "pass",
+    "returncode": 0,
+    "queue_wait_s": 8.269998943433166e-06,
+    "execution_s": 32.492224925998016,
+    "diagnostic_errors": [],
+    "checked_launches": 24,
+    "traces_bytes": 358385177,
+    "trace_host_sha256": "201fea0e76a0082d857338cd2241f764383de19dd78157e30e26b62a72515cea"
+  },
+  {
+    "case": "descriptor-n16",
+    "status": "pass",
+    "returncode": 0,
+    "queue_wait_s": 7.50999606680125e-06,
+    "execution_s": 75.66669190300308,
+    "diagnostic_errors": [],
+    "checked_launches": 24,
+    "traces_bytes": 808041524,
+    "trace_host_sha256": "201fea0e76a0082d857338cd2241f764383de19dd78157e30e26b62a72515cea"
+  },
+  {
+    "case": "hoisted-n16",
+    "status": "pass",
+    "returncode": 0,
+    "queue_wait_s": 7.199996616691351e-06,
+    "execution_s": 79.72637353000027,
+    "diagnostic_errors": [],
+    "checked_launches": 24,
+    "traces_bytes": 808040223,
+    "trace_host_sha256": "201fea0e76a0082d857338cd2241f764383de19dd78157e30e26b62a72515cea"
+  }
+]

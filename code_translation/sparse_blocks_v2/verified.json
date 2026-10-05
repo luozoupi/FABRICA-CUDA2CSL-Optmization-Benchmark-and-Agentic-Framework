@@ -1,0 +1,181 @@
+{
+ "_note": "sparse_blocks_v2/verify_blocks.py on SDK 2.10 (simulator), 2026-10-03; one record per toy configuration",
+ "configs": {
+  "banded_5diag_n128": {
+   "matrix": "128x128, band -2..+2 with 15% holes, N/6 off-band entries, one empty row",
+   "status": "pass",
+   "blocks_ok": true,
+   "methods": [
+    {
+     "method": "scalar_u32",
+     "products": 1,
+     "cycles": 19772,
+     "nnz": 571,
+     "correct": true,
+     "max_abs_err": 1.1920928955078125e-07
+    },
+    {
+     "method": "scalar_u32",
+     "products": 10,
+     "cycles": 197468,
+     "nnz": 571,
+     "correct": true,
+     "max_abs_err": 1.1920928955078125e-07
+    },
+    {
+     "method": "cast16",
+     "products": 1,
+     "cycles": 19643,
+     "nnz": 571,
+     "correct": true,
+     "max_abs_err": 1.1920928955078125e-07
+    },
+    {
+     "method": "cast16",
+     "products": 10,
+     "cycles": 196178,
+     "nnz": 571,
+     "correct": true,
+     "max_abs_err": 1.1920928955078125e-07
+    },
+    {
+     "method": "shadow16",
+     "products": 1,
+     "cycles": 32702,
+     "nnz": 571,
+     "correct": true,
+     "max_abs_err": 1.1920928955078125e-07
+    },
+    {
+     "method": "shadow16",
+     "products": 10,
+     "cycles": 213332,
+     "nnz": 571,
+     "correct": true,
+     "max_abs_err": 1.1920928955078125e-07
+    },
+    {
+     "method": "row_dsd",
+     "products": 1,
+     "cycles": 21275,
+     "nnz": 571,
+     "correct": true,
+     "max_abs_err": 1.1920928955078125e-07
+    },
+    {
+     "method": "row_dsd",
+     "products": 10,
+     "cycles": 212498,
+     "nnz": 571,
+     "correct": true,
+     "max_abs_err": 1.1920928955078125e-07
+    },
+    {
+     "method": "dia_remainder",
+     "products": 1,
+     "cycles": 40162,
+     "nnz": 571,
+     "correct": true,
+     "max_abs_err": 1.1920928955078125e-07
+    },
+    {
+     "method": "dia_remainder",
+     "products": 10,
+     "cycles": 103081,
+     "nnz": 571,
+     "correct": true,
+     "max_abs_err": 1.1920928955078125e-07
+    }
+   ],
+   "commands": "commands_wse3.sh"
+  },
+  "banded_25diag_n64": {
+   "matrix": "64x64, band -12..+12 with 15% holes, N/6 off-band entries, one empty row",
+   "status": "pass",
+   "blocks_ok": true,
+   "methods": [
+    {
+     "method": "scalar_u32",
+     "products": 1,
+     "cycles": 36144,
+     "nnz": 1222,
+     "correct": true,
+     "max_abs_err": 2.384185791015625e-07
+    },
+    {
+     "method": "scalar_u32",
+     "products": 10,
+     "cycles": 361188,
+     "nnz": 1222,
+     "correct": true,
+     "max_abs_err": 2.384185791015625e-07
+    },
+    {
+     "method": "cast16",
+     "products": 1,
+     "cycles": 36079,
+     "nnz": 1222,
+     "correct": true,
+     "max_abs_err": 2.384185791015625e-07
+    },
+    {
+     "method": "cast16",
+     "products": 10,
+     "cycles": 360538,
+     "nnz": 1222,
+     "correct": true,
+     "max_abs_err": 2.384185791015625e-07
+    },
+    {
+     "method": "shadow16",
+     "products": 1,
+     "cycles": 60419,
+     "nnz": 1222,
+     "correct": true,
+     "max_abs_err": 2.384185791015625e-07
+    },
+    {
+     "method": "shadow16",
+     "products": 10,
+     "cycles": 395408,
+     "nnz": 1222,
+     "correct": true,
+     "max_abs_err": 2.384185791015625e-07
+    },
+    {
+     "method": "row_dsd",
+     "products": 1,
+     "cycles": 37037,
+     "nnz": 1222,
+     "correct": true,
+     "max_abs_err": 2.384185791015625e-07
+    },
+    {
+     "method": "row_dsd",
+     "products": 10,
+     "cycles": 370118,
+     "nnz": 1222,
+     "correct": true,
+     "max_abs_err": 2.384185791015625e-07
+    },
+    {
+     "method": "dia_remainder",
+     "products": 1,
+     "cycles": 97050,
+     "nnz": 1222,
+     "correct": true,
+     "max_abs_err": 2.384185791015625e-07
+    },
+    {
+     "method": "dia_remainder",
+     "products": 10,
+     "cycles": 340968,
+     "nnz": 1222,
+     "correct": true,
+     "max_abs_err": 2.384185791015625e-07
+    }
+   ],
+   "commands": "commands_wse3_long.sh"
+  }
+ }
+}

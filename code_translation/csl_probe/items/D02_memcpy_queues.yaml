@@ -1,0 +1,26 @@
+id: D02_memcpy_queues
+group: D_api
+prompt: 'Answer this Cerebras CSL / WSE-3 question with the single letter of the correct option, then one sentence
+  of justification.
+
+
+  A WSE-3 program that uses the memcpy library wants an input queue for its own fabric color. Which queues may it
+  use?
+
+
+  A) any of 0 to 7
+
+  B) 0 and 1 only
+
+  C) 2 to 7 (0 and 1 are reserved by memcpy)
+
+  D) 8 to 15'
+choices:
+- A) any of 0 to 7
+- B) 0 and 1 only
+- C) 2 to 7 (0 and 1 are reserved by memcpy)
+- D) 8 to 15
+expected:
+  choice: C
+scoring: first standalone letter A-D in the reply equals the key
+source_citation: error_gotcha_retrieval queue-0-1-reserved; docs/EXCLUDED_TASKS_AUDIT_20260806.md

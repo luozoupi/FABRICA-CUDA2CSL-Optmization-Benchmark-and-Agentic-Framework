@@ -1,0 +1,60 @@
+{
+ "schema": "sparse-walk/1",
+ "case": "spmm",
+ "task": "SpMM-CSR-Dense",
+ "fabric": "9,4",
+ "params": "P:2,Mt:4,K:8,Nt:2,max_nnz_pe:12,iters:1,structure_id:0",
+ "sdk": "/software/cerebras/cs_sdk-2.10",
+ "sif": [
+  "/software/cerebras/cs_sdk-2.10/sdk-cbcore-2.10.1-sdk-202606181328-8faf87a26e.sif"
+ ],
+ "commands": [
+  [
+   "cslc",
+   "./layout.csl",
+   "--arch=wse3",
+   "--fabric-dims=9,4",
+   "--fabric-offsets=4,1",
+   "--params=P:2,Mt:4,K:8,Nt:2,max_nnz_pe:12,iters:1,structure_id:0",
+   "-o",
+   "out",
+   "--memcpy",
+   "--channels=1",
+   "--width-west-buf=0",
+   "--width-east-buf=0"
+  ],
+  [
+   "cs_python",
+   "run.py",
+   "--name",
+   "out"
+  ],
+  [
+   "/home/USER/micromamba/envs/dev/bin/python",
+   "/home/USER/xkernel/studies/wse3-characterization/tools/decode_trace.py",
+   ".",
+   "-o",
+   "events.jsonl.gz"
+  ],
+  [
+   "/home/USER/micromamba/envs/dev/bin/python",
+   "/home/USER/xkernel/studies/wse3-characterization/tools/csdisasm.py",
+   "out/bin/out_0_0.elf",
+   "--json",
+   "disasm_out_0_0.json"
+  ],
+  [
+   "/home/USER/micromamba/envs/dev/bin/python",
+   "/home/USER/xkernel/studies/wse3-characterization/tools/csdisasm.py",
+   "out/bin/out_1_0.elf",
+   "--json",
+   "disasm_out_1_0.json"
+  ]
+ ],
+ "kernel_sources": {
+  "layout.csl": "850c790f0c63a7c7ecdd3c7d801166876b8dbc3ba38879f04c916c52d895a8de",
+  "pe.csl": "dc574a2019f58fc68287a5cd7e1aa075db2d4711901dcd0b95a8afd17f2fb3db"
+ },
+ "copied_sources_identical": true,
+ "result_exact": true
+}

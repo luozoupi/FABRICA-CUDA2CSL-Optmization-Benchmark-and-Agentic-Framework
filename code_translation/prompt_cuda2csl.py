@@ -9,7 +9,7 @@ import os
 # hallucinations like `@my_pe_x` / `@get_pe_id` / `@write_to_neighbor` that
 # show up in failed Residual / Game-of-Life runs.
 #
-# Source: union of (a) every @-builtin actually used across csl-examples
+# Source: union of (a) every @-builtin actually used across /home/USER/csl-examples
 # tutorials + benchmarks (62 builtins, ground-truth), and (b) additional builtins
 # documented in cerebras-csl-skills SKILL-BUILTINS.md that are stable in SDK 1.4.0.
 # Anti-patterns are explicit fixes for the failures we've seen in this codebase's
@@ -118,6 +118,12 @@ def builtin_whitelist_block() -> str:
     """
     if os.getenv("XKERNEL_BUILTIN_WHITELIST", "1") == "0":
         return ""
+    try:
+        from sdk_compat import is_sdk2
+        if is_sdk2():                       # removed in SDK 2.x; listing it would license a hallucination
+            return _BUILTIN_WHITELIST_BLOCK.replace("@concat_structs, ", "").replace("@concat_structs,", "")
+    except ImportError:
+        pass
     return _BUILTIN_WHITELIST_BLOCK
 
 
@@ -969,7 +975,7 @@ CSL_OPTIMIZATION_STEPS_CATALOG = {
 
     # --------------------------------------------------------------------
     # Model-derived angles (IPDPS 2027 study). Every number below is a
-    # MEASUREMENT from docs/PERFORMANCE_MODEL.md (silicon unless
+    # MEASUREMENT from studies/wse3-characterization/FINDINGS.md (silicon unless
     # stated); the angle text quotes the measurement rather than a rule of thumb.
     # Trigger keys `model_*` are produced by wse3_model.model_keys() from the
     # trace of the current best candidate. Flags: requires_precision_ok (only
@@ -994,7 +1000,7 @@ CSL_OPTIMIZATION_STEPS_CATALOG = {
         "applicable_groups": ["all"],
         "applicable_bottlenecks": ["model_narrow_dsd", "model_overhead_bound", "model_arithmetic_bound",
                                    "scalar_loops_over_arrays", "dsd_rebuild_in_loop"],
-        "source_skill": "docs/PERFORMANCE_MODEL.md §10, §10c (loop form); microbench/loopform",
+        "source_skill": "studies/wse3-characterization/FINDINGS.md §10, §10c (loop form); microbench/loopform",
         "knowledge_query_hint": "mem1d_dsd tensor_access full extent single dispatch set_dsd_length @map while loop",
     },
     "f16_precision": {
@@ -1011,7 +1017,7 @@ CSL_OPTIMIZATION_STEPS_CATALOG = {
         ),
         "applicable_groups": ["all"],
         "applicable_bottlenecks": ["model_f32_arith_only", "model_arithmetic_bound"],
-        "source_skill": "docs/PERFORMANCE_MODEL.md §3 (single-PE cost model, silicon), §10c",
+        "source_skill": "studies/wse3-characterization/FINDINGS.md §3 (single-PE cost model, silicon), §10c",
         "knowledge_query_hint": "f16 half precision @fmach @faddh convert f32_to_f16 accumulate f32",
         "requires_precision_ok": True,
     },
@@ -1028,7 +1034,7 @@ CSL_OPTIMIZATION_STEPS_CATALOG = {
         ),
         "applicable_groups": ["all"],
         "applicable_bottlenecks": ["model_bank_conflict_risk", "bad_stride_hint"],
-        "source_skill": "docs/PERFORMANCE_MODEL.md §3 (bank conflicts, silicon), §10c",
+        "source_skill": "studies/wse3-characterization/FINDINGS.md §3 (bank conflicts, silicon), §10c",
         "knowledge_query_hint": "SRAM bank conflict alignment class offset pad array align()",
         "hardware_validated": True,
     },
@@ -1044,7 +1050,7 @@ CSL_OPTIMIZATION_STEPS_CATALOG = {
         ),
         "applicable_groups": ["stencil", "collective", "gemm", "gemv", "linalg", "reduction", "app"],
         "applicable_bottlenecks": ["model_turns_present", "fabric_comm_dominant"],
-        "source_skill": "docs/PERFORMANCE_MODEL.md §4 (fabric, silicon), §5, §7",
+        "source_skill": "studies/wse3-characterization/FINDINGS.md §4 (fabric, silicon), §5, §7",
         "knowledge_query_hint": "route colour dimension-ordered turn layout.csl set_color_config",
         "codesign_only": True,
     },
@@ -1125,6 +1131,253 @@ MODEL_CSL_OPT_STEPS = [
     "bank_class_offset",
     "turn_free_routing",
 ]
+
+# --- Sparse angles (v2 sparse study, gate XKERNEL_SPARSE_ANGLES=1) --------------------------
+# Structure-aware and hardware-aware transformations for CSR/CSC kernels. Every description
+# quotes the measurement it rests on (studies/wse3-characterization/FINDINGS.md sections 10n,
+# 12c, 3, 4). Trigger keys come from three vocabularies: the silicon model (model_*), the
+# compiled-code readout (ir_*, code_translation/ir_readout.py) and the input-structure readout
+# (struct_*, code_translation/sparse_inputs.py), plus the static signature keys.
+SPARSE_CSL_OPT_STEPS = [
+    "vectorise_along_structure",
+    "row_dsd_runtime_repoint",
+    "index_type_narrowing",
+    "dense_row_accumulator",
+    "nnz_balanced_row_partition",
+    "index_value_wavelet_packing",
+    "owner_computes_no_atomics",
+    "f32_reduction_hazard_guard",
+    "dsd_setup_hoist",
+    # branchless_merge_advance: WITHDRAWN 2026-09-21, measured harmful three independent ways
+    # (see the catalogue entry below). Kept out of the selectable list so it cannot be proposed.
+]
+
+SPARSE_CSL_OPT_CATALOG = {
+    # Storage-format strategies (2026-10-04), offered only through XKERNEL_SPARSE_ANGLES_EXTRA (configuration
+    # O1B3); measurements from code_translation/sparse_blocks/formats_toy (SDK 2.10, one PE).
+    "dense_tile_format": {
+        "description": (
+            "Store a small, fairly dense matrix as a DENSE column-major tile and multiply it column by column: "
+            "y += A[:, c] * x[c] is one @fmacs per column into y in memory, with no gather and no horizontal "
+            "reduction. Measured on one PE: about 2.5 cycles per stored element against ~31 per nonzero for the "
+            "scalar CSR loop, i.e. 3.0x per product on a 64 x 64 matrix with 24% density. Building the tile from "
+            "the CSR input (zero it, scatter the nonzeros) costs about one product, so it pays from the second "
+            "product on (2.3x over ten) and loses with a single product (0.73x). Use it when the density is above "
+            "~8% (struct_dense_tile) and N*M*4 bytes fit, and only when the matrix is reused within the launch. "
+            "CSC is not an alternative for SpMV: its scatter-add costs as much as the CSR gather (0.95-0.98x)."
+        ),
+        "applicable_groups": ["sparse"],
+        "applicable_bottlenecks": ["struct_dense_tile", "ir_scalar_inner_loop", "ir_indexed_gather", "scalar_gather_loop"],
+        "source_skill": "code_translation/sparse_blocks/formats_toy (measured.json, random 24% config)",
+        "knowledge_query_hint": "dense tile column major @fmacs scalar operand y += column * x accumulate memory",
+    },
+    "block_sparse_format": {
+        "description": (
+            "Store a block-structured matrix as 4x4 BSR (block row pointers, block column indices, 16 values per "
+            "block, column-major inside) and multiply block by block: for each block column, one @fmacs adds "
+            "bval[:, c] * x[c] into the block's 4 rows of y in memory. Measured on one PE: 3.1x per product over "
+            "the scalar CSR loop on a matrix of 90%-full 4x4 blocks (break-even after 2.2 products, 2.1x over ten), "
+            "but only 1.29x on a banded matrix whose blocks are partly empty (break-even after 7 products). Use it "
+            "when most 4x4 blocks are full (struct_blocked) and the matrix is reused within the launch; with a "
+            "single product the conversion does not pay (0.55x)."
+        ),
+        "applicable_groups": ["sparse"],
+        "applicable_bottlenecks": ["struct_blocked", "ir_scalar_inner_loop", "ir_indexed_gather", "scalar_gather_loop"],
+        "source_skill": "code_translation/sparse_blocks/formats_toy (measured.json, block and banded configs)",
+        "knowledge_query_hint": "block sparse BSR 4x4 block row pointer @fmacs block column accumulate",
+    },
+    "vectorise_along_structure": {
+        "description": (
+            "Choose the VECTORISED AXIS from the input structure instead of vectorising each row. "
+            "Measured on SDK 2.10, one PE, a 16x16 banded matrix with 60 nonzeros: the scalar CSR gather "
+            "took 2,172 cycles (36.2 cycles per nonzero, almost all of it index arithmetic), one "
+            "runtime-length DSD per row 1,906 (1.14x), and the diagonal (DIA/ELL-style) form vectorised "
+            "ACROSS rows 438 cycles (4.96x): no gather, no horizontal reduction, two stream-to-stream DSD "
+            "ops per diagonal for the whole matrix. Rule: eliminate the horizontal reduction by choosing "
+            "the axis. Use DIA when a few diagonals hold most nonzeros (struct_few_diagonals), ELL or "
+            "sliced-ELL when rows are uniform (struct_uniform_rows), per-row runtime DSDs when rows are "
+            "long, scalar only when hypersparse. The host contract stays CSR: build the alternative layout "
+            "once on the PE (a setup pass outside the hot loop) or add padded arrays under the same caps. "
+            "Not hypothetical for this suite: its own SpMV training matrix holds 90% of its nonzeros in 6 "
+            "diagonals, and the translated kernels run at 34.9 cycles per nonzero on the busiest PE -- the "
+            "scalar rung -- so the diagonal form is worth about 4.8x here, and struct_few_diagonals fires."
+        ),
+        "applicable_groups": ["sparse"],
+        "applicable_bottlenecks": ["struct_few_diagonals", "struct_contiguous_rows", "struct_uniform_rows",
+                                   "struct_banded", "ir_scalar_inner_loop", "ir_no_dsd_ops", "model_narrow_dsd"],
+        "source_skill": "studies/wse3-characterization/FINDINGS.md §10n (strategy crossover 36.2 / 31.8 / 7.3 cyc/nnz)",
+        "knowledge_query_hint": "mem1d_dsd stride diagonal ELL padded rows @fmuls @fmacs vectorise across rows set_dsd_length",
+    },
+    "row_dsd_runtime_repoint": {
+        "description": (
+            "Replace the element-wise gather by ONE runtime-based, runtime-length descriptor per row: "
+            "pre-build full-extent mem1d_dsds over val and over x, then per row apply @set_dsd_length and "
+            "@increment_dsd_offset (both return clones; offsets are i16 element counts) and issue one "
+            "@fmuls into a scratch row, accumulating with a scalar loop or a memory-destination reduction. "
+            "Measured 1.14x over the scalar gather at 3.75 nonzeros per row because the 15-17 cycle "
+            "descriptor setup dominates short rows; it pays when rows are long (struct_dense_rows) and when "
+            "a row's columns form one contiguous run (struct_contiguous_rows), so the x operand is a run too. "
+            "Never reduce an f32 DSD into a register (see f32_reduction_hazard_guard)."
+        ),
+        "applicable_groups": ["sparse"],
+        "applicable_bottlenecks": ["struct_dense_rows", "struct_contiguous_rows", "ir_indexed_gather",
+                                   "ir_scalar_inner_loop", "scalar_loops_over_arrays"],
+        "source_skill": "studies/wse3-characterization/FINDINGS.md §10n (spmv_blk, 1,906 cycles)",
+        "knowledge_query_hint": "@set_dsd_length @increment_dsd_offset @set_dsd_base_addr runtime extent per row @fmuls",
+    },
+    "index_type_narrowing": {
+        "description": (
+            "Store and index with u16/i16 instead of u32 where the dimension is below 65,536. The PE is a "
+            "16-bit machine: every u32 index costs a scale-and-narrow shift pair (sll16 + slr16), 3.5 pairs "
+            "per nonzero in the scalar CSR loop (424 of its 1,354 instructions), FINDINGS §12c rule M5. Keep "
+            "the host-visible symbols as declared by the contract: convert col_idx/row_ptr once after H2D "
+            "into u16 shadow arrays (a setup pass outside the timed hot loop is acceptable only if the caps "
+            "allow the extra array; otherwise narrow the loop variables and offsets to u16/i16 and cast at "
+            "the boundary)."
+        ),
+        "applicable_groups": ["sparse", "all"],
+        "applicable_bottlenecks": ["ir_index_shift_heavy", "ir_scalar_inner_loop", "scalar_loops_over_arrays"],
+        "source_skill": "studies/wse3-characterization/FINDINGS.md §10n (addressing-dominated baseline), §12c rule M5",
+        "knowledge_query_hint": "u16 i16 index arithmetic @as cast 16-bit pointer offset shift",
+    },
+    "dense_row_accumulator": {
+        "description": (
+            "For sparse-times-sparse products (masked SpGEMM, A'A), accumulate each output row into a "
+            "DENSE f32 accumulator of length n when n*4 bytes fits the remaining SRAM (struct_accumulator_fits, "
+            "n <= 4,096 is safe), cleared with one @fmovs; scatter-adds are scalar but the merge's compare-and-"
+            "branch tax (9-10 cycles per back-edge, two branches per merge step) disappears; compact the row "
+            "back through the mask positions in one pass. Fall back to the sorted two-pointer merge when the "
+            "accumulator does not fit."
+        ),
+        "applicable_groups": ["sparse"],
+        "applicable_bottlenecks": ["struct_accumulator_fits", "struct_dense_rows", "ir_scalar_inner_loop"],
+        "source_skill": "studies/wse3-characterization/FINDINGS.md §10h (branch cost), §9 (capacity 44,976 B)",
+        "knowledge_query_hint": "dense accumulator row scatter add @fmovs zero clear masked SpGEMM merge",
+    },
+    "cursor_path_split": {
+        "description": (
+            "In a two-pointer merge of sorted index lists (masked SpGEMM, set intersection), write the cursor "
+            "updates as EXPLICIT control-flow paths that each end in `continue` -- equal: consume both and "
+            "continue; less: advance the first and continue; otherwise advance the second -- instead of an "
+            "if/else chain or arithmetic advances. Measured 2026-09-24/26 on SDK 2.10: cslc then emits "
+            "conditional register increments for the cursors, where the chain form selected a stack address "
+            "and updated it indirectly (a pointer phi in the IR); 1.216x on nine held-out 16x16 families and "
+            "1.18x / 1.15x on the suite's masked SpGEMM reference at list lengths 3.6 / 9.0, held-out clean. "
+            "The branch COUNT rises; the cost was the indirect cursor, not the branches -- do not replace the "
+            "branches with predicate arithmetic (measured 0.45x). Keep the arithmetic identical."
+        ),
+        "applicable_groups": ["sparse"],
+        "applicable_bottlenecks": ["ir_branch_heavy", "ir_scalar_inner_loop"],
+        "source_skill": "studies/spgemm-followup-20260924 (IR_NOTES.md); kernels/_sparse_expert/SpGEMM-Masked-Dot/pe_cursor_paths.csl",
+        "knowledge_query_hint": "two-pointer merge cursor update continue explicit paths sorted intersection SpGEMM",
+    },
+    "nnz_balanced_row_partition": {
+        "description": (
+            "Partition the rows across PEs by NONZERO COUNT, not by row count: the structure readout reports "
+            "the per-PE nonzeros and the imbalance max/mean; the slowest PE sets the kernel time, so an "
+            "imbalance of 1.5 wastes a third of the strip. This changes the layout parameters and the host "
+            "partition (equal-nnz row boundaries per PE), which is a co-design edit, not a compute-file edit."
+        ),
+        "applicable_groups": ["sparse"],
+        "applicable_bottlenecks": ["struct_pe_imbalance", "struct_skewed_rows"],
+        "source_skill": "csl-examples spmv-hypersparse util/analyze.cpp (load balancing); FINDINGS §6",
+        "knowledge_query_hint": "row partition nonzero balance layout params per PE row_ptr boundaries",
+        "codesign_only": True,
+    },
+    "index_value_wavelet_packing": {
+        "description": (
+            "When partial sums or gathered values travel over the fabric as (index, value) pairs, pack the "
+            "pair into one 32-bit wavelet (16-bit index in the upper half, 16-bit value in the lower, as the "
+            "SDK's sparse-tensor tutorial does) or use .simd_mode on the fabout_dsd so two or four 16-bit "
+            "values ride one wavelet: the fabric moves 1.125 cycles per wavelet and two senders on one link "
+            "serialise, so halving the wavelet count halves the transfer. Sparse-specific sibling of "
+            "fabric_simd_packing."
+        ),
+        "applicable_groups": ["sparse"],
+        "applicable_bottlenecks": ["many_small_wavelets", "unpacked_fabric_out", "fabric_comm_dominant",
+                                   "model_io_dominated"],
+        "source_skill": "csl-examples tutorials/topic-04-sparse-tensors; FINDINGS §4 (fabric)",
+        "knowledge_query_hint": "wavelet index value packing 16-bit upper lower fabout_dsd simd_mode sparse tensor",
+    },
+    "owner_computes_no_atomics": {
+        "description": (
+            "Translate atomicAdd / scatter into y into OWNER-COMPUTES: each PE accumulates its partial y for "
+            "its own rows in SRAM and one reduction pass along a mesh axis combines partials. There are no "
+            "atomics on the WSE, and per-element fabric sends cost about 20 cycles per route turn plus 2 "
+            "cycles per hop, so a scatter over the fabric never pays; reduce whole vectors with DSD-sized "
+            "wavelet streams or the collectives library instead."
+        ),
+        "applicable_groups": ["sparse"],
+        "applicable_bottlenecks": ["sync_fabric_ops", "fabric_comm_dominant", "model_turns_present",
+                                   "serialized_compute_and_comm"],
+        "source_skill": "csl_knowledge_base CUDA_TO_WSE_MAPPING (no atomics); FINDINGS §4 (20 cycles per turn)",
+        "knowledge_query_hint": "owner computes partial sums reduce along row fabric no atomics collectives",
+    },
+    "f32_reduction_hazard_guard": {
+        "description": (
+            "REPAIR a detected f32 DSD-reduction hazard before anything else. The backend sometimes lowers "
+            "@fadds(&acc, acc, dsd) (IR intrinsic fadds.rrs1) with the destination register different from "
+            "source-0 (`fadds d12 = d0, [s1ds1]`): nothing accumulates across the descriptor and the LAST "
+            "element is returned, silently wrong -- and the broken form is faster (18.5 vs 31.8 cycles per "
+            "nonzero), so a passing benchmark on one input is no evidence. Rewrite the reduction as a "
+            "memory-destination DSD op into a scratch buffer followed by a scalar sum, as a scalar loop, or in "
+            "f16 with @faddh where the precision contract allows it; then confirm the quoted disassembly line "
+            "is gone."
+        ),
+        "applicable_groups": ["sparse", "all"],
+        "applicable_bottlenecks": ["ir_f32_reduction_hazard", "ir_f32_reduction_candidate"],
+        "source_skill": "studies/wse3-characterization/FINDINGS.md §10n (spmv_blk_dsdred), §13",
+        "knowledge_query_hint": "@fadds accumulator register dest src0 reduction memory destination scalar sum @faddh",
+    },
+    "dsd_setup_hoist": {
+        "description": (
+            "Every @set_dsd_length / @increment_dsd_offset / @set_dsd_base_addr rebuilds a four-word "
+            "descriptor (four st16 plus a reload, 15-17 cycles per dispatch); in the diagonal SpMV, 100 of "
+            "276 instructions were descriptor stores. Amortise the setup: process longer runs per descriptor "
+            "(merge adjacent diagonals or rows of equal length, pad rows to a common length so one descriptor "
+            "covers a whole slice), hoist descriptors that do not depend on the loop variable out of the "
+            "loop, and keep the run length far above the setup cost."
+        ),
+        "applicable_groups": ["sparse", "all"],
+        "applicable_bottlenecks": ["ir_dsd_setup_in_loop", "dsd_rebuild_in_loop"],
+        "source_skill": "studies/wse3-characterization/FINDINGS.md §10n (spmv_dia instruction profile), §10c",
+        "knowledge_query_hint": "descriptor setup cost hoist loop invariant dsd longer runs padding",
+    },
+    # REFUTED AND WITHDRAWN, 2026-09-21. Kept as a record because the diagnosis was right and
+    # the remedy was wrong, which is worth not repeating. The premise stands: the merge is
+    # branch-bound, ~38 of ~44 cycles per step. The prescription below does NOT reach it --
+    # cslc does not lower `@as(u32, ia <= ib)` into a predicated add. Measured three ways on
+    # SpGEMM-Masked-Dot: hand-written, 577,853 cycles against the reference's 260,903 (0.45x),
+    # with branches UNCHANGED at 11 and 37 instructions ADDED for the predicate arithmetic; and
+    # gpt-5.6-luna proposed it twice in arm O1, reaching 470,588 and 308,643 cycles, worse than
+    # its own running best each time. What did pay on the same task was descriptor and
+    # compile-time work (stride_optimization, dsd_offset_chaining, comptime_hoist,
+    # dsd_setup_hoist), which took 439,009 to 202,106. Not selectable; see
+    # docs/SPARSE_BOTTLENECKS.md.
+    "branchless_merge_advance": {
+        "withdrawn": "2026-09-21: measured harmful; cslc keeps the branches and adds arithmetic",
+        "description": (
+            "A sorted two-pointer merge (masked SpGEMM, set intersection, sorted gather) is branch-bound on "
+            "an in-order core, not arithmetic-bound. Each taken branch costs 9-10 cycles, and the textbook "
+            "body has three of them plus the loop condition: `if (ia == ib) { acc += ... }`, "
+            "`if (ia <= ib) { pa += 1; }`, `if (ib <= ia) { pb += 1; }`. Measured on this suite's own masked "
+            "SpGEMM (234x234, 834 mask entries, two lists of ~3.6 each): 316 cycles per mask entry, about 44 "
+            "per merge step, of which roughly 38 are branch -- 86% of the work is deciding, not computing. "
+            "Rewrite the step without branches: compare once into a predicate and ADD it, "
+            "`pa += @as(u32, ia <= ib); pb += @as(u32, ib <= ia);`, and fold the equality test into the "
+            "accumulate with a multiply, `acc += va * vb * @as(f32, ia == ib);`, so the loop keeps only its "
+            "own back-edge. The pointers advance exactly as before, so the merge is unchanged semantically; "
+            "verify against the reference and keep the zombie/empty-output bookkeeping (a flag ORed in the "
+            "loop, tested once after it)."
+        ),
+        "applicable_groups": ["sparse"],
+        "applicable_bottlenecks": ["ir_branch_heavy", "ir_scalar_inner_loop", "scalar_gather_loop"],
+        "source_skill": ("studies/wse3-characterization/FINDINGS.md §10h (branch cost); "
+                         "the suite's SpGEMM disassembly, 2026-09-20"),
+        "knowledge_query_hint": "two-pointer merge branchless predicate add compare sorted intersection spgemm",
+    },
+}
+CSL_OPTIMIZATION_STEPS_CATALOG.update(SPARSE_CSL_OPT_CATALOG)
 
 
 # =============================================================================

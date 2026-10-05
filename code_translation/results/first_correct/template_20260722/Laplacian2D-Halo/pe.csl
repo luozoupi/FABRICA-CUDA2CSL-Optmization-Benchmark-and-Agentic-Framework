@@ -1,0 +1,392 @@
+// 5-point 2D Laplacian with zero-boundary halo exchange, 2x2 PE mesh.
+// One PE owns an Mt x Nt row-major tile. Each step exchanges 1-cell halos
+// with N/S/E/W neighbors (guarded by edge flags), then computes
+//   new[r,c] = 0.25*(up+down+left+right)
+// where missing (edge) neighbors read a zero-filled halo buffer.
+
+param memcpy_params: comptime_struct;
+
+param Mt: i16;
+param Nt: i16;
+param width: i16;
+param height: i16;
+
+param px: i16;
+param py: i16;
+
+param is_w_edge: bool;
+param is_e_edge: bool;
+param is_n_edge: bool;
+param is_s_edge: bool;
+
+param TX_N: color;
+param RX_N: color;
+param TX_S: color;
+param RX_S: color;
+param TX_E: color;
+param RX_E: color;
+param TX_W: color;
+param RX_W: color;
+
+const sys_mod = @import_module("<memcpy/memcpy>", memcpy_params);
+const timestamp = @import_module("<time>");
+
+// ---------------------------------------------------------------------------
+// Storage
+// ---------------------------------------------------------------------------
+const TSIZE: i16 = Mt * Nt;
+
+var tile     = @zeros([TSIZE]f32);
+var new_tile = @zeros([TSIZE]f32);
+
+var ptr_tile:     [*]f32 = &tile;
+var ptr_new_tile: [*]f32 = &new_tile;
+
+// Halo buffers (zero on edge PEs -> Dirichlet zero boundary).
+var halo_N = @zeros([Nt]f32);   // indexed by column c
+var halo_S = @zeros([Nt]f32);   // indexed by column c
+var halo_W = @zeros([Mt]f32);   // indexed by row r
+var halo_E = @zeros([Mt]f32);   // indexed by row r
+
+// Scratch for column sends (rows are contiguous, columns are not).
+var col_send_W = @zeros([Mt]f32);
+var col_send_E = @zeros([Mt]f32);
+
+// Timestamps
+var tscStartBuffer = @zeros([timestamp.tsc_size_words]u16);
+var tscEndBuffer   = @zeros([timestamp.tsc_size_words]u16);
+var time_buf_u16   = @zeros([6]u16);
+var ptr_time_buf: [*]u16 = &time_buf_u16;
+
+// ---------------------------------------------------------------------------
+// Iteration state
+// ---------------------------------------------------------------------------
+var remaining_iters: u16 = 0;
+
+// Number of halos we expect to receive this step.
+const n_recv: u16 = @as(u16, 4)
+  - (if (is_n_edge) @as(u16, 1) else @as(u16, 0))
+  - (if (is_s_edge) @as(u16, 1) else @as(u16, 0))
+  - (if (is_w_edge) @as(u16, 1) else @as(u16, 0))
+  - (if (is_e_edge) @as(u16, 1) else @as(u16, 0));
+
+var recv_count: u16 = 0;
+
+// ---------------------------------------------------------------------------
+// Queues (user queues 2..7; memcpy owns 0,1)
+// ---------------------------------------------------------------------------
+const oq_N = @get_output_queue(2);
+const oq_S = @get_output_queue(3);
+const oq_E = @get_output_queue(4);
+const oq_W = @get_output_queue(5);
+
+const iq_N = @get_input_queue(2);
+const iq_S = @get_input_queue(3);
+const iq_E = @get_input_queue(4);
+const iq_W = @get_input_queue(5);
+
+// Microthreads: one per concurrent op.
+const ut_txN = @get_ut_id(0);
+const ut_txS = @get_ut_id(1);
+const ut_txE = @get_ut_id(2);
+const ut_txW = @get_ut_id(3);
+const ut_rxN = @get_ut_id(4);
+const ut_rxS = @get_ut_id(5);
+const ut_rxE = @get_ut_id(6);
+const ut_rxW = @get_ut_id(7);
+
+// ---------------------------------------------------------------------------
+// Task IDs
+// ---------------------------------------------------------------------------
+const compute_task_id:  local_task_id = @get_local_task_id(8);
+const recv_done_task_id: local_task_id = @get_local_task_id(9);
+const send_done_task_id: local_task_id = @get_local_task_id(10);
+
+// ---------------------------------------------------------------------------
+// Fabric DSDs
+// ---------------------------------------------------------------------------
+// Send DSDs (extent = length of the border)
+const dsd_txN = @get_dsd(fabout_dsd, .{ .fabric_color = TX_N, .extent = @as(u16, Nt), .output_queue = oq_N });
+const dsd_txS = @get_dsd(fabout_dsd, .{ .fabric_color = TX_S, .extent = @as(u16, Nt), .output_queue = oq_S });
+const dsd_txE = @get_dsd(fabout_dsd, .{ .fabric_color = TX_E, .extent = @as(u16, Mt), .output_queue = oq_E });
+const dsd_txW = @get_dsd(fabout_dsd, .{ .fabric_color = TX_W, .extent = @as(u16, Mt), .output_queue = oq_W });
+
+// Receive DSDs
+const dsd_rxN = @get_dsd(fabin_dsd, .{ .fabric_color = RX_N, .extent = @as(u16, Nt), .input_queue = iq_N });
+const dsd_rxS = @get_dsd(fabin_dsd, .{ .fabric_color = RX_S, .extent = @as(u16, Nt), .input_queue = iq_S });
+const dsd_rxE = @get_dsd(fabin_dsd, .{ .fabric_color = RX_E, .extent = @as(u16, Mt), .input_queue = iq_E });
+const dsd_rxW = @get_dsd(fabin_dsd, .{ .fabric_color = RX_W, .extent = @as(u16, Mt), .input_queue = iq_W });
+
+// Memory DSDs for sending rows (top row / bottom row are contiguous).
+const dsd_top_row = @get_dsd(mem1d_dsd, .{
+  .tensor_access = |c|{@as(i16, Nt)} -> tile[0 * @as(i16, Nt) + c]
+});
+const dsd_bot_row = @get_dsd(mem1d_dsd, .{
+  .tensor_access = |c|{@as(i16, Nt)} -> tile[(Mt - 1) * @as(i16, Nt) + c]
+});
+
+// Column scratch DSDs
+const dsd_col_W = @get_dsd(mem1d_dsd, .{
+  .tensor_access = |r|{@as(i16, Mt)} -> col_send_W[r]
+});
+const dsd_col_E = @get_dsd(mem1d_dsd, .{
+  .tensor_access = |r|{@as(i16, Mt)} -> col_send_E[r]
+});
+
+// Halo receive-target DSDs
+const dsd_halo_N = @get_dsd(mem1d_dsd, .{ .tensor_access = |c|{@as(i16, Nt)} -> halo_N[c] });
+const dsd_halo_S = @get_dsd(mem1d_dsd, .{ .tensor_access = |c|{@as(i16, Nt)} -> halo_S[c] });
+const dsd_halo_E = @get_dsd(mem1d_dsd, .{ .tensor_access = |r|{@as(i16, Mt)} -> halo_E[r] });
+const dsd_halo_W = @get_dsd(mem1d_dsd, .{ .tensor_access = |r|{@as(i16, Mt)} -> halo_W[r] });
+
+// ---------------------------------------------------------------------------
+// Neighbor selection helpers
+// ---------------------------------------------------------------------------
+fn get_up(r: i16, c: i16) f32 {
+  if (r > 0) {
+    return tile[(r - 1) * @as(i16, Nt) + c];
+  }
+  return halo_N[c];
+}
+fn get_down(r: i16, c: i16) f32 {
+  if (r < Mt - 1) {
+    return tile[(r + 1) * @as(i16, Nt) + c];
+  }
+  return halo_S[c];
+}
+fn get_left(r: i16, c: i16) f32 {
+  if (c > 0) {
+    return tile[r * @as(i16, Nt) + (c - 1)];
+  }
+  return halo_W[r];
+}
+fn get_right(r: i16, c: i16) f32 {
+  if (c < Nt - 1) {
+    return tile[r * @as(i16, Nt) + (c + 1)];
+  }
+  return halo_E[r];
+}
+
+// ---------------------------------------------------------------------------
+// Compute one stencil step (assumes all halos have landed)
+// ---------------------------------------------------------------------------
+fn compute_stencil() void {
+  var r: i16 = 0;
+  while (r < Mt) : (r += 1) {
+    var c: i16 = 0;
+    while (c < Nt) : (c += 1) {
+      const up    = get_up(r, c);
+      const down  = get_down(r, c);
+      const left  = get_left(r, c);
+      const right = get_right(r, c);
+      new_tile[r * @as(i16, Nt) + c] = 0.25 * (up + down + left + right);
+    }
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Forward-declared task references handled via activation only.
+// ---------------------------------------------------------------------------
+
+// Reset halos to zero (edge halos always stay zero; non-edge get overwritten
+// by receive). We zero all every step to be safe for edges after swap.
+fn zero_halos() void {
+  var i: i16 = 0;
+  while (i < Nt) : (i += 1) {
+    halo_N[i] = 0.0;
+    halo_S[i] = 0.0;
+  }
+  i = 0;
+  while (i < Mt) : (i += 1) {
+    halo_W[i] = 0.0;
+    halo_E[i] = 0.0;
+  }
+}
+
+fn gather_columns() void {
+  var r: i16 = 0;
+  while (r < Mt) : (r += 1) {
+    col_send_W[r] = tile[r * @as(i16, Nt) + 0];
+    col_send_E[r] = tile[r * @as(i16, Nt) + (Nt - 1)];
+  }
+}
+
+// ---------------------------------------------------------------------------
+// recv_done: fired when a receive completes. Once all expected halos have
+// arrived, run the stencil compute.
+// ---------------------------------------------------------------------------
+task recv_done() void {
+  recv_count += 1;
+  if (recv_count == n_recv) {
+    compute_stencil();
+    // Prepare for next iteration (if any).
+    remaining_iters -= 1;
+    if (remaining_iters > 0) {
+      // Copy new_tile -> tile
+      var i: i16 = 0;
+      while (i < TSIZE) : (i += 1) {
+        tile[i] = new_tile[i];
+      }
+      run_one_step();
+    } else {
+      f_toc_dev();
+      sys_mod.unblock_cmd_stream();
+    }
+  }
+}
+
+// send_done: no completion action needed (sends fire-and-forget after arm).
+task send_done() void {
+}
+
+// ---------------------------------------------------------------------------
+// Launch all sends + receives for the current tile state.
+// ---------------------------------------------------------------------------
+fn run_one_step() void {
+  recv_count = 0;
+  zero_halos();
+  gather_columns();
+
+  // Post receives FIRST so arriving wavelets have a landing zone.
+  if (!is_n_edge) {
+    @fmovs(dsd_halo_N, dsd_rxN, .{ .async = true, .ut_id = ut_rxN, .activate = recv_done_task_id });
+  }
+  if (!is_s_edge) {
+    @fmovs(dsd_halo_S, dsd_rxS, .{ .async = true, .ut_id = ut_rxS, .activate = recv_done_task_id });
+  }
+  if (!is_e_edge) {
+    @fmovs(dsd_halo_E, dsd_rxE, .{ .async = true, .ut_id = ut_rxE, .activate = recv_done_task_id });
+  }
+  if (!is_w_edge) {
+    @fmovs(dsd_halo_W, dsd_rxW, .{ .async = true, .ut_id = ut_rxW, .activate = recv_done_task_id });
+  }
+
+  // Now issue sends.
+  if (!is_n_edge) {
+    @fmovs(dsd_txN, dsd_top_row, .{ .async = true, .ut_id = ut_txN, .activate = send_done_task_id });
+  }
+  if (!is_s_edge) {
+    @fmovs(dsd_txS, dsd_bot_row, .{ .async = true, .ut_id = ut_txS, .activate = send_done_task_id });
+  }
+  if (!is_e_edge) {
+    @fmovs(dsd_txE, dsd_col_E, .{ .async = true, .ut_id = ut_txE, .activate = send_done_task_id });
+  }
+  if (!is_w_edge) {
+    @fmovs(dsd_txW, dsd_col_W, .{ .async = true, .ut_id = ut_txW, .activate = send_done_task_id });
+  }
+
+  // Corner-of-nothing case: if a PE expects zero receives (cannot happen on a
+  // 2x2 mesh where every PE has exactly 2 neighbors), still finish the step.
+  if (n_recv == 0) {
+    compute_stencil();
+    remaining_iters -= 1;
+    if (remaining_iters > 0) {
+      var i: i16 = 0;
+      while (i < TSIZE) : (i += 1) {
+        tile[i] = new_tile[i];
+      }
+      run_one_step();
+    } else {
+      f_toc_dev();
+      sys_mod.unblock_cmd_stream();
+    }
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Entry point: step(iters)
+// ---------------------------------------------------------------------------
+fn step(iters: u16) void {
+  f_tic_dev();
+  remaining_iters = iters;
+  if (iters == 0) {
+    // No iterations: copy input straight through so new_tile is defined.
+    var i: i16 = 0;
+    while (i < TSIZE) : (i += 1) {
+      new_tile[i] = tile[i];
+    }
+    f_toc_dev();
+    sys_mod.unblock_cmd_stream();
+    return;
+  }
+  run_one_step();
+}
+
+// ---------------------------------------------------------------------------
+// Timer entrypoints
+// ---------------------------------------------------------------------------
+fn f_enable_timer() void {
+  timestamp.enable_tsc();
+  sys_mod.unblock_cmd_stream();
+}
+
+// Device-internal timing window (protocol device_internal_v2): start stamp at
+// entry-point start, end stamp immediately before the host is unblocked.
+var tsc_window_open: bool = false;
+fn f_tic_dev() void {
+  if (!tsc_window_open) {
+    tsc_window_open = true;
+    timestamp.get_timestamp(&tscStartBuffer);
+  }
+}
+fn f_toc_dev() void {
+  timestamp.get_timestamp(&tscEndBuffer);
+}
+
+fn f_tic() void {
+  timestamp.get_timestamp(&tscStartBuffer);
+  sys_mod.unblock_cmd_stream();
+}
+
+fn f_toc() void {
+  timestamp.get_timestamp(&tscEndBuffer);
+  sys_mod.unblock_cmd_stream();
+}
+
+fn f_memcpy_timestamps() void {
+  time_buf_u16[0] = tscStartBuffer[0];
+  time_buf_u16[1] = tscStartBuffer[1];
+  time_buf_u16[2] = tscStartBuffer[2];
+  time_buf_u16[3] = tscEndBuffer[0];
+  time_buf_u16[4] = tscEndBuffer[1];
+  time_buf_u16[5] = tscEndBuffer[2];
+  sys_mod.unblock_cmd_stream();
+}
+
+// ---------------------------------------------------------------------------
+// Comptime wiring
+// ---------------------------------------------------------------------------
+comptime {
+  @bind_local_task(recv_done, recv_done_task_id);
+  @bind_local_task(send_done, send_done_task_id);
+
+  if (@is_arch("wse3")) {
+    if (!is_n_edge) {
+      @initialize_queue(oq_N, .{ .color = TX_N });
+      @initialize_queue(iq_N, .{ .color = RX_N });
+    }
+    if (!is_s_edge) {
+      @initialize_queue(oq_S, .{ .color = TX_S });
+      @initialize_queue(iq_S, .{ .color = RX_S });
+    }
+    if (!is_e_edge) {
+      @initialize_queue(oq_E, .{ .color = TX_E });
+      @initialize_queue(iq_E, .{ .color = RX_E });
+    }
+    if (!is_w_edge) {
+      @initialize_queue(oq_W, .{ .color = TX_W });
+      @initialize_queue(iq_W, .{ .color = RX_W });
+    }
+  }
+}
+
+comptime {
+  @export_symbol(ptr_tile, "tile");
+  @export_symbol(ptr_new_tile, "new_tile");
+  @export_symbol(ptr_time_buf, "time_buf_u16");
+  @export_symbol(step, "step");
+  @export_symbol(f_tic, "f_tic");
+  @export_symbol(f_toc, "f_toc");
+  @export_symbol(f_memcpy_timestamps, "f_memcpy_timestamps");
+  @export_symbol(f_enable_timer, "f_enable_timer");
+}

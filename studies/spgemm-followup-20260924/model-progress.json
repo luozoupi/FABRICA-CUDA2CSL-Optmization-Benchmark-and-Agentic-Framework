@@ -1,0 +1,55 @@
+[
+  {
+    "case": "output_emission",
+    "group": "model",
+    "queue_wait_s": 1.720000000204891e-05,
+    "phases": [
+      {
+        "phase": "run",
+        "command": [
+          "/home/USER/cs_sdk/cs_python",
+          "host.py"
+        ],
+        "returncode": 0,
+        "wall_s": 20.458773514001223
+      },
+      {
+        "phase": "disassemble",
+        "command": [
+          "/home/USER/cs_sdk/cs_python",
+          "-c",
+          "import glob,subprocess\np=glob.glob('/cb/toolchains/llvm/cerebras/*/bin/elf2am')[0]\nsubprocess.run([p,'-o=kernel.am','out/bin/out_0_0.elf'],check=True)"
+        ],
+        "returncode": 0,
+        "wall_s": 0.6661523650036543
+      }
+    ],
+    "status": "pass",
+    "trace_enabled": false,
+    "hashes": {
+      "disassembly.json": "2caf7c822b7b3efa61421edadb86dc13dc47d3cb445ffb53e8847de86dc22080",
+      "kernel.am": "ff8b46f6e2f658589db043332d3fdd0d6ad891e15e27da2b7285478e14e67aeb",
+      "pe.csl": "df75cd1920cada5bcc52b91387f41b7da6d08d86ffb5a24d7a6af2c9db693bfb",
+      "case.json": "01319c32690c3e6c6c0cd6e688c96cb4e247592d45995518842cd75b4a2603c9",
+      "layout.csl": "e704accecebe9e2cf86b7e5895e300a96ac401c78f060552fc487284643c39c2",
+      "inputs.py": "2bbbe01b9caab3312078163c6c0c54493b73273ba2f1543db4e9c2855b764551",
+      "host.py": "68775b92bfcf81df72b2cd0e60c724eb9ce19a7bf5346431b16f7877f92ad71d",
+      "observations.json": "378cb2897a2eca2b30f4f90d5a224b65309a8d58be03d1c98c5fcb4a88401e87",
+      "sim_stats.json": "c3d2cb7c3c47681ae172b6df4e1ef7f2347ef4b5f71d7224bce5b8e2576b6dc9",
+      "simconfig.json": "ac8861b1a0ab97042fb33484d83a4d3ef124877e9bef550a89a5efe1f6da2be3",
+      "out/out.json": "b67e94695ca5a56ae9ae1a4a78bc93d3cae5825997109038dd11891f3cab5bb1",
+      "out/bin/out_rpc.json": "36f79f3d742819ca133bb177ae96924cace4b721138874eb2710d97104b583a6",
+      "out/bin/out_0_0.elf": "cc86c2d432b6b9e4c1bd386bf892d24aa3cb85206b12e6c8def925bc341d5e06",
+      "out/west/out.json": "248ecbf17b2090e46e426ee7b905c25f2b9770e8f6a382868cd2e07ab91e7a3a",
+      "out/generated/default.elf": "1a4776e4e8ea2809c518b2e36632ed454f65a1b85b80172c13c8a616b46dafd1",
+      "out/generated/MEMCPY_XY_ROUTES.elf": "145cfdf2650e18ccdc7a3c92f7692e103dd9a03c2762a8f8e36727d7b9924b92",
+      "out/generated/coord.elf": "a8c0c8e70d82ceb0019009b65eb6883ffcbf91dc55b537bcc188343a08542a66",
+      "out/east/out.json": "46ea180801c589023f5daf7351fb473475b50f302d72cf40f86e4ce5f7d320b7",
+      "out/east/bin/out_1_0.elf": "ceaec0d944a6aab27e238890a6ba939b432fba4788be63c70b1012d9ea37be24",
+      "out/east/bin/out_0_0.elf": "f3a6926e08cfc09b009267b1704734e9a4c9c69e7a3f1a2e84dfeb9ba683443a",
+      "out/west/bin/out_1_0.elf": "f3e14e207bf62c669bdb5269208ffa2d9f342d433b7245c35bf3e194299f88cd",
+      "out/west/bin/out_2_0.elf": "603bac3d102d82db359a235d75d1432d914c2ebf234089bd6974cb6a5aa89d44",
+      "out/west/bin/out_0_0.elf": "3a73914d0f4e7dff0a8cdd28dddc9477f5d9aba57296ebf254e1e8e432d33271"
+    }
+  }
+]

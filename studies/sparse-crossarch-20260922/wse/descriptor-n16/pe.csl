@@ -1,0 +1,52 @@
+param memcpy_params;
+const sys=@import_module("<memcpy/memcpy>",memcpy_params);
+const clock=@import_module("<time>");
+const N:u16=16;
+var row_ptr=@zeros([33]u32);
+var ptr_row_ptr:[*]u32=&row_ptr;
+var col_idx=@zeros([1024]u32);
+var ptr_col_idx:[*]u32=&col_idx;
+var values=@zeros([1024]f32);
+var ptr_values:[*]f32=&values;
+var B=@zeros([1024]f32);
+var ptr_B:[*]f32=&B;
+var C=@zeros([512]f32);
+var ptr_C:[*]f32=&C;
+var time_words=@zeros([6]u16);
+var ptr_time_words:[*]u16=&time_words;
+var t0=@zeros([3]u16);
+var t1=@zeros([3]u16);
+const all_c=@get_dsd(mem1d_dsd,.{.tensor_access=|x|{32*N}->C[x]});
+fn compute() void {
+clock.get_timestamp(&t0);
+@fmovs(all_c,@as(f32,0.0));
+var i:u16=0;while(i<32):(i+=1){
+var p:u16=@as(u16,row_ptr[i]);
+const end:u16=@as(u16,row_ptr[i+1]);
+while(p<end):(p+=1){
+const k:u16=@as(u16,col_idx[p]);
+var cd=@get_dsd(mem1d_dsd,.{.base_address=&C,.extent=N});
+cd=@increment_dsd_offset(cd,@as(i16,i*N),f32);
+var bd=@get_dsd(mem1d_dsd,.{.base_address=&B,.extent=N});
+bd=@increment_dsd_offset(bd,@as(i16,k*N),f32);
+@fmacs(cd,cd,bd,values[p]);
+}
+}
+clock.get_timestamp(&t1);
+time_words[0]=t0[0];
+time_words[1]=t0[1];
+time_words[2]=t0[2];
+time_words[3]=t1[0];
+time_words[4]=t1[1];
+time_words[5]=t1[2];
+sys.unblock_cmd_stream();
+}
+fn enable_timer() void {clock.enable_tsc();sys.unblock_cmd_stream();}
+comptime {
+@export_symbol(ptr_row_ptr,"row_ptr");
+@export_symbol(ptr_col_idx,"col_idx");
+@export_symbol(ptr_values,"values");
+@export_symbol(ptr_B,"B");
+@export_symbol(ptr_C,"C");
+@export_symbol(ptr_time_words,"time_words");
+@export_symbol(compute);@export_symbol(enable_timer);}

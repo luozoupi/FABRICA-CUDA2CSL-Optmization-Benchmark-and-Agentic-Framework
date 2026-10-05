@@ -1,0 +1,18 @@
+# Optional additions to the xkernel-agent environment. None of these are needed
+# to translate, benchmark or optimize kernels.
+#   ~/bin/micromamba install -n xkernel-agent -f code_translation/environment-extras.yml
+name: xkernel-agent
+channels:
+  - conda-forge
+dependencies:
+  - pip
+  - pip:
+      # post-training on the exported SFT/DPO corpus (build_training_corpus.py, export_for_training.py)
+      - torch==2.4.0
+      - transformers==4.57.1
+      - peft==0.19.1
+      - trl
+      - datasets==3.6.0
+      - accelerate==1.13.0
+      # legacy local-model prototype (test.py / test_phase_c.py)
+      - ollama

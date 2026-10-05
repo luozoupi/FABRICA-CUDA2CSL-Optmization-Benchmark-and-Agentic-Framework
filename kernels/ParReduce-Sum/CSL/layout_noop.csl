@@ -1,0 +1,20 @@
+param n_per_pe: u16;
+param width: i16 = 2;
+param height: i16 = 1;
+const C_REDUCE: color = @get_color(8);
+const memcpy = @import_module("<memcpy/get_params>", .{ .width = width, .height = height });
+layout {
+  @set_rectangle(width, height);
+  var px: i16 = 0;
+  while (px < width) : (px += 1) {
+    @set_tile_code(px, 0, "pe_noop.csl", .{
+      .memcpy_params = memcpy.get_params(px),
+      .n_per_pe = n_per_pe,
+      .px = px,
+      .C_REDUCE = C_REDUCE,
+    });
+  }
+  @export_name("x", [*]f32, true);
+  @export_name("result", [*]f32, true);
+  @export_name("compute", fn()void);
+}

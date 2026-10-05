@@ -1,0 +1,186 @@
+{
+  "verified_launches": 72,
+  "multiplication_results": 10128,
+  "addition_results": 10128,
+  "original_input_rows": [
+    {
+      "case": "merge",
+      "pattern": "banded",
+      "cycles": 16941,
+      "dispatches": 10730,
+      "equality_checks": 148,
+      "products": 112,
+      "nnz": 48,
+      "mask_positions": 48,
+      "structural_output_positions": 48,
+      "cancelled_output_positions": 0,
+      "unmasked_products": 144,
+      "unmasked_structural_output_positions": 80
+    },
+    {
+      "case": "merge",
+      "pattern": "uniform",
+      "cycles": 20461,
+      "dispatches": 13261,
+      "equality_checks": 213,
+      "products": 28,
+      "nnz": 48,
+      "mask_positions": 48,
+      "structural_output_positions": 16,
+      "cancelled_output_positions": 0,
+      "unmasked_products": 144,
+      "unmasked_structural_output_positions": 80
+    },
+    {
+      "case": "merge",
+      "pattern": "skewed",
+      "cycles": 30237,
+      "dispatches": 19701,
+      "equality_checks": 321,
+      "products": 288,
+      "nnz": 72,
+      "mask_positions": 72,
+      "structural_output_positions": 72,
+      "cancelled_output_positions": 2,
+      "unmasked_products": 1032,
+      "unmasked_structural_output_positions": 256
+    },
+    {
+      "case": "nested",
+      "pattern": "banded",
+      "cycles": 19376,
+      "dispatches": 10805,
+      "equality_checks": 432,
+      "products": 112,
+      "nnz": 48,
+      "mask_positions": 48,
+      "structural_output_positions": 48,
+      "cancelled_output_positions": 0,
+      "unmasked_products": 144,
+      "unmasked_structural_output_positions": 80
+    },
+    {
+      "case": "nested",
+      "pattern": "uniform",
+      "cycles": 17696,
+      "dispatches": 9713,
+      "equality_checks": 432,
+      "products": 28,
+      "nnz": 48,
+      "mask_positions": 48,
+      "structural_output_positions": 16,
+      "cancelled_output_positions": 0,
+      "unmasked_products": 144,
+      "unmasked_structural_output_positions": 80
+    },
+    {
+      "case": "nested",
+      "pattern": "skewed",
+      "cycles": 43088,
+      "dispatches": 23837,
+      "equality_checks": 1332,
+      "products": 288,
+      "nnz": 72,
+      "mask_positions": 72,
+      "structural_output_positions": 72,
+      "cancelled_output_positions": 2,
+      "unmasked_products": 1032,
+      "unmasked_structural_output_positions": 256
+    }
+  ],
+  "comparisons": [
+    {
+      "case": "merge",
+      "comparison": "uniform minus banded",
+      "cycle_difference": 3520,
+      "source_dispatch_intervals": [
+        {
+          "source": "<no source>",
+          "banded_cycles": 5670,
+          "uniform_cycles": 6455,
+          "difference": 785
+        },
+        {
+          "source": "while (p < @as(u16,row_ptr[i+1]) and q < @as(u16,row_ptr[j+1])) {",
+          "banded_cycles": 3406,
+          "uniform_cycles": 4855,
+          "difference": 1449
+        },
+        {
+          "source": "const rj: u16 = @as(u16,col_idx[q]);",
+          "banded_cycles": 1036,
+          "uniform_cycles": 1491,
+          "difference": 455
+        },
+        {
+          "source": "const ri: u16 = @as(u16,col_idx[p]);",
+          "banded_cycles": 888,
+          "uniform_cycles": 1278,
+          "difference": 390
+        },
+        {
+          "source": "if (ri == rj) {",
+          "banded_cycles": 700,
+          "uniform_cycles": 1407,
+          "difference": 707
+        },
+        {
+          "source": "C[i*N+j] += values[p] * values[q];",
+          "banded_cycles": 2016,
+          "uniform_cycles": 504,
+          "difference": -1512
+        },
+        {
+          "source": "present[i*N+j] = 1;",
+          "banded_cycles": 336,
+          "uniform_cycles": 84,
+          "difference": -252
+        },
+        {
+          "source": "p += 1; q += 1;",
+          "banded_cycles": 784,
+          "uniform_cycles": 196,
+          "difference": -588
+        },
+        {
+          "source": "} else if (ri < rj) { p += 1; } else { q += 1; }",
+          "banded_cycles": 504,
+          "uniform_cycles": 2590,
+          "difference": 2086
+        }
+      ]
+    },
+    {
+      "case": "nested",
+      "comparison": "uniform minus banded",
+      "cycle_difference": -1680,
+      "source_dispatch_intervals": [
+        {
+          "source": "if (col_idx[p] == col_idx[q]) {",
+          "banded_cycles": 5280,
+          "uniform_cycles": 5532,
+          "difference": 252
+        },
+        {
+          "source": "C[i*N+j] += values[p] * values[q];",
+          "banded_cycles": 1904,
+          "uniform_cycles": 476,
+          "difference": -1428
+        },
+        {
+          "source": "present[i*N+j] = 1;",
+          "banded_cycles": 336,
+          "uniform_cycles": 84,
+          "difference": -252
+        },
+        {
+          "source": "while (q < @as(u16,row_ptr[j+1])) : (q += 1) {",
+          "banded_cycles": 2928,
+          "uniform_cycles": 2676,
+          "difference": -252
+        }
+      ]
+    }
+  ],
+  "interpretation": "Dispatch-to-next-dispatch intervals partition elapsed cycles; they are not instruction latencies, stall counters, or causal runtime percentages."
+}

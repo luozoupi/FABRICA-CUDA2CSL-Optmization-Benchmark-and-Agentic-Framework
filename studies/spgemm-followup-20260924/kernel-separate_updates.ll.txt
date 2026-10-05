@@ -1,0 +1,403 @@
+define internal void @kernel() !dbg !3 {
+  %1 = alloca i16, i16 1, align 2, !dbg !7
+  %2 = alloca i16, i16 1, align 2, !dbg !9
+  %3 = alloca i1, i16 1, align 1, !dbg !10
+  %4 = alloca i16, i16 1, align 2, !dbg !11
+  %5 = alloca i16, i16 1, align 2, !dbg !12
+  %6 = alloca i16, i16 1, align 2, !dbg !13
+  %7 = alloca i16, i16 1, align 2, !dbg !14
+  %8 = alloca i16, i16 1, align 2, !dbg !15
+  %9 = alloca i16, i16 1, align 2, !dbg !16
+  call void @llvm.sdr.lddwds(i16 1, i8* bitcast (<{ i16, i16, i16, i16 }>* @__dsr_lowmeminit_ to i8*)), !dbg !17
+  call void @llvm.sdr.fmov32.dr(i16 1, float 0.000000e+00), !dbg !17
+  store i16 0, i16* %9, align 2, !dbg !16
+  br label %10, !dbg !18
+
+10:                                               ; preds = %27, %0
+  %11 = phi i16 [ 0, %27 ], [ 0, %0 ]
+  %12 = icmp sgt i16 %11, 0, !dbg !18
+  br i1 %12, label %13, label %15, !dbg !18
+
+13:                                               ; preds = %10
+  %14 = sub i16 %11, 1, !dbg !18
+  br label %16, !dbg !18
+
+15:                                               ; preds = %10
+  br label %16, !dbg !18
+
+16:                                               ; preds = %13, %15
+  %17 = phi i16 [ %11, %15 ], [ %14, %13 ]
+  br label %18, !dbg !18
+
+18:                                               ; preds = %16
+  %19 = icmp ne i16 %11, 0, !dbg !18
+  br i1 %19, label %20, label %21, !dbg !18
+
+20:                                               ; preds = %18
+  br label %24, !dbg !18
+
+21:                                               ; preds = %18
+  %22 = load i16, i16* %9, align 2, !dbg !19
+  %23 = icmp ult i16 %22, 256, !dbg !20
+  br label %24, !dbg !18
+
+24:                                               ; preds = %20, %21
+  %25 = phi i1 [ %23, %21 ], [ false, %20 ]
+  br label %26, !dbg !18
+
+26:                                               ; preds = %24
+  br i1 %25, label %27, label %32, !dbg !18
+
+27:                                               ; preds = %26
+  %28 = load i16, i16* %9, align 2, !dbg !21
+  %29 = getelementptr [256 x i16], [256 x i16]* @present, i16 0, i16 %28, !dbg !22
+  store i16 0, i16* %29, align 2, !dbg !23
+  %30 = load i16, i16* %9, align 2, !dbg !24
+  %31 = add i16 %30, 1, !dbg !25
+  store i16 %31, i16* %9, align 2, !dbg !25
+  br label %10, !dbg !18
+
+32:                                               ; preds = %26
+  %33 = icmp ne i16 %17, 0, !dbg !18
+  br i1 %33, label %34, label %35, !dbg !18
+
+34:                                               ; preds = %45, %32
+  br label %230, !dbg !18
+
+35:                                               ; preds = %32
+  store i16 0, i16* %8, align 2, !dbg !15
+  br label %36, !dbg !26
+
+36:                                               ; preds = %229, %35
+  %37 = phi i16 [ %228, %229 ], [ 0, %35 ]
+  %38 = icmp ne i16 %37, 0, !dbg !26
+  br i1 %38, label %39, label %40, !dbg !26
+
+39:                                               ; preds = %36
+  br label %43, !dbg !26
+
+40:                                               ; preds = %36
+  %41 = load i16, i16* %8, align 2, !dbg !27
+  %42 = icmp ult i16 %41, 16, !dbg !28
+  br label %43, !dbg !26
+
+43:                                               ; preds = %39, %40
+  %44 = phi i1 [ %42, %40 ], [ false, %39 ]
+  br label %45, !dbg !26
+
+45:                                               ; preds = %43
+  br i1 %44, label %46, label %34, !dbg !26
+
+46:                                               ; preds = %45
+  %47 = load i16, i16* %8, align 2, !dbg !29
+  %48 = getelementptr [17 x i32], [17 x i32]* @row_ptr, i16 0, i16 %47, !dbg !30
+  %49 = load i32, i32* %48, align 4, !dbg !30
+  %50 = trunc i32 %49 to i16, !dbg !31
+  store i16 %50, i16* %7, align 2, !dbg !14
+  br label %51, !dbg !32
+
+51:                                               ; preds = %218, %46
+  %52 = phi i16 [ %217, %218 ], [ 0, %46 ]
+  %53 = icmp sgt i16 %52, 0, !dbg !32
+  br i1 %53, label %54, label %56, !dbg !32
+
+54:                                               ; preds = %51
+  %55 = sub i16 %52, 1, !dbg !32
+  br label %57, !dbg !32
+
+56:                                               ; preds = %51
+  br label %57, !dbg !32
+
+57:                                               ; preds = %54, %56
+  %58 = phi i16 [ %52, %56 ], [ %55, %54 ]
+  br label %59, !dbg !32
+
+59:                                               ; preds = %57
+  %60 = icmp ne i16 %52, 0, !dbg !32
+  br i1 %60, label %61, label %62, !dbg !32
+
+61:                                               ; preds = %59
+  br label %70, !dbg !32
+
+62:                                               ; preds = %59
+  %63 = load i16, i16* %7, align 2, !dbg !33
+  %64 = load i16, i16* %8, align 2, !dbg !34
+  %65 = add i16 %64, 1, !dbg !35
+  %66 = getelementptr [17 x i32], [17 x i32]* @row_ptr, i16 0, i16 %65, !dbg !36
+  %67 = load i32, i32* %66, align 4, !dbg !36
+  %68 = trunc i32 %67 to i16, !dbg !37
+  %69 = icmp ult i16 %63, %68, !dbg !38
+  br label %70, !dbg !32
+
+70:                                               ; preds = %61, %62
+  %71 = phi i1 [ %69, %62 ], [ false, %61 ]
+  br label %72, !dbg !32
+
+72:                                               ; preds = %70
+  br i1 %71, label %73, label %219, !dbg !32
+
+73:                                               ; preds = %72
+  %74 = load i16, i16* %7, align 2, !dbg !39
+  %75 = getelementptr [256 x i32], [256 x i32]* @col_idx, i16 0, i16 %74, !dbg !40
+  %76 = load i32, i32* %75, align 4, !dbg !40
+  %77 = trunc i32 %76 to i16, !dbg !41
+  store i16 %77, i16* %6, align 2, !dbg !13
+  %78 = load i16, i16* %6, align 2, !dbg !42
+  %79 = getelementptr [17 x i32], [17 x i32]* @row_ptr, i16 0, i16 %78, !dbg !43
+  %80 = load i32, i32* %79, align 4, !dbg !43
+  %81 = trunc i32 %80 to i16, !dbg !44
+  store i16 %81, i16* %5, align 2, !dbg !12
+  %82 = load i16, i16* %8, align 2, !dbg !45
+  %83 = getelementptr [17 x i32], [17 x i32]* @row_ptr, i16 0, i16 %82, !dbg !46
+  %84 = load i32, i32* %83, align 4, !dbg !46
+  %85 = trunc i32 %84 to i16, !dbg !47
+  store i16 %85, i16* %4, align 2, !dbg !11
+  %86 = load i16, i16* %5, align 2, !dbg !48
+  %87 = load i16, i16* %6, align 2, !dbg !49
+  %88 = add i16 %87, 1, !dbg !50
+  %89 = getelementptr [17 x i32], [17 x i32]* @row_ptr, i16 0, i16 %88, !dbg !51
+  %90 = load i32, i32* %89, align 4, !dbg !51
+  %91 = trunc i32 %90 to i16, !dbg !52
+  %92 = icmp ult i16 %86, %91, !dbg !53
+  br i1 %92, label %93, label %101, !dbg !10
+
+93:                                               ; preds = %73
+  %94 = load i16, i16* %4, align 2, !dbg !54
+  %95 = load i16, i16* %8, align 2, !dbg !55
+  %96 = add i16 %95, 1, !dbg !56
+  %97 = getelementptr [17 x i32], [17 x i32]* @row_ptr, i16 0, i16 %96, !dbg !57
+  %98 = load i32, i32* %97, align 4, !dbg !57
+  %99 = trunc i32 %98 to i16, !dbg !58
+  %100 = icmp ult i16 %94, %99, !dbg !59
+  store i1 %100, i1* %3, align 1, !dbg !10
+  br label %102, !dbg !10
+
+101:                                              ; preds = %73
+  store i1 false, i1* %3, align 1, !dbg !10
+  br label %102, !dbg !10
+
+102:                                              ; preds = %206, %93, %101
+  %103 = phi i16 [ %207, %206 ], [ 0, %101 ], [ 0, %93 ]
+  br label %104, !dbg !60
+
+104:                                              ; preds = %102
+  %105 = phi i16 [ %103, %102 ]
+  %106 = icmp sgt i16 %105, 0, !dbg !60
+  br i1 %106, label %107, label %109, !dbg !60
+
+107:                                              ; preds = %104
+  %108 = sub i16 %105, 1, !dbg !60
+  br label %110, !dbg !60
+
+109:                                              ; preds = %104
+  br label %110, !dbg !60
+
+110:                                              ; preds = %107, %109
+  %111 = phi i16 [ %105, %109 ], [ %108, %107 ]
+  br label %112, !dbg !60
+
+112:                                              ; preds = %110
+  %113 = icmp ne i16 %105, 0, !dbg !60
+  br i1 %113, label %114, label %115, !dbg !60
+
+114:                                              ; preds = %112
+  br label %117, !dbg !60
+
+115:                                              ; preds = %112
+  %116 = load i1, i1* %3, align 1, !dbg !10
+  br label %117, !dbg !60
+
+117:                                              ; preds = %114, %115
+  %118 = phi i1 [ %116, %115 ], [ false, %114 ]
+  br label %119, !dbg !60
+
+119:                                              ; preds = %117
+  br i1 %118, label %120, label %208, !dbg !60
+
+120:                                              ; preds = %119
+  %121 = load i16, i16* %5, align 2, !dbg !61
+  %122 = getelementptr [256 x i32], [256 x i32]* @col_idx, i16 0, i16 %121, !dbg !62
+  %123 = load i32, i32* %122, align 4, !dbg !62
+  %124 = trunc i32 %123 to i16, !dbg !63
+  store i16 %124, i16* %2, align 2, !dbg !9
+  %125 = load i16, i16* %4, align 2, !dbg !64
+  %126 = getelementptr [256 x i32], [256 x i32]* @col_idx, i16 0, i16 %125, !dbg !65
+  %127 = load i32, i32* %126, align 4, !dbg !65
+  %128 = trunc i32 %127 to i16, !dbg !66
+  store i16 %128, i16* %1, align 2, !dbg !7
+  %129 = load i16, i16* %2, align 2, !dbg !67
+  %130 = load i16, i16* %1, align 2, !dbg !68
+  %131 = icmp eq i16 %129, %130, !dbg !69
+  br i1 %131, label %132, label %156, !dbg !70
+
+132:                                              ; preds = %120
+  %133 = load i16, i16* %6, align 2, !dbg !71
+  %134 = mul i16 %133, 16, !dbg !72
+  %135 = load i16, i16* %8, align 2, !dbg !73
+  %136 = add i16 %134, %135, !dbg !74
+  %137 = getelementptr [256 x float], [256 x float]* @"$$csl_base_address$$0$$C", i16 0, i16 %136, !dbg !75
+  %138 = load float, float* %137, align 4, !dbg !75
+  %139 = load i16, i16* %5, align 2, !dbg !76
+  %140 = getelementptr [256 x float], [256 x float]* @values, i16 0, i16 %139, !dbg !77
+  %141 = load float, float* %140, align 4, !dbg !77
+  %142 = load i16, i16* %4, align 2, !dbg !78
+  %143 = getelementptr [256 x float], [256 x float]* @values, i16 0, i16 %142, !dbg !79
+  %144 = load float, float* %143, align 4, !dbg !79
+  %145 = fmul float %141, %144, !dbg !80
+  %146 = fadd float %138, %145, !dbg !81
+  store float %146, float* %137, align 4, !dbg !81
+  %147 = load i16, i16* %6, align 2, !dbg !82
+  %148 = mul i16 %147, 16, !dbg !83
+  %149 = load i16, i16* %8, align 2, !dbg !84
+  %150 = add i16 %148, %149, !dbg !85
+  %151 = getelementptr [256 x i16], [256 x i16]* @present, i16 0, i16 %150, !dbg !86
+  store i16 1, i16* %151, align 2, !dbg !87
+  %152 = load i16, i16* %5, align 2, !dbg !88
+  %153 = add i16 %152, 1, !dbg !89
+  store i16 %153, i16* %5, align 2, !dbg !89
+  %154 = load i16, i16* %4, align 2, !dbg !90
+  %155 = add i16 %154, 1, !dbg !91
+  store i16 %155, i16* %4, align 2, !dbg !91
+  br label %157, !dbg !70
+
+156:                                              ; preds = %120
+  br label %157, !dbg !70
+
+157:                                              ; preds = %132, %156
+  %158 = phi i16 [ 0, %156 ], [ -1, %132 ]
+  br label %159, !dbg !70
+
+159:                                              ; preds = %157
+  %160 = icmp ne i16 %158, 0, !dbg !70
+  br i1 %160, label %161, label %163, !dbg !70
+
+161:                                              ; preds = %179, %159
+  %162 = phi i16 [ %180, %179 ], [ %158, %159 ]
+  br label %181, !dbg !70
+
+163:                                              ; preds = %159
+  %164 = load i16, i16* %2, align 2, !dbg !92
+  %165 = load i16, i16* %1, align 2, !dbg !93
+  %166 = icmp ult i16 %164, %165, !dbg !94
+  br i1 %166, label %167, label %170, !dbg !95
+
+167:                                              ; preds = %163
+  %168 = load i16, i16* %5, align 2, !dbg !96
+  %169 = add i16 %168, 1, !dbg !97
+  store i16 %169, i16* %5, align 2, !dbg !97
+  br label %171, !dbg !95
+
+170:                                              ; preds = %163
+  br label %171, !dbg !95
+
+171:                                              ; preds = %167, %170
+  %172 = phi i16 [ 0, %170 ], [ -1, %167 ]
+  br label %173, !dbg !95
+
+173:                                              ; preds = %171
+  %174 = icmp ne i16 %172, 0, !dbg !95
+  br i1 %174, label %175, label %176, !dbg !95
+
+175:                                              ; preds = %173
+  br label %179, !dbg !95
+
+176:                                              ; preds = %173
+  %177 = load i16, i16* %4, align 2, !dbg !98
+  %178 = add i16 %177, 1, !dbg !99
+  store i16 %178, i16* %4, align 2, !dbg !99
+  br label %179, !dbg !95
+
+179:                                              ; preds = %175, %176
+  %180 = phi i16 [ 0, %176 ], [ %172, %175 ]
+  br label %161, !dbg !95
+
+181:                                              ; preds = %161
+  %182 = phi i16 [ %162, %161 ]
+  br label %183, !dbg !70
+
+183:                                              ; preds = %181
+  %184 = icmp eq i16 %182, -1, !dbg !60
+  %185 = select i1 %184, i16 0, i16 %182, !dbg !60
+  %186 = icmp ne i16 %185, 0, !dbg !60
+  br i1 %186, label %187, label %189, !dbg !60
+
+187:                                              ; preds = %197, %205, %183
+  %188 = phi i16 [ 0, %197 ], [ 0, %205 ], [ %185, %183 ]
+  br label %206, !dbg !60
+
+189:                                              ; preds = %183
+  %190 = load i16, i16* %5, align 2, !dbg !48
+  %191 = load i16, i16* %6, align 2, !dbg !49
+  %192 = add i16 %191, 1, !dbg !50
+  %193 = getelementptr [17 x i32], [17 x i32]* @row_ptr, i16 0, i16 %192, !dbg !51
+  %194 = load i32, i32* %193, align 4, !dbg !51
+  %195 = trunc i32 %194 to i16, !dbg !52
+  %196 = icmp ult i16 %190, %195, !dbg !53
+  br i1 %196, label %197, label %205, !dbg !10
+
+197:                                              ; preds = %189
+  %198 = load i16, i16* %4, align 2, !dbg !54
+  %199 = load i16, i16* %8, align 2, !dbg !55
+  %200 = add i16 %199, 1, !dbg !56
+  %201 = getelementptr [17 x i32], [17 x i32]* @row_ptr, i16 0, i16 %200, !dbg !57
+  %202 = load i32, i32* %201, align 4, !dbg !57
+  %203 = trunc i32 %202 to i16, !dbg !58
+  %204 = icmp ult i16 %198, %203, !dbg !59
+  store i1 %204, i1* %3, align 1, !dbg !10
+  br label %187, !dbg !10
+
+205:                                              ; preds = %189
+  store i1 false, i1* %3, align 1, !dbg !10
+  br label %187, !dbg !10
+
+206:                                              ; preds = %187
+  %207 = phi i16 [ %188, %187 ]
+  br label %102, !dbg !60
+
+208:                                              ; preds = %119
+  %209 = icmp eq i16 %111, -1, !dbg !32
+  %210 = select i1 %209, i16 0, i16 %111, !dbg !32
+  %211 = icmp ne i16 %210, 0, !dbg !32
+  br i1 %211, label %212, label %213, !dbg !32
+
+212:                                              ; preds = %208
+  br label %216, !dbg !32
+
+213:                                              ; preds = %208
+  %214 = load i16, i16* %7, align 2, !dbg !100
+  %215 = add i16 %214, 1, !dbg !101
+  store i16 %215, i16* %7, align 2, !dbg !101
+  br label %216, !dbg !32
+
+216:                                              ; preds = %212, %213
+  %217 = phi i16 [ 0, %213 ], [ %210, %212 ]
+  br label %218, !dbg !32
+
+218:                                              ; preds = %216
+  br label %51, !dbg !32
+
+219:                                              ; preds = %72
+  %220 = icmp eq i16 %58, -1, !dbg !26
+  %221 = select i1 %220, i16 0, i16 %58, !dbg !26
+  %222 = icmp ne i16 %221, 0, !dbg !26
+  br i1 %222, label %223, label %224, !dbg !26
+
+223:                                              ; preds = %219
+  br label %227, !dbg !26
+
+224:                                              ; preds = %219
+  %225 = load i16, i16* %8, align 2, !dbg !102
+  %226 = add i16 %225, 1, !dbg !103
+  store i16 %226, i16* %8, align 2, !dbg !103
+  br label %227, !dbg !26
+
+227:                                              ; preds = %223, %224
+  %228 = phi i16 [ 0, %224 ], [ %221, %223 ]
+  br label %229, !dbg !26
+
+229:                                              ; preds = %227
+  br label %36, !dbg !26
+
+230:                                              ; preds = %34
+  ret void, !dbg !18
+}

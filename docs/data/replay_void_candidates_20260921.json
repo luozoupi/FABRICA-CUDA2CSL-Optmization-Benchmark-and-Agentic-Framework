@@ -1,0 +1,668 @@
+[
+  {
+    "root": "mg_sparse_luna2_20260921_055733",
+    "kernel": "SpMV-RowBlock",
+    "arm": "O0",
+    "candidate": "attempt_01_cand1_prefetch_fabric_async",
+    "script": "commands_wse3.sh",
+    "spliced": [
+      "f_memcpy_timestamps",
+      "f_tic",
+      "f_toc"
+    ],
+    "contract_violation": null,
+    "status": "pass",
+    "cycles": 37330,
+    "runs": [
+      37330,
+      37330,
+      37330
+    ],
+    "heldout_passed": true,
+    "failure": null,
+    "first_error": "",
+    "elapsed_s": 71.9
+  },
+  {
+    "root": "mg_sparse_luna2_20260921_055733",
+    "kernel": "SpMV-RowBlock",
+    "arm": "O0",
+    "candidate": "attempt_02_cand1_comptime_hoist",
+    "script": "commands_wse3.sh",
+    "spliced": [
+      "f_memcpy_timestamps",
+      "f_tic",
+      "f_toc"
+    ],
+    "contract_violation": null,
+    "status": "pass",
+    "cycles": 37012,
+    "runs": [
+      37012,
+      37012,
+      37012
+    ],
+    "heldout_passed": true,
+    "failure": null,
+    "first_error": "",
+    "elapsed_s": 66.5
+  },
+  {
+    "root": "mg_sparse_luna2_20260921_055733",
+    "kernel": "SpMV-RowBlock",
+    "arm": "O0",
+    "candidate": "attempt_03_cand1_dsd_offset_chaining",
+    "script": "commands_wse3.sh",
+    "spliced": [
+      "f_memcpy_timestamps",
+      "f_tic",
+      "f_toc"
+    ],
+    "contract_violation": null,
+    "status": "fail",
+    "cycles": null,
+    "runs": [],
+    "heldout_passed": null,
+    "failure": "command_failed",
+    "first_error": "ed by 'realpath <path>'\n\u001b[34m[INFO]\u001b[0m Bind path <path>\n\u001b[34m[INFO]\u001b[0m Commands of user-specified mount paths:  --bind=<path>\n./pe.csl:111:13: error: builtin requires 4 argument(s), 3 provided\n            @fmacs(sum_scalar_dsd, val_dsd, x_dsd);\n            ^\n./layout.csl:27:5: error: semantic error in module imported here\n    @set_tile_code(px, 0, \"pe.csl\", .{\n    ^",
+    "elapsed_s": 4.7
+  },
+  {
+    "root": "mg_sparse_luna2_20260921_055733",
+    "kernel": "SpMV-RowBlock",
+    "arm": "O0",
+    "candidate": "attempt_04_cand1_fmac_bulk",
+    "script": "commands_wse3.sh",
+    "spliced": [
+      "f_memcpy_timestamps",
+      "f_tic",
+      "f_toc"
+    ],
+    "contract_violation": null,
+    "status": "fail",
+    "cycles": null,
+    "runs": [],
+    "heldout_passed": null,
+    "failure": "command_failed",
+    "first_error": "d=<path>\n./pe.csl:136:9: error: operand types do not match expectations\n        @fmacs(y_dsd, y_dsd, val_slot_dsd, x_slot_dsd);\n        ^\n./pe.csl:136:9: note: got type(s): mem1d_dsd, mem1d_dsd, mem1d_dsd, mem1d_dsd\n./pe.csl:136:9: note:     expected type(s): DSD/DSR, DSD/DSR, DSD/DSR, f32\n./layout.csl:27:5: error: semantic error in module imported here\n    @set_tile_code(px, 0, \"pe.csl\", .{\n    ^",
+    "elapsed_s": 4.5
+  },
+  {
+    "root": "mg_sparse_luna2_20260921_055733",
+    "kernel": "SpMV-RowBlock",
+    "arm": "O0",
+    "candidate": "attempt_05_cand1_stride_optimization",
+    "script": "commands_wse3.sh",
+    "spliced": [
+      "f_memcpy_timestamps",
+      "f_tic",
+      "f_toc"
+    ],
+    "contract_violation": null,
+    "status": "pass",
+    "cycles": 39829,
+    "runs": [
+      39829,
+      39829,
+      39829
+    ],
+    "heldout_passed": true,
+    "failure": null,
+    "first_error": "",
+    "elapsed_s": 73.9
+  },
+  {
+    "root": "mg_sparse_luna2_20260921_055733",
+    "kernel": "SpMV-RowBlock",
+    "arm": "O1",
+    "candidate": "attempt_01_cand1_async_detach_overlap",
+    "script": "commands_wse3.sh",
+    "spliced": [
+      "f_memcpy_timestamps",
+      "f_tic",
+      "f_toc"
+    ],
+    "contract_violation": null,
+    "status": "fail",
+    "cycles": null,
+    "runs": [],
+    "heldout_passed": null,
+    "failure": "command_failed",
+    "first_error": "\n\u001b[34m[INFO]\u001b[0m Commands of user-specified mount paths:  --bind=<path>\n./pe.csl:132:40: error: Unexpected character at this location\n    if (send_done != 0 && compute_done != 0) {\n                                       ^\n./layout.csl:27:5: error: failed to parse program requested here\n    @set_tile_code(px, 0, \"pe.csl\", .{\n    ^\n./layout.csl:22:1: error: failed to evaluate layout block\nlayout {\n^",
+    "elapsed_s": 4.6
+  },
+  {
+    "root": "mg_sparse_luna2_20260921_055733",
+    "kernel": "SpMV-RowBlock",
+    "arm": "O1",
+    "candidate": "attempt_02_cand1_prefetch_fabric_async",
+    "script": "commands_wse3.sh",
+    "spliced": [
+      "f_memcpy_timestamps",
+      "f_tic",
+      "f_toc"
+    ],
+    "contract_violation": null,
+    "status": "pass",
+    "cycles": 37330,
+    "runs": [
+      37330,
+      37330,
+      37330
+    ],
+    "heldout_passed": true,
+    "failure": null,
+    "first_error": "",
+    "elapsed_s": 71.1
+  },
+  {
+    "root": "mg_sparse_luna2_20260921_055733",
+    "kernel": "SpMV-RowBlock",
+    "arm": "O1",
+    "candidate": "attempt_03_cand1_row_dsd_runtime_repoint",
+    "script": "commands_wse3.sh",
+    "spliced": [
+      "f_memcpy_timestamps",
+      "f_tic",
+      "f_toc"
+    ],
+    "contract_violation": null,
+    "status": "fail",
+    "cycles": null,
+    "runs": [],
+    "heldout_passed": null,
+    "failure": "command_failed",
+    "first_error": "[0m Bind path <path>\n\u001b[34m[INFO]\u001b[0m Commands of user-specified mount paths:  --bind=<path>\n./pe.csl:113:21: error: expected type 'u16', got: 'i16'\n                    row_len,\n                    ^\n./pe.csl:113:21: note: coercion loses precision or signedness\n./layout.csl:27:5: error: semantic error in module imported here\n    @set_tile_code(px, 0, \"pe.csl\", .{\n    ^",
+    "elapsed_s": 4.8
+  },
+  {
+    "root": "mg_sparse_luna2_20260921_055733",
+    "kernel": "SpMV-RowBlock",
+    "arm": "O1",
+    "candidate": "attempt_04_cand1_microthread_explicit_wse3",
+    "script": "commands_wse3.sh",
+    "spliced": [
+      "f_memcpy_timestamps",
+      "f_tic",
+      "f_toc"
+    ],
+    "contract_violation": null,
+    "status": "fail",
+    "cycles": null,
+    "runs": [],
+    "heldout_passed": null,
+    "failure": "command_failed",
+    "first_error": "INFO]\u001b[0m Commands of user-specified mount paths:  --bind=<path>\n./pe.csl:54:12: error: struct has unrecognized field: ut_id\n  .ut_id = @get_ut_id(0),\n           ^\n./pe.csl:51:38: note: when used in this context\nconst x_in_dsd = @get_dsd(fabin_dsd, .{\n                                     ^\n./layout.csl:27:5: error: semantic error in module imported here\n    @set_tile_code(px, 0, \"pe.csl\", .{\n    ^",
+    "elapsed_s": 4.5
+  },
+  {
+    "root": "mg_sparse_luna2_20260921_055733",
+    "kernel": "SpMV-RowBlock",
+    "arm": "O1",
+    "candidate": "attempt_05_cand1_index_type_narrowing",
+    "script": "commands_wse3.sh",
+    "spliced": [
+      "f_memcpy_timestamps",
+      "f_tic",
+      "f_toc"
+    ],
+    "contract_violation": "FROZEN timing window: entry point 'main' must start with f_tic(); f_tic() called in 'main' other than as an entry point's first statement",
+    "status": null,
+    "cycles": null,
+    "runs": null,
+    "heldout_passed": null,
+    "failure": null,
+    "first_error": "",
+    "elapsed_s": null
+  },
+  {
+    "root": "mg_sparse_luna2_20260921_055733",
+    "kernel": "SpMM-CSR-Dense",
+    "arm": "O0",
+    "candidate": "attempt_01_cand1_comptime_hoist",
+    "script": "commands_wse3.sh",
+    "spliced": [
+      "f_memcpy_timestamps",
+      "f_tic",
+      "f_toc"
+    ],
+    "contract_violation": null,
+    "status": "pass",
+    "cycles": 30954,
+    "runs": [
+      30954,
+      30954,
+      30954
+    ],
+    "heldout_passed": true,
+    "failure": null,
+    "first_error": "",
+    "elapsed_s": 99.6
+  },
+  {
+    "root": "mg_sparse_luna2_20260921_055733",
+    "kernel": "SpMM-CSR-Dense",
+    "arm": "O0",
+    "candidate": "attempt_02_cand1_stride_optimization",
+    "script": "commands_wse3.sh",
+    "spliced": [
+      "f_memcpy_timestamps",
+      "f_tic",
+      "f_toc"
+    ],
+    "contract_violation": null,
+    "status": "pass",
+    "cycles": 29807,
+    "runs": [
+      29807,
+      29807,
+      29807
+    ],
+    "heldout_passed": true,
+    "failure": null,
+    "first_error": "",
+    "elapsed_s": 104.1
+  },
+  {
+    "root": "mg_sparse_luna2_20260921_055733",
+    "kernel": "SpMM-CSR-Dense",
+    "arm": "O0",
+    "candidate": "attempt_03_cand1_dsd_offset_chaining",
+    "script": "commands_wse3.sh",
+    "spliced": [
+      "f_memcpy_timestamps",
+      "f_tic",
+      "f_toc"
+    ],
+    "contract_violation": null,
+    "status": "pass",
+    "cycles": 31894,
+    "runs": [
+      31894,
+      31894,
+      31894
+    ],
+    "heldout_passed": true,
+    "failure": null,
+    "first_error": "",
+    "elapsed_s": 101.1
+  },
+  {
+    "root": "mg_sparse_luna2_20260921_055733",
+    "kernel": "SpMM-CSR-Dense",
+    "arm": "O0",
+    "candidate": "attempt_04_cand1_fmac_bulk",
+    "script": "commands_wse3.sh",
+    "spliced": [
+      "f_memcpy_timestamps",
+      "f_tic",
+      "f_toc"
+    ],
+    "contract_violation": null,
+    "status": "pass",
+    "cycles": 29807,
+    "runs": [
+      29807,
+      29807,
+      29807
+    ],
+    "heldout_passed": true,
+    "failure": null,
+    "first_error": "",
+    "elapsed_s": 101.6
+  },
+  {
+    "root": "mg_sparse_luna2_20260921_055733",
+    "kernel": "SpMM-CSR-Dense",
+    "arm": "O0",
+    "candidate": "attempt_05_cand1_stride_optimization",
+    "script": "commands_wse3.sh",
+    "spliced": [
+      "f_memcpy_timestamps",
+      "f_tic",
+      "f_toc"
+    ],
+    "contract_violation": null,
+    "status": "pass",
+    "cycles": 29550,
+    "runs": [
+      29550,
+      29550,
+      29550
+    ],
+    "heldout_passed": true,
+    "failure": null,
+    "first_error": "",
+    "elapsed_s": 109.6
+  },
+  {
+    "root": "mg_sparse_luna2_20260921_055733",
+    "kernel": "SpMM-CSR-Dense",
+    "arm": "O1",
+    "candidate": "attempt_01_cand1_dsd_width_flatten_l0",
+    "script": "commands_wse3.sh",
+    "spliced": [
+      "f_memcpy_timestamps",
+      "f_tic",
+      "f_toc"
+    ],
+    "contract_violation": null,
+    "status": "pass",
+    "cycles": 29807,
+    "runs": [
+      29807,
+      29807,
+      29807
+    ],
+    "heldout_passed": true,
+    "failure": null,
+    "first_error": "",
+    "elapsed_s": 103.7
+  },
+  {
+    "root": "mg_sparse_luna2_20260921_055733",
+    "kernel": "SpMM-CSR-Dense",
+    "arm": "O1",
+    "candidate": "attempt_02_cand1_comptime_hoist",
+    "script": "commands_wse3.sh",
+    "spliced": [
+      "f_memcpy_timestamps",
+      "f_tic",
+      "f_toc"
+    ],
+    "contract_violation": null,
+    "status": "pass",
+    "cycles": 30954,
+    "runs": [
+      30954,
+      30954,
+      30954
+    ],
+    "heldout_passed": true,
+    "failure": null,
+    "first_error": "",
+    "elapsed_s": 100.8
+  },
+  {
+    "root": "mg_sparse_luna2_20260921_055733",
+    "kernel": "SpMM-CSR-Dense",
+    "arm": "O1",
+    "candidate": "attempt_03_cand1_dsd_setup_hoist",
+    "script": "commands_wse3.sh",
+    "spliced": [
+      "f_memcpy_timestamps",
+      "f_tic",
+      "f_toc"
+    ],
+    "contract_violation": null,
+    "status": "pass",
+    "cycles": 29550,
+    "runs": [
+      29550,
+      29550,
+      29550
+    ],
+    "heldout_passed": true,
+    "failure": null,
+    "first_error": "",
+    "elapsed_s": 103.3
+  },
+  {
+    "root": "mg_sparse_luna2_20260921_055733",
+    "kernel": "SpMM-CSR-Dense",
+    "arm": "O1",
+    "candidate": "attempt_04_cand1_microthread_explicit_wse3",
+    "script": "commands_wse3.sh",
+    "spliced": [
+      "f_memcpy_timestamps",
+      "f_tic",
+      "f_toc"
+    ],
+    "contract_violation": null,
+    "status": "fail",
+    "cycles": null,
+    "runs": [],
+    "heldout_passed": null,
+    "failure": "command_failed",
+    "first_error": "ath <path>\n\u001b[34m[INFO]\u001b[0m Commands of user-specified mount paths:  --bind=<path>\n./pe.csl:11:51: error: expected task ID in the range [8,31), got: 7\nconst FINISH0: local_task_id = @get_local_task_id(7);\n                                                  ^\n./layout.csl:28:7: error: semantic error in module imported here\n      @set_tile_code(px, py, \"pe.csl\", .{\n      ^",
+    "elapsed_s": 6.2
+  },
+  {
+    "root": "mg_sparse_luna2_20260921_055733",
+    "kernel": "SpMM-CSR-Dense",
+    "arm": "O1",
+    "candidate": "attempt_05_cand1_async_detach_overlap",
+    "script": "commands_wse3.sh",
+    "spliced": [
+      "f_memcpy_timestamps",
+      "f_tic",
+      "f_toc"
+    ],
+    "contract_violation": null,
+    "status": "fail",
+    "cycles": null,
+    "runs": [],
+    "heldout_passed": null,
+    "failure": "command_failed",
+    "first_error": "ath>'\n\u001b[34m[INFO]\u001b[0m Bind path <path>\n\u001b[34m[INFO]\u001b[0m Commands of user-specified mount paths:  --bind=<path>\n./pe.csl:117:9: error: only DSD/DSR operands are allowed for async operations\n        @fmovs(c_dsd, @as(f32, 0.0), .{ .async = true });\n        ^\n./layout.csl:28:7: error: semantic error in module imported here\n      @set_tile_code(px, py, \"pe.csl\", .{\n      ^",
+    "elapsed_s": 4.9
+  },
+  {
+    "root": "mg_sparse_luna_it10_20260921_174039",
+    "kernel": "SpMV-RowBlock",
+    "arm": "O0",
+    "candidate": "attempt_01_cand1_prefetch_fabric_async",
+    "script": "commands_wse3_it10.sh",
+    "spliced": [
+      "f_memcpy_timestamps",
+      "f_tic",
+      "f_toc"
+    ],
+    "contract_violation": null,
+    "status": "fail",
+    "cycles": null,
+    "runs": [],
+    "heldout_passed": null,
+    "failure": "command_failed",
+    "first_error": "path <path>\n\u001b[34m[INFO]\u001b[0m Commands of user-specified mount paths:  --bind=<path>\n./pe.csl:12:53: error: expected task ID in the range [8,31), got: 7\nconst COMPUTE_A: local_task_id = @get_local_task_id(7);\n                                                    ^\n./layout.csl:27:5: error: semantic error in module imported here\n    @set_tile_code(px, 0, \"pe.csl\", .{\n    ^",
+    "elapsed_s": 5.4
+  },
+  {
+    "root": "mg_sparse_luna_it10_20260921_174039",
+    "kernel": "SpMV-RowBlock",
+    "arm": "O0",
+    "candidate": "attempt_02_cand1_comptime_hoist",
+    "script": "commands_wse3_it10.sh",
+    "spliced": [
+      "f_memcpy_timestamps",
+      "f_tic",
+      "f_toc"
+    ],
+    "contract_violation": null,
+    "status": "pass",
+    "cycles": 380296,
+    "runs": [
+      380296,
+      380296,
+      380296
+    ],
+    "heldout_passed": true,
+    "failure": null,
+    "first_error": "",
+    "elapsed_s": 239.3
+  },
+  {
+    "root": "mg_sparse_luna_it10_20260921_174039",
+    "kernel": "SpMV-RowBlock",
+    "arm": "O0",
+    "candidate": "attempt_03_cand1_dsd_offset_chaining",
+    "script": "commands_wse3_it10.sh",
+    "spliced": [
+      "f_memcpy_timestamps",
+      "f_tic",
+      "f_toc"
+    ],
+    "contract_violation": null,
+    "status": "pass",
+    "cycles": 530256,
+    "runs": [
+      530256,
+      530256,
+      530256
+    ],
+    "heldout_passed": true,
+    "failure": null,
+    "first_error": "",
+    "elapsed_s": 324.4
+  },
+  {
+    "root": "mg_sparse_luna_it10_20260921_174039",
+    "kernel": "SpMV-RowBlock",
+    "arm": "O0",
+    "candidate": "attempt_04_cand1_fmac_bulk",
+    "script": "commands_wse3_it10.sh",
+    "spliced": [
+      "f_memcpy_timestamps",
+      "f_tic",
+      "f_toc"
+    ],
+    "contract_violation": null,
+    "status": "fail",
+    "cycles": null,
+    "runs": [],
+    "heldout_passed": null,
+    "failure": "command_failed",
+    "first_error": "d mount paths:  --bind=<path>\n./pe.csl:120:17: error: operand types do not match expectations\n                @fmacs(\n                ^\n./pe.csl:120:17: note: got type(s): mem1d_dsd, mem1d_dsd, mem1d_dsd, mem1d_dsd\n./pe.csl:120:17: note:     expected type(s): DSD/DSR, DSD/DSR, DSD/DSR, f32\n./layout.csl:27:5: error: semantic error in module imported here\n    @set_tile_code(px, 0, \"pe.csl\", .{\n    ^",
+    "elapsed_s": 4.8
+  },
+  {
+    "root": "mg_sparse_luna_it10_20260921_174039",
+    "kernel": "SpMV-RowBlock",
+    "arm": "O0",
+    "candidate": "attempt_05_cand1_stride_optimization",
+    "script": "commands_wse3_it10.sh",
+    "spliced": [
+      "f_memcpy_timestamps",
+      "f_tic",
+      "f_toc"
+    ],
+    "contract_violation": null,
+    "status": "pass",
+    "cycles": 347675,
+    "runs": [
+      347675,
+      347675,
+      347675
+    ],
+    "heldout_passed": true,
+    "failure": null,
+    "first_error": "",
+    "elapsed_s": 192.7
+  },
+  {
+    "root": "mg_sparse_luna_it10_20260921_174039",
+    "kernel": "SpMV-RowBlock",
+    "arm": "O1",
+    "candidate": "attempt_01_cand1_async_detach_overlap",
+    "script": "commands_wse3_it10.sh",
+    "spliced": [
+      "f_memcpy_timestamps",
+      "f_tic",
+      "f_toc"
+    ],
+    "contract_violation": null,
+    "status": "pass",
+    "cycles": 372582,
+    "runs": [
+      372582,
+      372582,
+      372582
+    ],
+    "heldout_passed": true,
+    "failure": null,
+    "first_error": "",
+    "elapsed_s": 230.8
+  },
+  {
+    "root": "mg_sparse_luna_it10_20260921_174039",
+    "kernel": "SpMV-RowBlock",
+    "arm": "O1",
+    "candidate": "attempt_02_cand1_microthread_explicit_wse3",
+    "script": "commands_wse3_it10.sh",
+    "spliced": [
+      "f_memcpy_timestamps",
+      "f_tic",
+      "f_toc"
+    ],
+    "contract_violation": null,
+    "status": "fail",
+    "cycles": null,
+    "runs": [],
+    "heldout_passed": null,
+    "failure": "command_failed",
+    "first_error": "INFO]\u001b[0m Commands of user-specified mount paths:  --bind=<path>\n./pe.csl:54:12: error: struct has unrecognized field: ut_id\n  .ut_id = @get_ut_id(0),\n           ^\n./pe.csl:51:38: note: when used in this context\nconst x_in_dsd = @get_dsd(fabin_dsd, .{\n                                     ^\n./layout.csl:27:5: error: semantic error in module imported here\n    @set_tile_code(px, 0, \"pe.csl\", .{\n    ^",
+    "elapsed_s": 4.7
+  },
+  {
+    "root": "mg_sparse_luna_it10_20260921_174039",
+    "kernel": "SpMV-RowBlock",
+    "arm": "O1",
+    "candidate": "attempt_03_cand1_prefetch_fabric_async",
+    "script": "commands_wse3_it10.sh",
+    "spliced": [
+      "f_memcpy_timestamps",
+      "f_tic",
+      "f_toc"
+    ],
+    "contract_violation": null,
+    "status": "fail",
+    "cycles": 374232,
+    "runs": [
+      374232
+    ],
+    "heldout_passed": null,
+    "failure": "command_failed",
+    "first_error": "00000e+00,  0.000000e+00,  0.000000e+00,  0.000000e+00,\n        0.000000e+00,  0.000000e+00,  0.000000e+00,  0.000000e+00,\n        0.000000e+00,  0.000000e+00,  0.000000e+00,  0.000000e+00,...\n y: array([-7.503456e-01, -4.185418e-01, -1.013994e+00, -1.337102e-01,\n       -1.008704e-01,  5.588245e-01,  1.004727e-01,  2.916484e-01,\n       -5.951099e-01,  8.984377e-02, -8.685983e-01, -2.919521e-01,...",
+    "elapsed_s": 31.6
+  },
+  {
+    "root": "mg_sparse_luna_it10_20260921_174039",
+    "kernel": "SpMV-RowBlock",
+    "arm": "O1",
+    "candidate": "attempt_04_cand1_row_dsd_runtime_repoint",
+    "script": "commands_wse3_it10.sh",
+    "spliced": [
+      "f_memcpy_timestamps",
+      "f_tic",
+      "f_toc"
+    ],
+    "contract_violation": null,
+    "status": "fail",
+    "cycles": null,
+    "runs": [],
+    "heldout_passed": null,
+    "failure": "command_failed",
+    "first_error": "er-specified mount paths:  --bind=<path>\n./pe.csl:99:62: error: expected type 'u16', got: 'i16'\n            const val_len_dsd = @set_dsd_length(val_mem_dsd, dsd_len);\n                                                             ^\n./pe.csl:99:62: note: coercion loses precision or signedness\n./layout.csl:27:5: error: semantic error in module imported here\n    @set_tile_code(px, 0, \"pe.csl\", .{\n    ^",
+    "elapsed_s": 4.7
+  },
+  {
+    "root": "mg_sparse_luna_it10_20260921_174039",
+    "kernel": "SpMV-RowBlock",
+    "arm": "O1",
+    "candidate": "attempt_05_cand1_vectorise_along_structure",
+    "script": "commands_wse3_it10.sh",
+    "spliced": [
+      "f_memcpy_timestamps",
+      "f_tic",
+      "f_toc"
+    ],
+    "contract_violation": null,
+    "status": "fail",
+    "cycles": null,
+    "runs": [],
+    "heldout_passed": null,
+    "failure": "command_failed",
+    "first_error": "hs:  --bind=<path>\n./pe.csl:158:9: error: operand types do not match expectations\n        @fmacs(y_dsd, y_dsd, val_dsd, x_dsd);\n        ^\n./pe.csl:158:9: note: got type(s): mem1d_dsd, mem1d_dsd, mem1d_dsd, mem1d_dsd\n./pe.csl:158:9: note:     expected type(s): DSD/DSR, DSD/DSR, DSD/DSR, f32\n./layout.csl:27:5: error: semantic error in module imported here\n    @set_tile_code(px, 0, \"pe.csl\", .{\n    ^",
+    "elapsed_s": 4.3
+  }
+]

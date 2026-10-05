@@ -1,0 +1,960 @@
+{
+ "ruleset_version": "addfam-v2",
+ "exact_definition": "equality of the static instruction-role count multiset over the region contract; not instruction, operand, register-allocation, numerical or timing equivalence",
+ "rows": [
+  {
+   "name": "base",
+   "factor": "reference",
+   "withheld": false,
+   "csl": "c[0] = a[0] + b[0];",
+   "machine_observed": {
+    "load": 2,
+    "store": 1,
+    "alu": 1,
+    "actvt": 1
+   },
+   "machine_predicted": {
+    "load": 2,
+    "alu": 1,
+    "store": 1,
+    "actvt": 1
+   },
+   "machine_exact": true,
+   "ir_observed": {
+    "load": 2,
+    "add": 1,
+    "store": 1,
+    "call": 1,
+    "ret": 1,
+    "call:llvm.sdr.actvt.r": 1
+   },
+   "ir_predicted": {
+    "load": 2,
+    "add": 1,
+    "store": 1,
+    "call": 1,
+    "ret": 1,
+    "call:llvm.sdr.actvt.r": 1
+   },
+   "ir_exact": true,
+   "ir_in_scope": true,
+   "n_body": 5,
+   "n_init": 0,
+   "n_total": 5
+  },
+  {
+   "name": "const_one",
+   "factor": "constantness",
+   "withheld": false,
+   "csl": "c[0] = a[0] + 7;",
+   "machine_observed": {
+    "load": 1,
+    "store": 1,
+    "alu": 1,
+    "actvt": 1
+   },
+   "machine_predicted": {
+    "load": 1,
+    "alu": 1,
+    "store": 1,
+    "actvt": 1
+   },
+   "machine_exact": true,
+   "ir_observed": {
+    "load": 1,
+    "add": 1,
+    "store": 1,
+    "call": 1,
+    "ret": 1,
+    "call:llvm.sdr.actvt.r": 1
+   },
+   "ir_predicted": {
+    "load": 1,
+    "add": 1,
+    "store": 1,
+    "call": 1,
+    "ret": 1,
+    "call:llvm.sdr.actvt.r": 1
+   },
+   "ir_exact": true,
+   "ir_in_scope": true,
+   "n_body": 4,
+   "n_init": 0,
+   "n_total": 4
+  },
+  {
+   "name": "const_both",
+   "factor": "constantness",
+   "withheld": false,
+   "csl": "c[0] = 3 + 7;",
+   "machine_observed": {
+    "store": 1,
+    "alu": 1,
+    "actvt": 1
+   },
+   "machine_predicted": {
+    "alu": 1,
+    "store": 1,
+    "actvt": 1
+   },
+   "machine_exact": true,
+   "ir_observed": {
+    "store": 1,
+    "call": 1,
+    "ret": 1,
+    "call:llvm.sdr.actvt.r": 1
+   },
+   "ir_predicted": {
+    "store": 1,
+    "call": 1,
+    "ret": 1,
+    "call:llvm.sdr.actvt.r": 1
+   },
+   "ir_exact": true,
+   "ir_in_scope": true,
+   "n_body": 2,
+   "n_init": 1,
+   "n_total": 3
+  },
+  {
+   "name": "index_runtime",
+   "factor": "addressing",
+   "withheld": false,
+   "csl": "var i: u16 = @as(u16, idx[0]);\n  c[0] = a[i] + b[i];",
+   "machine_observed": {
+    "load": 3,
+    "store": 1,
+    "alu": 1,
+    "addr": 7,
+    "actvt": 1
+   },
+   "machine_predicted": {
+    "load": 3,
+    "alu": 1,
+    "store": 1,
+    "addr": 7,
+    "actvt": 1
+   },
+   "machine_exact": true,
+   "ir_observed": {
+    "alloca": 1,
+    "load": 5,
+    "store": 2,
+    "getelementptr": 2,
+    "add": 1,
+    "call": 1,
+    "ret": 1,
+    "call:llvm.sdr.actvt.r": 1
+   },
+   "ir_predicted": null,
+   "ir_exact": false,
+   "ir_in_scope": false,
+   "n_body": 13,
+   "n_init": 0,
+   "n_total": 13
+  },
+  {
+   "name": "use_expr_twice",
+   "factor": "result use",
+   "withheld": false,
+   "csl": "c[0] = a[0] + b[0];\n  c[1] = a[0] + b[0];",
+   "machine_observed": {
+    "load": 2,
+    "store": 2,
+    "alu": 1,
+    "actvt": 1
+   },
+   "machine_predicted": {
+    "load": 2,
+    "alu": 1,
+    "store": 2,
+    "actvt": 1
+   },
+   "machine_exact": true,
+   "ir_observed": {
+    "load": 4,
+    "add": 2,
+    "store": 2,
+    "call": 1,
+    "ret": 1,
+    "call:llvm.sdr.actvt.r": 1
+   },
+   "ir_predicted": {
+    "load": 4,
+    "add": 2,
+    "store": 2,
+    "call": 1,
+    "ret": 1,
+    "call:llvm.sdr.actvt.r": 1
+   },
+   "ir_exact": true,
+   "ir_in_scope": true,
+   "n_body": 6,
+   "n_init": 0,
+   "n_total": 6
+  },
+  {
+   "name": "use_value_twice",
+   "factor": "result use",
+   "withheld": false,
+   "csl": "var t: i16 = a[0] + b[0];\n  c[0] = t;\n  c[1] = t + b[1];",
+   "machine_observed": {
+    "load": 3,
+    "store": 2,
+    "alu": 2,
+    "actvt": 1
+   },
+   "machine_predicted": {
+    "load": 3,
+    "alu": 2,
+    "store": 2,
+    "actvt": 1
+   },
+   "machine_exact": true,
+   "ir_observed": {
+    "alloca": 1,
+    "load": 5,
+    "add": 2,
+    "store": 3,
+    "call": 1,
+    "ret": 1,
+    "call:llvm.sdr.actvt.r": 1
+   },
+   "ir_predicted": null,
+   "ir_exact": false,
+   "ir_in_scope": false,
+   "n_body": 8,
+   "n_init": 0,
+   "n_total": 8
+  },
+  {
+   "name": "operand_shared",
+   "factor": "result use",
+   "withheld": false,
+   "csl": "c[0] = a[0] + b[0];\n  c[1] = a[0] + b[1];",
+   "machine_observed": {
+    "load": 3,
+    "store": 2,
+    "alu": 2,
+    "actvt": 1
+   },
+   "machine_predicted": {
+    "load": 3,
+    "alu": 2,
+    "store": 2,
+    "actvt": 1
+   },
+   "machine_exact": true,
+   "ir_observed": {
+    "load": 4,
+    "add": 2,
+    "store": 2,
+    "call": 1,
+    "ret": 1,
+    "call:llvm.sdr.actvt.r": 1
+   },
+   "ir_predicted": {
+    "load": 4,
+    "add": 2,
+    "store": 2,
+    "call": 1,
+    "ret": 1,
+    "call:llvm.sdr.actvt.r": 1
+   },
+   "ir_exact": true,
+   "ir_in_scope": true,
+   "n_body": 8,
+   "n_init": 0,
+   "n_total": 8
+  },
+  {
+   "name": "pair_independent",
+   "factor": "dependencies",
+   "withheld": false,
+   "csl": "c[0] = a[0] + b[0];\n  c[1] = a[1] + b[1];",
+   "machine_observed": {
+    "load": 4,
+    "store": 2,
+    "alu": 2,
+    "actvt": 1
+   },
+   "machine_predicted": {
+    "load": 4,
+    "alu": 2,
+    "store": 2,
+    "actvt": 1
+   },
+   "machine_exact": true,
+   "ir_observed": {
+    "load": 4,
+    "add": 2,
+    "store": 2,
+    "call": 1,
+    "ret": 1,
+    "call:llvm.sdr.actvt.r": 1
+   },
+   "ir_predicted": {
+    "load": 4,
+    "add": 2,
+    "store": 2,
+    "call": 1,
+    "ret": 1,
+    "call:llvm.sdr.actvt.r": 1
+   },
+   "ir_exact": true,
+   "ir_in_scope": true,
+   "n_body": 9,
+   "n_init": 0,
+   "n_total": 9
+  },
+  {
+   "name": "pair_dependent",
+   "factor": "dependencies",
+   "withheld": false,
+   "csl": "c[0] = a[0] + b[0];\n  c[1] = c[0] + b[1];",
+   "machine_observed": {
+    "load": 3,
+    "store": 2,
+    "alu": 2,
+    "actvt": 1
+   },
+   "machine_predicted": {
+    "load": 3,
+    "alu": 2,
+    "store": 2,
+    "actvt": 1
+   },
+   "machine_exact": true,
+   "ir_observed": {
+    "load": 4,
+    "add": 2,
+    "store": 2,
+    "call": 1,
+    "ret": 1,
+    "call:llvm.sdr.actvt.r": 1
+   },
+   "ir_predicted": {
+    "load": 4,
+    "add": 2,
+    "store": 2,
+    "call": 1,
+    "ret": 1,
+    "call:llvm.sdr.actvt.r": 1
+   },
+   "ir_exact": true,
+   "ir_in_scope": true,
+   "n_body": 8,
+   "n_init": 0,
+   "n_total": 8
+  },
+  {
+   "name": "inplace",
+   "factor": "aliasing",
+   "withheld": false,
+   "csl": "a[0] = a[0] + b[0];",
+   "machine_observed": {
+    "load": 2,
+    "store": 1,
+    "alu": 1,
+    "actvt": 1
+   },
+   "machine_predicted": {
+    "load": 2,
+    "alu": 1,
+    "store": 1,
+    "actvt": 1
+   },
+   "machine_exact": true,
+   "ir_observed": {
+    "load": 2,
+    "add": 1,
+    "store": 1,
+    "call": 1,
+    "ret": 1,
+    "call:llvm.sdr.actvt.r": 1
+   },
+   "ir_predicted": {
+    "load": 2,
+    "add": 1,
+    "store": 1,
+    "call": 1,
+    "ret": 1,
+    "call:llvm.sdr.actvt.r": 1
+   },
+   "ir_exact": true,
+   "ir_in_scope": true,
+   "n_body": 5,
+   "n_init": 0,
+   "n_total": 5
+  },
+  {
+   "name": "select_runtime",
+   "factor": "control",
+   "withheld": false,
+   "csl": "if (k[0] > 0) { c[0] = a[0] + b[0]; } else { c[0] = a[1] + b[1]; }",
+   "machine_observed": {
+    "load": 5,
+    "store": 1,
+    "alu": 1,
+    "ctrl": 3,
+    "actvt": 1
+   },
+   "machine_predicted": {
+    "load": 5,
+    "alu": 1,
+    "store": 1,
+    "ctrl": 3,
+    "actvt": 1
+   },
+   "machine_exact": true,
+   "ir_observed": {
+    "load": 5,
+    "icmp": 1,
+    "br": 3,
+    "3": 1,
+    "add": 2,
+    "store": 2,
+    "7": 1,
+    "11": 1,
+    "call": 1,
+    "ret": 1,
+    "call:llvm.sdr.actvt.r": 1
+   },
+   "ir_predicted": null,
+   "ir_exact": false,
+   "ir_in_scope": false,
+   "n_body": 11,
+   "n_init": 0,
+   "n_total": 11
+  },
+  {
+   "name": "loop_comptime",
+   "factor": "control",
+   "withheld": false,
+   "csl": "for (@range(u16, 16)) |i| { c[i] = a[i] + b[i]; }",
+   "machine_observed": {
+    "load": 32,
+    "store": 16,
+    "alu": 16,
+    "actvt": 1
+   },
+   "machine_predicted": {
+    "load": 32,
+    "alu": 16,
+    "store": 16,
+    "actvt": 1
+   },
+   "machine_exact": true,
+   "ir_observed": {
+    "alloca": 4,
+    "bitcast": 3,
+    "call": 3,
+    "store": 5,
+    "br": 14,
+    "8": 1,
+    "phi": 3,
+    "icmp": 4,
+    "11": 1,
+    "sub": 1,
+    "13": 1,
+    "14": 1,
+    "16": 1,
+    "18": 1,
+    "19": 1,
+    "load": 8,
+    "22": 1,
+    "24": 1,
+    "25": 1,
+    "getelementptr": 3,
+    "add": 3,
+    "39": 1,
+    "41": 1,
+    "42": 1,
+    "43": 1,
+    "ret": 1,
+    "call:llvm.memcpy.p0i8.p0i8.i32": 2,
+    "call:llvm.sdr.actvt.r": 1
+   },
+   "ir_predicted": null,
+   "ir_exact": false,
+   "ir_in_scope": false,
+   "n_body": 65,
+   "n_init": 0,
+   "n_total": 65
+  },
+  {
+   "name": "loop_runtime",
+   "factor": "control",
+   "withheld": false,
+   "csl": "var n: u16 = @as(u16, k[0]);\n  var i: u16 = 0;\n  while (i < n) : (i += 1) { c[i] = a[i] + b[i]; }",
+   "machine_observed": {
+    "load": 3,
+    "store": 1,
+    "alu": 4,
+    "addr": 10,
+    "ctrl": 4,
+    "actvt": 1
+   },
+   "machine_predicted": {
+    "load": 3,
+    "alu": 3,
+    "store": 1,
+    "addr": 10,
+    "ctrl": 4,
+    "actvt": 1
+   },
+   "machine_exact": false,
+   "ir_observed": {
+    "alloca": 2,
+    "load": 9,
+    "store": 4,
+    "br": 14,
+    "4": 1,
+    "phi": 3,
+    "icmp": 4,
+    "7": 1,
+    "sub": 1,
+    "9": 1,
+    "10": 1,
+    "12": 1,
+    "14": 1,
+    "15": 1,
+    "19": 1,
+    "21": 1,
+    "22": 1,
+    "getelementptr": 3,
+    "add": 2,
+    "34": 1,
+    "36": 1,
+    "37": 1,
+    "call": 1,
+    "38": 1,
+    "ret": 1,
+    "call:llvm.sdr.actvt.r": 1
+   },
+   "ir_predicted": null,
+   "ir_exact": false,
+   "ir_in_scope": false,
+   "n_body": 22,
+   "n_init": 1,
+   "n_total": 23
+  },
+  {
+   "name": "dsd16",
+   "factor": "execution form",
+   "withheld": false,
+   "csl": "@add16(cd, ad, bd);",
+   "machine_observed": {
+    "desc": 3,
+    "vecop": 1,
+    "actvt": 1
+   },
+   "machine_predicted": {
+    "desc": 3,
+    "vecop": 1,
+    "actvt": 1
+   },
+   "machine_exact": true,
+   "ir_observed": {
+    "call": 5,
+    "ret": 1,
+    "call:llvm.sdr.lddwds": 1,
+    "call:llvm.sdr.lds0wds": 1,
+    "call:llvm.sdr.lds1wds": 1,
+    "call:llvm.sdr.add16.ds0s1": 1,
+    "call:llvm.sdr.actvt.r": 1
+   },
+   "ir_predicted": {
+    "call": 5,
+    "ret": 1,
+    "call:llvm.sdr.lddwds": 1,
+    "call:llvm.sdr.lds0wds": 1,
+    "call:llvm.sdr.lds1wds": 1,
+    "call:llvm.sdr.actvt.r": 1,
+    "call:llvm.sdr.add16.ds0s1": 1
+   },
+   "ir_exact": true,
+   "ir_in_scope": true,
+   "n_body": 5,
+   "n_init": 0,
+   "n_total": 5
+  },
+  {
+   "name": "W_index_inplace",
+   "factor": "withheld",
+   "withheld": true,
+   "csl": "var i: u16 = @as(u16, idx[0]);\n  a[i] = a[i] + b[i];",
+   "machine_observed": {
+    "load": 3,
+    "store": 1,
+    "alu": 1,
+    "addr": 7,
+    "actvt": 1
+   },
+   "machine_predicted": {
+    "load": 3,
+    "alu": 1,
+    "store": 1,
+    "addr": 7,
+    "actvt": 1
+   },
+   "machine_exact": true,
+   "ir_observed": {
+    "alloca": 1,
+    "load": 6,
+    "store": 2,
+    "getelementptr": 3,
+    "add": 1,
+    "call": 1,
+    "ret": 1,
+    "call:llvm.sdr.actvt.r": 1
+   },
+   "ir_predicted": null,
+   "ir_exact": false,
+   "ir_in_scope": false,
+   "n_body": 13,
+   "n_init": 0,
+   "n_total": 13
+  },
+  {
+   "name": "W_const_in_loop",
+   "factor": "withheld",
+   "withheld": true,
+   "csl": "for (@range(u16, 8)) |i| { c[i] = a[0] + 5; }",
+   "machine_observed": {
+    "load": 1,
+    "store": 8,
+    "alu": 1,
+    "actvt": 1
+   },
+   "machine_predicted": {
+    "load": 1,
+    "alu": 1,
+    "store": 8,
+    "actvt": 1
+   },
+   "machine_exact": true,
+   "ir_observed": {
+    "alloca": 4,
+    "bitcast": 3,
+    "call": 3,
+    "store": 5,
+    "br": 14,
+    "8": 1,
+    "phi": 3,
+    "icmp": 4,
+    "11": 1,
+    "sub": 1,
+    "13": 1,
+    "14": 1,
+    "16": 1,
+    "18": 1,
+    "19": 1,
+    "load": 5,
+    "22": 1,
+    "24": 1,
+    "25": 1,
+    "add": 3,
+    "getelementptr": 1,
+    "34": 1,
+    "36": 1,
+    "37": 1,
+    "38": 1,
+    "ret": 1,
+    "call:llvm.memcpy.p0i8.p0i8.i32": 2,
+    "call:llvm.sdr.actvt.r": 1
+   },
+   "ir_predicted": null,
+   "ir_exact": false,
+   "ir_in_scope": false,
+   "n_body": 9,
+   "n_init": 2,
+   "n_total": 11
+  },
+  {
+   "name": "W_chain_in_loop",
+   "factor": "withheld",
+   "withheld": true,
+   "csl": "var n: u16 = @as(u16, k[0]);\n  var i: u16 = 1;\n  while (i < n) : (i += 1) { c[i] = c[i - 1] + b[i]; }",
+   "machine_observed": {
+    "load": 3,
+    "store": 1,
+    "alu": 3,
+    "addr": 7,
+    "ctrl": 4,
+    "actvt": 1
+   },
+   "machine_predicted": {
+    "load": 3,
+    "alu": 3,
+    "store": 1,
+    "addr": 7,
+    "ctrl": 4,
+    "actvt": 1
+   },
+   "machine_exact": true,
+   "ir_observed": {
+    "alloca": 2,
+    "load": 9,
+    "store": 4,
+    "br": 14,
+    "4": 1,
+    "phi": 3,
+    "icmp": 4,
+    "7": 1,
+    "sub": 2,
+    "9": 1,
+    "10": 1,
+    "12": 1,
+    "14": 1,
+    "15": 1,
+    "19": 1,
+    "21": 1,
+    "22": 1,
+    "getelementptr": 3,
+    "add": 2,
+    "35": 1,
+    "37": 1,
+    "38": 1,
+    "call": 1,
+    "39": 1,
+    "ret": 1,
+    "call:llvm.sdr.actvt.r": 1
+   },
+   "ir_predicted": null,
+   "ir_exact": false,
+   "ir_in_scope": false,
+   "n_body": 19,
+   "n_init": 0,
+   "n_total": 19
+  },
+  {
+   "name": "W_dsd_inplace",
+   "factor": "withheld",
+   "withheld": true,
+   "csl": "@add16(ad, ad, bd);",
+   "machine_observed": {
+    "desc": 2,
+    "vecop": 1,
+    "actvt": 1
+   },
+   "machine_predicted": {
+    "desc": 2,
+    "vecop": 1,
+    "actvt": 1
+   },
+   "machine_exact": true,
+   "ir_observed": {
+    "call": 4,
+    "ret": 1,
+    "call:llvm.sdr.lds0wds": 1,
+    "call:llvm.sdr.lds1wds": 1,
+    "call:llvm.sdr.add16.s0s0s1": 1,
+    "call:llvm.sdr.actvt.r": 1
+   },
+   "ir_predicted": {
+    "call": 4,
+    "ret": 1,
+    "call:llvm.sdr.lds0wds": 1,
+    "call:llvm.sdr.lds1wds": 1,
+    "call:llvm.sdr.actvt.r": 1,
+    "call:llvm.sdr.add16.s0s0s1": 1
+   },
+   "ir_exact": true,
+   "ir_in_scope": true,
+   "n_body": 4,
+   "n_init": 0,
+   "n_total": 4
+  }
+ ],
+ "rules": [
+  {
+   "id": "F1",
+   "boundary": "CSL -> captured IR",
+   "name": "straight-line statements lower one-to-one",
+   "when": "any straight-line add over array elements",
+   "result": "each statement contributes its own loads, add and store; nothing is shared between statements",
+   "cases": [
+    "base",
+    "use_expr_twice",
+    "operand_shared",
+    "pair_independent"
+   ],
+   "tested": "verified for one to two statements over i16[64] arrays",
+   "untested": "statement counts beyond two, and types other than i16",
+   "evidence": "compiled"
+  },
+  {
+   "id": "F2",
+   "boundary": "CSL -> captured IR",
+   "name": "a constant operand is already an IR immediate",
+   "when": "exactly one operand is a source-level constant",
+   "result": "`add i16 %x, 7`; the backend emits `add16.nf rD = rS, 0x7` with no load and no `movri`",
+   "cases": [
+    "const_one"
+   ],
+   "tested": "verified for the constant 7",
+   "untested": "the immediate encoding boundary: no constant near the field width has been tried",
+   "evidence": "compiled"
+  },
+  {
+   "id": "F3",
+   "boundary": "CSL -> captured IR",
+   "name": "source constants are folded before capture",
+   "when": "both operands are source-level constants",
+   "result": "no `add` in the captured IR; the folded value appears in the `store`, and the backend materialises it with one `movri`",
+   "cases": [
+    "const_both"
+   ],
+   "tested": "verified for 3 + 7",
+   "untested": "overflow behaviour at the i16 boundary",
+   "evidence": "compiled"
+  },
+  {
+   "id": "F4",
+   "boundary": "CSL -> captured IR",
+   "name": "DSD form, descriptor sharing and DSR indices are all chosen before capture",
+   "when": "the add is written as `@add16` over `mem1d_dsd` operands",
+   "result": "the captured IR holds the descriptor-load intrinsics and one arithmetic intrinsic whose NAME encodes the operand roles and whose ARGUMENTS are the DSR indices: `llvm.sdr.add16.ds0s1(1, 1, 1)` with three descriptor loads, against `llvm.sdr.add16.s0s0s1(0, 0, 1)` with two",
+   "cases": [
+    "dsd16",
+    "W_dsd_inplace"
+   ],
+   "tested": "verified for a 16-element mem1d_dsd add, and for the same DSD value passed as both destination and source-0",
+   "untested": "two separately constructed DSDs describing equivalent accesses; a destination aliasing source-1 rather than source-0",
+   "evidence": "compiled",
+   "note": "corrects an earlier version of this model, which placed descriptor elision and DSR assignment after the capture boundary and presented the two-descriptor form as a machine-code counterexample. It is visible in the IR."
+  },
+  {
+   "id": "F5",
+   "boundary": "CSL -> captured IR",
+   "name": "loops and named locals survive as structure",
+   "when": "a `var` local, or a loop of any kind",
+   "result": "a named local appears as an `alloca` with a store and reload; a loop appears as `br` and `phi`, never unrolled",
+   "cases": [
+    "use_value_twice",
+    "index_runtime",
+    "loop_comptime",
+    "loop_runtime"
+   ],
+   "tested": "verified for comptime `@range` and data-bounded `while`",
+   "untested": "nested loops",
+   "evidence": "compiled"
+  },
+  {
+   "id": "M1",
+   "boundary": "captured IR -> machine",
+   "name": "a repeated read or expression costs nothing extra",
+   "when": "the same element is read again, or the same expression recomputed, with no intervening write to it",
+   "result": "one load and one add in total",
+   "cases": [
+    "use_expr_twice",
+    "operand_shared"
+   ],
+   "tested": "verified within a single basic block",
+   "untested": "across basic blocks",
+   "evidence": "compiled",
+   "note": "counterexample: pair_independent reads four distinct elements and keeps four loads"
+  },
+  {
+   "id": "M2",
+   "boundary": "captured IR -> machine",
+   "name": "a value just stored is not reloaded",
+   "when": "an add reads an element a preceding statement stored",
+   "result": "no load; the stored register is reused. Also holds across iterations of a data-bounded loop, where only the initial element is loaded before the loop",
+   "cases": [
+    "pair_dependent",
+    "W_chain_in_loop"
+   ],
+   "tested": "verified within a block and across iterations of one loop",
+   "untested": "whether an aliasing runtime index defeats it",
+   "evidence": "compiled"
+  },
+  {
+   "id": "M3",
+   "boundary": "captured IR -> machine",
+   "name": "index-independent work in a comptime loop is computed once",
+   "when": "the body of a comptime-range loop does not depend on the induction variable",
+   "result": "the invariant load and add appear once; only the stores repeat. The observed endpoints do not distinguish hoisting-then-unrolling from unrolling-then-redundancy-elimination, and no order is claimed",
+   "cases": [
+    "W_const_in_loop"
+   ],
+   "tested": "verified at trip count 8 with a single-statement body",
+   "untested": "other trip counts and body sizes",
+   "evidence": "compiled"
+  },
+  {
+   "id": "M4",
+   "boundary": "captured IR -> machine",
+   "name": "a comptime loop is fully unrolled; a data-bounded loop is not",
+   "when": "the trip count is a comptime `@range`, or a runtime value",
+   "result": "comptime: N copies of the body, no loop control at all. Data-bounded: the body once, plus 4 ctrl (guard compare and branch, latch compare and branch) and 2 alu (induction variable materialised and incremented), with the array bases hoisted out of the body",
+   "cases": [
+    "loop_comptime",
+    "loop_runtime",
+    "W_chain_in_loop"
+   ],
+   "tested": "verified at comptime trip counts 8 and 16, and for two data-bounded loops",
+   "untested": "the unrolling policy at other trip counts or body sizes -- the threshold is unknown, so no trip count outside {8, 16} is predicted",
+   "evidence": "compiled"
+  },
+  {
+   "id": "M5",
+   "boundary": "captured IR -> machine",
+   "name": "runtime indexing costs a fixed address sequence",
+   "when": "an element is addressed by a runtime value (a `getelementptr` with a non-constant index)",
+   "result": "1 index scale, then per array base a `movri` and a base+offset `add`, then one address narrow per access; a read and a write of the same element share one address register",
+   "cases": [
+    "index_runtime",
+    "loop_runtime",
+    "W_index_inplace"
+   ],
+   "tested": "verified for two and three array bases",
+   "untested": "more bases than three, and indices wider than u16",
+   "evidence": "compiled",
+   "note": "the scale-then-narrow pair is an addressing-mode artifact: the index is scaled to bytes to add to the base, then narrowed back to words for the indirect access"
+  },
+  {
+   "id": "M6",
+   "boundary": "captured IR -> machine",
+   "name": "a DSD intrinsic becomes its descriptor loads and one vector instruction",
+   "when": "the captured IR contains `llvm.sdr.add16.*`",
+   "result": "one machine instruction per descriptor-load intrinsic plus one vector op, independent of element count",
+   "cases": [
+    "dsd16",
+    "W_dsd_inplace"
+   ],
+   "tested": "verified for 16 elements",
+   "untested": "element counts requiring more than one descriptor group",
+   "evidence": "compiled"
+  },
+  {
+   "id": "M7",
+   "boundary": "captured IR -> machine",
+   "name": "a runtime if/else over the same operation is tail-merged",
+   "when": "both arms perform the same add and store to the same destination",
+   "result": "a compare, a conditional jump and a jump; per-arm loads only; then ONE add and ONE store shared by both paths",
+   "cases": [
+    "select_runtime"
+   ],
+   "tested": "verified for two arms differing only in which elements they read",
+   "untested": "arms performing different operations, and more than two arms",
+   "evidence": "compiled",
+   "note": "differs from the atomic-ops if/else, whose arms stored constants and became full predication with no jump"
+  },
+  {
+   "id": "X1",
+   "boundary": "captured IR -> machine",
+   "name": "OPEN: register-to-register copies are not modelled",
+   "when": "a data-bounded loop whose induction variable is copied between registers",
+   "result": "`loop_runtime` contains one `fmov16.nf r0 = r5` that no rule accounts for; `W_chain_in_loop`, the other data-bounded loop, has no such copy. Register allocation is outside this model, so M4 under-predicts loop_runtime by one alu",
+   "cases": [
+    "loop_runtime"
+   ],
+   "tested": "observed in one of two data-bounded loops",
+   "untested": "what determines whether the copy appears",
+   "evidence": "compiled",
+   "open": true
+  }
+ ]
+}

@@ -1,0 +1,31 @@
+param memcpy_params: comptime_struct;
+param n_per_pe: u16;
+param px: i16;
+param C_REDUCE: color;
+
+const EXIT: local_task_id = @get_local_task_id(9);
+const sys_mod = @import_module("<memcpy/memcpy>", memcpy_params);
+
+var x_array = @zeros([n_per_pe]f32);
+var result_buf = @zeros([1]f32);
+var ptr_x: [*]f32 = &x_array;
+var ptr_result: [*]f32 = &result_buf;
+
+fn compute() void {
+  var acc: f32 = 0.0;
+  var i: u16 = 0;
+  while (i < n_per_pe) : (i += 1) {
+    acc += x_array[i];
+  }
+  result_buf[0] = acc;
+  @activate(EXIT);
+}
+
+task f_exit() void { sys_mod.unblock_cmd_stream(); }
+
+comptime {
+  @bind_local_task(f_exit, EXIT);
+  @export_symbol(ptr_x, "x");
+  @export_symbol(ptr_result, "result");
+  @export_symbol(compute);
+}

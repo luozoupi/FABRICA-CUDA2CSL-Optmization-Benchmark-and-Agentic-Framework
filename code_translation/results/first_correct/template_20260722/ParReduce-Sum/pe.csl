@@ -1,0 +1,251 @@
+// ParReduce-Sum compute file: 4-PE linear tree reduction.
+// Each PE sums its n_per_pe local elements, then a 2-phase tree reduce:
+//   Phase 1 (C_PHASE1): PE3->PE2, PE1->PE0   (parallel, 1 hop WEST)
+//   Phase 2 (C_PHASE2): PE2->PE0 (relayed through PE1 by the router)
+// Result (global sum) lands on PE(0,0).
+//
+// Critical correctness point (per DESIGN.md): PE0 must consume BOTH its
+// phase-1 wavelet (from PE1) AND its phase-2 wavelet (from PE2), adding
+// each into its accumulator, sequenced phase-1 -> phase-2. Otherwise the
+// PE2+PE3 subtree is silently dropped.
+
+param memcpy_params: comptime_struct;
+param n_per_pe: u16;
+param px: i16;
+param width: i16;
+param C_PHASE1: color;
+param C_PHASE2: color;
+
+const sys_mod = @import_module("<memcpy/memcpy>", memcpy_params);
+const timestamp = @import_module("<time>");
+
+// ------------------------------------------------------------------
+// Host-visible buffers
+// ------------------------------------------------------------------
+var x = @zeros([n_per_pe]f32);           // local input chunk
+var ptr_x: [*]f32 = &x;
+
+var result = @zeros([1]f32);             // global sum (only PE0 read by host)
+var ptr_result: [*]f32 = &result;
+
+var maxmin_time = @zeros([3]f32);        // timestamps (only PE0 read by host)
+var ptr_maxmin_time: [*]f32 = &maxmin_time;
+
+// Timestamp scratch
+var tscStartBuffer = @zeros([timestamp.tsc_size_words]u16);
+var tscEndBuffer   = @zeros([timestamp.tsc_size_words]u16);
+
+// ------------------------------------------------------------------
+// Scalars
+// ------------------------------------------------------------------
+var local_sum: f32 = 0.0;   // sum of this PE's local elements
+var acc:       f32 = 0.0;   // running accumulator (used on receivers)
+var recv_buf   = @zeros([1]f32);  // staging for a single received f32
+
+// ------------------------------------------------------------------
+// Task IDs (local band 8..20)
+// ------------------------------------------------------------------
+const startup_id:     local_task_id = @get_local_task_id(9);
+const phase1_done_id: local_task_id = @get_local_task_id(10);
+const phase2_done_id: local_task_id = @get_local_task_id(11);
+
+// ------------------------------------------------------------------
+// Queues (user queues start at 2; 0,1 reserved by memcpy)
+// ------------------------------------------------------------------
+const p1_iq: input_queue  = @get_input_queue(2);
+const p1_oq: output_queue = @get_output_queue(2);
+const p2_iq: input_queue  = @get_input_queue(3);
+const p2_oq: output_queue = @get_output_queue(3);
+
+// Microthreads (0..7)
+const p1_ut: ut_id = @get_ut_id(2);
+const p2_ut: ut_id = @get_ut_id(3);
+
+// ------------------------------------------------------------------
+// DSDs
+// ------------------------------------------------------------------
+// Single-word DSD over recv_buf for fabric send/recv of one f32.
+const recv1_dsd = @get_dsd(mem1d_dsd, .{
+  .tensor_access = |i|{1} -> recv_buf[i]
+});
+
+// Phase 1 fabric DSDs
+const p1_in_dsd = @get_dsd(fabin_dsd, .{
+  .extent = 1, .fabric_color = C_PHASE1, .input_queue = p1_iq
+});
+const p1_out_dsd = @get_dsd(fabout_dsd, .{
+  .extent = 1, .fabric_color = C_PHASE1, .output_queue = p1_oq
+});
+
+// Phase 2 fabric DSDs
+const p2_in_dsd = @get_dsd(fabin_dsd, .{
+  .extent = 1, .fabric_color = C_PHASE2, .input_queue = p2_iq
+});
+const p2_out_dsd = @get_dsd(fabout_dsd, .{
+  .extent = 1, .fabric_color = C_PHASE2, .output_queue = p2_oq
+});
+
+// ------------------------------------------------------------------
+// Local partial-sum computation.  Sequential accumulation in fixed
+// index order (replaces CUDA intra-block shared-memory tree reduce).
+// ------------------------------------------------------------------
+fn compute_local_sum() void {
+  local_sum = 0.0;
+  var i: i16 = 0;
+  while (i < @as(i16, n_per_pe)) : (i += 1) {
+    local_sum += x[i];
+  }
+}
+
+// ------------------------------------------------------------------
+// Finish: PE0 stores result, all PEs record timestamp and unblock.
+// ------------------------------------------------------------------
+fn finish() void {
+  timestamp.get_timestamp(&tscEndBuffer);
+  // Pack tsc words into maxmin_time (3 f32 lanes hold 6 u16 words:
+  // start[0..2] then end[0..2]). Host reconstructs the u48 delta.
+  maxmin_time[0] = @bitcast(f32, @as(u32, tscStartBuffer[0]) |
+                                 (@as(u32, tscStartBuffer[1]) << 16));
+  maxmin_time[1] = @bitcast(f32, @as(u32, tscStartBuffer[2]) |
+                                 (@as(u32, tscEndBuffer[0]) << 16));
+  maxmin_time[2] = @bitcast(f32, @as(u32, tscEndBuffer[1]) |
+                                 (@as(u32, tscEndBuffer[2]) << 16));
+  sys_mod.unblock_cmd_stream();
+}
+
+// ------------------------------------------------------------------
+// PE0: phase-1 receive completion -> we have (local0 + PE1's sum) in acc,
+// now post phase-2 receive (PE2's subtree sum).
+// ------------------------------------------------------------------
+task phase1_done() void {
+  acc += recv_buf[0];   // acc = local0 + local1
+  // Post the phase-2 receive; when it completes, phase2_done fires.
+  @fmovs(recv1_dsd, p2_in_dsd, .{
+    .async = true, .ut_id = p2_ut, .activate = phase2_done_id
+  });
+}
+
+// PE0: phase-2 receive completion -> add PE2 subtree, store, finish.
+task phase2_done() void {
+  acc += recv_buf[0];   // acc = local0+local1+local2+local3
+  result[0] = acc;
+  finish();
+}
+
+// ------------------------------------------------------------------
+// PE2: phase-1 receive completion -> we have (local2 + PE3) in acc,
+// now SEND that WEST on phase 2 toward PE0 (relayed through PE1).
+// ------------------------------------------------------------------
+task pe2_phase1_done() void {
+  acc += recv_buf[0];   // acc = local2 + local3
+  recv_buf[0] = acc;    // stage the value to send
+  @fmovs(p2_out_dsd, recv1_dsd, .{
+    .async = true, .ut_id = p2_ut, .activate = phase2_done_id
+  });
+}
+
+// PE2: phase-2 send completion -> nothing to store, just finish.
+task pe2_send_done() void {
+  finish();
+}
+
+// ------------------------------------------------------------------
+// PE1/PE3 sender completion -> just finish.
+// ------------------------------------------------------------------
+task sender_done() void {
+  finish();
+}
+
+// ------------------------------------------------------------------
+// Entrypoint (host launches "compute").  Role dispatch by px.
+// ------------------------------------------------------------------
+fn compute() void {
+  timestamp.get_timestamp(&tscStartBuffer);
+
+  // 1) Local partial sum on every PE.
+  compute_local_sum();
+  acc = local_sum;
+
+  if (px == 0) {
+    // PE0 receiver: phase-1 recv (from PE1), then chained phase-2 recv.
+    @fmovs(recv1_dsd, p1_in_dsd, .{
+      .async = true, .ut_id = p1_ut, .activate = phase1_done_id
+    });
+  } else if (px == 1) {
+    // PE1 sender on phase 1 (RAMP->WEST). Phase-2 is a pure router relay
+    // (EAST->WEST) requiring NO CE involvement — do not touch C_PHASE2.
+    recv_buf[0] = local_sum;
+    @fmovs(p1_out_dsd, recv1_dsd, .{
+      .async = true, .ut_id = p1_ut, .activate = phase1_done_id
+    });
+  } else if (px == 2) {
+    // PE2 receiver on phase 1 (from PE3), then sender on phase 2 (to PE0).
+    @fmovs(recv1_dsd, p1_in_dsd, .{
+      .async = true, .ut_id = p1_ut, .activate = phase1_done_id
+    });
+  } else {
+    // PE3 sender on phase 1 (RAMP->WEST).
+    recv_buf[0] = local_sum;
+    @fmovs(p1_out_dsd, recv1_dsd, .{
+      .async = true, .ut_id = p1_ut, .activate = phase1_done_id
+    });
+  }
+}
+
+// ------------------------------------------------------------------
+// Startup task: enable the timestamp counter exactly once.
+// ------------------------------------------------------------------
+task startup_task() void {
+  timestamp.enable_tsc();
+}
+
+// ------------------------------------------------------------------
+// Task bindings.
+//
+// phase1_done_id is reused as the phase-1 completion callback across roles,
+// but its BODY differs per PE.  We bind role-specific tasks to the SAME
+// local_task_id via a comptime px switch (only one binding compiled per tile).
+// ------------------------------------------------------------------
+comptime {
+  // enable_tsc must run before any tic/toc.
+  @bind_local_task(startup_task, startup_id);
+  @activate(startup_id);
+
+  // Phase-1 completion behavior depends on the PE's role:
+  //   px==0 : PE0 folds PE1's value, then posts phase-2 receive.
+  //   px==2 : PE2 folds PE3's value, then sends phase-2 west.
+  //   px==1,3 : sender, just finish after send drains.
+  if (px == 0) {
+    @bind_local_task(phase1_done, phase1_done_id);
+    @bind_local_task(phase2_done, phase2_done_id);
+  } else if (px == 2) {
+    @bind_local_task(pe2_phase1_done, phase1_done_id);
+    @bind_local_task(pe2_send_done,   phase2_done_id);
+  } else {
+    // px == 1 or px == 3 : both are phase-1 senders.
+    @bind_local_task(sender_done, phase1_done_id);
+  }
+
+  // Initialize user queues on WSE-3.
+  if (@is_arch("wse3")) {
+    if (px == 0) {
+      @initialize_queue(p1_iq, .{ .color = C_PHASE1 });
+      @initialize_queue(p2_iq, .{ .color = C_PHASE2 });
+    } else if (px == 1) {
+      @initialize_queue(p1_oq, .{ .color = C_PHASE1 });
+    } else if (px == 2) {
+      @initialize_queue(p1_iq, .{ .color = C_PHASE1 });
+      @initialize_queue(p2_oq, .{ .color = C_PHASE2 });
+    } else {
+      // px == 3
+      @initialize_queue(p1_oq, .{ .color = C_PHASE1 });
+    }
+  }
+}
+
+comptime {
+  @export_symbol(ptr_x, "x");
+  @export_symbol(ptr_result, "result");
+  @export_symbol(ptr_maxmin_time, "maxmin_time");
+  @export_symbol(compute, "compute");
+}

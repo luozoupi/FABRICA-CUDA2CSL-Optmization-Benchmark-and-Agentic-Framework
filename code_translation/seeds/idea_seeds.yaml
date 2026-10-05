@@ -1,0 +1,417 @@
+# Curated seed list for explore_csl.py Mode B (autonomous ideas).
+#
+# Schema (per seed):
+#   id, title, summary, acceptance_numerics, suggested_mesh, features (tags),
+#   notes (optional).
+#
+# Difficulty is a TWO-AXIS rating — both axes are 1=easy / 2=medium / 3=hard.
+#
+#   layout_complexity:
+#     1  single PE, no fabric routing, no collectives
+#     2  1D mesh (P×1 or 1×B), simple memcpy broadcast/reduce, no halo
+#     3  2D mesh with fabric routing, collectives_2d, halo exchange, OR
+#        microthread-style task chaining; multi-color routing
+#
+#   compute_complexity:
+#     1  elementwise / scalar broadcast / trivial reduction
+#     2  fused multi-pass (e.g. softmax, layernorm), small DSD pipelines
+#     3  iterative (CG, Cholesky), wafer-scale algorithms (SUMMA, FFT),
+#        irregular memory (SpMM, gather/scatter)
+#
+#   min_pe_count: hard floor on @set_rectangle(W,H) — W*H must be ≥ this.
+#                 Computed from layout_complexity by default; explicit
+#                 override allowed for kernels that need a specific shape
+#                 (e.g. SUMMA needs P*P with P≥2).
+#
+# Tier (easy/medium/hard) is derived as max(layout, compute).
+# IdeaSampler weights by gap-against-kernels-tree as before.
+#
+# Add new seeds by appending entries. No code change needed.
+
+seeds:
+
+  # =========================================================================
+  # TIER 1 — easy/easy (single-PE, trivial compute) — sanity baselines
+  # =========================================================================
+
+  - id: relu_inplace
+    title: ReLU activation in place on a tile
+    summary: |
+      y[i] = max(0, x[i]). Trivial elementwise op; useful as a sanity baseline
+      for new comm patterns.
+    acceptance_numerics: |
+      x = randn(...); expected = numpy.maximum(x, 0); assert_allclose
+      rtol=1e-6.
+    suggested_mesh: single_pe
+    min_pe_count: 1
+    layout_complexity: 1
+    compute_complexity: 1
+    features: [elementwise, mem1d_dsd]
+
+  - id: dropout_mask_apply
+    title: Apply a precomputed dropout mask
+    summary: |
+      y = x * mask * scale, where mask is binary {0,1} and scale = 1/(1-p).
+      Host computes the mask; device only applies it.
+    acceptance_numerics: |
+      Reference = (x * mask * scale).astype(f32); assert_allclose rtol=1e-5.
+    suggested_mesh: single_pe
+    min_pe_count: 1
+    layout_complexity: 1
+    compute_complexity: 1
+    features: [elementwise, broadcast_scalar]
+
+  # =========================================================================
+  # TIER 2a — easy layout, medium compute (single PE, non-trivial math)
+  # =========================================================================
+
+  - id: row_softmax_single_pe
+    title: Row-wise softmax on ONE PE
+    summary: |
+      Compute softmax of a single 1D vector of length N (≤ 1024) on one PE,
+      using the standard subtract-max trick for numerical stability. Single-PE
+      kernel deliberately — exercises @exp, two-pass reduction, normalization
+      without any fabric routing.
+    acceptance_numerics: |
+      x = randn(N).astype(f32); expected = numpy.exp(x - x.max());
+      expected /= expected.sum(); assert_allclose rtol=1e-4, atol=1e-5.
+    suggested_mesh: single_pe
+    min_pe_count: 1
+    layout_complexity: 1
+    compute_complexity: 2
+    features: [exp, reduction, normalization]
+
+  - id: top_k_single_pe
+    title: Top-K elements (small K, single PE)
+    summary: |
+      Return the K largest values + their indices from a length-N vector held
+      on one PE. K small (≤32). Use repeated max-and-mask.
+    acceptance_numerics: |
+      Sort device output and numpy.partition(x,-K)[-K:] before
+      assert_array_equal.
+    suggested_mesh: single_pe
+    min_pe_count: 1
+    layout_complexity: 1
+    compute_complexity: 2
+    features: [top_k, scalar_loops_over_arrays]
+
+  - id: gather_index_single_pe
+    title: Indexed gather y[i] = x[idx[i]] on ONE PE
+    summary: |
+      idx shape (M,), values in [0,N). Single-PE: tests indirection and
+      bounds-safe indexing without fabric.
+    acceptance_numerics: |
+      expected = x[idx]; assert_array_equal.
+    suggested_mesh: single_pe
+    min_pe_count: 1
+    layout_complexity: 1
+    compute_complexity: 2
+    features: [scatter_gather, indirection]
+
+  # =========================================================================
+  # TIER 2b — medium layout, easy compute (1D mesh, trivial per-PE math)
+  # =========================================================================
+  #
+  # This is the "fabric routing under load" tier — math is trivial but the
+  # kernel MUST distribute work across PEs and do a host-broadcast or
+  # row/col reduction.
+
+  - id: saxpy_1d_row
+    title: SAXPY across a 1D row of PEs
+    summary: |
+      y = alpha * x + y for length-N vectors distributed across P PEs along
+      the row axis. alpha is broadcast from host. Must use a P×1 mesh and
+      memcpy_h2d_rowbcast (or equivalent) for alpha; per-PE compute is
+      pure @fmacs over the local tile.
+    acceptance_numerics: |
+      alpha (scalar), x (N), y (N) with fixed seed; expected = alpha*x+y;
+      assert_allclose rtol=1e-5.
+    suggested_mesh: 1d_row
+    min_pe_count: 4
+    layout_complexity: 2
+    compute_complexity: 1
+    features: [vector, fmacs, broadcast_scalar, mem1d_dsd]
+
+  - id: vector_reduction_sum_row
+    title: 1D vector reduction across a row of PEs
+    summary: |
+      Sum a length-N vector distributed across P PEs along the row axis,
+      reducing to a single scalar on PE (0,0). Uses partial-sum per PE +
+      row-axis @fadds collective (collectives_2d) or equivalent.
+    acceptance_numerics: |
+      x = randn(N).astype(f32); expected = float(x.sum()); assert_allclose
+      rtol=1e-4, atol=1e-4.
+    suggested_mesh: 1d_row
+    min_pe_count: 4
+    layout_complexity: 2
+    compute_complexity: 1
+    features: [reduction, collectives, fadds]
+
+  - id: dot_product_row
+    title: Dot product across a 1D row of PEs
+    summary: |
+      s = sum(x[i]*y[i]) for length-N vectors distributed across P PEs along
+      the row axis. Per-PE local @fmacs followed by a row-axis reduce.
+    acceptance_numerics: |
+      x,y = randn(N),randn(N); expected = float(x@y); assert_allclose
+      rtol=1e-4.
+    suggested_mesh: 1d_row
+    min_pe_count: 4
+    layout_complexity: 2
+    compute_complexity: 1
+    features: [vector, fmacs, reduction]
+
+  - id: relu_distributed
+    title: ReLU across a 1D row of PEs
+    summary: |
+      Same compute as relu_inplace but the input is partitioned across P PEs
+      along the row axis. Tests memcpy_h2d row-major distribution.
+    acceptance_numerics: |
+      expected = numpy.maximum(x, 0); assert_allclose rtol=1e-6.
+    suggested_mesh: 1d_row
+    min_pe_count: 4
+    layout_complexity: 2
+    compute_complexity: 1
+    features: [elementwise, distributed_io]
+
+  # =========================================================================
+  # TIER 2c — medium layout + medium compute (1D mesh, fused pipelines)
+  # =========================================================================
+
+  - id: row_softmax_distributed
+    title: Row-wise softmax with rows distributed across PEs
+    summary: |
+      (B, N) matrix; rows distributed along Y axis (one row per PE). Each PE
+      runs the local softmax on its row — no inter-PE reduction needed for
+      the math (the N axis fits on one PE), but the row distribution itself
+      requires a P×1 column mesh.
+    acceptance_numerics: |
+      X = randn(B,N).astype(f32); expected = numpy.exp(X - X.max(1,keepdims=True));
+      expected /= expected.sum(1,keepdims=True); assert_allclose rtol=1e-4.
+    suggested_mesh: 1d_col
+    min_pe_count: 4
+    layout_complexity: 2
+    compute_complexity: 2
+    features: [exp, reduction, normalization, distributed_io]
+
+  - id: layernorm_distributed
+    title: LayerNorm over (B, N) with rows distributed across PEs
+    summary: |
+      Standard layernorm per row; rows distributed along Y axis. gamma + beta
+      replicated to every PE; mean + var computed locally per row.
+    acceptance_numerics: |
+      Reference: standard numpy implementation; assert_allclose rtol=1e-3,
+      atol=1e-4.
+    suggested_mesh: 1d_col
+    min_pe_count: 4
+    layout_complexity: 2
+    compute_complexity: 2
+    features: [reduction, normalization, broadcast]
+
+  - id: rmsnorm_distributed
+    title: RMSNorm over (B, N) with rows distributed across PEs
+    summary: |
+      y = (x / sqrt(mean(x*x)+eps)) * gamma per row of (B,N), rows distributed
+      along Y. Tests local reductions + broadcast scalar.
+    acceptance_numerics: |
+      Reference: x / sqrt((x*x).mean(-1,keepdims=True) + eps) * gamma;
+      assert_allclose rtol=1e-3, atol=1e-4.
+    suggested_mesh: 1d_col
+    min_pe_count: 4
+    layout_complexity: 2
+    compute_complexity: 2
+    features: [reduction, normalization, sqrt]
+
+  - id: conv1d_direct_row
+    title: 1D direct conv with halo exchange across a row of PEs
+    summary: |
+      y[i] = sum_k w[k] * x[i+k-K/2] for length-N input across P PEs along
+      the row. Each PE owns N/P + 2*(K/2) elements after halo exchange with
+      its left and right neighbours.
+    acceptance_numerics: |
+      expected = numpy.convolve(x, w, mode="same"); assert_allclose rtol=1e-4.
+    suggested_mesh: 1d_row
+    min_pe_count: 4
+    layout_complexity: 2
+    compute_complexity: 2
+    features: [stencil_1d, halo_exchange, fmacs]
+
+  - id: histogram_1d_row
+    title: 1D histogram via per-PE counts + row reduction
+    summary: |
+      counts[bin(x[i])] += 1 for x in [0,1) and B bins. Each PE owns a
+      shard of x, builds a local B-bin histogram; partial histograms are
+      reduced along the row.
+    acceptance_numerics: |
+      expected = numpy.histogram(x, bins=B, range=(0,1))[0];
+      assert_array_equal.
+    suggested_mesh: 1d_row
+    min_pe_count: 4
+    layout_complexity: 2
+    compute_complexity: 2
+    features: [scatter, reduction, atomic_free_local]
+
+  - id: prefix_sum_row
+    title: Inclusive prefix sum across a row of PEs
+    summary: |
+      y[i] = sum(x[0..=i]) for length-N vector distributed across P PEs.
+      Up-sweep / down-sweep tree variant on a 1D mesh — block sums computed
+      locally, exclusive prefix communicated along the row, then each PE
+      finalizes its local prefix.
+    acceptance_numerics: |
+      x = randn(N).astype(f32); expected = numpy.cumsum(x); assert_allclose
+      rtol=1e-4.
+    suggested_mesh: 1d_row
+    min_pe_count: 4
+    layout_complexity: 2
+    compute_complexity: 2
+    features: [scan, prefix_sum, two_phase_tree]
+
+  - id: pairwise_max_reduce_row
+    title: Tree max-reduction across a row of PEs
+    summary: |
+      Reduce a length-N vector to its scalar max via a log-depth pairwise
+      tree on a row of PEs. Exercises both local reduction and inter-PE
+      fabric send/recv.
+    acceptance_numerics: |
+      expected = float(x.max()); assert_allclose atol=0.
+    suggested_mesh: 1d_row
+    min_pe_count: 4
+    layout_complexity: 2
+    compute_complexity: 2
+    features: [reduction, max, tree]
+
+  # =========================================================================
+  # TIER 3a — hard layout, medium compute (2D mesh, halo / collectives)
+  # =========================================================================
+  #
+  # These are the kernels where the existing translation workflow tends to
+  # fail. They REQUIRE multi-PE layouts plus non-trivial routing — single-PE
+  # collapses fail the mesh gate.
+
+  - id: stencil_5pt_2d_halo
+    title: 5-point 2D Laplacian stencil with NSEW halo exchange
+    summary: |
+      y[i,j] = -4*x[i,j] + x[i-1,j] + x[i+1,j] + x[i,j-1] + x[i,j+1] on a
+      tiled 2D grid. Each PE owns a Wt×Ht tile and exchanges 1-element halos
+      with its 4 cardinal neighbours. Dirichlet zero boundary at the edge.
+    acceptance_numerics: |
+      Reference computed in numpy with scipy.signal.convolve2d or hand-rolled;
+      assert_allclose rtol=1e-4.
+    suggested_mesh: 2d_block
+    min_pe_count: 4
+    layout_complexity: 3
+    compute_complexity: 2
+    features: [halo_exchange, stencil, fabric_routing, ping_pong]
+
+  - id: transpose_2d_swap
+    title: Block-mapped transpose Y[j,i] = X[i,j]
+    summary: |
+      Each PE owns an Mt×Nt tile of X and emits its transpose to a peer
+      PE via the fabric — PE(r,c) receives PE(c,r)'s tile, transposed. Pure
+      fabric routing, no compute beyond the local in-place transpose.
+    acceptance_numerics: |
+      assert_array_equal(device_Y, X.T).
+    suggested_mesh: 2d_block
+    min_pe_count: 4
+    layout_complexity: 3
+    compute_complexity: 2
+    features: [routing, swap_pe, fabric, no_compute]
+
+  - id: row_broadcast_apply
+    title: Row-broadcast then per-PE elementwise apply
+    summary: |
+      Vector v of length P broadcast across each row; each PE in row r
+      multiplies its local tile by v[r]. Tests memcpy_h2d_rowbcast plus
+      simple compute. Mesh must be P×P with P≥2.
+    acceptance_numerics: |
+      expected[r,c,:] = X[r,c,:] * v[r]; assert_allclose rtol=1e-6.
+    suggested_mesh: 2d_block
+    min_pe_count: 4
+    layout_complexity: 3
+    compute_complexity: 1
+    features: [broadcast, row_bcast, collectives]
+
+  # =========================================================================
+  # TIER 3b — hard layout, hard compute (the FFT / Cholesky / SUMMA tier)
+  # =========================================================================
+  #
+  # These are the kernels the seed catalog deliberately included to force the
+  # explorer onto the same hard ground translation lives on.
+
+  - id: matmul_summa_2d
+    title: Blocked dense matmul C = A @ B on a 2D mesh via SUMMA
+    summary: |
+      Mesh P×P (P≥2). A row-tiled along Y, B col-tiled along X, partial
+      products accumulated locally then row+col broadcast / reduce. Use
+      collectives_2d. Single-PE collapse is FORBIDDEN — the mesh gate will
+      reject @set_rectangle(1,1).
+    acceptance_numerics: |
+      A,B = randn(M,K),randn(K,N); expected = A @ B; assert_allclose
+      rtol=1e-3, atol=1e-3. M and K must be ≥ P*4.
+    suggested_mesh: 2d_block
+    min_pe_count: 4
+    layout_complexity: 3
+    compute_complexity: 3
+    features: [gemm, summa, broadcast, collectives]
+
+  - id: matvec_batched_2d
+    title: Batched matrix-vector product on a 2D mesh
+    summary: |
+      B matrices of shape (M,N) and B vectors (N,); B batches distributed
+      along Y, GEMV row-tiling along X. The B axis must be ≥ Py and M
+      must be ≥ Px so neither axis collapses to 1.
+    acceptance_numerics: |
+      expected = numpy.einsum("bmn,bn->bm", A, x); assert_allclose rtol=1e-3.
+    suggested_mesh: 2d_block
+    min_pe_count: 4
+    layout_complexity: 3
+    compute_complexity: 3
+    features: [batched, gemv, fmacs, mem1d_dsd, collectives]
+
+  - id: power_iteration_2d
+    title: One step of power iteration on a 2D mesh
+    summary: |
+      y = A @ x followed by x = y / ||y||. A is row-tiled along Y, x is
+      replicated. After local GEMV, reduce along the row axis to get y,
+      then a global reduce for ||y||. Host drives multi-step iteration.
+    acceptance_numerics: |
+      device_y / norm(device_y) ≈ (A @ x) / norm(A @ x); assert_allclose
+      rtol=1e-3.
+    suggested_mesh: 2d_block
+    min_pe_count: 4
+    layout_complexity: 3
+    compute_complexity: 3
+    features: [gemv, normalization, iterative, collectives]
+
+  - id: segmented_sum_distributed
+    title: Segmented sum with cross-PE boundary fix-up
+    summary: |
+      values[N], segment_ids[N] (non-decreasing, in [0, G)). Each PE owns a
+      contiguous chunk; local sums are computed, then a single boundary
+      fix-up along the row reconciles segments that span PE boundaries.
+      Single-PE collapse forbidden.
+    acceptance_numerics: |
+      Reference = numpy.bincount(segment_ids, values, minlength=G);
+      assert_allclose rtol=1e-4.
+    suggested_mesh: 1d_row
+    min_pe_count: 4
+    layout_complexity: 3
+    compute_complexity: 3
+    features: [segmented_reduce, sparse_pattern, halo_exchange]
+
+  - id: spmm_csr_dense_distributed
+    title: Sparse-times-dense matmul Y = A @ B on a 2D mesh
+    summary: |
+      A is a sparse CSR matrix (M×K) row-tiled along Y; B is dense (K×N)
+      column-tiled or broadcast along X. Each PE consumes its local rows
+      of A, indexes into B (potentially via fabric requests), accumulates
+      the local rows of Y.
+    acceptance_numerics: |
+      Reference: scipy.sparse.csr_matrix(A).toarray() @ B; assert_allclose
+      rtol=1e-4.
+    suggested_mesh: 2d_block
+    min_pe_count: 4
+    layout_complexity: 3
+    compute_complexity: 3
+    features: [spmm, sparse, irregular_memory, collectives]

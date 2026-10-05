@@ -11,6 +11,7 @@ import logging
 import glob
 import os
 import subprocess
+import signal
 import time
 from dataclasses import asdict, dataclass
 from datetime import datetime
@@ -230,24 +231,36 @@ def run_subprocess(command: str,
     start = time.time()
     effective_command = compose_shell_command(command, shell_setup=shell_setup)
     try:
-        proc = subprocess.run(
+        proc = subprocess.Popen(
             effective_command,
             shell=True,
             executable="/bin/bash",
             cwd=cwd,
             env=env,
-            capture_output=True,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
             text=True,
-            timeout=timeout,
+            start_new_session=True,
         )
+        try:
+            stdout, stderr = proc.communicate(timeout=timeout)
+        except (subprocess.TimeoutExpired, KeyboardInterrupt):
+            # A failed generated kernel may leave cs_python/simulator children
+            # alive if only the shell is killed. Stop this command's group.
+            try:
+                os.killpg(proc.pid, signal.SIGKILL)
+            except ProcessLookupError:
+                pass
+            proc.communicate()
+            raise
         elapsed_ms = (time.time() - start) * 1000.0
-        blocked_reason = classify_blocked_reason(proc.stdout, proc.stderr)
+        blocked_reason = classify_blocked_reason(stdout, stderr)
         return CommandResult(
             command=command,
             cwd=os.path.abspath(cwd or os.getcwd()),
             returncode=proc.returncode,
-            stdout=proc.stdout,
-            stderr=proc.stderr,
+            stdout=stdout,
+            stderr=stderr,
             elapsed_ms=round(elapsed_ms, 3),
             blocked_reason=blocked_reason,
         )
@@ -495,8 +508,8 @@ def _usage_field(usage: Any, *names: str) -> Optional[int]:
 
 
 def _record_usage(provider: str, model: str, messages: List[Dict[str, str]], max_tokens: int,
-                  usage: Any, reply: str) -> None:
-    if os.getenv("XKERNEL_USAGE_LOG", "1") != "1":
+                  usage: Any, reply: str, **metadata: Any) -> None:
+    if os.getenv("XKERNEL_USAGE_LOG", "1") != "1" and not os.getenv("XKERNEL_CALL_ARCHIVE"):
         return
     import time as _time
     prompt_chars = sum(len(m.get("content", "") or "") for m in messages if isinstance(m.get("content"), str))
@@ -510,9 +523,23 @@ def _record_usage(provider: str, model: str, messages: List[Dict[str, str]], max
         "reply_chars": len(reply or ""),
         "input_tokens": _usage_field(usage, "input_tokens", "prompt_tokens"),
         "output_tokens": _usage_field(usage, "output_tokens", "completion_tokens"),
-        "cache_read_input_tokens": _usage_field(usage, "cache_read_input_tokens"),
+        "cache_read_input_tokens": _usage_field(usage, "cache_read_input_tokens", "prompt_cache_hit_tokens"),
         "cache_creation_input_tokens": _usage_field(usage, "cache_creation_input_tokens"),
+        **metadata,
     })
+    from model_artifacts import archive_call
+    archived = archive_call(USAGE_LOG[-1], messages, reply)
+    if archived:
+        USAGE_LOG[-1].update(archived)
+    # Persist each completed call, including calls from workflows that later fail.
+    journal = os.getenv("XKERNEL_USAGE_JSONL")
+    if journal:
+        ensure_directory(os.path.dirname(os.path.abspath(journal)))
+        with open(journal, "a", encoding="utf-8") as fh:
+            fh.write(json.dumps(USAGE_LOG[-1]) + "\n")
+    expected = os.getenv("XKERNEL_EXPECT_RESPONSE_MODEL")
+    if expected and metadata.get("response_model") != expected:
+        raise RuntimeError("API response model identity does not match the frozen experiment")
 
 
 def usage_summary() -> Dict[str, Any]:
@@ -542,6 +569,8 @@ def llm_complete(client: Any,
                  max_retries: int = 3) -> str:
     """Route to Anthropic messages, OpenAI responses, or chat.completions based on model name.
     Retries with exponential back-off on rate limit errors."""
+    if os.getenv("XKERNEL_DATA_PARTITION") == "final_test":
+        raise RuntimeError("Model calls are forbidden during final-test evaluation")
     import logging
     import time
 
@@ -564,24 +593,86 @@ def llm_complete(client: Any,
                 _record_usage("anthropic", model, messages, max_tokens, getattr(response, "usage", None), text)
                 return text
             elif is_responses_api_model(model):
-                response = bound.responses.create(
-                    model=model,
-                    input=messages,
-                    max_output_tokens=max_tokens,
-                    reasoning={"effort": "high"},
-                )
-                text = response.output_text or ""
-                _record_usage("openai_responses", model, messages, max_tokens, getattr(response, "usage", None), text)
-                return text
+                # A reasoning model spends the SAME budget on its hidden reasoning and on the
+                # visible answer. When the budget runs out during reasoning the call still
+                # succeeds and output_text is EMPTY -- which downstream looks like a model that
+                # answered nothing, not like truncation, and silently scores as a failure
+                # (observed 2026-09-20: gpt-5.6-luna, 2,500 tokens, 2,500 of them reasoning, 0
+                # characters of answer on every probe item). So: detect it and retry once with
+                # a budget large enough for reasoning plus an answer.
+                effort = os.getenv("XKERNEL_OPENAI_REASONING_EFFORT", "high")
+                budget = min(max(max_tokens, int(os.getenv("XKERNEL_OPENAI_MIN_TOKENS", "0"))),
+                             int(os.getenv("XKERNEL_LLM_TOKEN_CAP", "128000")))
+                for content_attempt in range(2):
+                    started = time.monotonic()
+                    response = bound.responses.create(
+                        model=model,
+                        input=messages,
+                        max_output_tokens=budget,
+                        reasoning={"effort": effort},
+                    )
+                    text = response.output_text or ""
+                    truncated = (getattr(getattr(response, "incomplete_details", None), "reason", None)
+                                 == "max_output_tokens")
+                    usage = getattr(response, "usage", None)
+                    _record_usage("openai_responses", model, messages, budget, usage, text,
+                                  response_model=getattr(response, "model", None),
+                                  response_status=getattr(response, "status", None),
+                                  reasoning_effort=effort,
+                                  incomplete_reason=getattr(getattr(response, "incomplete_details", None), "reason", None),
+                                  reasoning_tokens=_usage_field(getattr(usage, "output_tokens_details", None), "reasoning_tokens"),
+                                  cache_read_input_tokens=_usage_field(getattr(usage, "input_tokens_details", None), "cached_tokens"),
+                                  elapsed_s=round(time.monotonic() - started, 3))
+                    if not truncated:
+                        return text
+                    if content_attempt:
+                        raise RuntimeError("OpenAI response truncated after the bounded token-budget retry")
+                    next_budget = min(max(budget * 4, 16000), int(os.getenv("XKERNEL_LLM_TOKEN_CAP", "128000")))
+                    logging.warning("[llm] %s response truncated at %d tokens; retrying with %d",
+                                    model, budget, next_budget)
+                    budget = next_budget
             else:
-                response = bound.chat.completions.create(
-                    model=model,
-                    messages=messages,
-                    max_tokens=max_tokens,
-                )
-                msg = response.choices[0].message
-                text = msg.content or getattr(msg, "reasoning", None) or ""
-                _record_usage("openai_chat", model, messages, max_tokens, getattr(response, "usage", None), text)
+                deepseek = model.lower().startswith("deepseek-")
+                extra: Dict[str, Any] = {}
+                budget = max_tokens
+                if deepseek:
+                    thinking = os.getenv("XKERNEL_DEEPSEEK_THINKING", "enabled")
+                    effort = os.getenv("XKERNEL_DEEPSEEK_EFFORT", "high")
+                    if thinking not in {"enabled", "disabled"}:
+                        raise ValueError("XKERNEL_DEEPSEEK_THINKING must be enabled or disabled")
+                    if effort not in {"low", "high", "max"}:
+                        raise ValueError("XKERNEL_DEEPSEEK_EFFORT must be low, high or max")
+                    extra["extra_body"] = {"thinking": {"type": thinking}}
+                    if thinking == "enabled":
+                        extra["reasoning_effort"] = effort
+                        # The budget includes reasoning, even for a short reviewer verdict.
+                        budget = max(budget, int(os.getenv("XKERNEL_DEEPSEEK_MIN_TOKENS", "16384")))
+                budget = min(budget, int(os.getenv("XKERNEL_LLM_TOKEN_CAP", "65536"))) if deepseek else budget
+                for content_attempt in range(2):
+                    started = time.monotonic()
+                    response = bound.chat.completions.create(
+                        model=model, messages=messages, max_tokens=budget, **extra)
+                    msg = response.choices[0].message
+                    # Reasoning is not a final answer or a CSL artifact.
+                    text = (msg.content or "") if deepseek else (msg.content or getattr(msg, "reasoning", None) or "")
+                    finish = getattr(response.choices[0], "finish_reason", None)
+                    _record_usage("deepseek" if deepseek else "openai_chat", model, messages, budget,
+                                  getattr(response, "usage", None), text,
+                                  response_model=getattr(response, "model", None), finish_reason=finish,
+                                  elapsed_s=round(time.monotonic() - started, 3),
+                                  **({"thinking": thinking, "reasoning_effort": effort if thinking == "enabled" else None}
+                                     if deepseek else {}))
+                    if deepseek and finish == "length":
+                        retry_budget = min(int(os.getenv("XKERNEL_DEEPSEEK_RETRY_TOKENS", "65536")),
+                                           int(os.getenv("XKERNEL_LLM_TOKEN_CAP", "65536")))
+                        if content_attempt == 0 and budget < retry_budget:
+                            logging.warning("DeepSeek output truncated at %d tokens; retrying once at %d", budget, retry_budget)
+                            budget = retry_budget
+                            continue
+                        raise RuntimeError("DeepSeek output truncated at the maximum configured token budget")
+                    break
+                if deepseek and not text:
+                    raise RuntimeError("DeepSeek returned no final content; check the token budget and usage journal")
                 return text
         except Exception as exc:
             is_rate = _is_rate_limit_error(exc)

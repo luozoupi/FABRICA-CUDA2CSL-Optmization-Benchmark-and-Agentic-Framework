@@ -168,12 +168,12 @@ def calculate_xs_reference(n_starting_particles_per_pe, n_nuclides, n_gridpoints
             low = n*n_gridpoints_per_nuclide
             high = low + n_gridpoints_per_nuclide
             lower_index = iterative_binary_search(nuclide_energy_grids[low:high], e)
-
+ 
             # Interpolation factor
             e_lower = nuclide_energy_grids[n * n_gridpoints_per_nuclide + lower_index]
             e_higher = nuclide_energy_grids[n * n_gridpoints_per_nuclide + lower_index + 1]
             f = (e_higher - e) / (e_higher - e_lower)
-
+ 
             # Lookup xs data, interpolate, and store to particle array
             for xs in range(n_xs):
                 xs_lower = nuclide_xs_data[n * n_gridpoints_per_nuclide * n_xs + lower_index * n_xs + xs]
@@ -186,7 +186,7 @@ def calculate_xs_reference(n_starting_particles_per_pe, n_nuclides, n_gridpoints
 # Generation of randomized XS data
 #####################################################################
 
-# Allocates and initializes XS data arrays. This function
+# Allocates and initializes XS data arrays. This function 
 # assumes that the same XS data will be copied to all PE's, for
 # studying more ideal cases.
 def init_xs_data_replicated(n_nuclides, n_gridpoints_per_nuclide, n_xs, seed):
@@ -225,7 +225,7 @@ def init_xs_data_unique(n_nuclides, n_gridpoints_per_nuclide, n_xs, width, heigh
     egrid = np.linspace(0.0, 1.0, n_gridpoints_per_nuclide * height, dtype=np.float32)
     # Sort nuclide energy grid
     egrid = np.sort(egrid)
-
+    
     # assign replicated nuclide energy grid
     for i in range(n_nuclides * width):
         low = i*n_gridpoints_per_nuclide*height
@@ -296,7 +296,7 @@ def convolute_xs_data_for_memcpy_fast(n_nuclides, n_gridpoints_per_nuclide, n_xs
 def init_particle_data(n_starting_particles_per_pe, n_xs, seed):
     particle_e =           np.random.random(n_starting_particles_per_pe).astype(np.float32)
     particle_xs          = np.zeros(n_starting_particles_per_pe * n_xs, dtype=np.float32)
-
+    
     return particle_e, particle_xs, seed
 
 # This is the most complex version, that samples particle energies randomly, and enforces
@@ -327,7 +327,7 @@ def init_particle_data_load_balanced(n_starting_particles_per_pe, n_xs, width, h
         val_high = neg_2D[0,row*n_gridpoints_per_nuclide + n_gridpoints_per_nuclide - 1]
         #print("sampling particles for row %d between %.2f and %.2f" %(row, val_low, val_high))
         particle_e[row,:] = np.random.uniform(val_low, val_high,n_starting_particles_per_pe * width).astype(np.float32)
-
+    
     # At this point, each column is perfectly load balanced already, but the distribution of
     # particles in the column is non-random. Thus, if left alone, the sorting stage would not be
     # needed. Thus, we shuffle each column of the particle energy matrix independently, so that
@@ -364,7 +364,7 @@ def init_particle_data_in_bands(n_starting_particles_per_pe, n_xs, width, height
 
     # Compute bounds
     bounds = []
-
+    
     for row in range(height):
         val_low  = neg_2D[0,row*n_gridpoints_per_nuclide]
         val_high = neg_2D[0,row*n_gridpoints_per_nuclide + n_gridpoints_per_nuclide - 1]
@@ -545,7 +545,7 @@ for p in range(particle_e.size):
     #particle_contiguous[particle_offset] = reference_particles[p].energy # Sorted (for testing)
     for xs in range(n_xs):
         particle_contiguous[particle_offset + 1 + xs] = particle_xs[p * n_xs + xs]
-
+        
 print("Reformatting nuclide XS grids...")
 conv_nuclide_xs =  convolute_xs_data_for_memcpy_fast(n_nuclides, n_gridpoints_per_nuclide, n_xs, width, height)
 
@@ -616,7 +616,7 @@ for tile_row in range(tile_height):
             #handle = copy_array_host_to_device(edata, 'nuclide_energy_grids', sdk, 1, 1, starting_col+col, starting_row+row)
             #handles.append(handle)
 
-
+        
         handle = copy_array_host_to_device(xs_buf, 'nuclide_xs_data', sdk, width, height, starting_col, starting_row)
         handles.append(handle)
         handle = copy_array_host_to_device(e_buf, 'nuclide_energy_grids', sdk, width, height, starting_col, starting_row)
@@ -819,7 +819,7 @@ if VALIDATE_RESULTS:
 
             experimental_particles.sort(key=lambda p: p.energy)
             reference_particles.sort(key=lambda p: p.energy)
-
+    
             print("  Validating...")
 
             #print("egrids:")
@@ -837,7 +837,7 @@ if VALIDATE_RESULTS:
                 #print(experimental_particles[p].xs)
                 np.testing.assert_allclose(reference_particles[p].energy, experimental_particles[p].energy, atol=0.01, rtol=0)
                 np.testing.assert_allclose(reference_particles[p].xs, experimental_particles[p].xs, atol=0.01, rtol=0)
-
+        
             print("  CALCULATIONS CORRECT")
 
     #print("REFERENCE PARTICLE OBJECTS")

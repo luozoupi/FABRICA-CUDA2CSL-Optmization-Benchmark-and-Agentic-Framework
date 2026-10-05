@@ -1,0 +1,379 @@
+{
+  "scope": "Local sparse controlled-kernel simulator profiling; remote O1I agent bundles unavailable.",
+  "cases": 6,
+  "launches": 144,
+  "multiplication_results_checked": 258048,
+  "repeated_input_profile_checks": [
+    {
+      "case": "descriptor-n1",
+      "family": "uniform8",
+      "launches": 12,
+      "identical_event_profiles": true
+    },
+    {
+      "case": "descriptor-n1",
+      "family": "skew8",
+      "launches": 12,
+      "identical_event_profiles": true
+    },
+    {
+      "case": "descriptor-n16",
+      "family": "uniform8",
+      "launches": 12,
+      "identical_event_profiles": true
+    },
+    {
+      "case": "descriptor-n16",
+      "family": "skew8",
+      "launches": 12,
+      "identical_event_profiles": true
+    },
+    {
+      "case": "descriptor-n4",
+      "family": "uniform8",
+      "launches": 12,
+      "identical_event_profiles": true
+    },
+    {
+      "case": "descriptor-n4",
+      "family": "skew8",
+      "launches": 12,
+      "identical_event_profiles": true
+    },
+    {
+      "case": "hoisted-n16",
+      "family": "uniform8",
+      "launches": 12,
+      "identical_event_profiles": true
+    },
+    {
+      "case": "hoisted-n16",
+      "family": "skew8",
+      "launches": 12,
+      "identical_event_profiles": true
+    },
+    {
+      "case": "scalar-n1",
+      "family": "uniform8",
+      "launches": 12,
+      "identical_event_profiles": true
+    },
+    {
+      "case": "scalar-n1",
+      "family": "skew8",
+      "launches": 12,
+      "identical_event_profiles": true
+    },
+    {
+      "case": "scalar-n4",
+      "family": "uniform8",
+      "launches": 12,
+      "identical_event_profiles": true
+    },
+    {
+      "case": "scalar-n4",
+      "family": "skew8",
+      "launches": 12,
+      "identical_event_profiles": true
+    }
+  ],
+  "rows": [
+    {
+      "case": "descriptor-n1",
+      "family": "uniform8",
+      "nnz": 256,
+      "width": 1,
+      "cycles": 11429,
+      "dispatches": 8633,
+      "configuration_stores": 3072,
+      "explicit_nops": 1540,
+      "arithmetic_dispatches": 256,
+      "arithmetic_elements": {
+        "FMACS": 256
+      },
+      "flops_per_cycle": 0.04479832006299764,
+      "fmac_result_span": {
+        "min": 1,
+        "median": 1.0,
+        "max": 1
+      }
+    },
+    {
+      "case": "descriptor-n1",
+      "family": "skew8",
+      "nnz": 256,
+      "width": 1,
+      "cycles": 11513,
+      "dispatches": 8549,
+      "configuration_stores": 3072,
+      "explicit_nops": 1540,
+      "arithmetic_dispatches": 256,
+      "arithmetic_elements": {
+        "FMACS": 256
+      },
+      "flops_per_cycle": 0.04447146703726223,
+      "fmac_result_span": {
+        "min": 1,
+        "median": 1.0,
+        "max": 1
+      }
+    },
+    {
+      "case": "descriptor-n16",
+      "family": "uniform8",
+      "nnz": 256,
+      "width": 16,
+      "cycles": 19420,
+      "dispatches": 8632,
+      "configuration_stores": 3072,
+      "explicit_nops": 1540,
+      "arithmetic_dispatches": 256,
+      "arithmetic_elements": {
+        "FMACS": 4096
+      },
+      "flops_per_cycle": 0.42183316168898044,
+      "fmac_result_span": {
+        "min": 31,
+        "median": 31.0,
+        "max": 31
+      }
+    },
+    {
+      "case": "descriptor-n16",
+      "family": "skew8",
+      "nnz": 256,
+      "width": 16,
+      "cycles": 19504,
+      "dispatches": 8548,
+      "configuration_stores": 3072,
+      "explicit_nops": 1540,
+      "arithmetic_dispatches": 256,
+      "arithmetic_elements": {
+        "FMACS": 4096
+      },
+      "flops_per_cycle": 0.4200164068908942,
+      "fmac_result_span": {
+        "min": 31,
+        "median": 31.0,
+        "max": 31
+      }
+    },
+    {
+      "case": "descriptor-n4",
+      "family": "uniform8",
+      "nnz": 256,
+      "width": 4,
+      "cycles": 13181,
+      "dispatches": 8633,
+      "configuration_stores": 3072,
+      "explicit_nops": 1540,
+      "arithmetic_dispatches": 256,
+      "arithmetic_elements": {
+        "FMACS": 1024
+      },
+      "flops_per_cycle": 0.15537516121690312,
+      "fmac_result_span": {
+        "min": 7,
+        "median": 7.0,
+        "max": 7
+      }
+    },
+    {
+      "case": "descriptor-n4",
+      "family": "skew8",
+      "nnz": 256,
+      "width": 4,
+      "cycles": 13265,
+      "dispatches": 8549,
+      "configuration_stores": 3072,
+      "explicit_nops": 1540,
+      "arithmetic_dispatches": 256,
+      "arithmetic_elements": {
+        "FMACS": 1024
+      },
+      "flops_per_cycle": 0.1543912551828119,
+      "fmac_result_span": {
+        "min": 7,
+        "median": 7.0,
+        "max": 7
+      }
+    },
+    {
+      "case": "hoisted-n16",
+      "family": "uniform8",
+      "nnz": 256,
+      "width": 16,
+      "cycles": 19420,
+      "dispatches": 8632,
+      "configuration_stores": 3072,
+      "explicit_nops": 1540,
+      "arithmetic_dispatches": 256,
+      "arithmetic_elements": {
+        "FMACS": 4096
+      },
+      "flops_per_cycle": 0.42183316168898044,
+      "fmac_result_span": {
+        "min": 31,
+        "median": 31.0,
+        "max": 31
+      }
+    },
+    {
+      "case": "hoisted-n16",
+      "family": "skew8",
+      "nnz": 256,
+      "width": 16,
+      "cycles": 19504,
+      "dispatches": 8548,
+      "configuration_stores": 3072,
+      "explicit_nops": 1540,
+      "arithmetic_dispatches": 256,
+      "arithmetic_elements": {
+        "FMACS": 4096
+      },
+      "flops_per_cycle": 0.4200164068908942,
+      "fmac_result_span": {
+        "min": 31,
+        "median": 31.0,
+        "max": 31
+      }
+    },
+    {
+      "case": "scalar-n1",
+      "family": "uniform8",
+      "nnz": 256,
+      "width": 1,
+      "cycles": 8163,
+      "dispatches": 4855,
+      "configuration_stores": 0,
+      "explicit_nops": 4,
+      "arithmetic_dispatches": 512,
+      "arithmetic_elements": {
+        "FMULS": 256,
+        "FADDS": 256
+      },
+      "flops_per_cycle": 0.06272203846625016,
+      "fmac_result_span": null
+    },
+    {
+      "case": "scalar-n1",
+      "family": "skew8",
+      "nnz": 256,
+      "width": 1,
+      "cycles": 7883,
+      "dispatches": 4519,
+      "configuration_stores": 0,
+      "explicit_nops": 4,
+      "arithmetic_dispatches": 512,
+      "arithmetic_elements": {
+        "FMULS": 256,
+        "FADDS": 256
+      },
+      "flops_per_cycle": 0.06494989217303057,
+      "fmac_result_span": null
+    },
+    {
+      "case": "scalar-n4",
+      "family": "uniform8",
+      "nnz": 256,
+      "width": 4,
+      "cycles": 18044,
+      "dispatches": 12280,
+      "configuration_stores": 0,
+      "explicit_nops": 4,
+      "arithmetic_dispatches": 2048,
+      "arithmetic_elements": {
+        "FMULS": 1024,
+        "FADDS": 1024
+      },
+      "flops_per_cycle": 0.11350033252050543,
+      "fmac_result_span": null
+    },
+    {
+      "case": "scalar-n4",
+      "family": "skew8",
+      "nnz": 256,
+      "width": 4,
+      "cycles": 16784,
+      "dispatches": 11300,
+      "configuration_stores": 0,
+      "explicit_nops": 4,
+      "arithmetic_dispatches": 2048,
+      "arithmetic_elements": {
+        "FMULS": 1024,
+        "FADDS": 1024
+      },
+      "flops_per_cycle": 0.12202097235462345,
+      "fmac_result_span": null
+    }
+  ],
+  "hoisting_same_observed_profile": true,
+  "step_example": {
+    "row": 0,
+    "nonzero_position": 0,
+    "row_begin": 0,
+    "row_end": 8,
+    "column": 0,
+    "sparse_value": -2.0,
+    "dense_row": [
+      -3.0,
+      -1.0,
+      1.0,
+      3.0
+    ],
+    "instruction": {
+      "uid": 19769,
+      "pc": 462,
+      "dispatch_cycle": 38142,
+      "assembly": "fmacs [dds1] = [s0ds1], [s1ds1], d0",
+      "source": "@fmacs(cd,cd,bd,values[p]);",
+      "result_elements": 4,
+      "first_operand_events": [
+        {
+          "cycle": 38146,
+          "lane": 0,
+          "values": {
+            "dest": 6.0,
+            "src0": 0.0,
+            "src1": -3.0,
+            "src2": -2.0
+          }
+        },
+        {
+          "cycle": 38148,
+          "lane": 0,
+          "values": {
+            "dest": 2.0,
+            "src0": 0.0,
+            "src1": -1.0,
+            "src2": -2.0
+          }
+        },
+        {
+          "cycle": 38150,
+          "lane": 0,
+          "values": {
+            "dest": -2.0,
+            "src0": 0.0,
+            "src1": 1.0,
+            "src2": -2.0
+          }
+        },
+        {
+          "cycle": 38152,
+          "lane": 0,
+          "values": {
+            "dest": -6.0,
+            "src0": 0.0,
+            "src1": 3.0,
+            "src2": -2.0
+          }
+        }
+      ]
+    }
+  },
+  "provenance": {
+    "trace_analysis_sha256": "ed5fb3deccea9ac256680ce7ea772924c3ec6b916203003f7bae06272a61312f",
+    "registration_sha256": "44f04d6d6fc559a444b3279f056e73e2a08c5208563f0dfebf5293138f77c6f9"
+  }
+}

@@ -1,0 +1,9 @@
+# Artifact hashes cover bytes, including original line endings.
+* -text
+# Preserve upstream/generated whitespace in these frozen copies.
+browser_check.py -whitespace
+comparison-figure.svg -whitespace
+ge_kernels.cuh -whitespace
+gpu-results.csv -whitespace
+wse-results.csv -whitespace
+vendor/ge-spmm/spmm_test.cu -whitespace

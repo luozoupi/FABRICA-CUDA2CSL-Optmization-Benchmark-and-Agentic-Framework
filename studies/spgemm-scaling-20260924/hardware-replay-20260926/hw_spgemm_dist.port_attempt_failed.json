@@ -1,0 +1,202 @@
+[
+  {
+    "kernel_dir": "<path>",
+    "csl_main": "layout.csl",
+    "params": {
+      "S": "4",
+      "N": "16",
+      "K": "16",
+      "R": "1",
+      "AC": "16",
+      "BC": "48",
+      "OC": "16",
+      "W": "16"
+    },
+    "arms": {
+      "sim": {
+        "status": "fail",
+        "cycles_send": null,
+        "success_marker": false,
+        "returncode": 1,
+        "wall_s": 0.2,
+        "reason": "run.py exited 1",
+        "stdout_tail": "",
+        "stderr_tail": "Traceback (most recent call last):\n  File \"/tmp/hwsim_9ai8qrxj/bundle/_hw_vs_sim_driver_sim.py\", line 8, in <module>\n    runpy.run_path('/tmp/hwsim_9ai8qrxj/bundle/run.py', run_name=\"__main__\")\n  File \"<frozen runpy>\", line 291, in run_path\n  File \"<frozen runpy>\", line 98, in _run_module_code\n  File \"<frozen runpy>\", line 88, in _run_code\n  File \"/tmp/hwsim_9ai8qrxj/bundle/run.py\", line 10, in <module>\n    host.main()\n  File \"/tmp/hwsim_9ai8qrxj/bundle/host.py\", line 10, in main\n    for name,h in c['source_hashes'].items():assert hashlib.sha256(Path(name).read_bytes()).hexdigest()==h,name\n                                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: pe.csl\n"
+      },
+      "hw": {
+        "status": "fail",
+        "cycles_send": null,
+        "success_marker": false,
+        "returncode": 1,
+        "wall_s": 0.2,
+        "reason": "run.py exited 1",
+        "stdout_tail": "",
+        "stderr_tail": "Traceback (most recent call last):\n  File \"/tmp/hwsim_9ai8qrxj/bundle/_hw_vs_sim_driver_hw.py\", line 8, in <module>\n    runpy.run_path('/tmp/hwsim_9ai8qrxj/bundle/run.py', run_name=\"__main__\")\n  File \"<frozen runpy>\", line 291, in run_path\n  File \"<frozen runpy>\", line 98, in _run_module_code\n  File \"<frozen runpy>\", line 88, in _run_code\n  File \"/tmp/hwsim_9ai8qrxj/bundle/run.py\", line 10, in <module>\n    host.main()\n  File \"/tmp/hwsim_9ai8qrxj/bundle/host.py\", line 10, in main\n    for name,h in c['source_hashes'].items():assert hashlib.sha256(Path(name).read_bytes()).hexdigest()==h,name\n                                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: pe.csl\n"
+      }
+    },
+    "timing_method": "device_internal",
+    "hw_comparable": true,
+    "case": "strong-m16-k16-n16-p16-d3-full",
+    "wall_s": 111.1
+  },
+  {
+    "kernel_dir": "<path>",
+    "csl_main": "layout.csl",
+    "params": {
+      "S": "2",
+      "N": "16",
+      "K": "16",
+      "R": "4",
+      "AC": "32",
+      "BC": "48",
+      "OC": "36",
+      "W": "16"
+    },
+    "arms": {
+      "sim": {
+        "status": "fail",
+        "cycles_send": null,
+        "success_marker": false,
+        "returncode": 1,
+        "wall_s": 0.3,
+        "reason": "run.py exited 1",
+        "stdout_tail": "",
+        "stderr_tail": "Traceback (most recent call last):\n  File \"/tmp/hwsim_19u_ey7o/bundle/_hw_vs_sim_driver_sim.py\", line 8, in <module>\n    runpy.run_path('/tmp/hwsim_19u_ey7o/bundle/run.py', run_name=\"__main__\")\n  File \"<frozen runpy>\", line 291, in run_path\n  File \"<frozen runpy>\", line 98, in _run_module_code\n  File \"<frozen runpy>\", line 88, in _run_code\n  File \"/tmp/hwsim_19u_ey7o/bundle/run.py\", line 10, in <module>\n    host.main()\n  File \"/tmp/hwsim_19u_ey7o/bundle/host.py\", line 10, in main\n    for name,h in c['source_hashes'].items():assert hashlib.sha256(Path(name).read_bytes()).hexdigest()==h,name\n                                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: pe.csl\n"
+      },
+      "hw": {
+        "status": "fail",
+        "cycles_send": null,
+        "success_marker": false,
+        "returncode": 1,
+        "wall_s": 0.3,
+        "reason": "run.py exited 1",
+        "stdout_tail": "",
+        "stderr_tail": "Traceback (most recent call last):\n  File \"/tmp/hwsim_19u_ey7o/bundle/_hw_vs_sim_driver_hw.py\", line 8, in <module>\n    runpy.run_path('/tmp/hwsim_19u_ey7o/bundle/run.py', run_name=\"__main__\")\n  File \"<frozen runpy>\", line 291, in run_path\n  File \"<frozen runpy>\", line 98, in _run_module_code\n  File \"<frozen runpy>\", line 88, in _run_code\n  File \"/tmp/hwsim_19u_ey7o/bundle/run.py\", line 10, in <module>\n    host.main()\n  File \"/tmp/hwsim_19u_ey7o/bundle/host.py\", line 10, in main\n    for name,h in c['source_hashes'].items():assert hashlib.sha256(Path(name).read_bytes()).hexdigest()==h,name\n                                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: pe.csl\n"
+      }
+    },
+    "timing_method": "device_internal",
+    "hw_comparable": true,
+    "case": "strong-m16-k16-n16-p4-d3-full",
+    "wall_s": 120.8
+  },
+  {
+    "kernel_dir": "<path>",
+    "csl_main": "layout.csl",
+    "params": {
+      "S": "4",
+      "N": "64",
+      "K": "64",
+      "R": "4",
+      "AC": "68",
+      "BC": "192",
+      "OC": "204",
+      "W": "64"
+    },
+    "arms": {
+      "sim": {
+        "status": "fail",
+        "cycles_send": null,
+        "success_marker": false,
+        "returncode": 1,
+        "wall_s": 0.3,
+        "reason": "run.py exited 1",
+        "stdout_tail": "",
+        "stderr_tail": "Traceback (most recent call last):\n  File \"/tmp/hwsim_cewih6is/bundle/_hw_vs_sim_driver_sim.py\", line 8, in <module>\n    runpy.run_path('/tmp/hwsim_cewih6is/bundle/run.py', run_name=\"__main__\")\n  File \"<frozen runpy>\", line 291, in run_path\n  File \"<frozen runpy>\", line 98, in _run_module_code\n  File \"<frozen runpy>\", line 88, in _run_code\n  File \"/tmp/hwsim_cewih6is/bundle/run.py\", line 10, in <module>\n    host.main()\n  File \"/tmp/hwsim_cewih6is/bundle/host.py\", line 10, in main\n    for name,h in c['source_hashes'].items():assert hashlib.sha256(Path(name).read_bytes()).hexdigest()==h,name\n                                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: pe.csl\n"
+      },
+      "hw": {
+        "status": "fail",
+        "cycles_send": null,
+        "success_marker": false,
+        "returncode": 1,
+        "wall_s": 0.3,
+        "reason": "run.py exited 1",
+        "stdout_tail": "",
+        "stderr_tail": "Traceback (most recent call last):\n  File \"/tmp/hwsim_cewih6is/bundle/_hw_vs_sim_driver_hw.py\", line 8, in <module>\n    runpy.run_path('/tmp/hwsim_cewih6is/bundle/run.py', run_name=\"__main__\")\n  File \"<frozen runpy>\", line 291, in run_path\n  File \"<frozen runpy>\", line 98, in _run_module_code\n  File \"<frozen runpy>\", line 88, in _run_code\n  File \"/tmp/hwsim_cewih6is/bundle/run.py\", line 10, in <module>\n    host.main()\n  File \"/tmp/hwsim_cewih6is/bundle/host.py\", line 10, in main\n    for name,h in c['source_hashes'].items():assert hashlib.sha256(Path(name).read_bytes()).hexdigest()==h,name\n                                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: pe.csl\n"
+      }
+    },
+    "timing_method": "device_internal",
+    "hw_comparable": true,
+    "case": "strong-m64-k64-n64-p16-d3-full",
+    "wall_s": 120.8
+  },
+  {
+    "kernel_dir": "<path>",
+    "csl_main": "layout.csl",
+    "params": {
+      "S": "2",
+      "N": "64",
+      "K": "64",
+      "R": "16",
+      "AC": "136",
+      "BC": "192",
+      "OC": "408",
+      "W": "64"
+    },
+    "arms": {
+      "sim": {
+        "status": "fail",
+        "cycles_send": null,
+        "success_marker": false,
+        "returncode": 1,
+        "wall_s": 0.3,
+        "reason": "run.py exited 1",
+        "stdout_tail": "",
+        "stderr_tail": "Traceback (most recent call last):\n  File \"/tmp/hwsim_uemac_v5/bundle/_hw_vs_sim_driver_sim.py\", line 8, in <module>\n    runpy.run_path('/tmp/hwsim_uemac_v5/bundle/run.py', run_name=\"__main__\")\n  File \"<frozen runpy>\", line 291, in run_path\n  File \"<frozen runpy>\", line 98, in _run_module_code\n  File \"<frozen runpy>\", line 88, in _run_code\n  File \"/tmp/hwsim_uemac_v5/bundle/run.py\", line 10, in <module>\n    host.main()\n  File \"/tmp/hwsim_uemac_v5/bundle/host.py\", line 10, in main\n    for name,h in c['source_hashes'].items():assert hashlib.sha256(Path(name).read_bytes()).hexdigest()==h,name\n                                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: pe.csl\n"
+      },
+      "hw": {
+        "status": "fail",
+        "cycles_send": null,
+        "success_marker": false,
+        "returncode": 1,
+        "wall_s": 0.3,
+        "reason": "run.py exited 1",
+        "stdout_tail": "",
+        "stderr_tail": "Traceback (most recent call last):\n  File \"/tmp/hwsim_uemac_v5/bundle/_hw_vs_sim_driver_hw.py\", line 8, in <module>\n    runpy.run_path('/tmp/hwsim_uemac_v5/bundle/run.py', run_name=\"__main__\")\n  File \"<frozen runpy>\", line 291, in run_path\n  File \"<frozen runpy>\", line 98, in _run_module_code\n  File \"<frozen runpy>\", line 88, in _run_code\n  File \"/tmp/hwsim_uemac_v5/bundle/run.py\", line 10, in <module>\n    host.main()\n  File \"/tmp/hwsim_uemac_v5/bundle/host.py\", line 10, in main\n    for name,h in c['source_hashes'].items():assert hashlib.sha256(Path(name).read_bytes()).hexdigest()==h,name\n                                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: pe.csl\n"
+      }
+    },
+    "timing_method": "device_internal",
+    "hw_comparable": true,
+    "case": "strong-m64-k64-n64-p4-d3-full",
+    "wall_s": 120.8
+  },
+  {
+    "kernel_dir": "<path>",
+    "csl_main": "layout.csl",
+    "params": {
+      "S": "8",
+      "N": "64",
+      "K": "64",
+      "R": "1",
+      "AC": "17",
+      "BC": "192",
+      "OC": "51",
+      "W": "64"
+    },
+    "arms": {
+      "sim": {
+        "status": "fail",
+        "cycles_send": null,
+        "success_marker": false,
+        "returncode": 1,
+        "wall_s": 0.3,
+        "reason": "run.py exited 1",
+        "stdout_tail": "",
+        "stderr_tail": "Traceback (most recent call last):\n  File \"/tmp/hwsim_vreb8p3r/bundle/_hw_vs_sim_driver_sim.py\", line 8, in <module>\n    runpy.run_path('/tmp/hwsim_vreb8p3r/bundle/run.py', run_name=\"__main__\")\n  File \"<frozen runpy>\", line 291, in run_path\n  File \"<frozen runpy>\", line 98, in _run_module_code\n  File \"<frozen runpy>\", line 88, in _run_code\n  File \"/tmp/hwsim_vreb8p3r/bundle/run.py\", line 10, in <module>\n    host.main()\n  File \"/tmp/hwsim_vreb8p3r/bundle/host.py\", line 10, in main\n    for name,h in c['source_hashes'].items():assert hashlib.sha256(Path(name).read_bytes()).hexdigest()==h,name\n                                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: pe.csl\n"
+      },
+      "hw": {
+        "status": "fail",
+        "cycles_send": null,
+        "success_marker": false,
+        "returncode": 1,
+        "wall_s": 0.3,
+        "reason": "run.py exited 1",
+        "stdout_tail": "",
+        "stderr_tail": "Traceback (most recent call last):\n  File \"/tmp/hwsim_vreb8p3r/bundle/_hw_vs_sim_driver_hw.py\", line 8, in <module>\n    runpy.run_path('/tmp/hwsim_vreb8p3r/bundle/run.py', run_name=\"__main__\")\n  File \"<frozen runpy>\", line 291, in run_path\n  File \"<frozen runpy>\", line 98, in _run_module_code\n  File \"<frozen runpy>\", line 88, in _run_code\n  File \"/tmp/hwsim_vreb8p3r/bundle/run.py\", line 10, in <module>\n    host.main()\n  File \"/tmp/hwsim_vreb8p3r/bundle/host.py\", line 10, in main\n    for name,h in c['source_hashes'].items():assert hashlib.sha256(Path(name).read_bytes()).hexdigest()==h,name\n                                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: pe.csl\n"
+      }
+    },
+    "timing_method": "device_internal",
+    "hw_comparable": true,
+    "case": "strong-m64-k64-n64-p64-d3-full",
+    "wall_s": 120.7
+  }
+]

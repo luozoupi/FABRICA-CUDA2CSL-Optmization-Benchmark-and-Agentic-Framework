@@ -1,0 +1,19 @@
+{
+  "name": "wse3-gemm-explorer",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host 127.0.0.1",
+    "build": "tsc --noEmit && vite build && VIZ_PAGE=gemv vite build && VIZ_PAGE=time-slices vite build && VIZ_PAGE=space-time vite build",
+    "build:dataflow": "tsc --noEmit && VIZ_PAGE=dataflow vite build",
+    "preview": "vite preview --host 127.0.0.1",
+    "test": "playwright test",
+    "build:matmul": "tsc --noEmit && VIZ_PAGE=matmul vite build"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.63.0",
+    "typescript": "7.0.2",
+    "vite": "8.3.0"
+  }
+}

@@ -1,51 +1,118 @@
-# Local environments and credentials
-.venv/
-.env
-.env.*
-!.env.example
-*api-key*.txt
-*api_key*.txt
-*.pem
-*.key
-# Python/editor state
+# ---------------------------------------------------------------------------
+# xkernel .gitignore
+# Goal: track source (framework, kernels, docs, curated reports); exclude
+# scratch, generated simulator/compiler artifacts, run logs, and secrets.
+# ---------------------------------------------------------------------------
+
+# --- Python transient ---
 __pycache__/
-*.py[cod]
-.pytest_cache/
+*.pyc
+*.pyo
 *.egg-info/
-.DS_Store
-.idea/
-.vscode/
-# Generated runs and simulator/compiler output
-results/
-sandbox/
+.pytest_cache/
+.ipynb_checkpoints/
+
+# --- Local agent/session state & secrets ---
+.claude/
+*.key
+*api*key*.txt
+*.pem
+*.env
+.env
+settings.local.json
+
+# --- Scratch / working dirs (never committed) ---
+code_translation/sandbox/
 rl_data/
-artifacts/
-logs/
-cache/
-.cache/
-raw/
-knowledge/explored/experiences.jsonl
-knowledge/explored/optimization/experiences.jsonl
-out/
-out_*/
+knowledge/raw/
+# knowledge/data/*.jsonl (~1 MB, derived from public Cerebras SDK docs and the
+# Apache-2.0 csl-examples) IS tracked so every checkout retrieves the same corpus.
+
+# --- Explored-experience corpus: keep distilled index + jsonl digests, drop
+#     the thousands of per-run machine-generated bundles. ---
+knowledge/explored/successes/
+knowledge/explored/failures/
+knowledge/explored/optimization/accepted/
+knowledge/explored/optimization/failures/
+knowledge/explored/optimization/plans/
+knowledge/explored/optimization/trees/
+
+# --- Generated Cerebras toolchain artifacts ---
+# cslc compile output bundles + simulator traces are large and reproducible.
+**/out/
+**/simfab_traces/
 *.elf
-*.o
-*.so
-*.dylib
-*.sif
+*.bin
+sim.log
+simfab_*/
+
+# --- Compiled CUDA executables (build artifacts; .cu source is kept) ---
+# These are nvcc output ELF binaries committed by mistake; rebuild via Makefile.
+kernels/*/CUDA/stencil25
+kernels/*/CUDA/stencil7
+kernels/*/CUDA/bicgstab
+kernels/*/CUDA/cholesky
+kernels/*/CUDA/cg
+kernels/*/CUDA/fft
+kernels/*/CUDA/gemm
+kernels/*/CUDA/gemm_2d
+kernels/*/CUDA/gemv
+kernels/*/CUDA/gemv_2d
+kernels/*/CUDA/gemv_checker
+kernels/*/CUDA/gol
+kernels/*/CUDA/histogram
+kernels/*/CUDA/mandelbrot
+kernels/*/CUDA/power
+kernels/*/CUDA/pcg
+kernels/*/CUDA/residual
+kernels/*/CUDA/matvec
+kernels/*/CUDA/spmv
+kernels/*/CUDA/spmv_hyper
+kernels/*/CUDA/wide_mul
+
+# --- Run logs (large, regenerable) ---
 *.log
-*.trace
-*.ctf
-*.jsonl.gz
-simfab_traces/
-simconfig.json
-sim_stats.json
-sim.mem
-sim.err
-sim.out
-# Local datasets, archives, and reports
-*.zip
+
+# --- Bulk sweep output ---
+# results/ holds thousands of per-run benchmark.json + transcripts. Exclude the
+# CONTENTS (results/**, not the dir itself, so negations below can re-include),
+# then force-keep curated top-level reports.
+code_translation/results/**
+!code_translation/results/
+!code_translation/results/*.md
+# Frozen first-correct programs are experiment INPUTS (small); keep them.
+!code_translation/results/first_correct/
+!code_translation/results/first_correct/**
+!code_translation/results/translation_approaches_survey_*.json
+
+# --- A/B harness bulk artifacts (keep the .py + .csv verdicts, drop logs) ---
+tools/*.log
+
+# --- Cluster job metadata (ephemeral) ---
+wsjob-*-cluster-details.json
+run_meta.json
+code_translation/run_meta.json
+code_translation/wsjob-*-cluster-details.json
+
+# --- Additional build artifacts ---
+**/out_verbose/
+**/sim_stats.json
+**/simconfig.json
+
+# --- Corpus output (large, regenerable) ---
+corpus/
+training_package.tar.gz
 *.tar.gz
-*.pdf
-*.png
-*.svg
+
+# --- Silicon-model cache and shell junk ---
+code_translation/results/model_cache/
+/-J
+
+# --- WSE-3 characterization study: keep code + small result JSON, drop traces ---
+studies/**/*.jsonl.gz
+studies/**/disasm*.json
+studies/**/*.bak-*
+
+# --- OS noise ---
+.DS_Store
+Thumbs.db

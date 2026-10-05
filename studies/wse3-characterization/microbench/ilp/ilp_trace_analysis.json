@@ -1,0 +1,50 @@
+{
+ "tile_index": 12,
+ "iters": 512,
+ "variants": [
+  {
+   "variant": "k1",
+   "chain_depth": 8,
+   "dispatches": 9728,
+   "inst_per_iter": 19.0,
+   "cycles_per_iter": 38.99,
+   "cycles_per_inst": 2.052,
+   "cycles_per_fp_op": 2.437,
+   "pct_gaps_1_cycle": 15.8,
+   "spills_per_iter": 0.0
+  },
+  {
+   "variant": "k2",
+   "chain_depth": 4,
+   "dispatches": 9728,
+   "inst_per_iter": 19.0,
+   "cycles_per_iter": 35.99,
+   "cycles_per_inst": 1.894,
+   "cycles_per_fp_op": 2.249,
+   "pct_gaps_1_cycle": 31.6,
+   "spills_per_iter": 0.0
+  },
+  {
+   "variant": "k4",
+   "chain_depth": 2,
+   "dispatches": 9728,
+   "inst_per_iter": 19.0,
+   "cycles_per_iter": 30.99,
+   "cycles_per_inst": 1.631,
+   "cycles_per_fp_op": 1.937,
+   "pct_gaps_1_cycle": 57.9,
+   "spills_per_iter": 0.0
+  },
+  {
+   "variant": "k8",
+   "chain_depth": 1,
+   "dispatches": 17408,
+   "inst_per_iter": 34.0,
+   "cycles_per_iter": 43.0,
+   "cycles_per_inst": 1.265,
+   "cycles_per_fp_op": 2.687,
+   "pct_gaps_1_cycle": 76.5,
+   "spills_per_iter": 14.0
+  }
+ ]
+}

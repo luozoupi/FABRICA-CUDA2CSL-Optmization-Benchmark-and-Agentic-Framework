@@ -1,0 +1,62 @@
+{
+  "kernel": "Laplacian2D-Halo",
+  "run_dir": "code_translation/results/full_template_sweep_20260722_192305/Laplacian2D-Halo/run_20260722_220045",
+  "status": "extracted",
+  "n_attempts": 19,
+  "model": "claude-opus-4-8",
+  "target_relpath": "pe.csl",
+  "reference_dir": "/home/USER/xkernel/kernels/Laplacian2D-Halo/CSL",
+  "fc_attempt_index": 9,
+  "fc_cycles_send": 1799,
+  "fc_cycles_send_runs": [
+    1799
+  ],
+  "fc_code_lines": 375,
+  "fc_heldout_eval": {
+    "passed": true,
+    "failing_seed": null,
+    "per_seed": [
+      {
+        "seed": 101,
+        "steps": [
+          {
+            "command": "cs_python run.py --name out --iters 1",
+            "ok": true,
+            "returncode": 0
+          }
+        ]
+      },
+      {
+        "seed": 202,
+        "steps": [
+          {
+            "command": "cs_python run.py --name out --iters 1",
+            "ok": true,
+            "returncode": 0
+          }
+        ]
+      },
+      {
+        "seed": 303,
+        "steps": [
+          {
+            "command": "cs_python run.py --name out --iters 1",
+            "ok": true,
+            "returncode": 0
+          }
+        ]
+      }
+    ],
+    "reason": "passed all 3 held-out seeds"
+  },
+  "translated_path": "/home/USER/xkernel/code_translation/sandbox/cuda2csl/laplacian2d-halo_bw0jzzwn/pe.csl",
+  "source": "sandbox",
+  "dest": "code_translation/results/first_correct/template_20260722/Laplacian2D-Halo/pe.csl",
+  "timing_protocol_patch": "device_internal_v2 stamps added mechanically (timing_protocol.instrument_device_window) 2026-09-08",
+  "fc_cycles_send_v2": 1363,
+  "fc_cycles_send_runs_v2": [
+    1363,
+    1363,
+    1363
+  ]
+}

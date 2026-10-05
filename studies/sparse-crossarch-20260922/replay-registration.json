@@ -1,0 +1,14 @@
+{
+  "cases": [
+    "65536x65536-uniform8-n64",
+    "65536x65536-block8-n64",
+    "65536x65536-skew8-n64",
+    "262144x262144-uniform8-n64",
+    "262144x262144-uniform8-n128",
+    "262144x262144-block8-n64",
+    "262144x262144-block8-n128"
+  ],
+  "additional_repetitions": 2,
+  "reason": "Check whether the observed structure-dependent ranking survives independent process launches and uncontrolled clock variation; selected all four capacity extension cases, plus three degree-matched smaller controls.",
+  "selection": "after initial results; confirmatory replay, not independent final-test data"
+}

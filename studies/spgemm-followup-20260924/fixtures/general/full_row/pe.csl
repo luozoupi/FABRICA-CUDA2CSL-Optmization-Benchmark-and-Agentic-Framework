@@ -1,0 +1,106 @@
+param memcpy_params;
+const sys = @import_module("<memcpy/memcpy>", memcpy_params);
+const clock = @import_module("<time>");
+const N: u16 = 16;
+const WIDTH: u16 = 16;
+var ap = @zeros([17]u32);
+var ptr_ap: [*]u32 = &ap;
+var aj = @zeros([256]u32);
+var ptr_aj: [*]u32 = &aj;
+var av = @zeros([256]f32);
+var ptr_av: [*]f32 = &av;
+var bp = @zeros([17]u32);
+var ptr_bp: [*]u32 = &bp;
+var bj = @zeros([256]u32);
+var ptr_bj: [*]u32 = &bj;
+var bv = @zeros([256]f32);
+var ptr_bv: [*]f32 = &bv;
+var cp = @zeros([17]u32);
+var ptr_cp: [*]u32 = &cp;
+var cj = @zeros([260]u32);
+var ptr_cj: [*]u32 = &cj;
+var cv = @zeros([260]f32);
+var ptr_cv: [*]f32 = &cv;
+var count = @zeros([1]u16);
+var ptr_count: [*]u16 = &count;
+var status = @zeros([1]u16);
+var ptr_status: [*]u16 = &status;
+var limit = @zeros([1]u16);
+var ptr_limit: [*]u16 = &limit;
+var time_words = @zeros([6]u16);
+var ptr_time_words: [*]u16 = &time_words;
+var acc = @zeros([WIDTH]f32);
+var seen = @zeros([WIDTH]u16);
+var t0 = @zeros([3]u16);
+var t1 = @zeros([3]u16);
+const acc_dsd = @get_dsd(mem1d_dsd, .{ .tensor_access = |x|{WIDTH} -> acc[x] });
+fn kernel() void {
+status[0] = 0;
+count[0] = 0;
+var output_count: u16 = 0;
+var i: u16 = 0;
+while (i < N) : (i += 1) {
+cp[i] = @as(u32,output_count);
+var lo: u16 = 0;
+while (lo < N) : (lo += WIDTH) {
+@fmovs(acc_dsd, @as(f32,0.0));
+var t: u16 = 0;
+while (t < WIDTH) : (t += 1) { seen[t] = 0; }
+var p: u16 = @as(u16,ap[i]);
+const pe: u16 = @as(u16,ap[i+1]);
+while (p < pe) : (p += 1) {
+const k: u16 = @as(u16,aj[p]);
+const aval: f32 = av[p];
+var q: u16 = @as(u16,bp[k]);
+const qe: u16 = @as(u16,bp[k+1]);
+while (q < qe) : (q += 1) {
+const j: u16 = @as(u16,bj[q]);
+if (j >= lo and j < lo + WIDTH) {
+const local_j: u16 = j - lo;
+acc[local_j] += aval * bv[q];
+seen[local_j] = 1;
+}
+}
+}
+t = 0;
+while (t < WIDTH) : (t += 1) {
+if (seen[t] != 0) {
+if (output_count >= limit[0]) {
+status[0] = 1;
+count[0] = output_count;
+return;
+}
+cj[output_count] = @as(u32,lo+t);
+cv[output_count] = acc[t];
+output_count += 1;
+}
+}
+}
+cp[i+1] = @as(u32,output_count);
+}
+count[0] = output_count;
+}
+fn stamp_out() void {
+time_words[0]=t0[0]; time_words[1]=t0[1]; time_words[2]=t0[2];
+time_words[3]=t1[0]; time_words[4]=t1[1]; time_words[5]=t1[2];
+sys.unblock_cmd_stream();
+}
+fn enable_timer() void { clock.enable_tsc(); sys.unblock_cmd_stream(); }
+fn compute() void { clock.get_timestamp(&t0); kernel(); clock.get_timestamp(&t1); stamp_out(); }
+comptime {
+@export_symbol(ptr_ap, "ap");
+@export_symbol(ptr_aj, "aj");
+@export_symbol(ptr_av, "av");
+@export_symbol(ptr_bp, "bp");
+@export_symbol(ptr_bj, "bj");
+@export_symbol(ptr_bv, "bv");
+@export_symbol(ptr_cp, "cp");
+@export_symbol(ptr_cj, "cj");
+@export_symbol(ptr_cv, "cv");
+@export_symbol(ptr_count, "count");
+@export_symbol(ptr_status, "status");
+@export_symbol(ptr_limit, "limit");
+@export_symbol(ptr_time_words, "time_words");
+@export_symbol(compute);
+@export_symbol(enable_timer);
+}

@@ -1,0 +1,33 @@
+{
+ "elf": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/out/west/bin/out_0_0.elf",
+ "elf_sha": "3a73914d0f4e7dff",
+ "o_sha": "88b62cc333919c8a",
+ "backend_argv": [
+  "schrodinger",
+  "cs_sdr-cerebras-csos"
+ ],
+ "paths": {
+  "ll": "/tmp/cslc-208148/cslc-1387056628f1.ll",
+  "o": "/tmp/cslc-208148/cslc-9fddb822b428.o",
+  "task_ld": "/tmp/cslc-208148/cslc-24e4767b3ed9.ld",
+  "link_ld": "/tmp/cslc-208148/cslc-9e92eab84640.ld",
+  "elf": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit/out/west/bin/out_0_0.elf"
+ },
+ "libs": [
+  "/cb/toolchains/cslang/rel-sdk-2.10.0/202604012315-1813-1394a6ea/csl-rt/libcsl_rt_cs_sdr.a"
+ ],
+ "cwd": "/home/USER/xkernel/studies/wse3-characterization/microbench/iremit",
+ "cslang_bin": "/cb/toolchains/cslang/rel-sdk-2.10.0/202604012315-1813-1394a6ea/bin",
+ "cslc_args": [
+  "./layout.csl",
+  "--arch=wse3",
+  "--fabric-dims=8,3",
+  "--fabric-offsets=4,1",
+  "-o",
+  "out",
+  "--memcpy",
+  "--channels=1",
+  "--width-west-buf=0",
+  "--width-east-buf=0"
+ ]
+}

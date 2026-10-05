@@ -1,0 +1,77 @@
+{
+  "case": "strong-m64-k64-n64-p64-d3-full",
+  "status": "pass",
+  "phases": [
+    {
+      "phase": "compile",
+      "command": [
+        "/home/USER/cs_sdk/cslc",
+        "layout.csl",
+        "--arch=wse3",
+        "--fabric-dims=15,10",
+        "--fabric-offsets=4,1",
+        "--memcpy",
+        "--channels=1",
+        "--width-west-buf=0",
+        "--width-east-buf=0",
+        "--out-routes",
+        "--params=S:8,N:64,K:64,R:1,AC:17,BC:192,OC:51,W:64",
+        "-o",
+        "out"
+      ],
+      "returncode": 0,
+      "wall_seconds": 5.525989708999987
+    },
+    {
+      "phase": "run",
+      "command": [
+        "/home/USER/cs_sdk/cs_python",
+        "host.py"
+      ],
+      "returncode": 0,
+      "wall_seconds": 432.38688799100055
+    }
+  ],
+  "case_sha256": "7f9e37a395ceb2c8b129510cce899ad067d1d9b9f6ff259f734781a705cc6175",
+  "queue_wait_seconds": 4.1900057112798095e-06,
+  "errors": [],
+  "elf_sha256": {
+    "out/bin/out_6_0.elf": "71fa62bb44908a0c3da5298859606067d756627254b21a01ddc9a9f29ee282fa",
+    "out/bin/out_4_0.elf": "2737b5867f983693533021797d1d6a5b59a7192251cb1499d5fcf3b3f90f1265",
+    "out/bin/out_1_0.elf": "f1495ef8c19890a6128a23e6669e6e9ab77c25e22c86e8d102d7448d77f3d07d",
+    "out/bin/out_3_0.elf": "9592cbb79ebeade8ffc182def09d1bfe6c5bfdb074da737da51167fad181ece0",
+    "out/bin/out_5_0.elf": "4d99f9516e985675c9563aeb51e03bceeeab70c06bfbbeb5cfc5708a144f5f64",
+    "out/bin/out_2_0.elf": "1392c4bee02279d7090373f2ea6e4d947879e422fdc2e6ba732685e22af91894",
+    "out/bin/out_0_0.elf": "636b3ba64bbd02862072eaa390c4e78055db1d677ec6bb6c90b706a9beda03c7",
+    "out/bin/out_8_0.elf": "9a9afeb3c1e2adcdc3e88696a34eca4dc419b6c9a416caa7393c7feb0e408c68",
+    "out/bin/out_7_0.elf": "f95a77ba47b339362b4cebca328858283ea59ec756bbd15c98dee3d874ff12ee",
+    "out/generated/default.elf": "3ac83e67e4cc3af62b76d1080fc013d22f5549f7b227c95e86501f6ba5346bf3",
+    "out/generated/MEMCPY_XY_ROUTES.elf": "433b0907e7d809212fcf5196a64cabbae9b80f95e9ac023c302a530b7c209d89",
+    "out/generated/coord.elf": "4c438368c489700be9499d3ff92ed66a337cfba3b6a39402d8aa1d842bb68498",
+    "out/east/bin/out_4_0.elf": "f96d286be0cdfdffc0c04964c3b711c593f4c4fecfe41f4055f84387a6648e13",
+    "out/east/bin/out_1_0.elf": "ff720a8a8b079dac45ae42f12a53a6082cd2ae84b6ca41444b9b337ad8e71971",
+    "out/east/bin/out_3_0.elf": "af356b46d2ca34548f7a8713b9a395b9fd89837478d0c6e6a3a26acaf06f19eb",
+    "out/east/bin/out_5_0.elf": "300319c2e65b97d52a07d8faa9102f2f61ebca19ee847ddf4caed4d1c156dcd9",
+    "out/east/bin/out_2_0.elf": "54a43adc2d55c2d3f51163797694bb223f4c681dd3f1f00836049fe009c4e5ac",
+    "out/east/bin/out_0_0.elf": "4711ff2fcacd36f5655ffff4d1d5d081d5135f6b03d718b64d365734d3d226ac",
+    "out/west/bin/out_6_0.elf": "fa7745fe85c64a40885f5f67155cd192b88671554f1db2698332c0a9733ec221",
+    "out/west/bin/out_4_0.elf": "f5c8c8326fc16c1a811e266aac02d2e7c9b311e833a4ab56ad01050ccfca90d6",
+    "out/west/bin/out_1_0.elf": "079fc7c120f555fd416019e8ce2f47357039173ba01bd4fa14051286a7ee2b06",
+    "out/west/bin/out_3_0.elf": "7609d740191803c7eda2e23f1ec343390408612e9ee1537a4545eeddc769931d",
+    "out/west/bin/out_5_0.elf": "bf00080f4bbe9bf96f11a58f4ea9eb70dd4aca14918aa630aaac62e41330d838",
+    "out/west/bin/out_2_0.elf": "6b3aa1f5289380f5896fc509a720064c5238a049f04ae91c74bfd332a97b5043",
+    "out/west/bin/out_0_0.elf": "805f4d6620d9191599a48528b4a5bac884a9785848a4f20df859141cb1ebe295",
+    "out/west/bin/out_7_0.elf": "f4002f98a3d3016ada152b5f5ecaa01e1c38b23c7ae25972b4a6b13e305c130c"
+  },
+  "source_sha256": {
+    "single_collective.csl": "95db24b1ca3fd7e9d868657d0c991e4d9d3ff4601b154caf8d394523a19870b7",
+    "pe.csl": "8cc560b7f7a1fe6660f222c15d6a7d72a98cb6d5029b6734240e14cce65d5011",
+    "case.json": "7f9e37a395ceb2c8b129510cce899ad067d1d9b9f6ff259f734781a705cc6175",
+    "layout.csl": "0f841665ca0ea9f9e420e1099e5629bb4ab5aca660b85ce6540899c6ebe03f51",
+    "inputs.py": "99916fee5949cfa4bb7efc89b2da16ece9806de175d9bae4254f8e6504e5be4e",
+    "host.py": "afc8b5cb8fe9d182c3d3225fbba533ba233dbdbc38e82340a3e5723fd4101055",
+    "observations.json": "71b7eef56264b58679d91615467c162f23513d7f36f2820ca14ded51cbad6e6f",
+    "sim_stats.json": "a50eaeba357a9a7bb51754ca911c70ac74db232f136daa75dcff56ac17f2a877",
+    "simconfig.json": "ac8861b1a0ab97042fb33484d83a4d3ef124877e9bef550a89a5efe1f6da2be3"
+  }
+}

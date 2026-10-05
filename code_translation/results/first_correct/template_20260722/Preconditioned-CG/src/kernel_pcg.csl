@@ -1,0 +1,392 @@
+param memcpyParams: comptime_struct;
+// === SLOT: EXTRA_PARAMS ===
+param reduceParams: comptime_struct;
+param stencilParams: comptime_struct;
+param MAX_ZDIM: i16;   // maximum size of local vector x and y
+param BLOCK_SIZE: i16; // size of temporary buffers for communication
+param STATE: local_task_id; // entrypoint of PCG state machine
+
+const EXIT: local_task_id = @get_local_task_id(9);
+const sys_mod = @import_module("<memcpy/memcpy>", memcpyParams);
+
+// === SLOT: EXTRA_IMPORTS ===
+const math_lib = @import_module("<math>");
+
+// DSR ids (chosen distinct, in reserved-safe range)
+const stencil_mod = @import_module(
+    "../../benchmark-libs/stencil_3d_7pts/pe.csl",
+    @concat_structs(stencilParams, .{
+        .f_callback   = f_stencil_done,
+        .input_queues = [4]u16{ 4, 5, 6, 7 },
+        .output_queues= [4]u16{ 4, 5, 6, 7 },
+        .output_ut_id = @as(u16, 0),
+        .BLOCK_SIZE   = BLOCK_SIZE,
+        .dest_dsr_ids = [2]u16{ 1, 2 },
+        .src0_dsr_ids = [1]u16{ 1 },
+        .src1_dsr_ids = [2]u16{ 3, 4 },
+    }));
+
+const reduce_mod = @import_module(
+    "../../benchmark-libs/allreduce/pe.csl",
+    @concat_structs(reduceParams, .{
+        .f_callback   = f_reduce_done,
+        .queues       = [1]u16{ 2 },
+        .dest_dsr_ids = [1]u16{ 5 },
+        .src0_dsr_ids = [1]u16{ 5 },
+        .src1_dsr_ids = [1]u16{ 6 },
+    }));
+
+const timestamp = @import_module("<time>");
+var tsc_start_buf = @zeros([timestamp.tsc_size_words]u16);
+var tsc_end_buf   = @zeros([timestamp.tsc_size_words]u16);
+var timer_buf = @zeros([3]f32);
+var ptr_timer_buf: [*]f32 = &timer_buf;
+
+// === SLOT: DATA_BUFFERS ===
+const MZ: i16 = MAX_ZDIM;
+const MZu: u16 = @as(u16, MAX_ZDIM);
+
+// per-PE local vectors of length up to MAX_ZDIM
+var b_arr   = @zeros([MZu]f32);   // rhs
+var x_arr   = @zeros([MZu]f32);   // solution
+var r_arr   = @zeros([MZu]f32);   // residual
+var z_arr   = @zeros([MZu]f32);   // preconditioned residual
+var p_arr   = @zeros([MZu]f32);   // search direction
+var w_arr   = @zeros([MZu]f32);   // A*p
+var m_arr   = @zeros([MZu]f32);   // Jacobi 1/diag
+
+// stencil coefficients.  Host layout (stencil_3d_7pts convention): the
+// 7 coefficients are stored plane-major -> coefficient j for all z points
+// is contiguous: coeff_arr[j*zDim + iz].  spmv() reads it as *[7]f32 but
+// the underlying storage is [7][zDim].  The diagonal (self / center) term
+// is coefficient index 6.
+var coeff_arr = @zeros([7*MZu]f32);
+
+// scalars used by allreduce (single-element reduction buffers)
+var rho_buf   = @zeros([1]f32);
+var xi_buf    = @zeros([1]f32);
+var eta_buf   = @zeros([1]f32);
+
+var ptr_b: [*]f32 = &b_arr;
+var ptr_x: [*]f32 = &x_arr;
+var ptr_coeff: [*]f32 = &coeff_arr;
+var ptr_rho: [*]f32 = &rho_buf;
+var ptr_xi:  [*]f32 = &xi_buf;
+
+// time reference buffers (contract symbols)
+var time_buf_u16 = @zeros([6]u16);
+var ptr_time_buf_u16: [*]u16 = &time_buf_u16;
+var time_ref_buf = @zeros([3]u16);
+var ptr_time_ref: [*]u16 = &time_ref_buf;
+
+// runtime PCG parameters
+var g_size: i16 = 0;      // active z dimension
+var g_tol:  f32 = 0.0;
+var g_maxit: i16 = 0;
+
+// PCG scalar state (host-invisible, on-device)
+var rho: f32 = 0.0;
+var rho_old: f32 = 0.0;
+var eta: f32 = 0.0;
+var xi: f32 = 0.0;
+var alpha: f32 = 0.0;
+var beta: f32 = 0.0;
+var iter: i16 = 0;
+
+// state machine phase
+var phase: i16 = 0;
+
+// -----------------------------------------------------------------
+// Static DSDs built once at module scope over the concrete named
+// arrays (base address is comptime-known). Length is patched at
+// runtime via @set_dsd_length to the active g_size.
+// -----------------------------------------------------------------
+var b_dsd = @get_dsd(mem1d_dsd, .{ .tensor_access = |i|{MZu} -> b_arr[i] });
+var x_dsd = @get_dsd(mem1d_dsd, .{ .tensor_access = |i|{MZu} -> x_arr[i] });
+var r_dsd = @get_dsd(mem1d_dsd, .{ .tensor_access = |i|{MZu} -> r_arr[i] });
+var z_dsd = @get_dsd(mem1d_dsd, .{ .tensor_access = |i|{MZu} -> z_arr[i] });
+var p_dsd = @get_dsd(mem1d_dsd, .{ .tensor_access = |i|{MZu} -> p_arr[i] });
+var w_dsd = @get_dsd(mem1d_dsd, .{ .tensor_access = |i|{MZu} -> w_arr[i] });
+var m_dsd = @get_dsd(mem1d_dsd, .{ .tensor_access = |i|{MZu} -> m_arr[i] });
+
+// === SLOT: KERNEL_FUNCTION ===
+
+// Patch every working DSD to the active length g_size.
+fn set_dsd_lengths() void {
+    const n: u16 = @as(u16, g_size);
+    b_dsd = @set_dsd_length(b_dsd, n);
+    x_dsd = @set_dsd_length(x_dsd, n);
+    r_dsd = @set_dsd_length(r_dsd, n);
+    z_dsd = @set_dsd_length(z_dsd, n);
+    p_dsd = @set_dsd_length(p_dsd, n);
+    w_dsd = @set_dsd_length(w_dsd, n);
+    m_dsd = @set_dsd_length(m_dsd, n);
+}
+
+// z = M^{-1} * r  (Jacobi)  -- element-wise multiply
+fn jacobi_apply() void {
+    @fmuls(z_dsd, r_dsd, m_dsd);
+}
+
+// x += alpha * p
+fn axpy_x_p(a: f32) void {
+    @fmacs(x_dsd, x_dsd, p_dsd, a);
+}
+
+// r += a * w  (call with -alpha to subtract)
+fn axpy_r_w(a: f32) void {
+    @fmacs(r_dsd, r_dsd, w_dsd, a);
+}
+
+// p = z + beta * p
+fn update_p(bt: f32) void {
+    @fmuls(p_dsd, p_dsd, bt);
+    @fadds(p_dsd, p_dsd, z_dsd);
+}
+
+// p = z  (copy)
+fn copy_p_from_z() void {
+    @fmovs(p_dsd, z_dsd);
+}
+
+// r = b - w
+fn residual_from_w() void {
+    @fsubs(r_dsd, b_dsd, w_dsd);
+}
+
+// Compute Jacobi 1/diag from the diagonal (self) stencil coefficient.
+// Storage is plane-major [7][zDim]: coefficient j for point iz lives at
+// coeff_arr[j*zDim + iz].  The self/center term is index 6.  Robust
+// against zero diagonals (fall back to 1.0 -> identity preconditioner)
+// so a missing/zero coefficient never produces inf/nan.
+fn build_inv_diag() void {
+    const nz: u16 = @as(u16, g_size);
+    const base: u16 = 6 * nz;   // offset of the diagonal (index-6) plane
+    var i: u16 = 0;
+    while (i < nz) : (i += 1) {
+        const d = coeff_arr[base + i];
+        if (d != 0.0) {
+            m_arr[i] = 1.0 / d;
+        } else {
+            m_arr[i] = 1.0;
+        }
+    }
+}
+
+// ---- allreduce-based dot products ----
+// We compute a local partial dot into a 1-element buffer, then allreduce (SUM)
+// over the whole fabric. The library's allreduce operates in-place on the
+// tensor pointer and calls f_reduce_done when finished.
+
+fn local_dot(a: [*]f32, x: [*]f32, out: *f32) void {
+    var s: f32 = 0.0;
+    var i: i16 = 0;
+    while (i < g_size) : (i += 1) {
+        const ui = @as(u16, i);
+        s += a[ui] * x[ui];
+    }
+    out.* = s;
+}
+
+// SpMV via stencil library: y = A*x over the fabric (handles halo exchange).
+// stencil.spmv signature: fn spmv(n: i16, coeff: *[7]f32, x: [*]f32, y: [*]f32) void
+fn do_spmv(xin: [*]f32, yout: [*]f32) void {
+    const coeff_grouped = @ptrcast(*[7]f32, &coeff_arr);
+    stencil_mod.spmv(g_size, coeff_grouped, xin, yout);
+}
+
+// =====================================================================
+// PCG state machine
+//   phase 0: SpMV(x0)->w  [stencil callback -> phase 1]
+//   phase 1: r=b-w; z=Mr; p=z; local dot(r,z)->rho_buf; reduce [->2]
+//   phase 2: rho=reduced; local dot(r,r)->xi_buf; reduce [->3]
+//   phase 3: (loop top) conv check; if done ->EXIT; else SpMV(p)->w [->4]
+//   phase 4: local dot(p,w)->eta_buf; reduce [->5]
+//   phase 5: eta=reduced; alpha=rho/eta; x+=a p; r-=a w; z=Mr;
+//            rho_old=rho; local dot(r,z)->rho_buf; reduce [->6]
+//   phase 6: rho=reduced; local dot(r,r)->xi_buf; reduce [->7]
+//   phase 7: xi=reduced; beta=rho/rho_old; p=z+beta p; iter++; ->loop check
+// =====================================================================
+
+fn reduce_dot(buf: *f32) void {
+    // in-place allreduce SUM of a single element
+    reduce_mod.allreduce(1, @ptrcast([*]f32, buf), reduce_mod.TYPE_BINARY_OP.ADD);
+}
+
+fn f_stencil_done() void {
+    // SpMV finished; advance according to which SpMV was issued.
+    if (phase == 0) {
+        residual_from_w();       // r = b - w
+        jacobi_apply();          // z = M r
+        copy_p_from_z();         // p = z
+        local_dot(&r_arr, &z_arr, &rho_buf[0]);
+        phase = 1;
+        reduce_dot(&rho_buf[0]);
+    } else {
+        // phase was 3 -> SpMV(p) done
+        local_dot(&p_arr, &w_arr, &eta_buf[0]);
+        phase = 4;
+        reduce_dot(&eta_buf[0]);
+    }
+}
+
+fn f_reduce_done() void {
+    if (phase == 1) {
+        rho = rho_buf[0];
+        local_dot(&r_arr, &r_arr, &xi_buf[0]);
+        phase = 2;
+        reduce_dot(&xi_buf[0]);
+    } else if (phase == 2) {
+        xi = xi_buf[0];
+        xi_buf[0] = xi;   // keep host-visible
+        pcg_loop_check();
+    } else if (phase == 4) {
+        eta = eta_buf[0];
+        // guard: if eta is non-positive (shouldn't be for SPD A) stop.
+        if (eta != 0.0) {
+            alpha = rho / eta;
+        } else {
+            alpha = 0.0;
+        }
+        axpy_x_p(alpha);         // x += a p
+        axpy_r_w(-alpha);        // r -= a w
+        jacobi_apply();          // z = M r
+        rho_old = rho;
+        local_dot(&r_arr, &z_arr, &rho_buf[0]);
+        phase = 5;
+        reduce_dot(&rho_buf[0]);
+    } else if (phase == 5) {
+        rho = rho_buf[0];
+        rho_buf[0] = rho;        // host-visible
+        local_dot(&r_arr, &r_arr, &xi_buf[0]);
+        phase = 6;
+        reduce_dot(&xi_buf[0]);
+    } else if (phase == 6) {
+        xi = xi_buf[0];
+        xi_buf[0] = xi;
+        if (rho_old != 0.0) {
+            beta = rho / rho_old;
+        } else {
+            beta = 0.0;
+        }
+        update_p(beta);          // p = z + beta p
+        iter += 1;
+        pcg_loop_check();
+    }
+}
+
+fn pcg_loop_check() void {
+    // convergence: sqrt(xi) < tol  OR iter >= maxit
+    const rnorm = math_lib.sqrt(xi);
+    if (rnorm < g_tol) {
+        @activate(EXIT);
+        return;
+    }
+    if (iter >= g_maxit) {
+        @activate(EXIT);
+        return;
+    }
+    // w = A*p
+    phase = 3;
+    do_spmv(&p_arr, &w_arr);
+}
+
+// PCG entrypoint invoked by host: f_pcg(size, tol, max_ite)
+fn f_pcg(size: i16, tol: f32, max_ite: i16) void {
+    g_size = size;
+    g_tol = tol;
+    g_maxit = max_ite;
+    iter = 0;
+    phase = 0;
+
+    set_dsd_lengths();
+    build_inv_diag();
+
+    // r initialized after SpMV(x0). Kick off SpMV(x0) -> w
+    do_spmv(&x_arr, &w_arr);
+}
+
+// === SLOT: KERNEL_FUNCTION (end) ===
+
+fn compute() void {
+    timestamp.enable_tsc();
+    timestamp.get_timestamp(&tsc_start_buf);
+
+    // === SLOT: KERNEL_CALL ===
+    // (compute() retained for template compatibility; the real PCG is
+    //  driven by the contract entrypoint f_pcg.)
+
+    timestamp.get_timestamp(&tsc_end_buf);
+    timestamp.disable_tsc();
+
+    var lo_: u16 = 0;
+    var hi_: u16 = 0;
+    lo_ = tsc_start_buf[0]; hi_ = tsc_start_buf[1];
+    timer_buf[0] = @bitcast(f32, (@as(u32, hi_) << @as(u16, 16)) | @as(u32, lo_));
+    lo_ = tsc_start_buf[2]; hi_ = tsc_end_buf[0];
+    timer_buf[1] = @bitcast(f32, (@as(u32, hi_) << @as(u16, 16)) | @as(u32, lo_));
+    lo_ = tsc_end_buf[1]; hi_ = tsc_end_buf[2];
+    timer_buf[2] = @bitcast(f32, (@as(u32, hi_) << @as(u16, 16)) | @as(u32, lo_));
+
+    @activate(EXIT);
+}
+
+// ---- contract timing / control entrypoints ----
+fn f_enable_timer() void {
+    timestamp.enable_tsc();
+    sys_mod.unblock_cmd_stream();
+}
+
+fn f_tic() void {
+    timestamp.get_timestamp(&tsc_start_buf);
+    sys_mod.unblock_cmd_stream();
+}
+
+fn f_toc() void {
+    timestamp.get_timestamp(&tsc_end_buf);
+    sys_mod.unblock_cmd_stream();
+}
+
+fn f_memcpy_timestamps() void {
+    time_buf_u16[0] = tsc_start_buf[0];
+    time_buf_u16[1] = tsc_start_buf[1];
+    time_buf_u16[2] = tsc_start_buf[2];
+    time_buf_u16[3] = tsc_end_buf[0];
+    time_buf_u16[4] = tsc_end_buf[1];
+    time_buf_u16[5] = tsc_end_buf[2];
+    sys_mod.unblock_cmd_stream();
+}
+
+fn f_sync() void {
+    sys_mod.unblock_cmd_stream();
+}
+
+fn f_reference_timestamps() void {
+    timestamp.get_timestamp(&time_ref_buf);
+    sys_mod.unblock_cmd_stream();
+}
+
+task f_exit() void {
+    sys_mod.unblock_cmd_stream();
+}
+
+comptime {
+    @bind_local_task(f_exit, EXIT);
+
+    // === SLOT: EXPORT_SYMBOLS ===
+    @export_symbol(ptr_b, "b");
+    @export_symbol(ptr_x, "x");
+    @export_symbol(ptr_coeff, "stencil_coeff");
+    @export_symbol(ptr_rho, "rho");
+    @export_symbol(ptr_xi, "xi");
+    @export_symbol(ptr_time_buf_u16, "time_buf_u16");
+    @export_symbol(ptr_time_ref, "time_ref");
+
+    @export_symbol(f_enable_timer);
+    @export_symbol(f_tic);
+    @export_symbol(f_toc);
+    @export_symbol(f_memcpy_timestamps);
+    @export_symbol(f_pcg);
+    @export_symbol(f_sync);
+    @export_symbol(f_reference_timestamps);
+}

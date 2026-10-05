@@ -1,0 +1,293 @@
+[
+  {
+    "id": "perf-gemm-column_dsd-16x16x16-r",
+    "passed": true,
+    "all_timing_samples_match_original": true,
+    "raw_replay_samples": [
+      {
+        "repetition": 0,
+        "warmup": true,
+        "cycles": 17138,
+        "start": 223,
+        "end": 17361,
+        "correct": true,
+        "equals_original_measurement": true
+      },
+      {
+        "repetition": 1,
+        "warmup": false,
+        "cycles": 17138,
+        "start": 36988,
+        "end": 54126,
+        "correct": true,
+        "equals_original_measurement": true
+      },
+      {
+        "repetition": 2,
+        "warmup": false,
+        "cycles": 17138,
+        "start": 71297,
+        "end": 88435,
+        "correct": true,
+        "equals_original_measurement": true
+      },
+      {
+        "repetition": 3,
+        "warmup": false,
+        "cycles": 17138,
+        "start": 105644,
+        "end": 122782,
+        "correct": true,
+        "equals_original_measurement": true
+      }
+    ],
+    "static_fp_instruction_sites": {
+      "fmacs": 1
+    },
+    "dynamic_fp_instruction_instances_four_launches": {
+      "FMACS": 1024
+    },
+    "arithmetic_elements_four_launches": {
+      "FMACS": 16384
+    },
+    "dispatches_attributed_to_pe_csl_four_launches": {
+      "LDDWDS": 4,
+      "FMOV16.NF": 8,
+      "FMOV32.NF": 1028,
+      "MOVRI": 24,
+      "SLL16.NF": 3072,
+      "ADD16.NF": 4160,
+      "SLR16.NF": 1024,
+      "ST16": 12288,
+      "NOP": 6144,
+      "FMACS": 1024,
+      "LTU16": 1088,
+      "JMP": 1088
+    },
+    "fma_execute_span_median": 26.0,
+    "fma_execute_span_range": [
+      26,
+      44
+    ],
+    "scope": "FP operands/results and ELF encodings checked for one warmup plus three measured launches. pe.csl attribution includes host entrypoints and timestamp packing outside the measured window; these counts are not whole-kernel CPI or runtime percentages. FMA execute spans cover observed result elements, not setup or instruction latency."
+  },
+  {
+    "id": "perf-gemm-row_dsd-16x16x16-r",
+    "passed": true,
+    "all_timing_samples_match_original": true,
+    "raw_replay_samples": [
+      {
+        "repetition": 0,
+        "warmup": true,
+        "cycles": 17634,
+        "start": 223,
+        "end": 17857,
+        "correct": true,
+        "equals_original_measurement": true
+      },
+      {
+        "repetition": 1,
+        "warmup": false,
+        "cycles": 17634,
+        "start": 38853,
+        "end": 56487,
+        "correct": true,
+        "equals_original_measurement": true
+      },
+      {
+        "repetition": 2,
+        "warmup": false,
+        "cycles": 17634,
+        "start": 73661,
+        "end": 91295,
+        "correct": true,
+        "equals_original_measurement": true
+      },
+      {
+        "repetition": 3,
+        "warmup": false,
+        "cycles": 17634,
+        "start": 108480,
+        "end": 126114,
+        "correct": true,
+        "equals_original_measurement": true
+      }
+    ],
+    "static_fp_instruction_sites": {
+      "fmacs": 1
+    },
+    "dynamic_fp_instruction_instances_four_launches": {
+      "FMACS": 1024
+    },
+    "arithmetic_elements_four_launches": {
+      "FMACS": 16384
+    },
+    "dispatches_attributed_to_pe_csl_four_launches": {
+      "LDDWDS": 4,
+      "FMOV16.NF": 8,
+      "FMOV32.NF": 1028,
+      "MOVRI": 24,
+      "SLL16.NF": 2048,
+      "ADD16.NF": 4160,
+      "SLR16.NF": 1024,
+      "ST16": 12288,
+      "NOP": 6144,
+      "FMACS": 1024,
+      "LTU16": 1088,
+      "JMP": 1088
+    },
+    "fma_execute_span_median": 31.0,
+    "fma_execute_span_range": [
+      31,
+      31
+    ],
+    "scope": "FP operands/results and ELF encodings checked for one warmup plus three measured launches. pe.csl attribution includes host entrypoints and timestamp packing outside the measured window; these counts are not whole-kernel CPI or runtime percentages. FMA execute spans cover observed result elements, not setup or instruction latency."
+  },
+  {
+    "id": "perf-gemm-scalar_ijk-16x16x16-r",
+    "passed": true,
+    "all_timing_samples_match_original": true,
+    "raw_replay_samples": [
+      {
+        "repetition": 0,
+        "warmup": true,
+        "cycles": 111296,
+        "start": 223,
+        "end": 111519,
+        "correct": true,
+        "equals_original_measurement": true
+      },
+      {
+        "repetition": 1,
+        "warmup": false,
+        "cycles": 111296,
+        "start": 133111,
+        "end": 244407,
+        "correct": true,
+        "equals_original_measurement": true
+      },
+      {
+        "repetition": 2,
+        "warmup": false,
+        "cycles": 111296,
+        "start": 261575,
+        "end": 372871,
+        "correct": true,
+        "equals_original_measurement": true
+      },
+      {
+        "repetition": 3,
+        "warmup": false,
+        "cycles": 111296,
+        "start": 390066,
+        "end": 501362,
+        "correct": true,
+        "equals_original_measurement": true
+      }
+    ],
+    "static_fp_instruction_sites": {
+      "fmuls": 1,
+      "fadds": 1
+    },
+    "dynamic_fp_instruction_instances_four_launches": {
+      "FMULS": 16384,
+      "FADDS": 16384
+    },
+    "arithmetic_elements_four_launches": {
+      "FMULS": 16384,
+      "FADDS": 16384
+    },
+    "dispatches_attributed_to_pe_csl_four_launches": {
+      "LDDWDS": 4,
+      "FMOV16.NF": 8,
+      "FMOV32.NF": 33796,
+      "MOVRI": 16,
+      "SLL16.NF": 49152,
+      "ADD16.NF": 83008,
+      "SLR16.NF": 32768,
+      "FMULS": 16384,
+      "FADDS": 16384,
+      "LTU16": 17472,
+      "JMP": 17472,
+      "LD16": 1024
+    },
+    "fma_execute_span_median": null,
+    "fma_execute_span_range": null,
+    "scope": "FP operands/results and ELF encodings checked for one warmup plus three measured launches. pe.csl attribution includes host entrypoints and timestamp packing outside the measured window; these counts are not whole-kernel CPI or runtime percentages. FMA execute spans cover observed result elements, not setup or instruction latency."
+  },
+  {
+    "id": "perf-gemm-scalar_ijk-8x8x8-r",
+    "passed": true,
+    "all_timing_samples_match_original": true,
+    "raw_replay_samples": [
+      {
+        "repetition": 0,
+        "warmup": true,
+        "cycles": 6853,
+        "start": 223,
+        "end": 7076,
+        "correct": true,
+        "equals_original_measurement": true
+      },
+      {
+        "repetition": 1,
+        "warmup": false,
+        "cycles": 6853,
+        "start": 16432,
+        "end": 23285,
+        "correct": true,
+        "equals_original_measurement": true
+      },
+      {
+        "repetition": 2,
+        "warmup": false,
+        "cycles": 6853,
+        "start": 28935,
+        "end": 35788,
+        "correct": true,
+        "equals_original_measurement": true
+      },
+      {
+        "repetition": 3,
+        "warmup": false,
+        "cycles": 6853,
+        "start": 41432,
+        "end": 48285,
+        "correct": true,
+        "equals_original_measurement": true
+      }
+    ],
+    "static_fp_instruction_sites": {
+      "fmuls": 8,
+      "fadds": 8
+    },
+    "dynamic_fp_instruction_instances_four_launches": {
+      "FMULS": 2048,
+      "FADDS": 2048
+    },
+    "arithmetic_elements_four_launches": {
+      "FMULS": 2048,
+      "FADDS": 2048
+    },
+    "dispatches_attributed_to_pe_csl_four_launches": {
+      "LDDWDS": 4,
+      "FMOV16.NF": 328,
+      "FMOV32.NF": 2340,
+      "MOVRI": 2080,
+      "ST16": 32,
+      "ST32": 4,
+      "SLL16.NF": 288,
+      "LD16": 64,
+      "ADD16.NF": 2368,
+      "SLR16.NF": 2080,
+      "LD16RP": 1568,
+      "FMULS": 2048,
+      "FADDS": 2048,
+      "LTU16": 288,
+      "JMP": 288
+    },
+    "fma_execute_span_median": null,
+    "fma_execute_span_range": null,
+    "scope": "FP operands/results and ELF encodings checked for one warmup plus three measured launches. pe.csl attribution includes host entrypoints and timestamp packing outside the measured window; these counts are not whole-kernel CPI or runtime percentages. FMA execute spans cover observed result elements, not setup or instruction latency."
+  }
+]

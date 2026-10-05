@@ -1,0 +1,335 @@
+{
+  "version": "matrix-microbench-v1-safe-reduction-amendment",
+  "exclusions": {
+    "debug-gemm-dot_dsd-4x4x4-r": {
+      "reason": "Zero-stride reduction can produce simulator operand-overlap errors even when numerical outputs match. Exclude from accepted timings and journals.",
+      "replacement": "debug-gemm-dot_dsd-4x4x4-r-safe-reduce"
+    },
+    "debug-sparse-packed_dot-4x4x1-r": {
+      "reason": "Zero-stride reduction can produce simulator operand-overlap errors even when numerical outputs match. Exclude from accepted timings and journals.",
+      "replacement": "debug-sparse-packed_dot-4x4x1-r-safe-reduce"
+    },
+    "perf-gemm-dot_dsd-16x16x16-r": {
+      "reason": "Zero-stride reduction can produce simulator operand-overlap errors even when numerical outputs match. Exclude from accepted timings and journals.",
+      "replacement": "perf-gemm-dot_dsd-16x16x16-r-safe-reduce"
+    },
+    "perf-gemm-dot_dsd-8x8x8-r": {
+      "reason": "Zero-stride reduction can produce simulator operand-overlap errors even when numerical outputs match. Exclude from accepted timings and journals.",
+      "replacement": "perf-gemm-dot_dsd-8x8x8-r-safe-reduce"
+    },
+    "perf-sparse-packed_dot-16x16x1-r": {
+      "reason": "Zero-stride reduction can produce simulator operand-overlap errors even when numerical outputs match. Exclude from accepted timings and journals.",
+      "replacement": "perf-sparse-packed_dot-16x16x1-r-safe-reduce"
+    }
+  },
+  "replacements": [
+    {
+      "id": "debug-gemm-dot_dsd-4x4x4-r-safe-reduce",
+      "op": "gemm",
+      "variant": "dot_dsd",
+      "M": 4,
+      "K": 4,
+      "N": 4,
+      "layout": "row-major",
+      "debug": true,
+      "application_pes": 1,
+      "patterns": [
+        "page"
+      ],
+      "repetitions": 3,
+      "buffers": {
+        "A": [
+          "f32",
+          16
+        ],
+        "B": [
+          "f32",
+          16
+        ],
+        "C": [
+          "f32",
+          16
+        ],
+        "row_ptr": [
+          "u32",
+          5
+        ],
+        "col_idx": [
+          "u32",
+          16
+        ],
+        "values": [
+          "f32",
+          16
+        ],
+        "present": [
+          "u16",
+          16
+        ],
+        "time_words": [
+          "u16",
+          6
+        ],
+        "journal_meta": [
+          "u16",
+          384
+        ],
+        "journal_C": [
+          "f32",
+          1024
+        ],
+        "journal_count": [
+          "u16",
+          1
+        ]
+      },
+      "source_hashes": {
+        "pe.csl": "3f0d1c0dbb138f2c22b842d3813f553d443b0d5229d996f1b05920556d2d0ff1",
+        "layout.csl": "50301181378db3b689ce8ae66d0912daf4e147d33260008f137d23a4817dc60d",
+        "host.py": "962b98260d76bc1bc572440b4c73e21619ebe02e260263b8963a7fa1bfd71e53"
+      },
+      "replaces": "debug-gemm-dot_dsd-4x4x4-r",
+      "repair": "Vector multiplication followed by a scalar reduction loop; no overlapping zero-stride reduction descriptor."
+    },
+    {
+      "id": "debug-sparse-packed_dot-4x4x1-r-safe-reduce",
+      "op": "sparse",
+      "variant": "packed_dot",
+      "M": 4,
+      "K": 4,
+      "N": 1,
+      "layout": "row-major",
+      "debug": true,
+      "application_pes": 1,
+      "patterns": [
+        "banded",
+        "uniform",
+        "skewed"
+      ],
+      "repetitions": 3,
+      "buffers": {
+        "A": [
+          "f32",
+          16
+        ],
+        "B": [
+          "f32",
+          4
+        ],
+        "C": [
+          "f32",
+          4
+        ],
+        "row_ptr": [
+          "u32",
+          5
+        ],
+        "col_idx": [
+          "u32",
+          16
+        ],
+        "values": [
+          "f32",
+          16
+        ],
+        "present": [
+          "u16",
+          4
+        ],
+        "time_words": [
+          "u16",
+          6
+        ],
+        "journal_meta": [
+          "u16",
+          96
+        ],
+        "journal_C": [
+          "f32",
+          64
+        ],
+        "journal_count": [
+          "u16",
+          1
+        ]
+      },
+      "source_hashes": {
+        "pe.csl": "6e4dc310a22c11270a9b8433bba93efce17f4218dbc93cde8bb824ac0cba6133",
+        "layout.csl": "50301181378db3b689ce8ae66d0912daf4e147d33260008f137d23a4817dc60d",
+        "host.py": "962b98260d76bc1bc572440b4c73e21619ebe02e260263b8963a7fa1bfd71e53"
+      },
+      "replaces": "debug-sparse-packed_dot-4x4x1-r",
+      "repair": "Vector multiplication followed by a scalar reduction loop; no overlapping zero-stride reduction descriptor."
+    },
+    {
+      "id": "perf-gemm-dot_dsd-16x16x16-r-safe-reduce",
+      "op": "gemm",
+      "variant": "dot_dsd",
+      "M": 16,
+      "K": 16,
+      "N": 16,
+      "layout": "row-major",
+      "debug": false,
+      "application_pes": 1,
+      "patterns": [
+        "dense"
+      ],
+      "repetitions": 3,
+      "buffers": {
+        "A": [
+          "f32",
+          256
+        ],
+        "B": [
+          "f32",
+          256
+        ],
+        "C": [
+          "f32",
+          256
+        ],
+        "row_ptr": [
+          "u32",
+          17
+        ],
+        "col_idx": [
+          "u32",
+          256
+        ],
+        "values": [
+          "f32",
+          256
+        ],
+        "present": [
+          "u16",
+          256
+        ],
+        "time_words": [
+          "u16",
+          6
+        ]
+      },
+      "source_hashes": {
+        "pe.csl": "229121eabe5ec84d1c965d0a24f80f9b1c293aef80814e3fbd230d1853dd030c",
+        "layout.csl": "f38893acbc18a506eed3e6b466963b9e03ef40b9e681416bfb0a240ad6624a7e",
+        "host.py": "962b98260d76bc1bc572440b4c73e21619ebe02e260263b8963a7fa1bfd71e53"
+      },
+      "replaces": "perf-gemm-dot_dsd-16x16x16-r",
+      "repair": "Vector multiplication followed by a scalar reduction loop; no overlapping zero-stride reduction descriptor."
+    },
+    {
+      "id": "perf-gemm-dot_dsd-8x8x8-r-safe-reduce",
+      "op": "gemm",
+      "variant": "dot_dsd",
+      "M": 8,
+      "K": 8,
+      "N": 8,
+      "layout": "row-major",
+      "debug": false,
+      "application_pes": 1,
+      "patterns": [
+        "dense"
+      ],
+      "repetitions": 3,
+      "buffers": {
+        "A": [
+          "f32",
+          64
+        ],
+        "B": [
+          "f32",
+          64
+        ],
+        "C": [
+          "f32",
+          64
+        ],
+        "row_ptr": [
+          "u32",
+          9
+        ],
+        "col_idx": [
+          "u32",
+          64
+        ],
+        "values": [
+          "f32",
+          64
+        ],
+        "present": [
+          "u16",
+          64
+        ],
+        "time_words": [
+          "u16",
+          6
+        ]
+      },
+      "source_hashes": {
+        "pe.csl": "d6eaf60934ea966e27711600f4b1b3556bc855e924c1b59110ef5c524d084254",
+        "layout.csl": "f38893acbc18a506eed3e6b466963b9e03ef40b9e681416bfb0a240ad6624a7e",
+        "host.py": "962b98260d76bc1bc572440b4c73e21619ebe02e260263b8963a7fa1bfd71e53"
+      },
+      "replaces": "perf-gemm-dot_dsd-8x8x8-r",
+      "repair": "Vector multiplication followed by a scalar reduction loop; no overlapping zero-stride reduction descriptor."
+    },
+    {
+      "id": "perf-sparse-packed_dot-16x16x1-r-safe-reduce",
+      "op": "sparse",
+      "variant": "packed_dot",
+      "M": 16,
+      "K": 16,
+      "N": 1,
+      "layout": "row-major",
+      "debug": false,
+      "application_pes": 1,
+      "patterns": [
+        "banded",
+        "uniform",
+        "skewed"
+      ],
+      "repetitions": 3,
+      "buffers": {
+        "A": [
+          "f32",
+          256
+        ],
+        "B": [
+          "f32",
+          16
+        ],
+        "C": [
+          "f32",
+          16
+        ],
+        "row_ptr": [
+          "u32",
+          17
+        ],
+        "col_idx": [
+          "u32",
+          256
+        ],
+        "values": [
+          "f32",
+          256
+        ],
+        "present": [
+          "u16",
+          16
+        ],
+        "time_words": [
+          "u16",
+          6
+        ]
+      },
+      "source_hashes": {
+        "pe.csl": "36a29cd9c2c917138b4c638874b223ecce2f85a26b34173f95b894acfe099011",
+        "layout.csl": "f38893acbc18a506eed3e6b466963b9e03ef40b9e681416bfb0a240ad6624a7e",
+        "host.py": "962b98260d76bc1bc572440b4c73e21619ebe02e260263b8963a7fa1bfd71e53"
+      },
+      "replaces": "perf-sparse-packed_dot-16x16x1-r",
+      "repair": "Vector multiplication followed by a scalar reduction loop; no overlapping zero-stride reduction descriptor."
+    }
+  ]
+}

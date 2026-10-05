@@ -1,0 +1,16 @@
+512 OK 5200 bytes
+4096 OK 12368 bytes
+8192 OK 20560 bytes
+12288 OK 28752 bytes
+16384 OK 36944 bytes
+20480 OK 45136 bytes
+22528 FAIL ld.lld: error: ran out of PE memory for task table ld.lld: error: ran out of PE memory for data (section .data.hi)  
+23552 FAIL ld.lld: error: ran out of PE memory for data (section .bss)  ld.lld: error: ran out of PE memory for task table 
+24064 FAIL ld.lld: error: ran out of PE memory for data (section .bss)  ld.lld: error: ran out of PE memory for task table 
+24576 FAIL ld.lld: error: ran out of PE memory for data (section .bss)  ld.lld: error: ran out of PE memory for task table 
+25088 FAIL ld.lld: error: ran out of PE memory for data (section .bss)  ld.lld: error: ran out of PE memory for task table 
+25600 FAIL ld.lld: error: ran out of PE memory for data (section .bss)  ld.lld: error: ran out of PE memory for task table 
+26624 FAIL ld.lld: error: ran out of PE memory for data (section .bss)  ld.lld: error: ran out of PE memory for task table 
+28672 FAIL ld.lld: error: ran out of PE memory for data (section .bss)  ld.lld: error: ran out of PE memory for task table 
+32767 FAIL ld.lld: error: ran out of PE memory for data (section .bss)  ld.lld: error: ran out of PE memory for task table 
+FIN

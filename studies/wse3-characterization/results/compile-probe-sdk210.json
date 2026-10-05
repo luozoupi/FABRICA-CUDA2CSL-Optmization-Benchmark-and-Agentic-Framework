@@ -1,0 +1,22 @@
+{
+  "artifact_kind": "compile_only_telemetry_api_probe",
+  "csl_main": "compile_probe/layout.csl",
+  "compiler_args": "--arch=wse3 --fabric-dims=8,3 --fabric-offsets=4,1 --memcpy --channels=1",
+  "evidence": "compiled",
+  "executed_on_hardware": false,
+  "job_id": "wsjob-REDACTED",
+  "job_phase": "SUCCEEDED",
+  "job_type": "compile",
+  "sdk_client_version": "2.10.0",
+  "sdk_wsjob_version": "2.10.0-202602281136-11-32008fd8",
+  "submitted_at_utc": "2026-08-17T23:47:58Z",
+  "completed_at_utc": "2026-08-17T23:49:00Z",
+  "source": "instrumentation/compile_probe",
+  "validates": [
+    "time.enable_tsc",
+    "time.get_timestamp",
+    "time.get_perf_cntr_raw_ids_0_1",
+    "phase_valid_export_storage",
+    "official_sync_reference_copy_storage"
+  ]
+}

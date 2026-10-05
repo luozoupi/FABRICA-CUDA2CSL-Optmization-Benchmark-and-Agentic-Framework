@@ -1,0 +1,19 @@
+{
+  "rpc_symbols": [
+    {
+      "id": 1,
+      "immutable": 0,
+      "kind": "Var",
+      "name": "timer",
+      "sym_name": "ptr_timer",
+      "type": "[*]f32"
+    },
+    {
+      "id": 2,
+      "kind": "Func",
+      "name": "run",
+      "sym_name": "run",
+      "type": "void"
+    }
+  ]
+}

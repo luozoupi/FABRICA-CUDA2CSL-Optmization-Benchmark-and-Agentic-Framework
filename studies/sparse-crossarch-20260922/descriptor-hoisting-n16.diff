@@ -1,0 +1,18 @@
+--- sparse-crossarch-20260922/wse/descriptor-n16/disassembly.json
+
++++ sparse-crossarch-20260922/wse/hoisted-n16/disassembly.json
+
+@@ -152,10 +152,10 @@
+
+ lddwds dds1 = [0x0]
+ fmov16.nf r1 = r0
+ fmov32.nf [dds1] = d0
++movri r5 = 0x1ee4
++st16 sp[0x3] = r5
+ movri r5 = 0xd44
+ st16 sp[0x5] = r5
+-movri r5 = 0x1ee4
+-st16 sp[0x3] = r5
+ movri r9 = 0xdc8
+ movri r14 = 0x16e4
+ movri r15 = 0x1dc8

@@ -88,9 +88,17 @@ def _parse_sim_log(sim_log_path: str) -> Optional[Dict[str, Any]]:
     for m in _SIM_LOG_CTF_RE.finditer(text):
         ctf[m.group(1)] = int(m.group(2))
 
-    inst_dispatch = ctf.get("num_inst_dispatch", 0)
-    stalls = ctf.get("num_stalls_", 0)
-    wavelets = ctf.get("num_wavelets", 0)
+    inst_dispatch = ctf.get("num_inst_dispatch")
+    stalls = ctf.get("num_stalls_")
+    wavelets = ctf.get("num_wavelets")
+
+    if not inst_dispatch or stalls is None or wavelets is None:
+        return {"grid": grid, "hw_tiles": hw_tiles, "total_cycles": total_cycles,
+                "idle_cycles_at_end": idle_at_end, "counters_available": False,
+                "ctf_stats": {"num_stalls": None, "num_wavelets": None,
+                              "num_inst_dispatch": None, "num_inst_pipe": None},
+                "stall_ratio": None, "wavelet_density": None,
+                "bottleneck_label": "unavailable"}
 
     stall_ratio = stalls / max(inst_dispatch, 1)
     wavelet_density = wavelets / max(inst_dispatch, 1)
@@ -103,6 +111,7 @@ def _parse_sim_log(sim_log_path: str) -> Optional[Dict[str, Any]]:
         label = "compute-bound"
 
     return {
+        "counters_available": True,
         "grid": grid,
         "hw_tiles": hw_tiles,
         "total_cycles": total_cycles,
@@ -172,8 +181,32 @@ def _run_cs_readelf(staged_bundle: str, sdk_root: str = "") -> Optional[Dict[str
     }
 
 
+def _structure_from_transcript(transcript: Any) -> Optional[Dict[str, Any]]:
+    """The `xkernel_structure = {...}` line a v2 runner prints (sparse_inputs.emit_structure_line),
+    turned into {features, keys, readout_text}. None when no step printed it."""
+    import re as _re
+    line_re = _re.compile(r"xkernel_structure\s*=\s*(\{.*\})")
+    for entry in transcript or []:
+        m = line_re.search(str((entry or {}).get("stdout") or ""))
+        if not m:
+            continue
+        try:
+            feats = json.loads(m.group(1))
+        except ValueError:
+            continue
+        try:
+            import sparse_inputs
+            keys = feats.get("keys") or sparse_inputs.structure_keys(feats)
+            text = sparse_inputs.readout(dict(feats, keys=keys), max_chars=400)
+        except Exception:
+            keys, text = feats.get("keys") or [], "input structure: " + json.dumps(feats)[:380]
+        return {"schema": "structure_readout/1", "features": feats, "keys": list(keys), "readout_text": text}
+    return None
+
+
 def _find_artifacts(staged_bundle: Optional[str],
-                    cycles_send: Optional[int] = None) -> Dict[str, Any]:
+                    cycles_send: Optional[int] = None,
+                    target_relpath: Optional[str] = None) -> Dict[str, Any]:
     if not staged_bundle or not os.path.exists(staged_bundle):
         return {
             "staged_bundle": staged_bundle,
@@ -221,10 +254,22 @@ def _find_artifacts(staged_bundle: Optional[str],
         except Exception as exc:  # never let the model break a benchmark
             logging.warning("[profile] silicon-model readout failed: %s", exc)
 
+    # Compiled-code readout (v2 sparse study): built whenever ir_capture left artifacts under
+    # .xkernel_ir/ so the hazard census covers every arm; shown to the agent only when
+    # XKERNEL_IR_READOUT=1 (format_profile_for_prompt / _classify_bottlenecks).
+    ir_readout_doc = None
+    if (root / ".xkernel_ir").is_dir():
+        try:
+            import ir_readout
+            ir_readout_doc = ir_readout.build_ir_readout(str(root), target_relpath or "pe.csl")
+        except Exception as exc:  # never let the readout break a benchmark
+            logging.warning("[profile] IR readout failed: %s", exc)
+
     return {
         "staged_bundle": str(root),
         "available": True,
         "model_readout": model_readout,
+        "ir_readout": ir_readout_doc,
         "compile_output_dir": str(out_dir) if out_dir.exists() else None,
         "sim_log_count": len(sim_logs),
         "sim_logs": sim_logs[:10],
@@ -297,6 +342,38 @@ def _classify_bottlenecks(benchmark: Dict[str, Any],
             "finding": facts.strip(),
             "recommendation": (fix or str(readout.get("recommended_fix") or "")).strip(),
         })
+
+    # Compiled-code readout and input structure (v2 sparse study), each behind its gate.
+    if os.environ.get("XKERNEL_IR_READOUT", "0") == "1":
+        irr = artifacts.get("ir_readout") or {}
+        if irr:
+            hz = irr.get("hazards") or []
+            insights.append({
+                "category": "ir_readout",
+                "severity": "error" if any(h.get("severity") == "error" for h in hz) else "info",
+                "finding": str(irr.get("readout_text") or ""),
+                "recommendation": (
+                    "A register-destination f32 DSD reduction lowered with destination != source-0 "
+                    "returns the last element instead of the sum (silently wrong, and faster): rewrite "
+                    "the reduction (memory-destination form, scalar accumulate, or f16 @faddh where the "
+                    "precision contract allows) and re-check the quoted disassembly line."
+                    if hz else
+                    "Match the ir_* keys to an angle: no DSD ops or a scalar inner loop with indexed "
+                    "gathers call for a vectorised axis; heavy index shifts call for u16/i16 indices; "
+                    "descriptor setups inside loops call for longer runs per descriptor."),
+            })
+    if os.environ.get("XKERNEL_STRUCTURE_READOUT", "0") == "1":
+        st = artifacts.get("structure_readout") or {}
+        if st:
+            insights.append({
+                "category": "input_structure",
+                "severity": "info",
+                "finding": str(st.get("readout_text") or "").replace("\n", " "),
+                "recommendation": (
+                    "Choose the vectorised axis from the structure: few diagonals or contiguous rows -> "
+                    "a DIA/ELL form across rows; long rows -> one runtime-length DSD per row; skewed rows "
+                    "-> an nnz-balanced partition; a dense accumulator when the row fits SRAM."),
+            })
 
     # Phase 1a hook: surface per-run cycle variance when num_runs > 1.
     # Tells the optimizer "this measurement was stable" vs "this measurement
@@ -481,10 +558,20 @@ def format_profile_for_prompt(profile: Dict[str, Any], max_chars: int = 3500) ->
                       f"f16 share {readout.get('f16_arith_pct')}%, IPC {readout.get('ipc')}")
         if max_chars < 4500:
             max_chars = 4500  # never let the readout be the part that is truncated
+    ir_line = None
+    if os.environ.get("XKERNEL_IR_READOUT", "0") == "1" and (artifacts.get("ir_readout") or {}).get("readout_text"):
+        ir_line = "- ir: " + str(artifacts["ir_readout"]["readout_text"])
+    structure_line = None
+    if os.environ.get("XKERNEL_STRUCTURE_READOUT", "0") == "1" and (artifacts.get("structure_readout") or {}).get("readout_text"):
+        structure_line = "- structure: " + str(artifacts["structure_readout"]["readout_text"]).replace("\n", " ")
+    if (ir_line or structure_line) and max_chars < 5200:
+        max_chars = 5200  # the readouts are never the part that is truncated
     lines = [
         "Profiler feedback:",
         cycle_line,
         *([model_line] if model_line else []),
+        *([structure_line] if structure_line else []),
+        *([ir_line] if ir_line else []),
         f"- profile_status: {profile.get('profile_status')}",
         f"- target_sdk: {profile.get('target_sdk')}",
         f"- arch: {profile.get('arch')}",
@@ -525,7 +612,9 @@ def build_profile_report(benchmark: Dict[str, Any],
                          arch: str = "wse3",
                          stage_label: str = "benchmark") -> Dict[str, Any]:
     artifacts = _find_artifacts(str(benchmark.get("staged_bundle") or ""),
-                                cycles_send=benchmark.get("cycles_send"))
+                                cycles_send=benchmark.get("cycles_send"),
+                                target_relpath=benchmark.get("target_relpath"))
+    artifacts["structure_readout"] = _structure_from_transcript(benchmark.get("transcript"))
     profile: Dict[str, Any] = {
         "stage_label": stage_label,
         "profile_status": benchmark.get("status"),

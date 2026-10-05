@@ -1,0 +1,149 @@
+param memcpy_params: comptime_struct;
+// === SLOT: EXTRA_PARAMS ===
+param St_q: i16;
+param S: i16;
+param d: i16;
+param causal: i16;
+param P: u16;
+param px: u16;
+param py: u16;
+
+const EXIT: local_task_id = @get_local_task_id(9);
+const sys_mod = @import_module("<memcpy/memcpy>", memcpy_params);
+
+// === SLOT: EXTRA_IMPORTS ===
+const math = @import_module("<math>");
+
+const timestamp = @import_module("<time>");
+var tsc_start_buf = @zeros([timestamp.tsc_size_words]u16);
+var tsc_end_buf   = @zeros([timestamp.tsc_size_words]u16);
+var timer_buf = @zeros([3]f32);
+var ptr_timer_buf: [*]f32 = &timer_buf;
+
+// === SLOT: DATA_BUFFERS ===
+const Sq: i16 = St_q;   // local query rows on this PE
+const Sk: i16 = S;      // number of keys/values (full sequence)
+const D:  i16 = d;      // head dimension
+
+var Q_array = @zeros([St_q * d]f32);   // local query block [St_q, d]
+var K_array = @zeros([S * d]f32);      // full K [S, d]
+var V_array = @zeros([S * d]f32);      // full V [S, d]
+var O_array = @zeros([St_q * d]f32);   // local output block [St_q, d]
+
+var ptr_Q: [*]f32 = &Q_array;
+var ptr_K: [*]f32 = &K_array;
+var ptr_V: [*]f32 = &V_array;
+var ptr_O: [*]f32 = &O_array;
+
+// per-row scratch for the softmax probabilities (length S) and a d-length prod temp
+var p_array = @zeros([S]f32);
+var prod_array = @zeros([d]f32);
+
+// Module-scope DSDs over d-length slices (base addresses repositioned per-loop).
+var q_dsd = @get_dsd(mem1d_dsd, .{ .tensor_access = |k| { D } -> Q_array[k] });
+var k_dsd = @get_dsd(mem1d_dsd, .{ .tensor_access = |k| { D } -> K_array[k] });
+var v_dsd = @get_dsd(mem1d_dsd, .{ .tensor_access = |k| { D } -> V_array[k] });
+var o_dsd = @get_dsd(mem1d_dsd, .{ .tensor_access = |k| { D } -> O_array[k] });
+const prod_dsd = @get_dsd(mem1d_dsd, .{ .tensor_access = |k| { D } -> prod_array[k] });
+
+// Timestamp output buffers expected by the host: start_ts / finish_ts (3 u16 each)
+var start_ts_buf = @zeros([3]u16);
+var finish_ts_buf = @zeros([3]u16);
+var ptr_start_ts:  [*]u16 = &start_ts_buf;
+var ptr_finish_ts: [*]u16 = &finish_ts_buf;
+
+// === SLOT: KERNEL_FUNCTION ===
+fn attention() void {
+    const inv_sqrt_d: f32 = math.sqrt(1.0 / @as(f32, @as(f16, d)));
+
+    var i: i16 = 0;
+    while (i < Sq) : (i += 1) {
+        const q_base: i16 = i * D;
+        // point q_dsd at row i of Q
+        const cur_q = @set_dsd_base_addr(q_dsd, @ptrcast([*]f32, &Q_array[q_base]));
+
+        // 1) scores: p[j] = (Q[i] . K[j]) * inv_sqrt_d, track max
+        var mx: f32 = -3.4028235e38;
+        var j: i16 = 0;
+        while (j < Sk) : (j += 1) {
+            const k_base: i16 = j * D;
+            const cur_k = @set_dsd_base_addr(k_dsd, @ptrcast([*]f32, &K_array[k_base]));
+
+            // prod = Q[i,:] * K[j,:]  (elementwise), then reduce
+            @fmuls(prod_dsd, cur_q, cur_k);
+            var acc: f32 = 0.0;
+            var kk: i16 = 0;
+            while (kk < D) : (kk += 1) {
+                acc += prod_array[@as(u16, kk)];
+            }
+            acc *= inv_sqrt_d;
+            p_array[@as(u16, j)] = acc;
+            if (acc > mx) mx = acc;
+        }
+
+        // 2) stable softmax: p[j] = exp(p[j] - mx), sum
+        var sum: f32 = 0.0;
+        j = 0;
+        while (j < Sk) : (j += 1) {
+            const e: f32 = math.exp(p_array[@as(u16, j)] - mx);
+            p_array[@as(u16, j)] = e;
+            sum += e;
+        }
+        const inv_sum: f32 = 1.0 / sum;
+        j = 0;
+        while (j < Sk) : (j += 1) {
+            p_array[@as(u16, j)] *= inv_sum;
+        }
+
+        // 3) O[i,k] = sum_j p[j] * V[j,k]
+        const o_base: i16 = i * D;
+        const cur_o = @set_dsd_base_addr(o_dsd, @ptrcast([*]f32, &O_array[o_base]));
+        // zero the output row
+        @fmuls(cur_o, cur_o, 0.0);
+        j = 0;
+        while (j < Sk) : (j += 1) {
+            const v_base: i16 = j * D;
+            const cur_v = @set_dsd_base_addr(v_dsd, @ptrcast([*]f32, &V_array[v_base]));
+            const pj: f32 = p_array[@as(u16, j)];
+            @fmacs(cur_o, cur_o, cur_v, pj);
+        }
+    }
+}
+
+fn compute() void {
+    timestamp.enable_tsc();
+    timestamp.get_timestamp(&tsc_start_buf);
+
+    // === SLOT: KERNEL_CALL ===
+    attention();
+
+    timestamp.get_timestamp(&tsc_end_buf);
+    timestamp.disable_tsc();
+
+    // Copy raw timestamp words into the host-visible start/finish buffers.
+    var w: u16 = 0;
+    while (w < 3) : (w += 1) {
+        start_ts_buf[w]  = tsc_start_buf[w];
+        finish_ts_buf[w] = tsc_end_buf[w];
+    }
+
+    @activate(EXIT);
+}
+
+task f_exit() void {
+    sys_mod.unblock_cmd_stream();
+}
+
+comptime {
+    @bind_local_task(f_exit, EXIT);
+
+    // === SLOT: EXPORT_SYMBOLS ===
+    @export_symbol(ptr_Q, "Q");
+    @export_symbol(ptr_K, "K");
+    @export_symbol(ptr_V, "V");
+    @export_symbol(ptr_O, "O");
+
+    @export_symbol(ptr_start_ts,  "start_ts");
+    @export_symbol(ptr_finish_ts, "finish_ts");
+    @export_symbol(compute);
+}

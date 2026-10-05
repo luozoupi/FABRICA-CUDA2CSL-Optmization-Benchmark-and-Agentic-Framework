@@ -1,0 +1,18 @@
+{
+ "producer": "dsr",
+ "dsr_last": "s1",
+ "pairs": 9,
+ "k": [
+  0,
+  1,
+  2,
+  3,
+  4,
+  6,
+  12,
+  24,
+  0
+ ],
+ "prepared_pair": 8,
+ "expect": "dsr"
+}

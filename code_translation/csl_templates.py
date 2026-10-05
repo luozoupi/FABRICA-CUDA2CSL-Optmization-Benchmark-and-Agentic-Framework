@@ -497,7 +497,10 @@ def select_template(layout_text: str) -> Optional[str]:
     if not layout_text:
         return None
 
-    mesh_w, mesh_h = 1, 1
+    # Unknown dimensions are not evidence for a single-PE ABI. In particular,
+    # @set_rectangle(P, P) belongs to a parameterized mesh, not a 1x1 layout.
+    rectangle = re.search(r'@set_rectangle\(\s*(\d+)\s*,\s*(\d+)\s*\)', layout_text)
+    mesh_w, mesh_h = (tuple(map(int, rectangle.groups())) if rectangle else (None, None))
     for pat in [r'kernel_rows\s*=\s*(\d+)', r'width\s*[=:]\s*(\d+)']:
         m = re.search(pat, layout_text)
         if m:
@@ -517,7 +520,7 @@ def select_template(layout_text: str) -> Optional[str]:
         layout_text, re.IGNORECASE,
     ))
 
-    if is_single_pe:
+    if is_single_pe and not re.search(r'@export_name\(\s*"main"', layout_text):
         return "single_pe"
     if has_collectives:
         return "collectives"
@@ -528,8 +531,17 @@ def select_template(layout_text: str) -> Optional[str]:
 
 
 def get_template(name: str) -> str:
+    """The scaffold text; rewritten to SDK 2.x syntax (untyped memcpy params) when the
+    agent's target SDK is 2.x (sdk_compat), byte-identical at the 1.4 default."""
     """Get a template by name."""
-    return _TEMPLATES[name]
+    text = _TEMPLATES[name]
+    try:
+        from sdk_compat import fixup_csl_for_sdk, is_sdk2
+        if is_sdk2():
+            text = fixup_csl_for_sdk(text)[0]
+    except ImportError:
+        pass
+    return text
 
 
 def format_template_prompt(template_name: str, template_text: str) -> str:

@@ -1,0 +1,13 @@
+concept,claude-opus-4-8_n,openai/gpt-oss-120b_n,Llama-4-Maverick-17B-128E-Instruct_n,google/gemma-4-E4B-it_n,google/gemma-4-31B-it_n,openai/gpt-oss-20b_n,meta-llama/Llama-3.3-70B-Instruct_n,claude-opus-4-8_share_eff,openai/gpt-oss-120b_share_eff,Llama-4-Maverick-17B-128E-Instruct_share_eff,google/gemma-4-E4B-it_share_eff,google/gemma-4-31B-it_share_eff,openai/gpt-oss-20b_share_eff,meta-llama/Llama-3.3-70B-Instruct_share_eff
+syntax_lexical,76,365,105,297,62,140,205,0.0385,0.3294,0.2023,0.6471,0.1455,0.3581,0.5959
+types_declarations,241,225,153,98,45,82,87,0.1221,0.2031,0.2948,0.2135,0.1056,0.2097,0.2529
+comptime_model,95,119,99,21,27,62,16,0.0482,0.1074,0.1908,0.0458,0.0634,0.1586,0.0465
+resource_ids_interface,47,259,123,33,226,50,25,0.0238,0.2338,0.237,0.0719,0.5305,0.1279,0.0727
+dsd_semantics,31,6,5,0,6,3,4,0.0157,0.0054,0.0096,0.0,0.0141,0.0077,0.0116
+fabric_protocol_runtime,234,12,9,0,30,5,0,0.1186,0.0108,0.0173,0.0,0.0704,0.0128,0.0
+numerics_verification,269,76,19,8,17,31,6,0.1363,0.0686,0.0366,0.0174,0.0399,0.0793,0.0174
+pass,964,17,0,0,8,1,0,0.4886,0.0153,0.0,0.0,0.0188,0.0026,0.0
+harness_environment,16,29,6,2,5,17,1,0.0081,0.0262,0.0116,0.0044,0.0117,0.0435,0.0029
+LANGUAGE_total,443,715,362,416,140,287,312,0.2245,0.6453,0.6975,0.9063,0.3286,0.734,0.907
+PROTOCOL_total,281,271,132,33,256,55,25,0.1424,0.2446,0.2543,0.0719,0.6009,0.1407,0.0727
+EFFECTIVE_attempts,1973,1108,519,459,426,391,344,,,,,,,

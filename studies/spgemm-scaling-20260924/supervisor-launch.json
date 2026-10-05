@@ -1,0 +1,5 @@
+{
+  "pid": 4135703,
+  "driver": "supervise.py",
+  "log": "/home/USER/spgemm-scaling-20260924/supervised-sweep.log"
+}

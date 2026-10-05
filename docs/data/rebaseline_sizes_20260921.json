@@ -1,0 +1,82 @@
+{
+  "protocol": "in_kernel_tsc",
+  "num_runs": 3,
+  "sdk_root": "/software/cerebras/cs_sdk-2.10",
+  "measured_on": "2026-09-21",
+  "kernels": {
+    "SpGEMM-Masked-Dot": {
+      "small": {
+        "heldout_eval": {
+          "passed": true,
+          "reason": "passed all 3 held-out seeds",
+          "seeds": [
+            [
+              101,
+              101
+            ],
+            [
+              202,
+              202
+            ],
+            [
+              303,
+              303
+            ]
+          ]
+        },
+        "status": "pass",
+        "success_marker": true,
+        "cycles_send": 260903,
+        "cycles_send_runs": [
+          260903,
+          260903,
+          260903
+        ],
+        "cycles_median": 260903,
+        "time_send_us": 306.9447,
+        "failure_reason": null,
+        "commands_script": "commands_wse3.sh",
+        "target_relpath": "pe.csl",
+        "elapsed_s": 190.1,
+        "old_cycles_send": 260903,
+        "delta_pct": 0.0
+      },
+      "n144": {
+        "heldout_eval": {
+          "passed": true,
+          "reason": "passed all 3 held-out seeds",
+          "seeds": [
+            [
+              101,
+              101
+            ],
+            [
+              202,
+              202
+            ],
+            [
+              303,
+              303
+            ]
+          ]
+        },
+        "status": "pass",
+        "success_marker": true,
+        "cycles_send": 845529,
+        "cycles_send_runs": [
+          845529,
+          845529,
+          845529
+        ],
+        "cycles_median": 845529,
+        "time_send_us": 994.74,
+        "failure_reason": null,
+        "commands_script": "commands_wse3_n144.sh",
+        "target_relpath": "pe.csl",
+        "elapsed_s": 259.0,
+        "old_cycles_send": 260903,
+        "delta_pct": 224.08
+      }
+    }
+  }
+}

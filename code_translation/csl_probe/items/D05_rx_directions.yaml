@@ -1,0 +1,25 @@
+id: D05_rx_directions
+group: D_api
+prompt: 'Answer this Cerebras CSL / WSE-3 question with the single letter of the correct option, then one sentence
+  of justification.
+
+
+  On the WSE-3, how many receive (rx) directions may one color''s route on a PE list?
+
+
+  A) exactly one
+
+  B) up to two
+
+  C) up to four
+
+  D) any subset of the five ports'
+choices:
+- A) exactly one
+- B) up to two
+- C) up to four
+- D) any subset of the five ports
+expected:
+  choice: A
+scoring: first standalone letter A-D in the reply equals the key
+source_citation: error_gotcha_retrieval single-source-rx

@@ -1,0 +1,224 @@
+// SpMV with a 2D partition, one PE of the Pr x Pc mesh (see layout.csl for the data flow).
+// Roles: PE (0,0) sends the two halves of x and segment 0; the owner of segment j receives its half of
+// x and broadcasts its segment along column j; every other PE receives its segment. Each PE then
+// multiplies its block (COO, local rows, columns within the segment) into a partial y and streams the
+// row sum west: the east end sends its partial, middle PEs add the incoming stream to theirs while
+// forwarding, column 0 adds into y. A PE closes its timing window (device_internal_v2) when all of its
+// asynchronous operations have completed; each has its own completion task, so no activation is lost.
+
+param memcpy_params;
+param Pc: i16;
+param Pr: i16;
+param px: i16;
+param py: i16;
+param nr: u16;
+param ncols: u16;
+param max_nnz_pe: u16;
+param C_A: color;
+param C_R: color;
+param C_B: color;
+param C_0: color;
+param C_1: color;
+
+const H: i16 = Pc / 2;
+const is_src: bool = px == 0 and py == 0;
+const left_owner: bool = py == 0 and px < H;
+const right_owner: bool = py == 1 and px >= H;
+const owner: bool = left_owner or right_owner;
+const has_east: bool = px <= Pc - 2;      // receives a partial row sum from the east
+const has_west: bool = px >= 1;           // sends its row sum west
+const send_c: color = if (px % 2 == 0) C_0 else C_1;
+const recv_c: color = if (px % 2 == 0) C_1 else C_0;
+const half_c: color = if (left_owner) C_A else C_R;
+
+const EXIT: local_task_id = @get_local_task_id(9);
+const COMPUTE: local_task_id = @get_local_task_id(10);
+const OWN_READY: local_task_id = @get_local_task_id(11);
+const A_DONE: local_task_id = @get_local_task_id(12);
+const R_DONE: local_task_id = @get_local_task_id(13);
+const B_DONE: local_task_id = @get_local_task_id(14);
+const RED_DONE: local_task_id = @get_local_task_id(15);
+
+const UT_A = @get_ut_id(4);   // half of x: send on (0,0) / receive on an owner
+const UT_R = @get_ut_id(5);   // right half send on (0,0)
+const UT_B = @get_ut_id(6);   // segment broadcast: send on an owner / receive elsewhere
+const UT_C = @get_ut_id(7);   // row reduction
+
+const sys_mod = @import_module("<memcpy/memcpy>", memcpy_params);
+const timestamp = @import_module("<time>");
+var tscStartBuffer = @zeros([timestamp.tsc_size_words]u16);
+var tscEndBuffer   = @zeros([timestamp.tsc_size_words]u16);
+var time_buf_u16   = @zeros([timestamp.tsc_size_words * 2]u16);
+var ptr_time_buf_u16: [*]u16 = &time_buf_u16;
+
+var rr   = @zeros([max_nnz_pe]u32);
+var cc   = @zeros([max_nnz_pe]u32);
+var vv   = @zeros([max_nnz_pe]f32);
+var info = @zeros([4]u32);
+var x    = @zeros([ncols]f32);
+var y    = @zeros([nr]f32);
+var part = @zeros([nr]f32);
+var ptr_rr: [*]u32 = &rr;
+var ptr_cc: [*]u32 = &cc;
+var ptr_vv: [*]f32 = &vv;
+var ptr_info: [*]u32 = &info;
+var ptr_x: [*]f32 = &x;
+var ptr_y: [*]f32 = &y;
+
+const x_dsd    = @get_dsd(mem1d_dsd, .{ .tensor_access = |k|{ncols} -> x[k] });
+const part_dsd = @get_dsd(mem1d_dsd, .{ .tensor_access = |k|{nr} -> part[k] });
+const y_dsd    = @get_dsd(mem1d_dsd, .{ .tensor_access = |k|{nr} -> y[k] });
+const a_out  = @get_dsd(fabout_dsd, .{ .extent = ncols, .fabric_color = C_A, .output_queue = @get_output_queue(2) });
+const r_out  = @get_dsd(fabout_dsd, .{ .extent = ncols, .fabric_color = C_R, .output_queue = @get_output_queue(3) });
+const b_out  = @get_dsd(fabout_dsd, .{ .extent = ncols, .fabric_color = C_B, .output_queue = @get_output_queue(4) });
+const half_in = @get_dsd(fabin_dsd, .{ .extent = ncols, .fabric_color = half_c, .input_queue = @get_input_queue(2) });
+const b_in   = @get_dsd(fabin_dsd,  .{ .extent = ncols, .fabric_color = C_B, .input_queue = @get_input_queue(3) });
+const c_out  = @get_dsd(fabout_dsd, .{ .extent = nr, .fabric_color = send_c, .output_queue = @get_output_queue(5) });
+const c_in   = @get_dsd(fabin_dsd,  .{ .extent = nr, .fabric_color = recv_c, .input_queue = @get_input_queue(5) });
+
+var a_done: bool = true;
+var r_done: bool = true;
+var b_done: bool = true;
+var red_done: bool = false;
+
+fn seg_len() u16 { return @as(u16, info[2]); }
+
+fn maybe_exit() void {
+  if (a_done and r_done and b_done and red_done) { @activate(EXIT); }
+}
+
+fn main() void {
+  f_tic_dev();
+  const s: u16 = seg_len();
+  if (is_src) {
+    const left: u16 = @as(u16, H) * s;
+    const right: u16 = @as(u16, Pc - H) * s;
+    if (H >= 2) {
+      a_done = false;
+      @fmovs(@set_dsd_length(a_out, left), @set_dsd_length(x_dsd, left),
+             .{ .async = true, .ut_id = UT_A, .activate = A_DONE });
+    }
+    r_done = false;
+    const xr = @increment_dsd_offset(@set_dsd_length(x_dsd, right), @as(i16, left), f32);
+    @fmovs(@set_dsd_length(r_out, right), xr, .{ .async = true, .ut_id = UT_R, .activate = R_DONE });
+    b_done = false;
+    @fmovs(@set_dsd_length(b_out, s), @set_dsd_length(x_dsd, s), .{ .async = true, .ut_id = UT_B, .activate = B_DONE });
+    @activate(COMPUTE);
+  } else if (owner) {
+    const half: u16 = if (left_owner) @as(u16, H) * s else @as(u16, Pc - H) * s;
+    b_done = false;
+    @fmovs(@set_dsd_length(x_dsd, half), @set_dsd_length(half_in, half),
+           .{ .async = true, .ut_id = UT_A, .activate = OWN_READY });
+  } else {
+    @fmovs(@set_dsd_length(x_dsd, s), @set_dsd_length(b_in, s), .{ .async = true, .ut_id = UT_B, .activate = COMPUTE });
+  }
+}
+
+task own_ready() void {                    // an owner has its half of x: broadcast its segment, compute
+  const s: u16 = seg_len();
+  const xs = @increment_dsd_offset(@set_dsd_length(x_dsd, s), @as(i16, info[1]), f32);
+  @fmovs(@set_dsd_length(b_out, s), xs, .{ .async = true, .ut_id = UT_B, .activate = B_DONE });
+  @activate(COMPUTE);
+}
+
+task compute() void {
+  timestamp.get_timestamp(&tsc_seg);
+  @fmovs(part_dsd, 0.0);
+  const n: u16 = @as(u16, info[0]);
+  const xo: u16 = @as(u16, info[1]);
+  var k: u16 = 0;
+  while (k < n) : (k += 1) {
+    const r: u16 = @as(u16, rr[k]);
+    const c: u16 = @as(u16, cc[k]);
+    part[r] += vv[k] * x[xo + c];
+  }
+  timestamp.get_timestamp(&tsc_comp);
+  if (has_east and has_west) {
+    @fadds(c_out, c_in, part_dsd, .{ .async = true, .ut_id = UT_C, .activate = RED_DONE });
+  } else if (has_west) {
+    @fmovs(c_out, part_dsd, .{ .async = true, .ut_id = UT_C, .activate = RED_DONE });
+  } else {
+    @fadds(y_dsd, c_in, part_dsd, .{ .async = true, .ut_id = UT_C, .activate = RED_DONE });
+  }
+}
+
+task a_done_task() void { a_done = true; maybe_exit(); }
+task r_done_task() void { r_done = true; maybe_exit(); }
+task b_done_task() void { b_done = true; maybe_exit(); }
+task red_done_task() void { red_done = true; maybe_exit(); }
+
+task f_exit() void {
+  f_toc_dev();
+  sys_mod.unblock_cmd_stream();
+}
+
+fn f_enable_timer() void {
+  timestamp.enable_tsc();
+  sys_mod.unblock_cmd_stream();
+}
+
+var tsc_seg = @zeros([timestamp.tsc_size_words]u16);    // debug: segment available (compute starts)
+var tsc_comp = @zeros([timestamp.tsc_size_words]u16);   // debug: local product done (reduction starts)
+var dbg = @zeros([12]u16);
+var ptr_dbg: [*]u16 = &dbg;
+var tsc_window_open: bool = false;
+fn f_tic_dev() void {
+  if (!tsc_window_open) {
+    tsc_window_open = true;
+    timestamp.get_timestamp(&tscStartBuffer);
+  }
+}
+fn f_toc_dev() void {
+  timestamp.get_timestamp(&tscEndBuffer);
+}
+
+fn f_memcpy_timestamps() void {
+  time_buf_u16[0] = tscStartBuffer[0];
+  time_buf_u16[1] = tscStartBuffer[1];
+  time_buf_u16[2] = tscStartBuffer[2];
+  time_buf_u16[3] = tscEndBuffer[0];
+  time_buf_u16[4] = tscEndBuffer[1];
+  time_buf_u16[5] = tscEndBuffer[2];
+  var q: u16 = 0;
+  while (q < 3) : (q += 1) {
+    dbg[q] = tscStartBuffer[q]; dbg[3 + q] = tsc_seg[q]; dbg[6 + q] = tsc_comp[q]; dbg[9 + q] = tscEndBuffer[q];
+  }
+  sys_mod.unblock_cmd_stream();
+}
+
+comptime {
+  @bind_local_task(f_exit, EXIT);
+  @bind_local_task(compute, COMPUTE);
+  @bind_local_task(own_ready, OWN_READY);
+  @bind_local_task(a_done_task, A_DONE);
+  @bind_local_task(r_done_task, R_DONE);
+  @bind_local_task(b_done_task, B_DONE);
+  @bind_local_task(red_done_task, RED_DONE);
+
+  if (@is_arch("wse3")) {
+    if (is_src) {
+      if (H >= 2) { @initialize_queue(@get_output_queue(2), .{ .color = C_A }); }
+      @initialize_queue(@get_output_queue(3), .{ .color = C_R });
+      @initialize_queue(@get_output_queue(4), .{ .color = C_B });
+    } else if (owner) {
+      @initialize_queue(@get_input_queue(2), .{ .color = half_c });
+      @initialize_queue(@get_output_queue(4), .{ .color = C_B });
+    } else {
+      @initialize_queue(@get_input_queue(3), .{ .color = C_B });
+    }
+    if (has_east) { @initialize_queue(@get_input_queue(5), .{ .color = recv_c }); }
+    if (has_west) { @initialize_queue(@get_output_queue(5), .{ .color = send_c }); }
+  }
+
+  @export_symbol(ptr_rr, "rr");
+  @export_symbol(ptr_cc, "cc");
+  @export_symbol(ptr_vv, "vv");
+  @export_symbol(ptr_info, "info");
+  @export_symbol(ptr_x, "x");
+  @export_symbol(ptr_y, "y");
+  @export_symbol(ptr_time_buf_u16, "time_buf_u16");
+  @export_symbol(ptr_dbg, "dbg");
+  @export_symbol(main);
+  @export_symbol(f_enable_timer);
+  @export_symbol(f_memcpy_timestamps);
+}

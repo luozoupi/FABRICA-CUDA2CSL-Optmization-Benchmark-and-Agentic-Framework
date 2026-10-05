@@ -1,0 +1,16 @@
+const memcpy = @import_module("<memcpy/get_params>", .{ .width=1, .height=1 });
+layout {
+  @set_rectangle(1,1);
+  @set_tile_code(0,0,"pe.csl", .{ .memcpy_params=memcpy.get_params(0) });
+@export_name("A", [*]f32, true);
+@export_name("B", [*]f32, true);
+@export_name("C", [*]f32, true);
+@export_name("row_ptr", [*]u32, true);
+@export_name("col_idx", [*]u32, true);
+@export_name("values", [*]f32, true);
+@export_name("present", [*]u16, true);
+@export_name("time_words", [*]u16, true);
+@export_name("compute", fn()void);
+@export_name("enable_timer", fn()void);
+@export_name("timer_control", fn()void);
+}

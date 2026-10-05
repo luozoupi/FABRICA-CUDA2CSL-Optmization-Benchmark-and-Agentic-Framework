@@ -1,0 +1,56 @@
+param memcpy_params;
+const EXIT: local_task_id = @get_local_task_id(9);
+const sys_mod = @import_module("<memcpy/memcpy>", memcpy_params);
+
+var a = @zeros([8]i16); var b = @zeros([8]i16); var g = @zeros([8]i16);
+var c = @zeros([80]i16); var d = @zeros([8]i16);
+var af = @zeros([8]f16); var bf = @zeros([8]f16); var gf = @zeros([8]f16); var cf = @zeros([16]f16);
+var mark = @zeros([16]i16);
+var p_a: [*]i16 = &a; var p_b: [*]i16 = &b; var p_g: [*]i16 = &g; var p_c: [*]i16 = &c; var p_d: [*]i16 = &d;
+var p_af: [*]f16 = &af; var p_bf: [*]f16 = &bf; var p_gf: [*]f16 = &gf; var p_cf: [*]f16 = &cf; var p_mark: [*]i16 = &mark;
+
+const ad  = @get_dsd(mem1d_dsd, .{ .tensor_access = |i|{8} -> a[i] });
+const bd  = @get_dsd(mem1d_dsd, .{ .tensor_access = |i|{8} -> b[i] });
+const afd = @get_dsd(mem1d_dsd, .{ .tensor_access = |i|{8} -> af[i] });
+const cd0 = @get_dsd(mem1d_dsd, .{ .tensor_access = |j|{8} -> c[j + 0] });
+const cd1 = @get_dsd(mem1d_dsd, .{ .tensor_access = |j|{8} -> c[j + 8] });
+const cd2 = @get_dsd(mem1d_dsd, .{ .tensor_access = |j|{8} -> c[j + 16] });
+const cd3 = @get_dsd(mem1d_dsd, .{ .tensor_access = |j|{8} -> c[j + 24] });
+const cd4 = @get_dsd(mem1d_dsd, .{ .tensor_access = |j|{8} -> c[j + 32] });
+const cd5 = @get_dsd(mem1d_dsd, .{ .tensor_access = |j|{8} -> c[j + 40] });
+const cd6 = @get_dsd(mem1d_dsd, .{ .tensor_access = |j|{8} -> c[j + 48] });
+const cd7 = @get_dsd(mem1d_dsd, .{ .tensor_access = |j|{8} -> c[j + 56] });
+const cd8 = @get_dsd(mem1d_dsd, .{ .tensor_access = |j|{8} -> c[j + 64] });
+
+fn compute() void {
+  mark[0] = 0x6000;
+  @add16(cd0, ad, bd);
+  mark[1] = 0x6001;
+  @add16(cd1, ad, bd);
+  mark[2] = 0x6002;
+  @add16(cd2, ad, bd);
+  mark[3] = 0x6003;
+  @add16(cd3, ad, bd);
+  mark[4] = 0x6004;
+  @add16(cd4, ad, bd);
+  mark[5] = 0x6005;
+  @add16(cd5, ad, bd);
+  mark[6] = 0x6006;
+  @add16(cd6, ad, bd);
+  mark[7] = 0x6007;
+  @add16(cd7, ad, bd);
+  mark[8] = 0x6008;
+  @add16(cd7, ad, bd);
+
+  mark[9] = 0x6009;
+  @activate(EXIT);
+}
+
+task f_exit() void { sys_mod.unblock_cmd_stream(); }
+
+comptime {
+  @bind_local_task(f_exit, EXIT);
+  @export_symbol(p_a, "a"); @export_symbol(p_b, "b"); @export_symbol(p_g, "g"); @export_symbol(p_c, "c"); @export_symbol(p_d, "d");
+  @export_symbol(p_af, "af"); @export_symbol(p_bf, "bf"); @export_symbol(p_gf, "gf"); @export_symbol(p_cf, "cf"); @export_symbol(p_mark, "mark");
+  @export_symbol(compute);
+}

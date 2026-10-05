@@ -1,0 +1,25 @@
+param S: u16;
+param N: u16;
+param K: u16;
+param R: u16;
+param AC: u16;
+param BC: u16;
+param OC: u16;
+param W: u16;
+const memcpy = @import_module("<memcpy/get_params>", .{.width=S,.height=S});
+const c2d = @import_module("<collectives_2d/params>");
+layout {
+ @set_rectangle(S,S);
+ for (@range(u16,S)) |x| {
+  for (@range(u16,S)) |y| {
+   const cp=c2d.get_params(x,y,.{
+    .x_colors=.{@get_color(0),@get_color(1)}, .x_entrypoints=.{@get_local_task_id(8),@get_local_task_id(9)},
+    .y_colors=.{@get_color(4),@get_color(5)}, .y_entrypoints=.{@get_local_task_id(10),@get_local_task_id(11)}
+   });
+   @set_tile_code(x,y,"pe.csl",.{.memcpy_params=memcpy.get_params(x),.c2d_params=cp,.N=N,.K=K,.R=R,.AC=AC,.BC=BC,.OC=OC,.W=W});
+  }
+ }
+ @export_name("aa",[*]u32,true); @export_name("bb",[*]u32,true); @export_name("cc",[*]u32,true);
+ @export_name("config",[*]u16,true); @export_name("report",[*]u16,true); @export_name("total_sum",[*]f32,true);
+ @export_name("start",fn()void); @export_name("init",fn()void);
+}

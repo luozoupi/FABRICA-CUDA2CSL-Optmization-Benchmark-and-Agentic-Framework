@@ -1,0 +1,5 @@
+addressing
+
+the single factor changed relative to `base`:
+var i: u16 = @as(u16, idx[0]);
+  c[0] = a[i] + b[i];

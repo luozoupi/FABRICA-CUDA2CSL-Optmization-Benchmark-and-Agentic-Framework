@@ -1,0 +1,119 @@
+[
+  {
+    "kernel_dir": "<repo>/kernels/RowScale-CSR/CSL",
+    "csl_main": "layout.csl",
+    "params": {
+      "nrows": "512",
+      "max_nnz": "2304",
+      "iters": "1"
+    },
+    "arms": {
+      "sim": {
+        "status": "pass",
+        "cycles_send": 45868,
+        "success_marker": true,
+        "returncode": 0,
+        "wall_s": 70.6,
+        "reason": null,
+        "stdout_tail": "RowScale-CSR: nrows=512, max_nnz=2304, iters=1\neval_seed = 7\nmatrix = HB/494_bus n=494 m=494 nnz=1666 (index 0)\nxkernel_structure = {\"n\": 494, \"m\": 494, \"nnz\": 1666, \"density\": 0.006826861610582045, \"row_len_mean\": 3.3724696356275303, \"row_len_max\": 10, \"row_len_min\": 2, \"row_len_cv\": 0.4204989264988126, \"empty_rows_frac\": 0.0, \"bandwidth\": 428, \"band95\": 310, \"frac_within_band1\": 0.4105642256902761, \"n_diagonals\": 465, \"n_diagonals_for_90pct\": 299, \"contiguous_run_rows_frac\": 0.11740890688259109, \"symmetric_pattern\": true, \"block_density_4x4\": 0.11244600431965443, \"accumulator_fits\": true, \"cap_fill\": 0.7230902777777778, \"keys\": [\"struct_short_rows\", \"struct_symmetric\", \"struct_accumulator_fits\"]}\ncycles_send = 45868 cycles\ntime_send = 53.9624 us\ncycles_per_nnz = 27.53\n[verify] max abs err = 0.000e+00 over 1666 nonzeros\nSUCCESS\n",
+        "stderr_tail": "Event 2026-09-16 04:22:08 +0000 UTC reason=InconsistentVersion wsjob=wsjob-<id> message='Warning: client semantic version 1.14.0 is inconsistent with cluster server semantic version 1.20.2, there's a risk job could fail due to inconsistent setup.'\nEmpty ingress service url. Falling back to default server: 0.0.0.0:443\n"
+      },
+      "hw": {
+        "status": "pass",
+        "cycles_send": 41346,
+        "success_marker": true,
+        "returncode": 0,
+        "wall_s": 441.8,
+        "reason": null,
+        "stdout_tail": "RowScale-CSR: nrows=512, max_nnz=2304, iters=1\neval_seed = 7\nmatrix = HB/494_bus n=494 m=494 nnz=1666 (index 0)\nxkernel_structure = {\"n\": 494, \"m\": 494, \"nnz\": 1666, \"density\": 0.006826861610582045, \"row_len_mean\": 3.3724696356275303, \"row_len_max\": 10, \"row_len_min\": 2, \"row_len_cv\": 0.4204989264988126, \"empty_rows_frac\": 0.0, \"bandwidth\": 428, \"band95\": 310, \"frac_within_band1\": 0.4105642256902761, \"n_diagonals\": 465, \"n_diagonals_for_90pct\": 299, \"contiguous_run_rows_frac\": 0.11740890688259109, \"symmetric_pattern\": true, \"block_density_4x4\": 0.11244600431965443, \"accumulator_fits\": true, \"cap_fill\": 0.7230902777777778, \"keys\": [\"struct_short_rows\", \"struct_symmetric\", \"struct_accumulator_fits\"]}\ncycles_send = 41346 cycles\ntime_send = 48.6424 us\ncycles_per_nnz = 24.82\n[verify] max abs err = 0.000e+00 over 1666 nonzeros\nSUCCESS\n",
+        "stderr_tail": "Event 2026-09-16 04:24:08 +0000 UTC reason=InconsistentVersion wsjob=wsjob-<id> message='Warning: client semantic version 1.14.0 is inconsistent with cluster server semantic version 1.20.2, there's a risk job could fail due to inconsistent setup.'\nCould not find coordinator IP:port in cluster details\nEmpty ingress service url. Falling back to default server: 0.0.0.0:443\n",
+        "cycles_send_runs": [
+          41346,
+          41346,
+          41346
+        ],
+        "repeats": 3,
+        "cycles_send_min": 41346,
+        "cycles_send_max": 41346,
+        "spread": 1.0
+      }
+    },
+    "timing_method": "device_internal",
+    "hw_comparable": true,
+    "hw_vs_sim": {
+      "sim_cycles": 45868,
+      "hw_cycles": 41346,
+      "ratio": 0.9014,
+      "delta_pct": -9.86,
+      "comparable": true,
+      "caveat": null
+    },
+    "kernel": "RowScale-CSR",
+    "size": "small",
+    "commands_script": "commands_wse3.sh",
+    "spec_sim_cycles": 45868,
+    "pass_kind": "reference",
+    "elapsed_s": 612.9,
+    "appliance_sim_vs_local_sim": 1.0
+  },
+  {
+    "kernel_dir": "<repo>/kernels/SpMV-RowBlock/CSL",
+    "csl_main": "layout.csl",
+    "params": {
+      "P": "4",
+      "nrows_pe": "256",
+      "ncols": "1024",
+      "max_nnz_pe": "2560",
+      "iters": "1",
+      "structure_id": "0"
+    },
+    "arms": {
+      "sim": {
+        "status": "pass",
+        "cycles_send": 37330,
+        "success_marker": true,
+        "returncode": 0,
+        "wall_s": 60.6,
+        "reason": null,
+        "stdout_tail": "SpMV-RowBlock: P=4, nrows_pe=256, ncols=1024, max_nnz_pe=2560, iters=1, structure_id=0\neval_seed = 7\nmatrix = HB/sherman1 n=1000 m=1000 nnz=3750 (index 0, manifest.json)\nxkernel_structure = {\"n\": 1000, \"m\": 1000, \"nnz\": 3750, \"density\": 0.00375, \"row_len_mean\": 3.75, \"row_len_max\": 7, \"row_len_min\": 1, \"row_len_cv\": 0.537549997674635, \"empty_rows_frac\": 0.0, \"bandwidth\": 100, \"band95\": 100, \"frac_within_band1\": 0.5130666666666667, \"n_diagonals\": 7, \"n_diagonals_for_90pct\": 6, \"contiguous_run_rows_frac\": 0.322, \"symmetric_pattern\": true, \"block_density_4x4\": 0.14611907730673318, \"accumulator_fits\": true, \"partition\": {\"scheme\": \"row_block\", \"pes\": 4, \"pe_nnz\": [1021, 1037, 877, 815], \"imbalance\": 1.1061333333333334}, \"cap_fill\": 0.405078125, \"keys\": [\"struct_short_rows\", \"struct_few_diagonals\", \"struct_banded\", \"struct_symmetric\", \"struct_accumulator_fits\"]}\nrow blocks: nnz per PE [1021, 1037, 877, 815]\ncycles_send = 37330 cycles\ntime_send = 43.9176 us\ncycles_per_nnz = 9.95\nper-PE windows (cycles): [36120, 37330, 32850, 31234]\n[verify] max abs err = 2.384e-07, rel = 9.886e-08\nSUCCESS\n",
+        "stderr_tail": "Event 2026-09-16 04:32:10 +0000 UTC reason=InconsistentVersion wsjob=wsjob-<id> message='Warning: client semantic version 1.14.0 is inconsistent with cluster server semantic version 1.20.2, there's a risk job could fail due to inconsistent setup.'\nEmpty ingress service url. Falling back to default server: 0.0.0.0:443\n"
+      },
+      "hw": {
+        "status": "pass",
+        "cycles_send": 36776,
+        "success_marker": true,
+        "returncode": 0,
+        "wall_s": 201.7,
+        "reason": null,
+        "stdout_tail": "SpMV-RowBlock: P=4, nrows_pe=256, ncols=1024, max_nnz_pe=2560, iters=1, structure_id=0\neval_seed = 7\nmatrix = HB/sherman1 n=1000 m=1000 nnz=3750 (index 0, manifest.json)\nxkernel_structure = {\"n\": 1000, \"m\": 1000, \"nnz\": 3750, \"density\": 0.00375, \"row_len_mean\": 3.75, \"row_len_max\": 7, \"row_len_min\": 1, \"row_len_cv\": 0.537549997674635, \"empty_rows_frac\": 0.0, \"bandwidth\": 100, \"band95\": 100, \"frac_within_band1\": 0.5130666666666667, \"n_diagonals\": 7, \"n_diagonals_for_90pct\": 6, \"contiguous_run_rows_frac\": 0.322, \"symmetric_pattern\": true, \"block_density_4x4\": 0.14611907730673318, \"accumulator_fits\": true, \"partition\": {\"scheme\": \"row_block\", \"pes\": 4, \"pe_nnz\": [1021, 1037, 877, 815], \"imbalance\": 1.1061333333333334}, \"cap_fill\": 0.405078125, \"keys\": [\"struct_short_rows\", \"struct_few_diagonals\", \"struct_banded\", \"struct_symmetric\", \"struct_accumulator_fits\"]}\nrow blocks: nnz per PE [1021, 1037, 877, 815]\ncycles_send = 36776 cycles\ntime_send = 43.2659 us\ncycles_per_nnz = 9.81\nper-PE windows (cycles): [34932, 36776, 32296, 30633]\n[verify] max abs err = 2.384e-07, rel = 9.886e-08\nSUCCESS\n",
+        "stderr_tail": "Event 2026-09-16 04:34:11 +0000 UTC reason=InconsistentVersion wsjob=wsjob-<id> message='Warning: client semantic version 1.14.0 is inconsistent with cluster server semantic version 1.20.2, there's a risk job could fail due to inconsistent setup.'\nCould not find coordinator IP:port in cluster details\nEmpty ingress service url. Falling back to default server: 0.0.0.0:443\n",
+        "cycles_send_runs": [
+          36776,
+          36776,
+          36776
+        ],
+        "repeats": 3,
+        "cycles_send_min": 36776,
+        "cycles_send_max": 36776,
+        "spread": 1.0
+      }
+    },
+    "timing_method": "device_internal",
+    "hw_comparable": true,
+    "hw_vs_sim": {
+      "sim_cycles": 37330,
+      "hw_cycles": 36776,
+      "ratio": 0.9852,
+      "delta_pct": -1.48,
+      "comparable": true,
+      "caveat": null
+    },
+    "kernel": "SpMV-RowBlock",
+    "size": "small",
+    "commands_script": "commands_wse3.sh",
+    "spec_sim_cycles": 37330,
+    "pass_kind": "reference",
+    "elapsed_s": 362.5,
+    "appliance_sim_vs_local_sim": 1.0
+  }
+]

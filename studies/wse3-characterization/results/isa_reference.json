@@ -1,0 +1,1823 @@
+{
+ "schema": "isa_reference/1",
+ "evidence": "compiled",
+ "elfs": 44,
+ "instructions": 45904,
+ "mnemonics": {
+  "ublk.term": {
+   "count": 132,
+   "kernels": [
+    "Cross-Entropy-Loss-1PE",
+    "Dot-Product-1PE",
+    "GELU-1PE",
+    "Jacobi-2D-5pt",
+    "L2-Norm-1PE",
+    "Laplacian2D-Halo",
+    "Laplacian2D-Reduce",
+    "LorenzoPredictor-Tile",
+    "MSE-Loss-1PE",
+    "Max-Reduction-1PE",
+    "ParBroadcast-Scale",
+    "ParDot-Product",
+    "ParReduce-Sum",
+    "Prefix-Sum-1PE",
+    "RMSNorm-1PE",
+    "ReLU-1PE",
+    "RowParallel-Softmax",
+    "SAXPY-1PE",
+    "SiLU-1PE",
+    "Sigmoid-1PE",
+    "Softmax-1PE",
+    "Sum-Reduction-1PE"
+   ],
+   "operand_forms": {
+    "IMM": 132
+   }
+  },
+  "addsp": {
+   "count": 319,
+   "kernels": [
+    "Cross-Entropy-Loss-1PE",
+    "Dot-Product-1PE",
+    "GELU-1PE",
+    "Jacobi-2D-5pt",
+    "L2-Norm-1PE",
+    "Laplacian2D-Halo",
+    "Laplacian2D-Reduce",
+    "LorenzoPredictor-Tile",
+    "MSE-Loss-1PE",
+    "Max-Reduction-1PE",
+    "ParBroadcast-Scale",
+    "ParDot-Product",
+    "ParReduce-Sum",
+    "Prefix-Sum-1PE",
+    "RMSNorm-1PE",
+    "ReLU-1PE",
+    "RowParallel-Softmax",
+    "SAXPY-1PE",
+    "SiLU-1PE",
+    "Sigmoid-1PE",
+    "Softmax-1PE",
+    "Sum-Reduction-1PE"
+   ],
+   "operand_forms": {
+    "sp = sp, IMM": 319
+   }
+  },
+  "movri": {
+   "count": 4894,
+   "kernels": [
+    "Cross-Entropy-Loss-1PE",
+    "Dot-Product-1PE",
+    "GELU-1PE",
+    "Jacobi-2D-5pt",
+    "L2-Norm-1PE",
+    "Laplacian2D-Halo",
+    "Laplacian2D-Reduce",
+    "LorenzoPredictor-Tile",
+    "MSE-Loss-1PE",
+    "Max-Reduction-1PE",
+    "ParBroadcast-Scale",
+    "ParDot-Product",
+    "ParReduce-Sum",
+    "Prefix-Sum-1PE",
+    "RMSNorm-1PE",
+    "ReLU-1PE",
+    "RowParallel-Softmax",
+    "SAXPY-1PE",
+    "SiLU-1PE",
+    "Sigmoid-1PE",
+    "Softmax-1PE",
+    "Sum-Reduction-1PE"
+   ],
+   "operand_forms": {
+    "R = IMM": 4894
+   }
+  },
+  "ld16": {
+   "count": 5836,
+   "kernels": [
+    "Cross-Entropy-Loss-1PE",
+    "Dot-Product-1PE",
+    "GELU-1PE",
+    "Jacobi-2D-5pt",
+    "L2-Norm-1PE",
+    "Laplacian2D-Halo",
+    "Laplacian2D-Reduce",
+    "LorenzoPredictor-Tile",
+    "MSE-Loss-1PE",
+    "Max-Reduction-1PE",
+    "ParBroadcast-Scale",
+    "ParDot-Product",
+    "ParReduce-Sum",
+    "Prefix-Sum-1PE",
+    "RMSNorm-1PE",
+    "ReLU-1PE",
+    "RowParallel-Softmax",
+    "SAXPY-1PE",
+    "SiLU-1PE",
+    "Sigmoid-1PE",
+    "Softmax-1PE",
+    "Sum-Reduction-1PE"
+   ],
+   "operand_forms": {
+    "R = [MEM]": 4809,
+    "R = sp[MEM]": 1027
+   }
+  },
+  "eq16.and": {
+   "count": 1277,
+   "kernels": [
+    "Cross-Entropy-Loss-1PE",
+    "Dot-Product-1PE",
+    "GELU-1PE",
+    "Jacobi-2D-5pt",
+    "L2-Norm-1PE",
+    "Laplacian2D-Halo",
+    "Laplacian2D-Reduce",
+    "LorenzoPredictor-Tile",
+    "MSE-Loss-1PE",
+    "Max-Reduction-1PE",
+    "ParBroadcast-Scale",
+    "ParDot-Product",
+    "ParReduce-Sum",
+    "Prefix-Sum-1PE",
+    "RMSNorm-1PE",
+    "ReLU-1PE",
+    "RowParallel-Softmax",
+    "SAXPY-1PE",
+    "SiLU-1PE",
+    "Sigmoid-1PE",
+    "Softmax-1PE",
+    "Sum-Reduction-1PE"
+   ],
+   "operand_forms": {
+    "CFLAG = R, R": 529,
+    "CFLAG = R, IMM": 747,
+    "CFLAG = R, R, CFLAG": 1
+   }
+  },
+  "jmp": {
+   "count": 4210,
+   "kernels": [
+    "Cross-Entropy-Loss-1PE",
+    "Dot-Product-1PE",
+    "GELU-1PE",
+    "Jacobi-2D-5pt",
+    "L2-Norm-1PE",
+    "Laplacian2D-Halo",
+    "Laplacian2D-Reduce",
+    "LorenzoPredictor-Tile",
+    "MSE-Loss-1PE",
+    "Max-Reduction-1PE",
+    "ParBroadcast-Scale",
+    "ParDot-Product",
+    "ParReduce-Sum",
+    "Prefix-Sum-1PE",
+    "RMSNorm-1PE",
+    "ReLU-1PE",
+    "RowParallel-Softmax",
+    "SAXPY-1PE",
+    "SiLU-1PE",
+    "Sigmoid-1PE",
+    "Softmax-1PE",
+    "Sum-Reduction-1PE"
+   ],
+   "operand_forms": {
+    "IMM": 3893,
+    "R": 317
+   }
+  },
+  "brk": {
+   "count": 516,
+   "kernels": [
+    "Cross-Entropy-Loss-1PE",
+    "Dot-Product-1PE",
+    "GELU-1PE",
+    "Jacobi-2D-5pt",
+    "L2-Norm-1PE",
+    "Laplacian2D-Halo",
+    "Laplacian2D-Reduce",
+    "LorenzoPredictor-Tile",
+    "MSE-Loss-1PE",
+    "Max-Reduction-1PE",
+    "ParBroadcast-Scale",
+    "ParDot-Product",
+    "ParReduce-Sum",
+    "Prefix-Sum-1PE",
+    "RMSNorm-1PE",
+    "ReLU-1PE",
+    "RowParallel-Softmax",
+    "SAXPY-1PE",
+    "SiLU-1PE",
+    "Sigmoid-1PE",
+    "Softmax-1PE",
+    "Sum-Reduction-1PE"
+   ],
+   "operand_forms": {
+    "IMM": 516
+   }
+  },
+  "st16": {
+   "count": 5498,
+   "kernels": [
+    "Cross-Entropy-Loss-1PE",
+    "Dot-Product-1PE",
+    "GELU-1PE",
+    "Jacobi-2D-5pt",
+    "L2-Norm-1PE",
+    "Laplacian2D-Halo",
+    "Laplacian2D-Reduce",
+    "LorenzoPredictor-Tile",
+    "MSE-Loss-1PE",
+    "Max-Reduction-1PE",
+    "ParBroadcast-Scale",
+    "ParDot-Product",
+    "ParReduce-Sum",
+    "Prefix-Sum-1PE",
+    "RMSNorm-1PE",
+    "ReLU-1PE",
+    "RowParallel-Softmax",
+    "SAXPY-1PE",
+    "SiLU-1PE",
+    "Sigmoid-1PE",
+    "Softmax-1PE",
+    "Sum-Reduction-1PE"
+   ],
+   "operand_forms": {
+    "[MEM] = R": 4667,
+    "sp[MEM] = R": 831
+   }
+  },
+  "st32": {
+   "count": 799,
+   "kernels": [
+    "Cross-Entropy-Loss-1PE",
+    "Dot-Product-1PE",
+    "GELU-1PE",
+    "Jacobi-2D-5pt",
+    "L2-Norm-1PE",
+    "Laplacian2D-Halo",
+    "Laplacian2D-Reduce",
+    "LorenzoPredictor-Tile",
+    "MSE-Loss-1PE",
+    "Max-Reduction-1PE",
+    "ParBroadcast-Scale",
+    "ParDot-Product",
+    "ParReduce-Sum",
+    "Prefix-Sum-1PE",
+    "RMSNorm-1PE",
+    "ReLU-1PE",
+    "RowParallel-Softmax",
+    "SAXPY-1PE",
+    "SiLU-1PE",
+    "Sigmoid-1PE",
+    "Softmax-1PE",
+    "Sum-Reduction-1PE"
+   ],
+   "operand_forms": {
+    "sp[MEM] = D": 355,
+    "[MEM] = D": 444
+   }
+  },
+  "add16.nf": {
+   "count": 2405,
+   "kernels": [
+    "Cross-Entropy-Loss-1PE",
+    "Dot-Product-1PE",
+    "GELU-1PE",
+    "Jacobi-2D-5pt",
+    "L2-Norm-1PE",
+    "Laplacian2D-Halo",
+    "Laplacian2D-Reduce",
+    "LorenzoPredictor-Tile",
+    "MSE-Loss-1PE",
+    "Max-Reduction-1PE",
+    "ParBroadcast-Scale",
+    "ParDot-Product",
+    "ParReduce-Sum",
+    "Prefix-Sum-1PE",
+    "RMSNorm-1PE",
+    "ReLU-1PE",
+    "RowParallel-Softmax",
+    "SAXPY-1PE",
+    "SiLU-1PE",
+    "Sigmoid-1PE",
+    "Softmax-1PE",
+    "Sum-Reduction-1PE"
+   ],
+   "operand_forms": {
+    "R = R, R": 1318,
+    "R = R, IMM": 1087
+   }
+  },
+  "fmov32.nf": {
+   "count": 687,
+   "kernels": [
+    "Cross-Entropy-Loss-1PE",
+    "Dot-Product-1PE",
+    "GELU-1PE",
+    "Jacobi-2D-5pt",
+    "L2-Norm-1PE",
+    "Laplacian2D-Halo",
+    "Laplacian2D-Reduce",
+    "LorenzoPredictor-Tile",
+    "MSE-Loss-1PE",
+    "Max-Reduction-1PE",
+    "ParBroadcast-Scale",
+    "ParDot-Product",
+    "ParReduce-Sum",
+    "Prefix-Sum-1PE",
+    "RMSNorm-1PE",
+    "ReLU-1PE",
+    "RowParallel-Softmax",
+    "SAXPY-1PE",
+    "SiLU-1PE",
+    "Sigmoid-1PE",
+    "Softmax-1PE",
+    "Sum-Reduction-1PE"
+   ],
+   "operand_forms": {
+    "D = D": 220,
+    "D = [MEM]": 308,
+    "[MEM] = D": 95,
+    "[MEM] = [MEM]": 64
+   }
+  },
+  "ld16rp": {
+   "count": 646,
+   "kernels": [
+    "Cross-Entropy-Loss-1PE",
+    "Dot-Product-1PE",
+    "GELU-1PE",
+    "Jacobi-2D-5pt",
+    "L2-Norm-1PE",
+    "Laplacian2D-Halo",
+    "Laplacian2D-Reduce",
+    "LorenzoPredictor-Tile",
+    "MSE-Loss-1PE",
+    "Max-Reduction-1PE",
+    "ParBroadcast-Scale",
+    "ParDot-Product",
+    "ParReduce-Sum",
+    "Prefix-Sum-1PE",
+    "RMSNorm-1PE",
+    "ReLU-1PE",
+    "RowParallel-Softmax",
+    "SAXPY-1PE",
+    "SiLU-1PE",
+    "Sigmoid-1PE",
+    "Softmax-1PE",
+    "Sum-Reduction-1PE"
+   ],
+   "operand_forms": {
+    "D = sp[MEM]": 363,
+    "D = [MEM]": 283
+   }
+  },
+  "fmov16.nf": {
+   "count": 1258,
+   "kernels": [
+    "Cross-Entropy-Loss-1PE",
+    "Dot-Product-1PE",
+    "GELU-1PE",
+    "Jacobi-2D-5pt",
+    "L2-Norm-1PE",
+    "Laplacian2D-Halo",
+    "Laplacian2D-Reduce",
+    "LorenzoPredictor-Tile",
+    "MSE-Loss-1PE",
+    "Max-Reduction-1PE",
+    "ParBroadcast-Scale",
+    "ParDot-Product",
+    "ParReduce-Sum",
+    "Prefix-Sum-1PE",
+    "RMSNorm-1PE",
+    "ReLU-1PE",
+    "RowParallel-Softmax",
+    "SAXPY-1PE",
+    "SiLU-1PE",
+    "Sigmoid-1PE",
+    "Softmax-1PE",
+    "Sum-Reduction-1PE"
+   ],
+   "operand_forms": {
+    "R = R": 950,
+    "R = [MEM]": 176,
+    "[MEM] = R": 132
+   }
+  },
+  "blk": {
+   "count": 264,
+   "kernels": [
+    "Cross-Entropy-Loss-1PE",
+    "Dot-Product-1PE",
+    "GELU-1PE",
+    "Jacobi-2D-5pt",
+    "L2-Norm-1PE",
+    "Laplacian2D-Halo",
+    "Laplacian2D-Reduce",
+    "LorenzoPredictor-Tile",
+    "MSE-Loss-1PE",
+    "Max-Reduction-1PE",
+    "ParBroadcast-Scale",
+    "ParDot-Product",
+    "ParReduce-Sum",
+    "Prefix-Sum-1PE",
+    "RMSNorm-1PE",
+    "ReLU-1PE",
+    "RowParallel-Softmax",
+    "SAXPY-1PE",
+    "SiLU-1PE",
+    "Sigmoid-1PE",
+    "Softmax-1PE",
+    "Sum-Reduction-1PE"
+   ],
+   "operand_forms": {
+    "IMM": 264
+   }
+  },
+  "nop": {
+   "count": 5414,
+   "kernels": [
+    "Cross-Entropy-Loss-1PE",
+    "Dot-Product-1PE",
+    "GELU-1PE",
+    "Jacobi-2D-5pt",
+    "L2-Norm-1PE",
+    "Laplacian2D-Halo",
+    "Laplacian2D-Reduce",
+    "LorenzoPredictor-Tile",
+    "MSE-Loss-1PE",
+    "Max-Reduction-1PE",
+    "ParBroadcast-Scale",
+    "ParDot-Product",
+    "ParReduce-Sum",
+    "Prefix-Sum-1PE",
+    "RMSNorm-1PE",
+    "ReLU-1PE",
+    "RowParallel-Softmax",
+    "SAXPY-1PE",
+    "SiLU-1PE",
+    "Sigmoid-1PE",
+    "Softmax-1PE",
+    "Sum-Reduction-1PE"
+   ],
+   "operand_forms": {
+    "IMM": 5414
+   }
+  },
+  "and16": {
+   "count": 1286,
+   "kernels": [
+    "Cross-Entropy-Loss-1PE",
+    "Dot-Product-1PE",
+    "GELU-1PE",
+    "Jacobi-2D-5pt",
+    "L2-Norm-1PE",
+    "Laplacian2D-Halo",
+    "Laplacian2D-Reduce",
+    "LorenzoPredictor-Tile",
+    "MSE-Loss-1PE",
+    "Max-Reduction-1PE",
+    "ParBroadcast-Scale",
+    "ParDot-Product",
+    "ParReduce-Sum",
+    "Prefix-Sum-1PE",
+    "RMSNorm-1PE",
+    "ReLU-1PE",
+    "RowParallel-Softmax",
+    "SAXPY-1PE",
+    "SiLU-1PE",
+    "Sigmoid-1PE",
+    "Softmax-1PE",
+    "Sum-Reduction-1PE"
+   ],
+   "operand_forms": {
+    "R = R, R": 1056,
+    "R = R, IMM": 230
+   }
+  },
+  "or16": {
+   "count": 1080,
+   "kernels": [
+    "Cross-Entropy-Loss-1PE",
+    "Dot-Product-1PE",
+    "GELU-1PE",
+    "Jacobi-2D-5pt",
+    "L2-Norm-1PE",
+    "Laplacian2D-Halo",
+    "Laplacian2D-Reduce",
+    "LorenzoPredictor-Tile",
+    "MSE-Loss-1PE",
+    "Max-Reduction-1PE",
+    "ParBroadcast-Scale",
+    "ParDot-Product",
+    "ParReduce-Sum",
+    "Prefix-Sum-1PE",
+    "RMSNorm-1PE",
+    "ReLU-1PE",
+    "RowParallel-Softmax",
+    "SAXPY-1PE",
+    "SiLU-1PE",
+    "Sigmoid-1PE",
+    "Softmax-1PE",
+    "Sum-Reduction-1PE"
+   ],
+   "operand_forms": {
+    "R = R, R": 882,
+    "R = R, IMM": 198
+   }
+  },
+  "oqflush": {
+   "count": 88,
+   "kernels": [
+    "Cross-Entropy-Loss-1PE",
+    "Dot-Product-1PE",
+    "GELU-1PE",
+    "Jacobi-2D-5pt",
+    "L2-Norm-1PE",
+    "Laplacian2D-Halo",
+    "Laplacian2D-Reduce",
+    "LorenzoPredictor-Tile",
+    "MSE-Loss-1PE",
+    "Max-Reduction-1PE",
+    "ParBroadcast-Scale",
+    "ParDot-Product",
+    "ParReduce-Sum",
+    "Prefix-Sum-1PE",
+    "RMSNorm-1PE",
+    "ReLU-1PE",
+    "RowParallel-Softmax",
+    "SAXPY-1PE",
+    "SiLU-1PE",
+    "Sigmoid-1PE",
+    "Softmax-1PE",
+    "Sum-Reduction-1PE"
+   ],
+   "operand_forms": {
+    "IMM": 88
+   }
+  },
+  "blk.term": {
+   "count": 44,
+   "kernels": [
+    "Cross-Entropy-Loss-1PE",
+    "Dot-Product-1PE",
+    "GELU-1PE",
+    "Jacobi-2D-5pt",
+    "L2-Norm-1PE",
+    "Laplacian2D-Halo",
+    "Laplacian2D-Reduce",
+    "LorenzoPredictor-Tile",
+    "MSE-Loss-1PE",
+    "Max-Reduction-1PE",
+    "ParBroadcast-Scale",
+    "ParDot-Product",
+    "ParReduce-Sum",
+    "Prefix-Sum-1PE",
+    "RMSNorm-1PE",
+    "ReLU-1PE",
+    "RowParallel-Softmax",
+    "SAXPY-1PE",
+    "SiLU-1PE",
+    "Sigmoid-1PE",
+    "Softmax-1PE",
+    "Sum-Reduction-1PE"
+   ],
+   "operand_forms": {
+    "IMM": 44
+   }
+  },
+  "st16.term": {
+   "count": 237,
+   "kernels": [
+    "Cross-Entropy-Loss-1PE",
+    "Dot-Product-1PE",
+    "GELU-1PE",
+    "Jacobi-2D-5pt",
+    "L2-Norm-1PE",
+    "Laplacian2D-Halo",
+    "Laplacian2D-Reduce",
+    "LorenzoPredictor-Tile",
+    "MSE-Loss-1PE",
+    "Max-Reduction-1PE",
+    "ParBroadcast-Scale",
+    "ParDot-Product",
+    "ParReduce-Sum",
+    "Prefix-Sum-1PE",
+    "RMSNorm-1PE",
+    "ReLU-1PE",
+    "RowParallel-Softmax",
+    "SAXPY-1PE",
+    "SiLU-1PE",
+    "Sigmoid-1PE",
+    "Softmax-1PE",
+    "Sum-Reduction-1PE"
+   ],
+   "operand_forms": {
+    "[MEM] = R": 237
+   }
+  },
+  "lt16.and": {
+   "count": 553,
+   "kernels": [
+    "Cross-Entropy-Loss-1PE",
+    "Dot-Product-1PE",
+    "GELU-1PE",
+    "Jacobi-2D-5pt",
+    "L2-Norm-1PE",
+    "Laplacian2D-Halo",
+    "Laplacian2D-Reduce",
+    "LorenzoPredictor-Tile",
+    "MSE-Loss-1PE",
+    "Max-Reduction-1PE",
+    "ParBroadcast-Scale",
+    "ParDot-Product",
+    "ParReduce-Sum",
+    "Prefix-Sum-1PE",
+    "RMSNorm-1PE",
+    "ReLU-1PE",
+    "RowParallel-Softmax",
+    "SAXPY-1PE",
+    "SiLU-1PE",
+    "Sigmoid-1PE",
+    "Softmax-1PE",
+    "Sum-Reduction-1PE"
+   ],
+   "operand_forms": {
+    "CFLAG = IMM, R": 132,
+    "CFLAG = R, R": 245,
+    "CFLAG = R, IMM": 176
+   }
+  },
+  "sll16.nf": {
+   "count": 851,
+   "kernels": [
+    "Cross-Entropy-Loss-1PE",
+    "Dot-Product-1PE",
+    "GELU-1PE",
+    "Jacobi-2D-5pt",
+    "L2-Norm-1PE",
+    "Laplacian2D-Halo",
+    "Laplacian2D-Reduce",
+    "LorenzoPredictor-Tile",
+    "MSE-Loss-1PE",
+    "Max-Reduction-1PE",
+    "ParBroadcast-Scale",
+    "ParDot-Product",
+    "ParReduce-Sum",
+    "Prefix-Sum-1PE",
+    "RMSNorm-1PE",
+    "ReLU-1PE",
+    "RowParallel-Softmax",
+    "SAXPY-1PE",
+    "SiLU-1PE",
+    "Sigmoid-1PE",
+    "Softmax-1PE",
+    "Sum-Reduction-1PE"
+   ],
+   "operand_forms": {
+    "R = R, IMM": 851
+   }
+  },
+  "sar16.nf": {
+   "count": 477,
+   "kernels": [
+    "Cross-Entropy-Loss-1PE",
+    "Dot-Product-1PE",
+    "GELU-1PE",
+    "Jacobi-2D-5pt",
+    "L2-Norm-1PE",
+    "Laplacian2D-Halo",
+    "Laplacian2D-Reduce",
+    "LorenzoPredictor-Tile",
+    "MSE-Loss-1PE",
+    "Max-Reduction-1PE",
+    "ParBroadcast-Scale",
+    "ParDot-Product",
+    "ParReduce-Sum",
+    "Prefix-Sum-1PE",
+    "RMSNorm-1PE",
+    "ReLU-1PE",
+    "RowParallel-Softmax",
+    "SAXPY-1PE",
+    "SiLU-1PE",
+    "Sigmoid-1PE",
+    "Softmax-1PE",
+    "Sum-Reduction-1PE"
+   ],
+   "operand_forms": {
+    "R = R, IMM": 477
+   }
+  },
+  "imov32.nf": {
+   "count": 404,
+   "kernels": [
+    "Cross-Entropy-Loss-1PE",
+    "Dot-Product-1PE",
+    "GELU-1PE",
+    "Jacobi-2D-5pt",
+    "L2-Norm-1PE",
+    "Laplacian2D-Halo",
+    "Laplacian2D-Reduce",
+    "LorenzoPredictor-Tile",
+    "MSE-Loss-1PE",
+    "Max-Reduction-1PE",
+    "ParBroadcast-Scale",
+    "ParDot-Product",
+    "ParReduce-Sum",
+    "Prefix-Sum-1PE",
+    "RMSNorm-1PE",
+    "ReLU-1PE",
+    "RowParallel-Softmax",
+    "SAXPY-1PE",
+    "SiLU-1PE",
+    "Sigmoid-1PE",
+    "Softmax-1PE",
+    "Sum-Reduction-1PE"
+   ],
+   "operand_forms": {
+    "D = [MEM]": 88,
+    "[MEM] = [MEM]": 220,
+    "D = IMM": 96
+   }
+  },
+  "eq32.and": {
+   "count": 264,
+   "kernels": [
+    "Cross-Entropy-Loss-1PE",
+    "Dot-Product-1PE",
+    "GELU-1PE",
+    "Jacobi-2D-5pt",
+    "L2-Norm-1PE",
+    "Laplacian2D-Halo",
+    "Laplacian2D-Reduce",
+    "LorenzoPredictor-Tile",
+    "MSE-Loss-1PE",
+    "Max-Reduction-1PE",
+    "ParBroadcast-Scale",
+    "ParDot-Product",
+    "ParReduce-Sum",
+    "Prefix-Sum-1PE",
+    "RMSNorm-1PE",
+    "ReLU-1PE",
+    "RowParallel-Softmax",
+    "SAXPY-1PE",
+    "SiLU-1PE",
+    "Sigmoid-1PE",
+    "Softmax-1PE",
+    "Sum-Reduction-1PE"
+   ],
+   "operand_forms": {
+    "CFLAG = D, IMM": 232,
+    "CFLAG = D, D": 32
+   }
+  },
+  "flts.and": {
+   "count": 65,
+   "kernels": [
+    "Cross-Entropy-Loss-1PE",
+    "GELU-1PE",
+    "L2-Norm-1PE",
+    "Laplacian2D-Reduce",
+    "Max-Reduction-1PE",
+    "RMSNorm-1PE",
+    "ReLU-1PE",
+    "RowParallel-Softmax",
+    "SiLU-1PE",
+    "Sigmoid-1PE",
+    "Softmax-1PE"
+   ],
+   "operand_forms": {
+    "CFLAG = D, D": 38,
+    "CFLAG = D, 0.0E+0": 27
+   }
+  },
+  "ltu16.and": {
+   "count": 577,
+   "kernels": [
+    "Cross-Entropy-Loss-1PE",
+    "Dot-Product-1PE",
+    "GELU-1PE",
+    "Jacobi-2D-5pt",
+    "L2-Norm-1PE",
+    "Laplacian2D-Halo",
+    "Laplacian2D-Reduce",
+    "LorenzoPredictor-Tile",
+    "MSE-Loss-1PE",
+    "Max-Reduction-1PE",
+    "ParBroadcast-Scale",
+    "ParDot-Product",
+    "ParReduce-Sum",
+    "Prefix-Sum-1PE",
+    "RMSNorm-1PE",
+    "ReLU-1PE",
+    "RowParallel-Softmax",
+    "SAXPY-1PE",
+    "SiLU-1PE",
+    "Sigmoid-1PE",
+    "Softmax-1PE",
+    "Sum-Reduction-1PE"
+   ],
+   "operand_forms": {
+    "CFLAG = R, R": 394,
+    "CFLAG = R, IMM": 183
+   }
+  },
+  "fsubs": {
+   "count": 59,
+   "kernels": [
+    "Cross-Entropy-Loss-1PE",
+    "L2-Norm-1PE",
+    "Laplacian2D-Reduce",
+    "LorenzoPredictor-Tile",
+    "MSE-Loss-1PE",
+    "RMSNorm-1PE",
+    "RowParallel-Softmax",
+    "SiLU-1PE",
+    "Sigmoid-1PE",
+    "Softmax-1PE"
+   ],
+   "operand_forms": {
+    "D = D, D": 59
+   }
+  },
+  "and32": {
+   "count": 138,
+   "kernels": [
+    "Cross-Entropy-Loss-1PE",
+    "Dot-Product-1PE",
+    "GELU-1PE",
+    "Jacobi-2D-5pt",
+    "L2-Norm-1PE",
+    "Laplacian2D-Halo",
+    "Laplacian2D-Reduce",
+    "LorenzoPredictor-Tile",
+    "MSE-Loss-1PE",
+    "Max-Reduction-1PE",
+    "ParBroadcast-Scale",
+    "ParDot-Product",
+    "ParReduce-Sum",
+    "Prefix-Sum-1PE",
+    "RMSNorm-1PE",
+    "ReLU-1PE",
+    "RowParallel-Softmax",
+    "SAXPY-1PE",
+    "SiLU-1PE",
+    "Sigmoid-1PE",
+    "Softmax-1PE",
+    "Sum-Reduction-1PE"
+   ],
+   "operand_forms": {
+    "D = D, D": 138
+   }
+  },
+  "fmuls": {
+   "count": 321,
+   "kernels": [
+    "Cross-Entropy-Loss-1PE",
+    "Dot-Product-1PE",
+    "GELU-1PE",
+    "Jacobi-2D-5pt",
+    "L2-Norm-1PE",
+    "Laplacian2D-Halo",
+    "Laplacian2D-Reduce",
+    "LorenzoPredictor-Tile",
+    "MSE-Loss-1PE",
+    "Max-Reduction-1PE",
+    "ParBroadcast-Scale",
+    "ParDot-Product",
+    "ParReduce-Sum",
+    "Prefix-Sum-1PE",
+    "RMSNorm-1PE",
+    "ReLU-1PE",
+    "RowParallel-Softmax",
+    "SAXPY-1PE",
+    "SiLU-1PE",
+    "Sigmoid-1PE",
+    "Softmax-1PE",
+    "Sum-Reduction-1PE"
+   ],
+   "operand_forms": {
+    "D = D, D": 273,
+    "D = D, 5.0E-1": 1,
+    "D = D, 2.5E-1": 44,
+    "D = D, -5.0E-1": 2,
+    "D = D, 0.0E+0": 1
+   }
+  },
+  "fs2xp16.zero": {
+   "count": 140,
+   "kernels": [
+    "Cross-Entropy-Loss-1PE",
+    "Dot-Product-1PE",
+    "GELU-1PE",
+    "Jacobi-2D-5pt",
+    "L2-Norm-1PE",
+    "Laplacian2D-Halo",
+    "Laplacian2D-Reduce",
+    "LorenzoPredictor-Tile",
+    "MSE-Loss-1PE",
+    "Max-Reduction-1PE",
+    "ParBroadcast-Scale",
+    "ParDot-Product",
+    "ParReduce-Sum",
+    "Prefix-Sum-1PE",
+    "RMSNorm-1PE",
+    "ReLU-1PE",
+    "RowParallel-Softmax",
+    "SAXPY-1PE",
+    "SiLU-1PE",
+    "Sigmoid-1PE",
+    "Softmax-1PE",
+    "Sum-Reduction-1PE"
+   ],
+   "operand_forms": {
+    "R = D": 140
+   }
+  },
+  "xp162fs": {
+   "count": 149,
+   "kernels": [
+    "Cross-Entropy-Loss-1PE",
+    "Dot-Product-1PE",
+    "GELU-1PE",
+    "Jacobi-2D-5pt",
+    "L2-Norm-1PE",
+    "Laplacian2D-Halo",
+    "Laplacian2D-Reduce",
+    "LorenzoPredictor-Tile",
+    "MSE-Loss-1PE",
+    "Max-Reduction-1PE",
+    "ParBroadcast-Scale",
+    "ParDot-Product",
+    "ParReduce-Sum",
+    "Prefix-Sum-1PE",
+    "RMSNorm-1PE",
+    "ReLU-1PE",
+    "RowParallel-Softmax",
+    "SAXPY-1PE",
+    "SiLU-1PE",
+    "Sigmoid-1PE",
+    "Softmax-1PE",
+    "Sum-Reduction-1PE"
+   ],
+   "operand_forms": {
+    "D = R": 149
+   }
+  },
+  "neg16": {
+   "count": 16,
+   "kernels": [
+    "Cross-Entropy-Loss-1PE",
+    "GELU-1PE",
+    "L2-Norm-1PE",
+    "RMSNorm-1PE",
+    "RowParallel-Softmax",
+    "SiLU-1PE",
+    "Sigmoid-1PE",
+    "Softmax-1PE"
+   ],
+   "operand_forms": {
+    "R = R": 16
+   }
+  },
+  "fadds": {
+   "count": 274,
+   "kernels": [
+    "Cross-Entropy-Loss-1PE",
+    "Dot-Product-1PE",
+    "GELU-1PE",
+    "Jacobi-2D-5pt",
+    "L2-Norm-1PE",
+    "Laplacian2D-Halo",
+    "Laplacian2D-Reduce",
+    "LorenzoPredictor-Tile",
+    "MSE-Loss-1PE",
+    "ParDot-Product",
+    "ParReduce-Sum",
+    "Prefix-Sum-1PE",
+    "RMSNorm-1PE",
+    "RowParallel-Softmax",
+    "SAXPY-1PE",
+    "SiLU-1PE",
+    "Sigmoid-1PE",
+    "Softmax-1PE",
+    "Sum-Reduction-1PE"
+   ],
+   "operand_forms": {
+    "D = D, D": 244,
+    "D = D, 1.0E+0": 13,
+    "D = D, -5.0E-1": 1,
+    "D = D, -1.0E+0": 2,
+    "D = D, 5.0E-1": 4,
+    "D = D, 0.0E+0": 10
+   }
+  },
+  "slr16.nf": {
+   "count": 406,
+   "kernels": [
+    "Cross-Entropy-Loss-1PE",
+    "Dot-Product-1PE",
+    "GELU-1PE",
+    "Jacobi-2D-5pt",
+    "L2-Norm-1PE",
+    "Laplacian2D-Halo",
+    "Laplacian2D-Reduce",
+    "LorenzoPredictor-Tile",
+    "MSE-Loss-1PE",
+    "Max-Reduction-1PE",
+    "ParBroadcast-Scale",
+    "ParDot-Product",
+    "ParReduce-Sum",
+    "Prefix-Sum-1PE",
+    "RMSNorm-1PE",
+    "ReLU-1PE",
+    "RowParallel-Softmax",
+    "SAXPY-1PE",
+    "SiLU-1PE",
+    "Sigmoid-1PE",
+    "Softmax-1PE",
+    "Sum-Reduction-1PE"
+   ],
+   "operand_forms": {
+    "R = R, IMM": 406
+   }
+  },
+  "fscales": {
+   "count": 62,
+   "kernels": [
+    "Cross-Entropy-Loss-1PE",
+    "GELU-1PE",
+    "L2-Norm-1PE",
+    "RMSNorm-1PE",
+    "RowParallel-Softmax",
+    "SiLU-1PE",
+    "Sigmoid-1PE",
+    "Softmax-1PE"
+   ],
+   "operand_forms": {
+    "D = D, R": 60,
+    "D = D, IMM": 2
+   }
+  },
+  "feqs.and": {
+   "count": 3,
+   "kernels": [
+    "Cross-Entropy-Loss-1PE",
+    "L2-Norm-1PE",
+    "RMSNorm-1PE"
+   ],
+   "operand_forms": {
+    "CFLAG = D, 0.0E+0": 3
+   }
+  },
+  "fdivss": {
+   "count": 11,
+   "kernels": [
+    "Cross-Entropy-Loss-1PE",
+    "GELU-1PE",
+    "L2-Norm-1PE",
+    "RMSNorm-1PE",
+    "RowParallel-Softmax",
+    "SiLU-1PE",
+    "Sigmoid-1PE",
+    "Softmax-1PE"
+   ],
+   "operand_forms": {
+    "D, CFLAG = D, D": 11
+   }
+  },
+  "imov16.nf": {
+   "count": 941,
+   "kernels": [
+    "Cross-Entropy-Loss-1PE",
+    "Dot-Product-1PE",
+    "GELU-1PE",
+    "Jacobi-2D-5pt",
+    "L2-Norm-1PE",
+    "Laplacian2D-Halo",
+    "Laplacian2D-Reduce",
+    "LorenzoPredictor-Tile",
+    "MSE-Loss-1PE",
+    "Max-Reduction-1PE",
+    "ParBroadcast-Scale",
+    "ParDot-Product",
+    "ParReduce-Sum",
+    "Prefix-Sum-1PE",
+    "RMSNorm-1PE",
+    "ReLU-1PE",
+    "RowParallel-Softmax",
+    "SAXPY-1PE",
+    "SiLU-1PE",
+    "Sigmoid-1PE",
+    "Softmax-1PE",
+    "Sum-Reduction-1PE"
+   ],
+   "operand_forms": {
+    "R = IMM": 488,
+    "[MEM] = R": 132,
+    "[MEM] = [MEM]": 88,
+    "R = R": 109,
+    "R = [MEM]": 124
+   }
+  },
+  "fnorms": {
+   "count": 19,
+   "kernels": [
+    "Cross-Entropy-Loss-1PE",
+    "GELU-1PE",
+    "L2-Norm-1PE",
+    "RMSNorm-1PE",
+    "RowParallel-Softmax",
+    "SiLU-1PE",
+    "Sigmoid-1PE",
+    "Softmax-1PE"
+   ],
+   "operand_forms": {
+    "D = D": 19
+   }
+  },
+  "fltus.and": {
+   "count": 2,
+   "kernels": [
+    "Cross-Entropy-Loss-1PE"
+   ],
+   "operand_forms": {
+    "CFLAG = D, D": 2
+   }
+  },
+  "fnegs": {
+   "count": 51,
+   "kernels": [
+    "Cross-Entropy-Loss-1PE",
+    "GELU-1PE",
+    "L2-Norm-1PE",
+    "Laplacian2D-Reduce",
+    "RMSNorm-1PE",
+    "RowParallel-Softmax",
+    "SiLU-1PE",
+    "Sigmoid-1PE",
+    "Softmax-1PE"
+   ],
+   "operand_forms": {
+    "D = D": 51
+   }
+  },
+  "or32": {
+   "count": 127,
+   "kernels": [
+    "Cross-Entropy-Loss-1PE",
+    "Dot-Product-1PE",
+    "GELU-1PE",
+    "L2-Norm-1PE",
+    "MSE-Loss-1PE",
+    "Max-Reduction-1PE",
+    "ParBroadcast-Scale",
+    "ParDot-Product",
+    "ParReduce-Sum",
+    "Prefix-Sum-1PE",
+    "RMSNorm-1PE",
+    "ReLU-1PE",
+    "RowParallel-Softmax",
+    "SAXPY-1PE",
+    "SiLU-1PE",
+    "Sigmoid-1PE",
+    "Softmax-1PE",
+    "Sum-Reduction-1PE"
+   ],
+   "operand_forms": {
+    "D = D, D": 127
+   }
+  },
+  "actvt": {
+   "count": 237,
+   "kernels": [
+    "Cross-Entropy-Loss-1PE",
+    "Dot-Product-1PE",
+    "GELU-1PE",
+    "Jacobi-2D-5pt",
+    "L2-Norm-1PE",
+    "Laplacian2D-Halo",
+    "Laplacian2D-Reduce",
+    "LorenzoPredictor-Tile",
+    "MSE-Loss-1PE",
+    "Max-Reduction-1PE",
+    "ParBroadcast-Scale",
+    "ParDot-Product",
+    "ParReduce-Sum",
+    "Prefix-Sum-1PE",
+    "RMSNorm-1PE",
+    "ReLU-1PE",
+    "RowParallel-Softmax",
+    "SAXPY-1PE",
+    "SiLU-1PE",
+    "Sigmoid-1PE",
+    "Softmax-1PE",
+    "Sum-Reduction-1PE"
+   ],
+   "operand_forms": {
+    "IMM": 237
+   }
+  },
+  "nop.term": {
+   "count": 150,
+   "kernels": [
+    "Cross-Entropy-Loss-1PE",
+    "Dot-Product-1PE",
+    "GELU-1PE",
+    "Jacobi-2D-5pt",
+    "L2-Norm-1PE",
+    "Laplacian2D-Halo",
+    "Laplacian2D-Reduce",
+    "LorenzoPredictor-Tile",
+    "MSE-Loss-1PE",
+    "Max-Reduction-1PE",
+    "ParBroadcast-Scale",
+    "ParDot-Product",
+    "ParReduce-Sum",
+    "Prefix-Sum-1PE",
+    "RMSNorm-1PE",
+    "ReLU-1PE",
+    "RowParallel-Softmax",
+    "SAXPY-1PE",
+    "SiLU-1PE",
+    "Sigmoid-1PE",
+    "Softmax-1PE",
+    "Sum-Reduction-1PE"
+   ],
+   "operand_forms": {
+    "IMM": 150
+   }
+  },
+  "lddwds": {
+   "count": 399,
+   "kernels": [
+    "Cross-Entropy-Loss-1PE",
+    "Dot-Product-1PE",
+    "GELU-1PE",
+    "Jacobi-2D-5pt",
+    "L2-Norm-1PE",
+    "Laplacian2D-Halo",
+    "Laplacian2D-Reduce",
+    "LorenzoPredictor-Tile",
+    "MSE-Loss-1PE",
+    "Max-Reduction-1PE",
+    "ParBroadcast-Scale",
+    "ParDot-Product",
+    "ParReduce-Sum",
+    "Prefix-Sum-1PE",
+    "RMSNorm-1PE",
+    "ReLU-1PE",
+    "RowParallel-Softmax",
+    "SAXPY-1PE",
+    "SiLU-1PE",
+    "Sigmoid-1PE",
+    "Softmax-1PE",
+    "Sum-Reduction-1PE"
+   ],
+   "operand_forms": {
+    "DDS = [MEM]": 399
+   }
+  },
+  "lteu16.and": {
+   "count": 88,
+   "kernels": [
+    "Cross-Entropy-Loss-1PE",
+    "Dot-Product-1PE",
+    "GELU-1PE",
+    "Jacobi-2D-5pt",
+    "L2-Norm-1PE",
+    "Laplacian2D-Halo",
+    "Laplacian2D-Reduce",
+    "LorenzoPredictor-Tile",
+    "MSE-Loss-1PE",
+    "Max-Reduction-1PE",
+    "ParBroadcast-Scale",
+    "ParDot-Product",
+    "ParReduce-Sum",
+    "Prefix-Sum-1PE",
+    "RMSNorm-1PE",
+    "ReLU-1PE",
+    "RowParallel-Softmax",
+    "SAXPY-1PE",
+    "SiLU-1PE",
+    "Sigmoid-1PE",
+    "Softmax-1PE",
+    "Sum-Reduction-1PE"
+   ],
+   "operand_forms": {
+    "CFLAG = R, R": 88
+   }
+  },
+  "lds1wds": {
+   "count": 179,
+   "kernels": [
+    "Cross-Entropy-Loss-1PE",
+    "Dot-Product-1PE",
+    "GELU-1PE",
+    "Jacobi-2D-5pt",
+    "L2-Norm-1PE",
+    "Laplacian2D-Halo",
+    "Laplacian2D-Reduce",
+    "LorenzoPredictor-Tile",
+    "MSE-Loss-1PE",
+    "Max-Reduction-1PE",
+    "ParBroadcast-Scale",
+    "ParDot-Product",
+    "ParReduce-Sum",
+    "Prefix-Sum-1PE",
+    "RMSNorm-1PE",
+    "ReLU-1PE",
+    "RowParallel-Softmax",
+    "SAXPY-1PE",
+    "SiLU-1PE",
+    "Sigmoid-1PE",
+    "Softmax-1PE",
+    "Sum-Reduction-1PE"
+   ],
+   "operand_forms": {
+    "S1DS = [MEM]": 179
+   }
+  },
+  "imov32.nf.term": {
+   "count": 176,
+   "kernels": [
+    "Cross-Entropy-Loss-1PE",
+    "Dot-Product-1PE",
+    "GELU-1PE",
+    "Jacobi-2D-5pt",
+    "L2-Norm-1PE",
+    "Laplacian2D-Halo",
+    "Laplacian2D-Reduce",
+    "LorenzoPredictor-Tile",
+    "MSE-Loss-1PE",
+    "Max-Reduction-1PE",
+    "ParBroadcast-Scale",
+    "ParDot-Product",
+    "ParReduce-Sum",
+    "Prefix-Sum-1PE",
+    "RMSNorm-1PE",
+    "ReLU-1PE",
+    "RowParallel-Softmax",
+    "SAXPY-1PE",
+    "SiLU-1PE",
+    "Sigmoid-1PE",
+    "Softmax-1PE",
+    "Sum-Reduction-1PE"
+   ],
+   "operand_forms": {
+    "[MEM] = [MEM]": 176
+   }
+  },
+  "sub16.nf": {
+   "count": 176,
+   "kernels": [
+    "Cross-Entropy-Loss-1PE",
+    "Dot-Product-1PE",
+    "GELU-1PE",
+    "Jacobi-2D-5pt",
+    "L2-Norm-1PE",
+    "Laplacian2D-Halo",
+    "Laplacian2D-Reduce",
+    "LorenzoPredictor-Tile",
+    "MSE-Loss-1PE",
+    "Max-Reduction-1PE",
+    "ParBroadcast-Scale",
+    "ParDot-Product",
+    "ParReduce-Sum",
+    "Prefix-Sum-1PE",
+    "RMSNorm-1PE",
+    "ReLU-1PE",
+    "RowParallel-Softmax",
+    "SAXPY-1PE",
+    "SiLU-1PE",
+    "Sigmoid-1PE",
+    "Softmax-1PE",
+    "Sum-Reduction-1PE"
+   ],
+   "operand_forms": {
+    "R = R, R": 176
+   }
+  },
+  "not16": {
+   "count": 88,
+   "kernels": [
+    "Cross-Entropy-Loss-1PE",
+    "Dot-Product-1PE",
+    "GELU-1PE",
+    "Jacobi-2D-5pt",
+    "L2-Norm-1PE",
+    "Laplacian2D-Halo",
+    "Laplacian2D-Reduce",
+    "LorenzoPredictor-Tile",
+    "MSE-Loss-1PE",
+    "Max-Reduction-1PE",
+    "ParBroadcast-Scale",
+    "ParDot-Product",
+    "ParReduce-Sum",
+    "Prefix-Sum-1PE",
+    "RMSNorm-1PE",
+    "ReLU-1PE",
+    "RowParallel-Softmax",
+    "SAXPY-1PE",
+    "SiLU-1PE",
+    "Sigmoid-1PE",
+    "Softmax-1PE",
+    "Sum-Reduction-1PE"
+   ],
+   "operand_forms": {
+    "R = R": 88
+   }
+  },
+  "imul16": {
+   "count": 88,
+   "kernels": [
+    "Cross-Entropy-Loss-1PE",
+    "Dot-Product-1PE",
+    "GELU-1PE",
+    "Jacobi-2D-5pt",
+    "L2-Norm-1PE",
+    "Laplacian2D-Halo",
+    "Laplacian2D-Reduce",
+    "LorenzoPredictor-Tile",
+    "MSE-Loss-1PE",
+    "Max-Reduction-1PE",
+    "ParBroadcast-Scale",
+    "ParDot-Product",
+    "ParReduce-Sum",
+    "Prefix-Sum-1PE",
+    "RMSNorm-1PE",
+    "ReLU-1PE",
+    "RowParallel-Softmax",
+    "SAXPY-1PE",
+    "SiLU-1PE",
+    "Sigmoid-1PE",
+    "Softmax-1PE",
+    "Sum-Reduction-1PE"
+   ],
+   "operand_forms": {
+    "R = R, R": 88
+   }
+  },
+  "lte16.and": {
+   "count": 308,
+   "kernels": [
+    "Cross-Entropy-Loss-1PE",
+    "Dot-Product-1PE",
+    "GELU-1PE",
+    "Jacobi-2D-5pt",
+    "L2-Norm-1PE",
+    "Laplacian2D-Halo",
+    "Laplacian2D-Reduce",
+    "LorenzoPredictor-Tile",
+    "MSE-Loss-1PE",
+    "Max-Reduction-1PE",
+    "ParBroadcast-Scale",
+    "ParDot-Product",
+    "ParReduce-Sum",
+    "Prefix-Sum-1PE",
+    "RMSNorm-1PE",
+    "ReLU-1PE",
+    "RowParallel-Softmax",
+    "SAXPY-1PE",
+    "SiLU-1PE",
+    "Sigmoid-1PE",
+    "Softmax-1PE",
+    "Sum-Reduction-1PE"
+   ],
+   "operand_forms": {
+    "CFLAG = R, R": 308
+   }
+  },
+  "ublk": {
+   "count": 140,
+   "kernels": [
+    "Cross-Entropy-Loss-1PE",
+    "Dot-Product-1PE",
+    "GELU-1PE",
+    "Jacobi-2D-5pt",
+    "L2-Norm-1PE",
+    "Laplacian2D-Halo",
+    "Laplacian2D-Reduce",
+    "LorenzoPredictor-Tile",
+    "MSE-Loss-1PE",
+    "Max-Reduction-1PE",
+    "ParBroadcast-Scale",
+    "ParDot-Product",
+    "ParReduce-Sum",
+    "Prefix-Sum-1PE",
+    "RMSNorm-1PE",
+    "ReLU-1PE",
+    "RowParallel-Softmax",
+    "SAXPY-1PE",
+    "SiLU-1PE",
+    "Sigmoid-1PE",
+    "Softmax-1PE",
+    "Sum-Reduction-1PE"
+   ],
+   "operand_forms": {
+    "IMM": 140
+   }
+  },
+  "xor16": {
+   "count": 132,
+   "kernels": [
+    "Cross-Entropy-Loss-1PE",
+    "Dot-Product-1PE",
+    "GELU-1PE",
+    "Jacobi-2D-5pt",
+    "L2-Norm-1PE",
+    "Laplacian2D-Halo",
+    "Laplacian2D-Reduce",
+    "LorenzoPredictor-Tile",
+    "MSE-Loss-1PE",
+    "Max-Reduction-1PE",
+    "ParBroadcast-Scale",
+    "ParDot-Product",
+    "ParReduce-Sum",
+    "Prefix-Sum-1PE",
+    "RMSNorm-1PE",
+    "ReLU-1PE",
+    "RowParallel-Softmax",
+    "SAXPY-1PE",
+    "SiLU-1PE",
+    "Sigmoid-1PE",
+    "Softmax-1PE",
+    "Sum-Reduction-1PE"
+   ],
+   "operand_forms": {
+    "R = R, R": 132
+   }
+  },
+  "sub16": {
+   "count": 44,
+   "kernels": [
+    "Cross-Entropy-Loss-1PE",
+    "Dot-Product-1PE",
+    "GELU-1PE",
+    "Jacobi-2D-5pt",
+    "L2-Norm-1PE",
+    "Laplacian2D-Halo",
+    "Laplacian2D-Reduce",
+    "LorenzoPredictor-Tile",
+    "MSE-Loss-1PE",
+    "Max-Reduction-1PE",
+    "ParBroadcast-Scale",
+    "ParDot-Product",
+    "ParReduce-Sum",
+    "Prefix-Sum-1PE",
+    "RMSNorm-1PE",
+    "ReLU-1PE",
+    "RowParallel-Softmax",
+    "SAXPY-1PE",
+    "SiLU-1PE",
+    "Sigmoid-1PE",
+    "Softmax-1PE",
+    "Sum-Reduction-1PE"
+   ],
+   "operand_forms": {
+    "R, CFLAG = R, R": 44
+   }
+  },
+  "sll16": {
+   "count": 308,
+   "kernels": [
+    "Cross-Entropy-Loss-1PE",
+    "Dot-Product-1PE",
+    "GELU-1PE",
+    "Jacobi-2D-5pt",
+    "L2-Norm-1PE",
+    "Laplacian2D-Halo",
+    "Laplacian2D-Reduce",
+    "LorenzoPredictor-Tile",
+    "MSE-Loss-1PE",
+    "Max-Reduction-1PE",
+    "ParBroadcast-Scale",
+    "ParDot-Product",
+    "ParReduce-Sum",
+    "Prefix-Sum-1PE",
+    "RMSNorm-1PE",
+    "ReLU-1PE",
+    "RowParallel-Softmax",
+    "SAXPY-1PE",
+    "SiLU-1PE",
+    "Sigmoid-1PE",
+    "Softmax-1PE",
+    "Sum-Reduction-1PE"
+   ],
+   "operand_forms": {
+    "R, CFLAG = R, R": 132,
+    "R, CFLAG = R, IMM": 176
+   }
+  },
+  "slr16": {
+   "count": 264,
+   "kernels": [
+    "Cross-Entropy-Loss-1PE",
+    "Dot-Product-1PE",
+    "GELU-1PE",
+    "Jacobi-2D-5pt",
+    "L2-Norm-1PE",
+    "Laplacian2D-Halo",
+    "Laplacian2D-Reduce",
+    "LorenzoPredictor-Tile",
+    "MSE-Loss-1PE",
+    "Max-Reduction-1PE",
+    "ParBroadcast-Scale",
+    "ParDot-Product",
+    "ParReduce-Sum",
+    "Prefix-Sum-1PE",
+    "RMSNorm-1PE",
+    "ReLU-1PE",
+    "RowParallel-Softmax",
+    "SAXPY-1PE",
+    "SiLU-1PE",
+    "Sigmoid-1PE",
+    "Softmax-1PE",
+    "Sum-Reduction-1PE"
+   ],
+   "operand_forms": {
+    "R, CFLAG = R, R": 88,
+    "R, CFLAG = R, IMM": 176
+   }
+  },
+  "ctz": {
+   "count": 44,
+   "kernels": [
+    "Cross-Entropy-Loss-1PE",
+    "Dot-Product-1PE",
+    "GELU-1PE",
+    "Jacobi-2D-5pt",
+    "L2-Norm-1PE",
+    "Laplacian2D-Halo",
+    "Laplacian2D-Reduce",
+    "LorenzoPredictor-Tile",
+    "MSE-Loss-1PE",
+    "Max-Reduction-1PE",
+    "ParBroadcast-Scale",
+    "ParDot-Product",
+    "ParReduce-Sum",
+    "Prefix-Sum-1PE",
+    "RMSNorm-1PE",
+    "ReLU-1PE",
+    "RowParallel-Softmax",
+    "SAXPY-1PE",
+    "SiLU-1PE",
+    "Sigmoid-1PE",
+    "Softmax-1PE",
+    "Sum-Reduction-1PE"
+   ],
+   "operand_forms": {
+    "R = R": 44
+   }
+  },
+  "add16": {
+   "count": 88,
+   "kernels": [
+    "Cross-Entropy-Loss-1PE",
+    "Dot-Product-1PE",
+    "GELU-1PE",
+    "Jacobi-2D-5pt",
+    "L2-Norm-1PE",
+    "Laplacian2D-Halo",
+    "Laplacian2D-Reduce",
+    "LorenzoPredictor-Tile",
+    "MSE-Loss-1PE",
+    "Max-Reduction-1PE",
+    "ParBroadcast-Scale",
+    "ParDot-Product",
+    "ParReduce-Sum",
+    "Prefix-Sum-1PE",
+    "RMSNorm-1PE",
+    "ReLU-1PE",
+    "RowParallel-Softmax",
+    "SAXPY-1PE",
+    "SiLU-1PE",
+    "Sigmoid-1PE",
+    "Softmax-1PE",
+    "Sum-Reduction-1PE"
+   ],
+   "operand_forms": {
+    "R, CFLAG = R, IMM": 88
+   }
+  },
+  "xor32": {
+   "count": 8,
+   "kernels": [
+    "GELU-1PE",
+    "L2-Norm-1PE",
+    "RMSNorm-1PE",
+    "RowParallel-Softmax",
+    "SiLU-1PE",
+    "Sigmoid-1PE",
+    "Softmax-1PE"
+   ],
+   "operand_forms": {
+    "D = D, D": 8
+   }
+  },
+  "fabss": {
+   "count": 16,
+   "kernels": [
+    "GELU-1PE",
+    "L2-Norm-1PE",
+    "RMSNorm-1PE",
+    "RowParallel-Softmax",
+    "SiLU-1PE",
+    "Sigmoid-1PE",
+    "Softmax-1PE"
+   ],
+   "operand_forms": {
+    "D = D": 16
+   }
+  },
+  "fmacs": {
+   "count": 80,
+   "kernels": [
+    "GELU-1PE",
+    "L2-Norm-1PE",
+    "RMSNorm-1PE",
+    "RowParallel-Softmax",
+    "SiLU-1PE",
+    "Sigmoid-1PE",
+    "Softmax-1PE"
+   ],
+   "operand_forms": {
+    "D = D, D, D": 80
+   }
+  },
+  "fmov32.nf.term": {
+   "count": 27,
+   "kernels": [
+    "Jacobi-2D-5pt",
+    "Laplacian2D-Halo",
+    "Laplacian2D-Reduce",
+    "LorenzoPredictor-Tile",
+    "ParDot-Product",
+    "ParReduce-Sum",
+    "RowParallel-Softmax"
+   ],
+   "operand_forms": {
+    "[MEM] = [MEM]": 27
+   }
+  },
+  "actvt.term": {
+   "count": 48,
+   "kernels": [
+    "Jacobi-2D-5pt",
+    "Laplacian2D-Halo",
+    "Laplacian2D-Reduce",
+    "LorenzoPredictor-Tile",
+    "ParBroadcast-Scale",
+    "ParDot-Product",
+    "ParReduce-Sum",
+    "RowParallel-Softmax"
+   ],
+   "operand_forms": {
+    "IMM": 48
+   }
+  },
+  "lt32.and": {
+   "count": 8,
+   "kernels": [
+    "Jacobi-2D-5pt",
+    "Laplacian2D-Halo"
+   ],
+   "operand_forms": {
+    "CFLAG = IMM, D": 8
+   }
+  },
+  "ltu32.and": {
+   "count": 2,
+   "kernels": [
+    "L2-Norm-1PE",
+    "RMSNorm-1PE"
+   ],
+   "operand_forms": {
+    "CFLAG = D, D": 2
+   }
+  },
+  "sub32.nf": {
+   "count": 2,
+   "kernels": [
+    "L2-Norm-1PE",
+    "RMSNorm-1PE"
+   ],
+   "operand_forms": {
+    "D = D, D": 2
+   }
+  },
+  "fltequs.and": {
+   "count": 4,
+   "kernels": [
+    "Laplacian2D-Reduce",
+    "RowParallel-Softmax"
+   ],
+   "operand_forms": {
+    "CFLAG = D, D": 4
+   }
+  }
+ }
+}

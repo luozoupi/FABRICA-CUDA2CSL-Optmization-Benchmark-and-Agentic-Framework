@@ -1,0 +1,4 @@
+withheld
+
+the single factor changed relative to `base`:
+for (@range(u16, 8)) |i| { c[i] = a[0] + 5; }

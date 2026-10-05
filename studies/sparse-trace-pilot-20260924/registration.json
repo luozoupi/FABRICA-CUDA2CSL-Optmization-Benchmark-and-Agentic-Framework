@@ -1,0 +1,33 @@
+{
+  "created_utc": "2026-09-24T17:35:06.955553+00:00",
+  "framework_commit": "cb3785baa4201832b4cdbe7324aff00383f77ea4",
+  "scope": "Local controlled-kernel profiling pilot; not O1I agent replay. No new compilation or API calls.",
+  "original_root": "/home/USER/sparse-crossarch-20260922/wse",
+  "cases": [
+    "scalar-n1",
+    "descriptor-n1",
+    "scalar-n4",
+    "descriptor-n4",
+    "descriptor-n16",
+    "hoisted-n16"
+  ],
+  "families": [
+    "uniform8",
+    "skew8"
+  ],
+  "sessions": [
+    "original",
+    "changed_indices_values_dense_operand",
+    "restored_original"
+  ],
+  "warmups": 1,
+  "timing_repetitions": 3,
+  "launches": 144,
+  "predictions": [
+    "Descriptor setup outweighs work saved at width 1.",
+    "Descriptor processing amortizes setup at width 4.",
+    "Source descriptor hoisting at width 16 does not reduce emitted per-nonzero setup."
+  ],
+  "analysis": "Measured ELF and input hash binding; CTF instruction encodings; per-launch timer anchors and arithmetic work. Treat counts as events, not runtime percentages. Preserve all discrepancies.",
+  "remote_artifact_gap": "O1I SpMV and SpMM candidate source and measured ELF bundles not present locally or committed on origin/sparse_ipdps at review."
+}

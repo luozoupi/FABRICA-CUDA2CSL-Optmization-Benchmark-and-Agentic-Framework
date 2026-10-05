@@ -1,0 +1,27 @@
+// Does CSL bound-check a DSD's declared extent against its backing array?
+// The array is deliberately small (1024) while the DSD asks for `dsdlen`.
+// A compile error naming bounds => extent is checked against the array.
+// A clean compile => the extent field is independent, and its own ceiling can
+// then be read from the dispatch trace's num_data.
+param memcpy_params;
+param dsdlen: i16;
+
+const EXIT: local_task_id = @get_local_task_id(9);
+const sys_mod = @import_module("<memcpy/memcpy>", memcpy_params);
+
+var A = @zeros([1024]f16);
+var ptr_C: [*]f16 = &A;
+
+fn compute() void {
+  const d = @get_dsd(mem1d_dsd, .{ .tensor_access = |i|{dsdlen} -> A[i] });
+  @fmovh(d, @as(f16, 1.5));
+  @activate(EXIT);
+}
+
+task f_exit() void { sys_mod.unblock_cmd_stream(); }
+
+comptime {
+  @bind_local_task(f_exit, EXIT);
+  @export_symbol(ptr_C, "C");
+  @export_symbol(compute);
+}

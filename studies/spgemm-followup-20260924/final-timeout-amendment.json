@@ -1,0 +1,9 @@
+{
+  "created_utc": "2026-09-24T21:02:55.452601+00:00",
+  "reason": "Before final-test execution, allow 900 seconds for every complete final matrix suite. Dense nested matching performs 65,536 index comparisons per launch, versus 432 in selection, and nine final families replace three selection families. This changes only the process watchdog, not kernel timing scope, repetition counts, candidates, inputs or selection.",
+  "original_runner_sha256": "b8b7c92f71ce59bd2d001c0e23a95792aaa5702c039dfa029b1ca660a01ab7f9",
+  "amended_runner_sha256": "00c0af3cdd0644d6a59d2b3d2604ce6bbd5713ecb00abc686498a70d840c0151",
+  "prior_timeout_s": 420,
+  "final_timeout_s": 900,
+  "all_final_variants_same_limit": true
+}

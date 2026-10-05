@@ -1,0 +1,25 @@
+id: D08_tensor_access
+group: D_api
+prompt: 'Answer this Cerebras CSL / WSE-3 question with the single letter of the correct option, then one sentence
+  of justification.
+
+
+  Which is a valid mem1d_dsd declaration over the first 32 elements of `x`?
+
+
+  A) `@get_dsd(mem1d_dsd, .{ .tensor_access = |i|{32} -> x[i] })`
+
+  B) `@get_dsd(mem1d_dsd, x, 32)`
+
+  C) `@get_dsd(mem1d_dsd, .{ .base = x, .len = 32 })`
+
+  D) `mem1d_dsd(x[0..32])`'
+choices:
+- A) `@get_dsd(mem1d_dsd, .{ .tensor_access = |i|{32} -> x[i] })`
+- B) `@get_dsd(mem1d_dsd, x, 32)`
+- C) `@get_dsd(mem1d_dsd, .{ .base = x, .len = 32 })`
+- D) `mem1d_dsd(x[0..32])`
+expected:
+  choice: A
+scoring: first standalone letter A-D in the reply equals the key
+source_citation: 'SDK DSD reference: tensor_access syntax `|i|{n} -> arr[i]`'

@@ -1,0 +1,18 @@
+{
+  "case": "HB-bcsstk08-n1",
+  "method": "ge_plain",
+  "session": 1,
+  "failures": [
+    {
+      "row": 432,
+      "reference": 2106.1337890625,
+      "actual": 2106.25,
+      "absolute_error": 0.1162109375,
+      "tolerance": 0.105356689453125,
+      "row_nonzeros": 14,
+      "absolute_sum": 8145959.1123046875,
+      "sum_over_result": 3867.7310789124585
+    }
+  ],
+  "interpretation": "The componentwise acceptance threshold is retained. Cancellation and FP32 accumulation explain a plausible numerical mechanism; not evidence of a library implementation defect."
+}

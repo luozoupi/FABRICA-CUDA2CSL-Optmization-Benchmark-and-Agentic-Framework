@@ -1,0 +1,25 @@
+<h2 id="mapping">From matrices to PEs, wavelets and colours</h2>
+<p>Before following a run, here is how MeshGEMM's inputs are cut up and carried. The same rules apply at every size; the traced run uses 64×64 matrices on a 4×4 mesh, so every PE holds 16×16 tiles. The toy at the end uses the same mesh and the same schedule with 1×1 tiles, small enough to check by hand.</p>
+
+<h3>1 · Cut into tiles, placed on PEs</h3>
+<div class="card"><svg id="mapfig" viewBox="0 0 1020 330" role="img" aria-label="X and W cut into 4 by 4 blocks and placed on the 4 by 4 PE mesh"></svg>
+<p class="mini" id="mapcap"></p></div>
+
+<h3>2 · A tile becomes wavelets</h3>
+<div class="card"><svg id="wavefig" viewBox="0 0 1020 250" role="img" aria-label="One 16 by 16 tile as memcpy wavelets and as kernel wavelets"></svg></div>
+
+<h3>3 · Which colour carries what</h3>
+<p>A colour is a 5-bit tag on every wavelet, from 24 IDs (0–23). It is not a separate wire: all colours share each physical link, and each router holds one route per colour (rx port → tx port) plus a buffer per colour. MeshGEMM's layout binds 12 IDs: X on 1–3, W on 4–6, and the X skew on 7–9 (backward) and 12, 13, 16 (forward). The memcpy framework reserves 21–23. The remaining IDs (10, 11, 14, 15, 17–20) are unused.</p>
+<div class="card"><svg id="rulefig" viewBox="0 0 1020 250" role="img" aria-label="Three-colour rule along one row"></svg><p class="mini" id="rulecap"></p></div>
+<div class="tw"><table class="res" id="coltab"></table></div>
+
+<h3>4 · One-to-one or one-to-many?</h3>
+<div class="tw"><table class="res" id="fantab"></table></div>
+
+<h3>5 · Toy: a 4×4 GEMM you can check by hand</h3>
+<p>X and W are 4×4 integer matrices, and each PE holds a single number of each (1×1 tiles). The schedule is the real one: the k-block each PE multiplies at each step is the one verified in the trace. Step through it, then tap a PE to see its four terms add up to its entry of C.</p>
+<div class="tabs" id="toytabs"></div>
+<div class="stage">
+  <div class="card"><svg id="toyfig" viewBox="0 0 700 560" role="img" aria-label="Toy GEMM on the 4 by 4 mesh"></svg></div>
+  <div class="card" id="toyside"></div>
+</div>

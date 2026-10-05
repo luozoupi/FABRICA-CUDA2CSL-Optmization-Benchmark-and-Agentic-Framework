@@ -1,0 +1,33 @@
+{
+ "total_elements": 4096,
+ "variants": [
+  {
+   "form": "L0",
+   "software_loops": 0,
+   "cycles": 1040,
+   "cycles_per_element": 0.2539,
+   "vs_L0": 1.0
+  },
+  {
+   "form": "L1",
+   "software_loops": 1,
+   "cycles": 4617,
+   "cycles_per_element": 1.1272,
+   "vs_L0": 4.44
+  },
+  {
+   "form": "L2",
+   "software_loops": 2,
+   "cycles": 2840,
+   "cycles_per_element": 0.6934,
+   "vs_L0": 2.73
+  },
+  {
+   "form": "L3",
+   "software_loops": 3,
+   "cycles": 3032,
+   "cycles_per_element": 0.7402,
+   "vs_L0": 2.92
+  }
+ ]
+}

@@ -1,0 +1,32 @@
+{
+ "L": 2048,
+ "S": 256,
+ "run_verified": true,
+ "T_A_dsd_alone": 514,
+ "T_B_chain_alone": 514,
+ "T_C_combined": 1027,
+ "serial_prediction": 1028,
+ "overlap_prediction": 514,
+ "pct_of_serial": 99.9,
+ "pct_of_full_overlap": 199.8,
+ "chain_steps": 256,
+ "chain_cyc_per_step_alone": 2.01,
+ "chain_cyc_per_step_after_dsd": 2.01,
+ "dsd_a": {
+  "dispatch": 7770,
+  "x_first": 7774,
+  "x_last": 8284,
+  "records": 2304
+ },
+ "dsd_c": {
+  "dispatch": 9051,
+  "x_first": 9055,
+  "x_last": 9565,
+  "records": 2304
+ },
+ "chain_execs_inside_dsd_window": 0,
+ "chain_execs_total": 256,
+ "earliest_chain_dispatch_after_dsd": 513,
+ "issue_held_cycles": 511,
+ "verdict": "SERIALIZED \u2014 no execution overlap"
+}

@@ -1,0 +1,182 @@
+// Copyright 2025 Cerebras Systems.
+//
+// 7-point stencil SpMV compute file.
+// Contract driven by layout.csl / run.py: uses stencil_3d_7pts + allreduce libs.
+//
+// DEBUG NOTE: applying the wavelet-trace debug recipe requires host-side
+// changes (csdb invocation) I cannot make from this compute file; per reviewer
+// rationale the stall is in the sync path — f_sync used the low-level reduce()
+// helper which skips the allreduce configure/broadcast state machine and never
+// signals completion, hanging the host's blocking launch. Fixed to call the
+// full allreduce() entry which runs configure -> reduce -> broadcast and fires
+// f_reduce_done. Queue wiring: memcpy owns queues 0,1; stencil uses free ids
+// {2,3,4,5} (input/output are separate hardware pools); allreduce uses id 6.
+
+param memcpyParams: comptime_struct;
+param reduceParams: comptime_struct;
+param stencilParams: comptime_struct;
+
+param MAX_ZDIM: i16;   // maximum size of local vector x and y
+param BLOCK_SIZE: i16; // size of temporary buffers for communication
+
+param STARTUP: local_task_id;
+
+const timestamp = @import_module("<time>");
+
+// memcpy module
+const sys_mod = @import_module("<memcpy/memcpy>", memcpyParams);
+
+////////////////////////////////////////////////////////////////////////////////
+// Data buffers
+////////////////////////////////////////////////////////////////////////////////
+
+// coefficients: 7 per PE (center + 6 neighbors)
+var stencil_coeff = @zeros([7]f32);
+// input/output vectors of length MAX_ZDIM
+var x = @zeros([MAX_ZDIM]f32);
+var y = @zeros([MAX_ZDIM]f32);
+
+var ptr_x: [*]f32 = &x;
+var ptr_y: [*]f32 = &y;
+var ptr_stencil_coeff: [*]f32 = &stencil_coeff;
+
+// scratch tensor for the sync allreduce (one f32 element)
+var sync_buf = @zeros([1]f32);
+var ptr_sync_buf: [*]f32 = &sync_buf;
+
+// timestamps
+var tsc_start_buffer = @zeros([timestamp.tsc_size_words]u16);
+var tsc_end_buffer   = @zeros([timestamp.tsc_size_words]u16);
+// time_buf_u16 holds start (3 words) + end (3 words)
+var time_buf_u16 = @zeros([6]u16);
+var ptr_time_buf_u16: [*]u16 = &time_buf_u16;
+
+// time_ref for sync
+var time_ref_u16 = @zeros([3]u16);
+var ptr_time_ref: [*]u16 = &time_ref_u16;
+
+////////////////////////////////////////////////////////////////////////////////
+// Forward-declared callbacks
+////////////////////////////////////////////////////////////////////////////////
+
+// callback after stencil finishes — the SpMV result is complete; unblock host.
+fn f_stencil_done() void {
+    sys_mod.unblock_cmd_stream();
+}
+
+// allreduce (sync) callback — release host.
+fn f_reduce_done() void {
+    sys_mod.unblock_cmd_stream();
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// Library instantiations
+////////////////////////////////////////////////////////////////////////////////
+
+// stencil_3d_7pts needs: input_queues[4], output_queues[4], output_ut_id (scalar
+// u16), dest_dsr_ids[2], src0_dsr_ids[1], src1_dsr_ids[2].
+// In-place accumulate: src0[0] == dest[0].
+const stencil_mod = @import_module(
+    "../../benchmark-libs/stencil_3d_7pts/pe.csl",
+    @concat_structs(stencilParams, .{
+        .f_callback    = f_stencil_done,
+        .input_queues  = [4]u16{ 2, 3, 4, 5 },
+        .output_queues = [4]u16{ 2, 3, 4, 5 },
+        .output_ut_id  = @as(u16, 0),
+        .BLOCK_SIZE    = BLOCK_SIZE,
+        .dest_dsr_ids  = [2]u16{ 1, 2 },
+        .src0_dsr_ids  = [1]u16{ 1 },
+        .src1_dsr_ids  = [2]u16{ 3, 4 },
+    }));
+
+// allreduce needs: queues[1], dest_dsr_ids[1], src0_dsr_ids[1], src1_dsr_ids[1].
+// In-place accumulate: src0[0] == dest[0]. Uses free-range queue id 6.
+const reduce_mod = @import_module(
+    "../../benchmark-libs/allreduce/pe.csl",
+    @concat_structs(reduceParams, .{
+        .f_callback    = f_reduce_done,
+        .queues        = [1]u16{ 6 },
+        .dest_dsr_ids  = [1]u16{ 5 },
+        .src0_dsr_ids  = [1]u16{ 5 },
+        .src1_dsr_ids  = [1]u16{ 6 },
+    }));
+
+////////////////////////////////////////////////////////////////////////////////
+// SpMV: y = A * x via the stencil library
+////////////////////////////////////////////////////////////////////////////////
+
+fn f_spmv(n: i16) void {
+    // stencil_mod.spmv computes the full 7-point stencil y = A*x, using fabric
+    // exchange for in-plane neighbors (E/W/N/S) and the on-PE z-direction
+    // (top/bottom) plus center. Boundary PEs contribute zero for missing
+    // neighbors, matching the CUDA Dirichlet guards. Calls f_stencil_done when
+    // complete, which unblocks the host command stream.
+    stencil_mod.spmv(n, &stencil_coeff, ptr_x, ptr_y);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// Timestamp entrypoints (match run.py launch names)
+////////////////////////////////////////////////////////////////////////////////
+
+fn f_tic() void {
+    timestamp.enable_tsc();
+    timestamp.get_timestamp(&tsc_start_buffer);
+    sys_mod.unblock_cmd_stream();
+}
+
+fn f_toc() void {
+    timestamp.get_timestamp(&tsc_end_buffer);
+    timestamp.disable_tsc();
+    sys_mod.unblock_cmd_stream();
+}
+
+fn f_memcpy_timestamps() void {
+    time_buf_u16[0] = tsc_start_buffer[0];
+    time_buf_u16[1] = tsc_start_buffer[1];
+    time_buf_u16[2] = tsc_start_buffer[2];
+    time_buf_u16[3] = tsc_end_buffer[0];
+    time_buf_u16[4] = tsc_end_buffer[1];
+    time_buf_u16[5] = tsc_end_buffer[2];
+    sys_mod.unblock_cmd_stream();
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// Sync (uses allreduce fabric to synchronize all PEs)
+////////////////////////////////////////////////////////////////////////////////
+
+fn f_sync(n: i16) void {
+    // Run the FULL allreduce state machine (configure -> reduce -> broadcast).
+    // The bare reduce() helper skips configuration and never fires the callback,
+    // hanging the blocking host launch. allreduce() drives the whole sequence
+    // and invokes f_reduce_done on completion, which unblocks the host.
+    reduce_mod.allreduce(1, ptr_sync_buf, reduce_mod.TYPE_BINARY_OP.ADD);
+}
+
+fn f_reference_timestamps() void {
+    timestamp.enable_tsc();
+    timestamp.get_timestamp(&tsc_start_buffer);
+    timestamp.disable_tsc();
+    time_ref_u16[0] = tsc_start_buffer[0];
+    time_ref_u16[1] = tsc_start_buffer[1];
+    time_ref_u16[2] = tsc_start_buffer[2];
+    sys_mod.unblock_cmd_stream();
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// Exports (names must match layout.csl @export_name and run.py get_id)
+////////////////////////////////////////////////////////////////////////////////
+
+comptime {
+    @export_symbol(ptr_x, "x");
+    @export_symbol(ptr_y, "y");
+    @export_symbol(ptr_stencil_coeff, "stencil_coeff");
+    @export_symbol(ptr_time_buf_u16, "time_buf_u16");
+    @export_symbol(ptr_time_ref, "time_ref");
+
+    @export_symbol(f_tic);
+    @export_symbol(f_toc);
+    @export_symbol(f_memcpy_timestamps);
+    @export_symbol(f_spmv);
+    @export_symbol(f_sync);
+    @export_symbol(f_reference_timestamps);
+}

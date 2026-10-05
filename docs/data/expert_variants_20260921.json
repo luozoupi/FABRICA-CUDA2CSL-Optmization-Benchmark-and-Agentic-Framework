@@ -1,0 +1,38 @@
+[
+  {
+    "label": "spgemm_accumulator",
+    "kernel": "SpGEMM-Masked-Dot",
+    "status": "pass",
+    "cycles": 222989,
+    "runs": [
+      222989,
+      222989,
+      222989
+    ],
+    "heldout_passed": true,
+    "heldout_reason": "passed all 3 held-out seeds",
+    "failure": null,
+    "instrs": 166,
+    "dsd_ops": 0,
+    "branches": 12,
+    "elapsed_s": 136.0
+  },
+  {
+    "label": "spmv_dia_remainder",
+    "kernel": "SpMV-RowBlock",
+    "status": "pass",
+    "cycles": 172302,
+    "runs": [
+      172302,
+      172302,
+      172302
+    ],
+    "heldout_passed": true,
+    "heldout_reason": "passed all 3 held-out seeds",
+    "failure": null,
+    "instrs": 338,
+    "dsd_ops": 3,
+    "branches": 28,
+    "elapsed_s": 160.8
+  }
+]

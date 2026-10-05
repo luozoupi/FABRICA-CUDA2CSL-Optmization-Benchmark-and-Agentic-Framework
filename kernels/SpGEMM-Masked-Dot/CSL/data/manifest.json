@@ -1,0 +1,40 @@
+{
+ "schema": 1,
+ "class": "hb_n256",
+ "train_seed": 7,
+ "values": "seeded_uniform",
+ "matrices": [
+  {
+   "id": "HB/dwt_234",
+   "file": "dwt_234.mtx",
+   "sha256": "00a4a599bf2cd9878e649e9d26005126ade6af2da7d24feee70ec2b0d45f494f",
+   "n": 234,
+   "m": 234,
+   "nnz": 834
+  },
+  {
+   "id": "HB/gre_216a",
+   "file": "gre_216a.mtx",
+   "sha256": "f5f99ec361a831356e02aef875da3190089950c5de0b311ea8b73f3be2a02feb",
+   "n": 216,
+   "m": 216,
+   "nnz": 876
+  },
+  {
+   "id": "HB/fs_183_1",
+   "file": "fs_183_1.mtx",
+   "sha256": "c9fe9de4b075e4932f95f439d5351b8265ae5df21a716a5b95dceac2edbd70ee",
+   "n": 183,
+   "m": 183,
+   "nnz": 1069
+  },
+  {
+   "id": "HB/west0167",
+   "file": "west0167.mtx",
+   "sha256": "1039e28d0546cef0d0be6ac118054a8273ac3ca3b988b1ddcc9146e8030658a9",
+   "n": 167,
+   "m": 167,
+   "nnz": 507
+  }
+ ]
+}

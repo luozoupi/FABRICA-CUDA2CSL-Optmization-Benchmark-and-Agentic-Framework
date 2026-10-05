@@ -1,0 +1,147 @@
+param memcpy_params: comptime_struct;
+// === SLOT: EXTRA_PARAMS ===
+// Declare any compile-time params your kernel needs from layout.csl
+param S: i16;      // full sequence length (number of keys/values)
+param d: i16;      // head dimension
+param St_q: i16;   // number of query rows owned by this PE
+param P: u16;
+param px: u16;
+param py: u16;
+param causal: i16;
+
+const EXIT: local_task_id = @get_local_task_id(9);
+const sys_mod = @import_module("<memcpy/memcpy>", memcpy_params);
+
+// === SLOT: EXTRA_IMPORTS ===
+const math = @import_module("<math>");
+
+const timestamp = @import_module("<time>");
+var tsc_start_buf = @zeros([timestamp.tsc_size_words]u16);
+var tsc_end_buf   = @zeros([timestamp.tsc_size_words]u16);
+var ptr_start_ts: [*]u16 = &tsc_start_buf;
+var ptr_finish_ts: [*]u16 = &tsc_end_buf;
+
+// === SLOT: DATA_BUFFERS ===
+// Q: [St_q * d] queries owned by this PE
+// K, V: [S * d] replicated keys/values
+// O: [St_q * d] output rows for this PE
+const S_u: u16 = @as(u16, S);
+const d_u: u16 = @as(u16, d);
+const St_q_u: u16 = @as(u16, St_q);
+
+var Q_array = @zeros([St_q_u * d_u]f32);
+var K_array = @zeros([S_u * d_u]f32);
+var V_array = @zeros([S_u * d_u]f32);
+var O_array = @zeros([St_q_u * d_u]f32);
+
+// Per-row softmax scratch (length S)
+var p_array = @zeros([S_u]f32);
+
+var ptr_Q: [*]f32 = &Q_array;
+var ptr_K: [*]f32 = &K_array;
+var ptr_V: [*]f32 = &V_array;
+var ptr_O: [*]f32 = &O_array;
+
+// Base DSD templates over a length-d row; base address is retargeted per row.
+var o_dsd = @get_dsd(mem1d_dsd, .{
+    .tensor_access = |k| { d_u } -> O_array[k],
+});
+var v_dsd = @get_dsd(mem1d_dsd, .{
+    .tensor_access = |k| { d_u } -> V_array[k],
+});
+
+// === SLOT: KERNEL_FUNCTION ===
+fn attention() void {
+    // inv_sqrt_d = 1/sqrt(d)
+    const inv_sqrt_d: f32 = 1.0 / math.sqrt(@as(f32, d_u));
+
+    // Iterate over the query rows owned by this PE.
+    var i: u16 = 0;
+    while (i < St_q_u) : (i += 1) {
+        const q_base: u16 = i * d_u;
+
+        // --- 1) scores p[j] = (Q[i] . K[j]) * inv_sqrt_d, track max ---
+        var mx: f32 = -3.4028235e38; // -FLT_MAX
+        var j: u16 = 0;
+        while (j < S_u) : (j += 1) {
+            const k_base: u16 = j * d_u;
+
+            var acc: f32 = 0.0;
+            var kk: u16 = 0;
+            while (kk < d_u) : (kk += 1) {
+                acc += Q_array[q_base + kk] * K_array[k_base + kk];
+            }
+            acc = acc * inv_sqrt_d;
+            p_array[j] = acc;
+            if (acc > mx) mx = acc;
+        }
+
+        // --- 2) stable softmax over p[0..S) ---
+        var sum: f32 = 0.0;
+        j = 0;
+        while (j < S_u) : (j += 1) {
+            const e: f32 = math.exp(p_array[j] - mx);
+            p_array[j] = e;
+            sum += e;
+        }
+        const inv_sum: f32 = 1.0 / sum;
+        j = 0;
+        while (j < S_u) : (j += 1) {
+            p_array[j] = p_array[j] * inv_sum;
+        }
+
+        // --- 3) O[i][k] = sum_j p[j] * V[j][k] ---
+        const o_base: u16 = i * d_u;
+        // Zero the output row first.
+        var kk: u16 = 0;
+        while (kk < d_u) : (kk += 1) {
+            O_array[o_base + kk] = 0.0;
+        }
+
+        // Point the O DSD at this output row.
+        const o_row = @set_dsd_base_addr(o_dsd, @ptrcast([*]f32, &O_array[o_base]));
+
+        // Accumulate: for each key j, O_row += p[j] * V_row_j  (fmacs over d)
+        j = 0;
+        while (j < S_u) : (j += 1) {
+            const v_base: u16 = j * d_u;
+            const pj: f32 = p_array[j];
+
+            // Point the V DSD at this value row.
+            const v_row = @set_dsd_base_addr(v_dsd, @ptrcast([*]f32, &V_array[v_base]));
+            // O_row += pj * V_row_j
+            @fmacs(o_row, o_row, v_row, pj);
+        }
+    }
+}
+
+fn compute() void {
+    timestamp.enable_tsc();
+    timestamp.get_timestamp(&tsc_start_buf);
+
+    // === SLOT: KERNEL_CALL ===
+    attention();
+
+    timestamp.get_timestamp(&tsc_end_buf);
+    timestamp.disable_tsc();
+
+    @activate(EXIT);
+}
+
+task f_exit() void {
+    sys_mod.unblock_cmd_stream();
+}
+
+comptime {
+    @bind_local_task(f_exit, EXIT);
+
+    // === SLOT: EXPORT_SYMBOLS ===
+    @export_symbol(ptr_Q, "Q");
+    @export_symbol(ptr_K, "K");
+    @export_symbol(ptr_V, "V");
+    @export_symbol(ptr_O, "O");
+
+    @export_symbol(ptr_start_ts, "start_ts");
+    @export_symbol(ptr_finish_ts, "finish_ts");
+    @export_symbol(compute);
+}

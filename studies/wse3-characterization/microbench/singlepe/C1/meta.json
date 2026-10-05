@@ -1,0 +1,83 @@
+{
+ "suite": "C1",
+ "exports": [
+  {
+   "name": "Amat",
+   "dtype": "f16",
+   "len": 4096
+  },
+  {
+   "name": "X",
+   "dtype": "f16",
+   "len": 64
+  },
+  {
+   "name": "Y",
+   "dtype": "f16",
+   "len": 64
+  },
+  {
+   "name": "Bout",
+   "dtype": "f16",
+   "len": 4096
+  }
+ ],
+ "variants": [
+  {
+   "name": "gemv_4x8",
+   "family": "gemv",
+   "elems": 32,
+   "reps": 128,
+   "flop": 2,
+   "bytes": 3.0
+  },
+  {
+   "name": "gemv_8x16",
+   "family": "gemv",
+   "elems": 128,
+   "reps": 32,
+   "flop": 2,
+   "bytes": 2.5
+  },
+  {
+   "name": "gemv_16x32",
+   "family": "gemv",
+   "elems": 512,
+   "reps": 8,
+   "flop": 2,
+   "bytes": 2.25
+  },
+  {
+   "name": "gemv_32x64",
+   "family": "gemv",
+   "elems": 2048,
+   "reps": 2,
+   "flop": 2,
+   "bytes": 2.125
+  },
+  {
+   "name": "gemv_64x32",
+   "family": "gemv",
+   "elems": 2048,
+   "reps": 2,
+   "flop": 2,
+   "bytes": 2.156
+  },
+  {
+   "name": "gemv_64x64",
+   "family": "gemv",
+   "elems": 4096,
+   "reps": 1,
+   "flop": 2,
+   "bytes": 2.094
+  },
+  {
+   "name": "stencil5_64x64",
+   "family": "stencil",
+   "elems": 3968,
+   "reps": 1,
+   "flop": 4,
+   "bytes": 24
+  }
+ ]
+}

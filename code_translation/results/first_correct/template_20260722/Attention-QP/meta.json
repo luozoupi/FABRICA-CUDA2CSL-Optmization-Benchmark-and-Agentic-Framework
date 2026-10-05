@@ -1,0 +1,62 @@
+{
+  "kernel": "Attention-QP",
+  "run_dir": "code_translation/results/attention_translate_20260908/Attention-QP/seed_1/run_20260908_163510",
+  "status": "extracted",
+  "n_attempts": 4,
+  "model": "claude-opus-4-8",
+  "target_relpath": "pe.csl",
+  "reference_dir": "/home/USER/xkernel/kernels/Attention-QP/CSL",
+  "fc_attempt_index": 4,
+  "fc_cycles_send": 264770,
+  "fc_cycles_send_runs": [
+    264770
+  ],
+  "fc_code_lines": 147,
+  "fc_heldout_eval": {
+    "passed": true,
+    "failing_seed": null,
+    "per_seed": [
+      {
+        "seed": 101,
+        "steps": [
+          {
+            "command": "cs_python run.py --name out",
+            "ok": true,
+            "returncode": 0
+          }
+        ]
+      },
+      {
+        "seed": 202,
+        "steps": [
+          {
+            "command": "cs_python run.py --name out",
+            "ok": true,
+            "returncode": 0
+          }
+        ]
+      },
+      {
+        "seed": 303,
+        "steps": [
+          {
+            "command": "cs_python run.py --name out",
+            "ok": true,
+            "returncode": 0
+          }
+        ]
+      }
+    ],
+    "reason": "passed all 3 held-out seeds"
+  },
+  "translated_path": "/home/USER/xkernel/code_translation/sandbox/cuda2csl/attention-qp_jcmcfmgy/pe.csl",
+  "source": "sandbox",
+  "dest": "code_translation/results/first_correct/template_20260722/Attention-QP/pe.csl",
+  "source_group": "seed_1",
+  "sibling_fc_cycles": {
+    "seed_1": 264770,
+    "seed_2": 421676,
+    "seed_3": 260858
+  },
+  "seed_choice_rule": "lowest-sorted run group that yielded an extraction (blind to cycle counts)"
+}

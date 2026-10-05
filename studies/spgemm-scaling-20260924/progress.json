@@ -1,0 +1,1463 @@
+[
+  {
+    "case": "strong-m16-k16-n16-p1-d3-full",
+    "status": "pass",
+    "phases": [
+      {
+        "phase": "compile",
+        "command": [
+          "/home/USER/cs_sdk/cslc",
+          "layout.csl",
+          "--arch=wse3",
+          "--fabric-dims=8,3",
+          "--fabric-offsets=4,1",
+          "--memcpy",
+          "--channels=1",
+          "--width-west-buf=0",
+          "--width-east-buf=0",
+          "--out-routes",
+          "--params=S:1,N:16,K:16,R:16,AC:48,BC:48,OC:144,W:16",
+          "-o",
+          "out"
+        ],
+        "returncode": 0,
+        "wall_seconds": 3.421100612002192
+      },
+      {
+        "phase": "run",
+        "command": [
+          "/home/USER/cs_sdk/cs_python",
+          "host.py"
+        ],
+        "returncode": 0,
+        "wall_seconds": 77.42720705799002
+      }
+    ],
+    "case_sha256": "2081703c82e27f31ba39d74bb1bdbe77f7a71fd6b1e779d1066185817465bbf8",
+    "queue_wait_seconds": 1.7050013411790133e-05,
+    "errors": [],
+    "elf_sha256": {
+      "out/bin/out_0_0.elf": "70a28aec33d0fce9525acea1c5b9a89cf774850a289e1f3e1ac9fe5923786609",
+      "out/generated/default.elf": "1a4776e4e8ea2809c518b2e36632ed454f65a1b85b80172c13c8a616b46dafd1",
+      "out/generated/MEMCPY_XY_ROUTES.elf": "145cfdf2650e18ccdc7a3c92f7692e103dd9a03c2762a8f8e36727d7b9924b92",
+      "out/generated/coord.elf": "a8c0c8e70d82ceb0019009b65eb6883ffcbf91dc55b537bcc188343a08542a66",
+      "out/east/bin/out_1_0.elf": "ceaec0d944a6aab27e238890a6ba939b432fba4788be63c70b1012d9ea37be24",
+      "out/east/bin/out_0_0.elf": "f3a6926e08cfc09b009267b1704734e9a4c9c69e7a3f1a2e84dfeb9ba683443a",
+      "out/west/bin/out_1_0.elf": "f3e14e207bf62c669bdb5269208ffa2d9f342d433b7245c35bf3e194299f88cd",
+      "out/west/bin/out_2_0.elf": "603bac3d102d82db359a235d75d1432d914c2ebf234089bd6974cb6a5aa89d44",
+      "out/west/bin/out_0_0.elf": "3a73914d0f4e7dff0a8cdd28dddc9477f5d9aba57296ebf254e1e8e432d33271"
+    },
+    "source_sha256": {
+      "single_collective.csl": "95db24b1ca3fd7e9d868657d0c991e4d9d3ff4601b154caf8d394523a19870b7",
+      "pe.csl": "c5f1faad9e3331ced546ce8e83c2e9f318855d8137e49001cd23a9f9baaccb0b",
+      "case.json": "2081703c82e27f31ba39d74bb1bdbe77f7a71fd6b1e779d1066185817465bbf8",
+      "layout.csl": "0f841665ca0ea9f9e420e1099e5629bb4ab5aca660b85ce6540899c6ebe03f51",
+      "inputs.py": "99916fee5949cfa4bb7efc89b2da16ece9806de175d9bae4254f8e6504e5be4e",
+      "host.py": "afc8b5cb8fe9d182c3d3225fbba533ba233dbdbc38e82340a3e5723fd4101055",
+      "observations.json": "faf8d96eba81636fb42d5b93b996653bbddcaae6229f485bc12f670067f826c6",
+      "sim_stats.json": "558c28e9f7acbf188f45e365c90edd6d8853e6aab314da76e52adfc4f0395cdd",
+      "simconfig.json": "ac8861b1a0ab97042fb33484d83a4d3ef124877e9bef550a89a5efe1f6da2be3"
+    }
+  },
+  {
+    "case": "strong-m16-k16-n16-p1-d3-tiled",
+    "status": "pass",
+    "phases": [
+      {
+        "phase": "compile",
+        "command": [
+          "/home/USER/cs_sdk/cslc",
+          "layout.csl",
+          "--arch=wse3",
+          "--fabric-dims=8,3",
+          "--fabric-offsets=4,1",
+          "--memcpy",
+          "--channels=1",
+          "--width-west-buf=0",
+          "--width-east-buf=0",
+          "--out-routes",
+          "--params=S:1,N:16,K:16,R:16,AC:48,BC:48,OC:144,W:4",
+          "-o",
+          "out"
+        ],
+        "returncode": 0,
+        "wall_seconds": 3.7725150879996363
+      },
+      {
+        "phase": "run",
+        "command": [
+          "/home/USER/cs_sdk/cs_python",
+          "host.py"
+        ],
+        "returncode": 0,
+        "wall_seconds": 99.50519413899747
+      }
+    ],
+    "case_sha256": "01b8f0fea123b126092a5f72c01751b8a3ebca0bf40515d7d1ee01b4d5c37905",
+    "queue_wait_seconds": 4.05999890062958e-06,
+    "errors": [],
+    "elf_sha256": {
+      "out/bin/out_0_0.elf": "e9db400866fa3c12b34a3c1e24b1a0f847a300fe5c9f01078633b97cf7e1a0db",
+      "out/generated/default.elf": "1a4776e4e8ea2809c518b2e36632ed454f65a1b85b80172c13c8a616b46dafd1",
+      "out/generated/MEMCPY_XY_ROUTES.elf": "145cfdf2650e18ccdc7a3c92f7692e103dd9a03c2762a8f8e36727d7b9924b92",
+      "out/generated/coord.elf": "a8c0c8e70d82ceb0019009b65eb6883ffcbf91dc55b537bcc188343a08542a66",
+      "out/east/bin/out_1_0.elf": "ceaec0d944a6aab27e238890a6ba939b432fba4788be63c70b1012d9ea37be24",
+      "out/east/bin/out_0_0.elf": "f3a6926e08cfc09b009267b1704734e9a4c9c69e7a3f1a2e84dfeb9ba683443a",
+      "out/west/bin/out_1_0.elf": "f3e14e207bf62c669bdb5269208ffa2d9f342d433b7245c35bf3e194299f88cd",
+      "out/west/bin/out_2_0.elf": "603bac3d102d82db359a235d75d1432d914c2ebf234089bd6974cb6a5aa89d44",
+      "out/west/bin/out_0_0.elf": "3a73914d0f4e7dff0a8cdd28dddc9477f5d9aba57296ebf254e1e8e432d33271"
+    },
+    "source_sha256": {
+      "single_collective.csl": "95db24b1ca3fd7e9d868657d0c991e4d9d3ff4601b154caf8d394523a19870b7",
+      "pe.csl": "c5f1faad9e3331ced546ce8e83c2e9f318855d8137e49001cd23a9f9baaccb0b",
+      "case.json": "01b8f0fea123b126092a5f72c01751b8a3ebca0bf40515d7d1ee01b4d5c37905",
+      "layout.csl": "0f841665ca0ea9f9e420e1099e5629bb4ab5aca660b85ce6540899c6ebe03f51",
+      "inputs.py": "99916fee5949cfa4bb7efc89b2da16ece9806de175d9bae4254f8e6504e5be4e",
+      "host.py": "afc8b5cb8fe9d182c3d3225fbba533ba233dbdbc38e82340a3e5723fd4101055",
+      "observations.json": "c954be04eb3f390d39c22fa338bee74299ed0f6ebec4f57a88444a4705b1d8b7",
+      "sim_stats.json": "5dbd3c71c9ee4d280e965375ccb2801827444190376ba5e5c914b627ee24727f",
+      "simconfig.json": "ac8861b1a0ab97042fb33484d83a4d3ef124877e9bef550a89a5efe1f6da2be3"
+    }
+  },
+  {
+    "case": "strong-m16-k16-n16-p4-d3-full",
+    "status": "pass",
+    "phases": [
+      {
+        "phase": "compile",
+        "command": [
+          "/home/USER/cs_sdk/cslc",
+          "layout.csl",
+          "--arch=wse3",
+          "--fabric-dims=9,4",
+          "--fabric-offsets=4,1",
+          "--memcpy",
+          "--channels=1",
+          "--width-west-buf=0",
+          "--width-east-buf=0",
+          "--out-routes",
+          "--params=S:2,N:16,K:16,R:4,AC:32,BC:48,OC:36,W:16",
+          "-o",
+          "out"
+        ],
+        "returncode": 0,
+        "wall_seconds": 4.573050945997238
+      },
+      {
+        "phase": "run",
+        "command": [
+          "/home/USER/cs_sdk/cs_python",
+          "host.py"
+        ],
+        "returncode": 0,
+        "wall_seconds": 75.28632094999193
+      }
+    ],
+    "case_sha256": "2ba6f79f89985b54fefa3a15a19fbfbbc183475c63e824c5f3226eb3d8007e64",
+    "queue_wait_seconds": 4.0800077840685844e-06,
+    "errors": [],
+    "elf_sha256": {
+      "out/bin/out_1_0.elf": "361dff774829368f805382e367b372ddc2f6066537281444e345738f45439b4b",
+      "out/bin/out_3_0.elf": "e1f43d072ee997ce9b11c7f157281029bef8445d2ca3aced332cc29278f12e84",
+      "out/bin/out_2_0.elf": "adf3c70e61eeca1e6843bc6af1b091584db4a13247c0c8205b2a650d611a81ad",
+      "out/bin/out_0_0.elf": "4b7a0ee07653b316b87379bef452ec1d0638daa8e9de3d76b3b7010207aedb7e",
+      "out/generated/default.elf": "c54f29292b8c02e7b06ab679bc4bd91639dde429ad8e49bea106a0c05f716703",
+      "out/generated/MEMCPY_XY_ROUTES.elf": "25ccab43c347aca5e3ef5bc7741be8653fac2a0743e8ee4de2bc3c2953b83155",
+      "out/generated/coord.elf": "a4fb4f74663f689b78e6693120fd0858fa59310608f81b75f32716ab2698603c",
+      "out/east/bin/out_1_0.elf": "16e6db5e760b71af4a3c82a208cf55854af80df54d8b338b061e153f783a800b",
+      "out/east/bin/out_3_0.elf": "75139edc97263118d0a98ac133c5365d6acd26baf6e6034e04e74316e2333113",
+      "out/east/bin/out_2_0.elf": "6c5ae64be8f3ed6c55a31aa75d8d6ba8957a803d375eb36a6dc681746644e992",
+      "out/east/bin/out_0_0.elf": "9b94276299d05caf27866fabde1cdc191318080a42232830f0aabf7226d11adf",
+      "out/west/bin/out_4_0.elf": "ad4c06f53bcd678c75dce5c042767ca44265820a1de76022462885ed9b7cfda2",
+      "out/west/bin/out_1_0.elf": "2445f3a29e39adc37237a22be5e361ee1c8a5e0a4e5828307c97a1dd256c9469",
+      "out/west/bin/out_3_0.elf": "c408e8c8f9daf7333c8b7d3ebc3bdd814cd889c4d193db33e15661c9dba0d25c",
+      "out/west/bin/out_5_0.elf": "4c8237ef799dc0982a5f6c7ead03505de573660dcc0e5e5ffab2a37fb5b22af3",
+      "out/west/bin/out_2_0.elf": "d803501bdfe73c2cb4937a1c5cad3de32513f6c3e32b51a399d94cf5cdbc0ce4",
+      "out/west/bin/out_0_0.elf": "0c92c6eab1339894363c0c6a9afa1624363dc6f456f589c80275890de0cb2e1d"
+    },
+    "source_sha256": {
+      "single_collective.csl": "95db24b1ca3fd7e9d868657d0c991e4d9d3ff4601b154caf8d394523a19870b7",
+      "pe.csl": "8cc560b7f7a1fe6660f222c15d6a7d72a98cb6d5029b6734240e14cce65d5011",
+      "case.json": "2ba6f79f89985b54fefa3a15a19fbfbbc183475c63e824c5f3226eb3d8007e64",
+      "layout.csl": "0f841665ca0ea9f9e420e1099e5629bb4ab5aca660b85ce6540899c6ebe03f51",
+      "inputs.py": "99916fee5949cfa4bb7efc89b2da16ece9806de175d9bae4254f8e6504e5be4e",
+      "host.py": "afc8b5cb8fe9d182c3d3225fbba533ba233dbdbc38e82340a3e5723fd4101055",
+      "observations.json": "8132ae5a9385d364a20126f85f4850b53105155b1c7bbe6b58c7f06c7441c066",
+      "sim_stats.json": "286a5bc1d2e2beb4f36a991b47ee593ede41951d15beb00a011b4a5ebdd977c6",
+      "simconfig.json": "ac8861b1a0ab97042fb33484d83a4d3ef124877e9bef550a89a5efe1f6da2be3"
+    }
+  },
+  {
+    "case": "strong-m16-k16-n16-p4-d3-tiled",
+    "status": "pass",
+    "phases": [
+      {
+        "phase": "compile",
+        "command": [
+          "/home/USER/cs_sdk/cslc",
+          "layout.csl",
+          "--arch=wse3",
+          "--fabric-dims=9,4",
+          "--fabric-offsets=4,1",
+          "--memcpy",
+          "--channels=1",
+          "--width-west-buf=0",
+          "--width-east-buf=0",
+          "--out-routes",
+          "--params=S:2,N:16,K:16,R:4,AC:32,BC:48,OC:36,W:4",
+          "-o",
+          "out"
+        ],
+        "returncode": 0,
+        "wall_seconds": 4.893465999994078
+      },
+      {
+        "phase": "run",
+        "command": [
+          "/home/USER/cs_sdk/cs_python",
+          "host.py"
+        ],
+        "returncode": 0,
+        "wall_seconds": 89.52293379399634
+      }
+    ],
+    "case_sha256": "afe5f7cb14e49a88efe7626434b5b7f558d996b69175216da5ade66a72f663df",
+    "queue_wait_seconds": 3.859997377730906e-06,
+    "errors": [],
+    "elf_sha256": {
+      "out/bin/out_1_0.elf": "482a2ec05fdc04d3e609604b8aace7fc505cf6d2d5a19b007c6e336082d3d1e6",
+      "out/bin/out_3_0.elf": "85fc156f3cca900c885ed11f7c515c83f1258a5013c9daf2886bbd4aefd01c39",
+      "out/bin/out_2_0.elf": "f29fbfc2d3ab014f5f6c5509bbe783cf68e4f86212f4e7e0e4589b3a7f237288",
+      "out/bin/out_0_0.elf": "ffc63f021efb50aa27ceb5ba86310200f011bf245e27920d062df5bfaf716799",
+      "out/generated/default.elf": "c54f29292b8c02e7b06ab679bc4bd91639dde429ad8e49bea106a0c05f716703",
+      "out/generated/MEMCPY_XY_ROUTES.elf": "25ccab43c347aca5e3ef5bc7741be8653fac2a0743e8ee4de2bc3c2953b83155",
+      "out/generated/coord.elf": "a4fb4f74663f689b78e6693120fd0858fa59310608f81b75f32716ab2698603c",
+      "out/east/bin/out_1_0.elf": "16e6db5e760b71af4a3c82a208cf55854af80df54d8b338b061e153f783a800b",
+      "out/east/bin/out_3_0.elf": "75139edc97263118d0a98ac133c5365d6acd26baf6e6034e04e74316e2333113",
+      "out/east/bin/out_2_0.elf": "6c5ae64be8f3ed6c55a31aa75d8d6ba8957a803d375eb36a6dc681746644e992",
+      "out/east/bin/out_0_0.elf": "9b94276299d05caf27866fabde1cdc191318080a42232830f0aabf7226d11adf",
+      "out/west/bin/out_4_0.elf": "ad4c06f53bcd678c75dce5c042767ca44265820a1de76022462885ed9b7cfda2",
+      "out/west/bin/out_1_0.elf": "2445f3a29e39adc37237a22be5e361ee1c8a5e0a4e5828307c97a1dd256c9469",
+      "out/west/bin/out_3_0.elf": "c408e8c8f9daf7333c8b7d3ebc3bdd814cd889c4d193db33e15661c9dba0d25c",
+      "out/west/bin/out_5_0.elf": "4c8237ef799dc0982a5f6c7ead03505de573660dcc0e5e5ffab2a37fb5b22af3",
+      "out/west/bin/out_2_0.elf": "d803501bdfe73c2cb4937a1c5cad3de32513f6c3e32b51a399d94cf5cdbc0ce4",
+      "out/west/bin/out_0_0.elf": "0c92c6eab1339894363c0c6a9afa1624363dc6f456f589c80275890de0cb2e1d"
+    },
+    "source_sha256": {
+      "single_collective.csl": "95db24b1ca3fd7e9d868657d0c991e4d9d3ff4601b154caf8d394523a19870b7",
+      "pe.csl": "8cc560b7f7a1fe6660f222c15d6a7d72a98cb6d5029b6734240e14cce65d5011",
+      "case.json": "afe5f7cb14e49a88efe7626434b5b7f558d996b69175216da5ade66a72f663df",
+      "layout.csl": "0f841665ca0ea9f9e420e1099e5629bb4ab5aca660b85ce6540899c6ebe03f51",
+      "inputs.py": "99916fee5949cfa4bb7efc89b2da16ece9806de175d9bae4254f8e6504e5be4e",
+      "host.py": "afc8b5cb8fe9d182c3d3225fbba533ba233dbdbc38e82340a3e5723fd4101055",
+      "observations.json": "c9f050f04c9412774552b007ec3f9af052e22541f8ffe2d6404045709f393bde",
+      "sim_stats.json": "d37e9d18f774fe53a6f649afe3742d9c150f817285e7fedd5c5c02f381caf1d8",
+      "simconfig.json": "ac8861b1a0ab97042fb33484d83a4d3ef124877e9bef550a89a5efe1f6da2be3"
+    }
+  },
+  {
+    "case": "strong-m16-k16-n16-p16-d3-full",
+    "status": "pass",
+    "phases": [
+      {
+        "phase": "compile",
+        "command": [
+          "/home/USER/cs_sdk/cslc",
+          "layout.csl",
+          "--arch=wse3",
+          "--fabric-dims=11,6",
+          "--fabric-offsets=4,1",
+          "--memcpy",
+          "--channels=1",
+          "--width-west-buf=0",
+          "--width-east-buf=0",
+          "--out-routes",
+          "--params=S:4,N:16,K:16,R:1,AC:16,BC:48,OC:16,W:16",
+          "-o",
+          "out"
+        ],
+        "returncode": 0,
+        "wall_seconds": 5.375892101001227
+      },
+      {
+        "phase": "run",
+        "command": [
+          "/home/USER/cs_sdk/cs_python",
+          "host.py"
+        ],
+        "returncode": 0,
+        "wall_seconds": 103.66311573299754
+      }
+    ],
+    "case_sha256": "c48177fd2444647f8a2195b54d03adc15e057fb5b4e1a5a57d51859041269055",
+    "queue_wait_seconds": 5.409994628280401e-06,
+    "errors": [],
+    "elf_sha256": {
+      "out/bin/out_6_0.elf": "e48a92f1ef48324ae1cd4b3ea680948a904640e85cec9854f17fcbd571ed2a15",
+      "out/bin/out_4_0.elf": "bb202adbd55a9246ad348514fcf3f40ca9719fe591538ac91bdc7f65f2eb31fb",
+      "out/bin/out_1_0.elf": "99cbfb74583217238c80415d300dde63bbb5032d60d6d5adda05664056fa7553",
+      "out/bin/out_3_0.elf": "5f1865c44b6ac66d1a7cb71ec2050fd45f90c0ee9e00dd7d508de7630f31793f",
+      "out/bin/out_5_0.elf": "cc019a911228ce6bb521d858c2f40ef2f8d07d61ad279e18b348b56ceaa71d2e",
+      "out/bin/out_2_0.elf": "fc5170d24f20e0db586fe568aada941264a41b0df9200c69a3be768b2acbcdd1",
+      "out/bin/out_0_0.elf": "74d659b1d7e3df3d01ffa4d2020cd908936d3d68a7da8dc282f205e991891253",
+      "out/bin/out_8_0.elf": "897965169f04e3093914547201cf8c3f6aad17ded60ac7150825e6e15988ffe5",
+      "out/bin/out_7_0.elf": "4af1985ebebfa5cc7c895a288af0a1857db4ed85b92e70f5afebed5b4505961a",
+      "out/generated/default.elf": "c936f8443d2fd632760a523566975d7776a03a99304e33ba0b11899e4110e612",
+      "out/generated/MEMCPY_XY_ROUTES.elf": "e41c6de1ca1a5c8900f7f6f967e2e0c5c2fcf0712be018b950d5cf2f41206ff6",
+      "out/generated/coord.elf": "1a78c93d84d3c2e2359717e8b5f97d6772a6c32bdf430e4bb752e7cdf799a2af",
+      "out/east/bin/out_4_0.elf": "21d946ad7561efc889d344eaad52b5d9056528e53d37bf4e5c33b3520ea44732",
+      "out/east/bin/out_1_0.elf": "d163d2d201dcf0b90f077a51ce3c3b7b61a47ce757f7168ec03b7d05fd53ee0e",
+      "out/east/bin/out_3_0.elf": "0266db6004ff6489f385b266dad7119b7758078d75671fecc5a5cf76cff08c7b",
+      "out/east/bin/out_5_0.elf": "30615053c525b1ef0bbe9812fe2f4a14c73a90805a5ec2883a51349e0fa444ac",
+      "out/east/bin/out_2_0.elf": "0122caafa732139c08aee00ad94f6f3dc826029020f4a09ba649e5aca7088f33",
+      "out/east/bin/out_0_0.elf": "96187da79ed92dfb4687aa3d008c0e16cd55353d30876ae6dd1e2e0db581a053",
+      "out/west/bin/out_6_0.elf": "fe6154ce9e8da07f29e543ebceae795ac544d67bccff01a0357309589db7741c",
+      "out/west/bin/out_4_0.elf": "fa2fcc1581927bc5e885f16b0db6a2042e5224e415c6cd3a0f78a7ede344fa76",
+      "out/west/bin/out_1_0.elf": "1c12dcf8fb57ce41f711915b7044ebb540f3d3a5730a242bed8210c86708aa06",
+      "out/west/bin/out_3_0.elf": "ab20a5d405b95687c357bf86ebe91a5aa069e381ce11794ce6972ec23df0638a",
+      "out/west/bin/out_5_0.elf": "750fdf0014e9be4be4a4fcdd7a852b52663a10813dcc317d1c910a9d9039b123",
+      "out/west/bin/out_2_0.elf": "c45f8129c711d27c75a13b6e99346b2bf721a7b4fa88e448f44b001d9ba829f6",
+      "out/west/bin/out_0_0.elf": "97f63030ccf9137efdd260a6bcb17d8263088316f2ca18b05fb32ab95bdb82d1",
+      "out/west/bin/out_7_0.elf": "8ae552a2bdffa37d4ead61f19001fcd9f227b21ab18e1f011b9263ebc09e83fe"
+    },
+    "source_sha256": {
+      "single_collective.csl": "95db24b1ca3fd7e9d868657d0c991e4d9d3ff4601b154caf8d394523a19870b7",
+      "pe.csl": "8cc560b7f7a1fe6660f222c15d6a7d72a98cb6d5029b6734240e14cce65d5011",
+      "case.json": "c48177fd2444647f8a2195b54d03adc15e057fb5b4e1a5a57d51859041269055",
+      "layout.csl": "0f841665ca0ea9f9e420e1099e5629bb4ab5aca660b85ce6540899c6ebe03f51",
+      "inputs.py": "99916fee5949cfa4bb7efc89b2da16ece9806de175d9bae4254f8e6504e5be4e",
+      "host.py": "afc8b5cb8fe9d182c3d3225fbba533ba233dbdbc38e82340a3e5723fd4101055",
+      "observations.json": "038fe41732f5125ebd9363e130a9c044ad11affa328936def57d56475aad1c4c",
+      "sim_stats.json": "368fc764ce34a26aa2d570c6d4cb0a2e6d27d3deb21e62cf80faca803fd82a61",
+      "simconfig.json": "ac8861b1a0ab97042fb33484d83a4d3ef124877e9bef550a89a5efe1f6da2be3"
+    }
+  },
+  {
+    "case": "density-m64-k64-n64-p1-d8-full",
+    "status": "pass",
+    "phases": [
+      {
+        "phase": "compile",
+        "command": [
+          "/home/USER/cs_sdk/cslc",
+          "layout.csl",
+          "--arch=wse3",
+          "--fabric-dims=8,3",
+          "--fabric-offsets=4,1",
+          "--memcpy",
+          "--channels=1",
+          "--width-west-buf=0",
+          "--width-east-buf=0",
+          "--out-routes",
+          "--params=S:1,N:64,K:64,R:64,AC:512,BC:512,OC:4096,W:64",
+          "-o",
+          "out"
+        ],
+        "returncode": 0,
+        "wall_seconds": 3.471507346999715
+      },
+      {
+        "phase": "run",
+        "command": [
+          "/home/USER/cs_sdk/cs_python",
+          "host.py"
+        ],
+        "returncode": 0,
+        "wall_seconds": 921.9937401810021
+      }
+    ],
+    "case_sha256": "282e7df97f1084b80fadd35211ca7e8ec906565823f7e2dc51e8be71c955b28c",
+    "queue_wait_seconds": 5.610010703094304e-06,
+    "errors": [],
+    "elf_sha256": {
+      "out/bin/out_0_0.elf": "29b68965d8c2dd3f71ccbb63d5e65836da99dcffcc68f7bb2b66f7ecdc198345",
+      "out/generated/default.elf": "1a4776e4e8ea2809c518b2e36632ed454f65a1b85b80172c13c8a616b46dafd1",
+      "out/generated/MEMCPY_XY_ROUTES.elf": "145cfdf2650e18ccdc7a3c92f7692e103dd9a03c2762a8f8e36727d7b9924b92",
+      "out/generated/coord.elf": "a8c0c8e70d82ceb0019009b65eb6883ffcbf91dc55b537bcc188343a08542a66",
+      "out/east/bin/out_1_0.elf": "ceaec0d944a6aab27e238890a6ba939b432fba4788be63c70b1012d9ea37be24",
+      "out/east/bin/out_0_0.elf": "f3a6926e08cfc09b009267b1704734e9a4c9c69e7a3f1a2e84dfeb9ba683443a",
+      "out/west/bin/out_1_0.elf": "f3e14e207bf62c669bdb5269208ffa2d9f342d433b7245c35bf3e194299f88cd",
+      "out/west/bin/out_2_0.elf": "603bac3d102d82db359a235d75d1432d914c2ebf234089bd6974cb6a5aa89d44",
+      "out/west/bin/out_0_0.elf": "3a73914d0f4e7dff0a8cdd28dddc9477f5d9aba57296ebf254e1e8e432d33271"
+    },
+    "source_sha256": {
+      "single_collective.csl": "95db24b1ca3fd7e9d868657d0c991e4d9d3ff4601b154caf8d394523a19870b7",
+      "pe.csl": "c5f1faad9e3331ced546ce8e83c2e9f318855d8137e49001cd23a9f9baaccb0b",
+      "case.json": "282e7df97f1084b80fadd35211ca7e8ec906565823f7e2dc51e8be71c955b28c",
+      "layout.csl": "0f841665ca0ea9f9e420e1099e5629bb4ab5aca660b85ce6540899c6ebe03f51",
+      "inputs.py": "99916fee5949cfa4bb7efc89b2da16ece9806de175d9bae4254f8e6504e5be4e",
+      "host.py": "afc8b5cb8fe9d182c3d3225fbba533ba233dbdbc38e82340a3e5723fd4101055",
+      "observations.json": "68d66d5ae25bb6e57d1636da532dcc195716e93dd37e39f207cfc9cf4e10e924",
+      "sim_stats.json": "1663bbacde7f627fc9abe165adb22e38e1d08a1e6ddfddac68c4840a2302a23b",
+      "simconfig.json": "ac8861b1a0ab97042fb33484d83a4d3ef124877e9bef550a89a5efe1f6da2be3"
+    }
+  },
+  {
+    "case": "strong-m64-k64-n64-p1-d3-full",
+    "status": "pass",
+    "phases": [
+      {
+        "phase": "compile",
+        "command": [
+          "/home/USER/cs_sdk/cslc",
+          "layout.csl",
+          "--arch=wse3",
+          "--fabric-dims=8,3",
+          "--fabric-offsets=4,1",
+          "--memcpy",
+          "--channels=1",
+          "--width-west-buf=0",
+          "--width-east-buf=0",
+          "--out-routes",
+          "--params=S:1,N:64,K:64,R:64,AC:200,BC:192,OC:600,W:64",
+          "-o",
+          "out"
+        ],
+        "returncode": 0,
+        "wall_seconds": 3.220170547007001
+      },
+      {
+        "phase": "run",
+        "command": [
+          "/home/USER/cs_sdk/cs_python",
+          "host.py"
+        ],
+        "returncode": 0,
+        "wall_seconds": 493.95582677199855
+      }
+    ],
+    "case_sha256": "d2d0e8fd36c491694798f4e5d470b513fddf683ae344348fb3e2726e606874de",
+    "queue_wait_seconds": 6.809990736655891e-06,
+    "errors": [],
+    "elf_sha256": {
+      "out/bin/out_0_0.elf": "6651fbba39aa22fda989e6ff4b06b95e12ad46329b57a0101b53e5e4725a721a",
+      "out/generated/default.elf": "1a4776e4e8ea2809c518b2e36632ed454f65a1b85b80172c13c8a616b46dafd1",
+      "out/generated/MEMCPY_XY_ROUTES.elf": "145cfdf2650e18ccdc7a3c92f7692e103dd9a03c2762a8f8e36727d7b9924b92",
+      "out/generated/coord.elf": "a8c0c8e70d82ceb0019009b65eb6883ffcbf91dc55b537bcc188343a08542a66",
+      "out/east/bin/out_1_0.elf": "ceaec0d944a6aab27e238890a6ba939b432fba4788be63c70b1012d9ea37be24",
+      "out/east/bin/out_0_0.elf": "f3a6926e08cfc09b009267b1704734e9a4c9c69e7a3f1a2e84dfeb9ba683443a",
+      "out/west/bin/out_1_0.elf": "f3e14e207bf62c669bdb5269208ffa2d9f342d433b7245c35bf3e194299f88cd",
+      "out/west/bin/out_2_0.elf": "603bac3d102d82db359a235d75d1432d914c2ebf234089bd6974cb6a5aa89d44",
+      "out/west/bin/out_0_0.elf": "3a73914d0f4e7dff0a8cdd28dddc9477f5d9aba57296ebf254e1e8e432d33271"
+    },
+    "source_sha256": {
+      "single_collective.csl": "95db24b1ca3fd7e9d868657d0c991e4d9d3ff4601b154caf8d394523a19870b7",
+      "pe.csl": "c5f1faad9e3331ced546ce8e83c2e9f318855d8137e49001cd23a9f9baaccb0b",
+      "case.json": "d2d0e8fd36c491694798f4e5d470b513fddf683ae344348fb3e2726e606874de",
+      "layout.csl": "0f841665ca0ea9f9e420e1099e5629bb4ab5aca660b85ce6540899c6ebe03f51",
+      "inputs.py": "99916fee5949cfa4bb7efc89b2da16ece9806de175d9bae4254f8e6504e5be4e",
+      "host.py": "afc8b5cb8fe9d182c3d3225fbba533ba233dbdbc38e82340a3e5723fd4101055",
+      "observations.json": "5760985a0da55360bf2892a4c34c2fd708b92b329b9ce6fd8ceb65bf03a92e0e",
+      "sim_stats.json": "697dcb0f5fc0193b00b9575076e52fe5724f1853610498f54d6494f68ea097ce",
+      "simconfig.json": "ac8861b1a0ab97042fb33484d83a4d3ef124877e9bef550a89a5efe1f6da2be3"
+    }
+  },
+  {
+    "case": "strong-m64-k64-n64-p1-d3-tiled",
+    "status": "pass",
+    "phases": [
+      {
+        "phase": "compile",
+        "command": [
+          "/home/USER/cs_sdk/cslc",
+          "layout.csl",
+          "--arch=wse3",
+          "--fabric-dims=8,3",
+          "--fabric-offsets=4,1",
+          "--memcpy",
+          "--channels=1",
+          "--width-west-buf=0",
+          "--width-east-buf=0",
+          "--out-routes",
+          "--params=S:1,N:64,K:64,R:64,AC:200,BC:192,OC:600,W:16",
+          "-o",
+          "out"
+        ],
+        "returncode": 0,
+        "wall_seconds": 3.421502537006745
+      },
+      {
+        "phase": "run",
+        "command": [
+          "/home/USER/cs_sdk/cs_python",
+          "host.py"
+        ],
+        "returncode": 0,
+        "wall_seconds": 554.5516147620074
+      }
+    ],
+    "case_sha256": "c6d75a8879ddd648d3a42391d8b1775ceb5b2bf4c1a0f24fcf9397a1e99d5aa9",
+    "queue_wait_seconds": 4.139990778639913e-06,
+    "errors": [],
+    "elf_sha256": {
+      "out/bin/out_0_0.elf": "cfef8d5072a323fa92bf48e0849fc9407c987b0da1abe35414ec8c9679bcb89b",
+      "out/generated/default.elf": "1a4776e4e8ea2809c518b2e36632ed454f65a1b85b80172c13c8a616b46dafd1",
+      "out/generated/MEMCPY_XY_ROUTES.elf": "145cfdf2650e18ccdc7a3c92f7692e103dd9a03c2762a8f8e36727d7b9924b92",
+      "out/generated/coord.elf": "a8c0c8e70d82ceb0019009b65eb6883ffcbf91dc55b537bcc188343a08542a66",
+      "out/east/bin/out_1_0.elf": "ceaec0d944a6aab27e238890a6ba939b432fba4788be63c70b1012d9ea37be24",
+      "out/east/bin/out_0_0.elf": "f3a6926e08cfc09b009267b1704734e9a4c9c69e7a3f1a2e84dfeb9ba683443a",
+      "out/west/bin/out_1_0.elf": "f3e14e207bf62c669bdb5269208ffa2d9f342d433b7245c35bf3e194299f88cd",
+      "out/west/bin/out_2_0.elf": "603bac3d102d82db359a235d75d1432d914c2ebf234089bd6974cb6a5aa89d44",
+      "out/west/bin/out_0_0.elf": "3a73914d0f4e7dff0a8cdd28dddc9477f5d9aba57296ebf254e1e8e432d33271"
+    },
+    "source_sha256": {
+      "single_collective.csl": "95db24b1ca3fd7e9d868657d0c991e4d9d3ff4601b154caf8d394523a19870b7",
+      "pe.csl": "c5f1faad9e3331ced546ce8e83c2e9f318855d8137e49001cd23a9f9baaccb0b",
+      "case.json": "c6d75a8879ddd648d3a42391d8b1775ceb5b2bf4c1a0f24fcf9397a1e99d5aa9",
+      "layout.csl": "0f841665ca0ea9f9e420e1099e5629bb4ab5aca660b85ce6540899c6ebe03f51",
+      "inputs.py": "99916fee5949cfa4bb7efc89b2da16ece9806de175d9bae4254f8e6504e5be4e",
+      "host.py": "afc8b5cb8fe9d182c3d3225fbba533ba233dbdbc38e82340a3e5723fd4101055",
+      "observations.json": "8460a6324ae73528aa96db569b6e2f280784b696e2be76d3ef7a263be039fc92",
+      "sim_stats.json": "e4352bc2326551613f3d4c624178f9a51bd98d0c78bc15233ab7d2c1ca0350bc",
+      "simconfig.json": "ac8861b1a0ab97042fb33484d83a4d3ef124877e9bef550a89a5efe1f6da2be3"
+    }
+  },
+  {
+    "case": "weak-m4-k64-n64-p1-d3-full",
+    "status": "pass",
+    "phases": [
+      {
+        "phase": "compile",
+        "command": [
+          "/home/USER/cs_sdk/cslc",
+          "layout.csl",
+          "--arch=wse3",
+          "--fabric-dims=8,3",
+          "--fabric-offsets=4,1",
+          "--memcpy",
+          "--channels=1",
+          "--width-west-buf=0",
+          "--width-east-buf=0",
+          "--out-routes",
+          "--params=S:1,N:64,K:64,R:4,AC:12,BC:192,OC:36,W:64",
+          "-o",
+          "out"
+        ],
+        "returncode": 0,
+        "wall_seconds": 3.9327394980064128
+      },
+      {
+        "phase": "run",
+        "command": [
+          "/home/USER/cs_sdk/cs_python",
+          "host.py"
+        ],
+        "returncode": 0,
+        "wall_seconds": 31.54707457200857
+      }
+    ],
+    "case_sha256": "155feda4195498b3e3e4baa0a8d6b0436aa4ba05238ec36320ce653ebbb572e4",
+    "queue_wait_seconds": 6.179994670674205e-06,
+    "errors": [],
+    "elf_sha256": {
+      "out/bin/out_0_0.elf": "d62ff0f27573b18cf1ba257b25f24807b568045f29526541622c7552a58042ac",
+      "out/generated/default.elf": "1a4776e4e8ea2809c518b2e36632ed454f65a1b85b80172c13c8a616b46dafd1",
+      "out/generated/MEMCPY_XY_ROUTES.elf": "145cfdf2650e18ccdc7a3c92f7692e103dd9a03c2762a8f8e36727d7b9924b92",
+      "out/generated/coord.elf": "a8c0c8e70d82ceb0019009b65eb6883ffcbf91dc55b537bcc188343a08542a66",
+      "out/east/bin/out_1_0.elf": "ceaec0d944a6aab27e238890a6ba939b432fba4788be63c70b1012d9ea37be24",
+      "out/east/bin/out_0_0.elf": "f3a6926e08cfc09b009267b1704734e9a4c9c69e7a3f1a2e84dfeb9ba683443a",
+      "out/west/bin/out_1_0.elf": "f3e14e207bf62c669bdb5269208ffa2d9f342d433b7245c35bf3e194299f88cd",
+      "out/west/bin/out_2_0.elf": "603bac3d102d82db359a235d75d1432d914c2ebf234089bd6974cb6a5aa89d44",
+      "out/west/bin/out_0_0.elf": "3a73914d0f4e7dff0a8cdd28dddc9477f5d9aba57296ebf254e1e8e432d33271"
+    },
+    "source_sha256": {
+      "single_collective.csl": "95db24b1ca3fd7e9d868657d0c991e4d9d3ff4601b154caf8d394523a19870b7",
+      "pe.csl": "c5f1faad9e3331ced546ce8e83c2e9f318855d8137e49001cd23a9f9baaccb0b",
+      "case.json": "155feda4195498b3e3e4baa0a8d6b0436aa4ba05238ec36320ce653ebbb572e4",
+      "layout.csl": "0f841665ca0ea9f9e420e1099e5629bb4ab5aca660b85ce6540899c6ebe03f51",
+      "inputs.py": "99916fee5949cfa4bb7efc89b2da16ece9806de175d9bae4254f8e6504e5be4e",
+      "host.py": "afc8b5cb8fe9d182c3d3225fbba533ba233dbdbc38e82340a3e5723fd4101055",
+      "observations.json": "0779c00591e9c4535249c3a6995c563995cc0eb736d406af9624fba2ddb20592",
+      "sim_stats.json": "8b09989e097eff849079d2985d8140bc306675df3fb35a5ca3a95772d626146c",
+      "simconfig.json": "ac8861b1a0ab97042fb33484d83a4d3ef124877e9bef550a89a5efe1f6da2be3"
+    }
+  },
+  {
+    "case": "density-m64-k64-n64-p4-d8-full",
+    "status": "pass",
+    "phases": [
+      {
+        "phase": "compile",
+        "command": [
+          "/home/USER/cs_sdk/cslc",
+          "layout.csl",
+          "--arch=wse3",
+          "--fabric-dims=9,4",
+          "--fabric-offsets=4,1",
+          "--memcpy",
+          "--channels=1",
+          "--width-west-buf=0",
+          "--width-east-buf=0",
+          "--out-routes",
+          "--params=S:2,N:64,K:64,R:16,AC:128,BC:512,OC:1024,W:64",
+          "-o",
+          "out"
+        ],
+        "returncode": 0,
+        "wall_seconds": 4.72451141399506
+      },
+      {
+        "phase": "run",
+        "command": [
+          "/home/USER/cs_sdk/cs_python",
+          "host.py"
+        ],
+        "returncode": 0,
+        "wall_seconds": 561.0202895040129
+      }
+    ],
+    "case_sha256": "b50fedcc3c85de9756244ff8d41eb87311a7adb0762555176d7c9ad0a9804b67",
+    "queue_wait_seconds": 1.0310002835467458e-05,
+    "errors": [],
+    "elf_sha256": {
+      "out/bin/out_1_0.elf": "90dacc9aece78c286e4605528e03b98b8c71d8c473722fdfd7d333f9e5c96af6",
+      "out/bin/out_3_0.elf": "959c8eab62226a170d51059695f6ff6b163ce1dacd7adfcd425e104fb8c7e148",
+      "out/bin/out_2_0.elf": "3715b9c309e1e85462499f2ee7339670aa021e5dbf001697c97984e6e2fab9c6",
+      "out/bin/out_0_0.elf": "190fcc185200f6b9a74be7f2826daa6f55cb11a828eb4dc26c8513dc32c0e49d",
+      "out/generated/default.elf": "c54f29292b8c02e7b06ab679bc4bd91639dde429ad8e49bea106a0c05f716703",
+      "out/generated/MEMCPY_XY_ROUTES.elf": "25ccab43c347aca5e3ef5bc7741be8653fac2a0743e8ee4de2bc3c2953b83155",
+      "out/generated/coord.elf": "a4fb4f74663f689b78e6693120fd0858fa59310608f81b75f32716ab2698603c",
+      "out/east/bin/out_1_0.elf": "16e6db5e760b71af4a3c82a208cf55854af80df54d8b338b061e153f783a800b",
+      "out/east/bin/out_3_0.elf": "75139edc97263118d0a98ac133c5365d6acd26baf6e6034e04e74316e2333113",
+      "out/east/bin/out_2_0.elf": "6c5ae64be8f3ed6c55a31aa75d8d6ba8957a803d375eb36a6dc681746644e992",
+      "out/east/bin/out_0_0.elf": "9b94276299d05caf27866fabde1cdc191318080a42232830f0aabf7226d11adf",
+      "out/west/bin/out_4_0.elf": "ad4c06f53bcd678c75dce5c042767ca44265820a1de76022462885ed9b7cfda2",
+      "out/west/bin/out_1_0.elf": "2445f3a29e39adc37237a22be5e361ee1c8a5e0a4e5828307c97a1dd256c9469",
+      "out/west/bin/out_3_0.elf": "c408e8c8f9daf7333c8b7d3ebc3bdd814cd889c4d193db33e15661c9dba0d25c",
+      "out/west/bin/out_5_0.elf": "4c8237ef799dc0982a5f6c7ead03505de573660dcc0e5e5ffab2a37fb5b22af3",
+      "out/west/bin/out_2_0.elf": "d803501bdfe73c2cb4937a1c5cad3de32513f6c3e32b51a399d94cf5cdbc0ce4",
+      "out/west/bin/out_0_0.elf": "0c92c6eab1339894363c0c6a9afa1624363dc6f456f589c80275890de0cb2e1d"
+    },
+    "source_sha256": {
+      "single_collective.csl": "95db24b1ca3fd7e9d868657d0c991e4d9d3ff4601b154caf8d394523a19870b7",
+      "pe.csl": "8cc560b7f7a1fe6660f222c15d6a7d72a98cb6d5029b6734240e14cce65d5011",
+      "case.json": "b50fedcc3c85de9756244ff8d41eb87311a7adb0762555176d7c9ad0a9804b67",
+      "layout.csl": "0f841665ca0ea9f9e420e1099e5629bb4ab5aca660b85ce6540899c6ebe03f51",
+      "inputs.py": "99916fee5949cfa4bb7efc89b2da16ece9806de175d9bae4254f8e6504e5be4e",
+      "host.py": "afc8b5cb8fe9d182c3d3225fbba533ba233dbdbc38e82340a3e5723fd4101055",
+      "observations.json": "317a72ee0b9a1d39b73f8dcb1d14e4db663b07185213777173cea5fa74a7c62a",
+      "sim_stats.json": "5c8af22d2ea1fa57c478c3f12c1fcab537bcaba20ca554b1674a6efdd36aaf3f",
+      "simconfig.json": "ac8861b1a0ab97042fb33484d83a4d3ef124877e9bef550a89a5efe1f6da2be3"
+    }
+  },
+  {
+    "case": "strong-m64-k64-n64-p4-d3-full",
+    "status": "pass",
+    "phases": [
+      {
+        "phase": "compile",
+        "command": [
+          "/home/USER/cs_sdk/cslc",
+          "layout.csl",
+          "--arch=wse3",
+          "--fabric-dims=9,4",
+          "--fabric-offsets=4,1",
+          "--memcpy",
+          "--channels=1",
+          "--width-west-buf=0",
+          "--width-east-buf=0",
+          "--out-routes",
+          "--params=S:2,N:64,K:64,R:16,AC:136,BC:192,OC:408,W:64",
+          "-o",
+          "out"
+        ],
+        "returncode": 0,
+        "wall_seconds": 4.523386755012325
+      },
+      {
+        "phase": "run",
+        "command": [
+          "/home/USER/cs_sdk/cs_python",
+          "host.py"
+        ],
+        "returncode": 0,
+        "wall_seconds": 469.1035484580061
+      }
+    ],
+    "case_sha256": "c67b6f3f321e22f20c73ee51f855e0f932e2ef4826d1830b79c65cfeaa8fa1b1",
+    "queue_wait_seconds": 8.889997843652964e-06,
+    "errors": [],
+    "elf_sha256": {
+      "out/bin/out_1_0.elf": "6e904efa63af2958cfa6965a9a06d27fe0fa0f6a7344b400290cf22d8c6fbdcc",
+      "out/bin/out_3_0.elf": "272014e40c9d8dacd1eb9d587e827b90bce96b9aa224c3ee08b64e8eeaf95297",
+      "out/bin/out_2_0.elf": "50289e4eb5dc5b0005a60c46c4f4152e789e70f2d9239edb78929e36ce55427d",
+      "out/bin/out_0_0.elf": "502eb67f5f2a4595218ba2affeee416cb1e75461b87636f0b6c0a9f51a0d1212",
+      "out/generated/default.elf": "c54f29292b8c02e7b06ab679bc4bd91639dde429ad8e49bea106a0c05f716703",
+      "out/generated/MEMCPY_XY_ROUTES.elf": "25ccab43c347aca5e3ef5bc7741be8653fac2a0743e8ee4de2bc3c2953b83155",
+      "out/generated/coord.elf": "a4fb4f74663f689b78e6693120fd0858fa59310608f81b75f32716ab2698603c",
+      "out/east/bin/out_1_0.elf": "16e6db5e760b71af4a3c82a208cf55854af80df54d8b338b061e153f783a800b",
+      "out/east/bin/out_3_0.elf": "75139edc97263118d0a98ac133c5365d6acd26baf6e6034e04e74316e2333113",
+      "out/east/bin/out_2_0.elf": "6c5ae64be8f3ed6c55a31aa75d8d6ba8957a803d375eb36a6dc681746644e992",
+      "out/east/bin/out_0_0.elf": "9b94276299d05caf27866fabde1cdc191318080a42232830f0aabf7226d11adf",
+      "out/west/bin/out_4_0.elf": "ad4c06f53bcd678c75dce5c042767ca44265820a1de76022462885ed9b7cfda2",
+      "out/west/bin/out_1_0.elf": "2445f3a29e39adc37237a22be5e361ee1c8a5e0a4e5828307c97a1dd256c9469",
+      "out/west/bin/out_3_0.elf": "c408e8c8f9daf7333c8b7d3ebc3bdd814cd889c4d193db33e15661c9dba0d25c",
+      "out/west/bin/out_5_0.elf": "4c8237ef799dc0982a5f6c7ead03505de573660dcc0e5e5ffab2a37fb5b22af3",
+      "out/west/bin/out_2_0.elf": "d803501bdfe73c2cb4937a1c5cad3de32513f6c3e32b51a399d94cf5cdbc0ce4",
+      "out/west/bin/out_0_0.elf": "0c92c6eab1339894363c0c6a9afa1624363dc6f456f589c80275890de0cb2e1d"
+    },
+    "source_sha256": {
+      "single_collective.csl": "95db24b1ca3fd7e9d868657d0c991e4d9d3ff4601b154caf8d394523a19870b7",
+      "pe.csl": "8cc560b7f7a1fe6660f222c15d6a7d72a98cb6d5029b6734240e14cce65d5011",
+      "case.json": "c67b6f3f321e22f20c73ee51f855e0f932e2ef4826d1830b79c65cfeaa8fa1b1",
+      "layout.csl": "0f841665ca0ea9f9e420e1099e5629bb4ab5aca660b85ce6540899c6ebe03f51",
+      "inputs.py": "99916fee5949cfa4bb7efc89b2da16ece9806de175d9bae4254f8e6504e5be4e",
+      "host.py": "afc8b5cb8fe9d182c3d3225fbba533ba233dbdbc38e82340a3e5723fd4101055",
+      "observations.json": "5e95b6463aa22fdd2907511a6a35a852d23d899467cc7a077749e627d1f11bc5",
+      "sim_stats.json": "7c5312089262c015b7e59b608a839aba59e2958e111a3547e8630d7f2da5ef74",
+      "simconfig.json": "ac8861b1a0ab97042fb33484d83a4d3ef124877e9bef550a89a5efe1f6da2be3"
+    }
+  },
+  {
+    "case": "strong-m64-k64-n64-p4-d3-tiled",
+    "status": "pass",
+    "phases": [
+      {
+        "phase": "compile",
+        "command": [
+          "/home/USER/cs_sdk/cslc",
+          "layout.csl",
+          "--arch=wse3",
+          "--fabric-dims=9,4",
+          "--fabric-offsets=4,1",
+          "--memcpy",
+          "--channels=1",
+          "--width-west-buf=0",
+          "--width-east-buf=0",
+          "--out-routes",
+          "--params=S:2,N:64,K:64,R:16,AC:136,BC:192,OC:408,W:16",
+          "-o",
+          "out"
+        ],
+        "returncode": 0,
+        "wall_seconds": 4.222353407996707
+      },
+      {
+        "phase": "run",
+        "command": [
+          "/home/USER/cs_sdk/cs_python",
+          "host.py"
+        ],
+        "returncode": 0,
+        "wall_seconds": 474.6733746550017
+      }
+    ],
+    "case_sha256": "9df931418d29594b6b59f9519e944d0a52c35a270569453620ecf45142784933",
+    "queue_wait_seconds": 4.689994966611266e-06,
+    "errors": [],
+    "elf_sha256": {
+      "out/bin/out_1_0.elf": "cffd006b300c23c3d9ac7b1dd21dc717998d7fbb6837e27960527db100a38f23",
+      "out/bin/out_3_0.elf": "cbb8824f73e029ef779c8a0f98b8e1bb22b242eac28d05ebf8e1e86f2982c3f6",
+      "out/bin/out_2_0.elf": "5d91249b76d3b1bb185e0c2f01391252dcd4d1d5811d0c964e5e396c59460b3c",
+      "out/bin/out_0_0.elf": "826af1168605833d1bbc9fcd03abd6d5933936380ee9e366f36b2c817d6da90b",
+      "out/generated/default.elf": "c54f29292b8c02e7b06ab679bc4bd91639dde429ad8e49bea106a0c05f716703",
+      "out/generated/MEMCPY_XY_ROUTES.elf": "25ccab43c347aca5e3ef5bc7741be8653fac2a0743e8ee4de2bc3c2953b83155",
+      "out/generated/coord.elf": "a4fb4f74663f689b78e6693120fd0858fa59310608f81b75f32716ab2698603c",
+      "out/east/bin/out_1_0.elf": "16e6db5e760b71af4a3c82a208cf55854af80df54d8b338b061e153f783a800b",
+      "out/east/bin/out_3_0.elf": "75139edc97263118d0a98ac133c5365d6acd26baf6e6034e04e74316e2333113",
+      "out/east/bin/out_2_0.elf": "6c5ae64be8f3ed6c55a31aa75d8d6ba8957a803d375eb36a6dc681746644e992",
+      "out/east/bin/out_0_0.elf": "9b94276299d05caf27866fabde1cdc191318080a42232830f0aabf7226d11adf",
+      "out/west/bin/out_4_0.elf": "ad4c06f53bcd678c75dce5c042767ca44265820a1de76022462885ed9b7cfda2",
+      "out/west/bin/out_1_0.elf": "2445f3a29e39adc37237a22be5e361ee1c8a5e0a4e5828307c97a1dd256c9469",
+      "out/west/bin/out_3_0.elf": "c408e8c8f9daf7333c8b7d3ebc3bdd814cd889c4d193db33e15661c9dba0d25c",
+      "out/west/bin/out_5_0.elf": "4c8237ef799dc0982a5f6c7ead03505de573660dcc0e5e5ffab2a37fb5b22af3",
+      "out/west/bin/out_2_0.elf": "d803501bdfe73c2cb4937a1c5cad3de32513f6c3e32b51a399d94cf5cdbc0ce4",
+      "out/west/bin/out_0_0.elf": "0c92c6eab1339894363c0c6a9afa1624363dc6f456f589c80275890de0cb2e1d"
+    },
+    "source_sha256": {
+      "single_collective.csl": "95db24b1ca3fd7e9d868657d0c991e4d9d3ff4601b154caf8d394523a19870b7",
+      "pe.csl": "8cc560b7f7a1fe6660f222c15d6a7d72a98cb6d5029b6734240e14cce65d5011",
+      "case.json": "9df931418d29594b6b59f9519e944d0a52c35a270569453620ecf45142784933",
+      "layout.csl": "0f841665ca0ea9f9e420e1099e5629bb4ab5aca660b85ce6540899c6ebe03f51",
+      "inputs.py": "99916fee5949cfa4bb7efc89b2da16ece9806de175d9bae4254f8e6504e5be4e",
+      "host.py": "afc8b5cb8fe9d182c3d3225fbba533ba233dbdbc38e82340a3e5723fd4101055",
+      "observations.json": "71761f864cbb1938ebc7027b7c72cb069741c63e0e94f27c09ce04e0a45a6d24",
+      "sim_stats.json": "4ea919f726006da2bb90a928be971c05c4677b9d0e7832a317fbb84f3834a11e",
+      "simconfig.json": "ac8861b1a0ab97042fb33484d83a4d3ef124877e9bef550a89a5efe1f6da2be3"
+    }
+  },
+  {
+    "case": "weak-m16-k64-n64-p4-d3-full",
+    "status": "pass",
+    "phases": [
+      {
+        "phase": "compile",
+        "command": [
+          "/home/USER/cs_sdk/cslc",
+          "layout.csl",
+          "--arch=wse3",
+          "--fabric-dims=9,4",
+          "--fabric-offsets=4,1",
+          "--memcpy",
+          "--channels=1",
+          "--width-west-buf=0",
+          "--width-east-buf=0",
+          "--out-routes",
+          "--params=S:2,N:64,K:64,R:4,AC:12,BC:192,OC:36,W:64",
+          "-o",
+          "out"
+        ],
+        "returncode": 0,
+        "wall_seconds": 4.472521619987674
+      },
+      {
+        "phase": "run",
+        "command": [
+          "/home/USER/cs_sdk/cs_python",
+          "host.py"
+        ],
+        "returncode": 0,
+        "wall_seconds": 54.73336723000102
+      }
+    ],
+    "case_sha256": "4b4db53d32d1aac77a45365fbda78eb752d834c7ad08ebe741bb234446e5b38e",
+    "queue_wait_seconds": 4.469999112188816e-06,
+    "errors": [],
+    "elf_sha256": {
+      "out/bin/out_1_0.elf": "e5842dd4a2cedef45db9a879ca3f95ad8acfa2a445582c78928a10c7864f01cb",
+      "out/bin/out_3_0.elf": "f6f15f7ecebc084919c8aee1b589201b625fa148c6c758fcbafd8ad1f6b53fe1",
+      "out/bin/out_2_0.elf": "82681d0ea6a886cf84aa7e44b3bff64768cd1ba93205299ab23ae2d1abdf8c73",
+      "out/bin/out_0_0.elf": "0ba38fbfa2ce228b68fcf3de8cefc91dce15525a8ae97f04ba84fff2f55cf611",
+      "out/generated/default.elf": "c54f29292b8c02e7b06ab679bc4bd91639dde429ad8e49bea106a0c05f716703",
+      "out/generated/MEMCPY_XY_ROUTES.elf": "25ccab43c347aca5e3ef5bc7741be8653fac2a0743e8ee4de2bc3c2953b83155",
+      "out/generated/coord.elf": "a4fb4f74663f689b78e6693120fd0858fa59310608f81b75f32716ab2698603c",
+      "out/east/bin/out_1_0.elf": "16e6db5e760b71af4a3c82a208cf55854af80df54d8b338b061e153f783a800b",
+      "out/east/bin/out_3_0.elf": "75139edc97263118d0a98ac133c5365d6acd26baf6e6034e04e74316e2333113",
+      "out/east/bin/out_2_0.elf": "6c5ae64be8f3ed6c55a31aa75d8d6ba8957a803d375eb36a6dc681746644e992",
+      "out/east/bin/out_0_0.elf": "9b94276299d05caf27866fabde1cdc191318080a42232830f0aabf7226d11adf",
+      "out/west/bin/out_4_0.elf": "ad4c06f53bcd678c75dce5c042767ca44265820a1de76022462885ed9b7cfda2",
+      "out/west/bin/out_1_0.elf": "2445f3a29e39adc37237a22be5e361ee1c8a5e0a4e5828307c97a1dd256c9469",
+      "out/west/bin/out_3_0.elf": "c408e8c8f9daf7333c8b7d3ebc3bdd814cd889c4d193db33e15661c9dba0d25c",
+      "out/west/bin/out_5_0.elf": "4c8237ef799dc0982a5f6c7ead03505de573660dcc0e5e5ffab2a37fb5b22af3",
+      "out/west/bin/out_2_0.elf": "d803501bdfe73c2cb4937a1c5cad3de32513f6c3e32b51a399d94cf5cdbc0ce4",
+      "out/west/bin/out_0_0.elf": "0c92c6eab1339894363c0c6a9afa1624363dc6f456f589c80275890de0cb2e1d"
+    },
+    "source_sha256": {
+      "single_collective.csl": "95db24b1ca3fd7e9d868657d0c991e4d9d3ff4601b154caf8d394523a19870b7",
+      "pe.csl": "8cc560b7f7a1fe6660f222c15d6a7d72a98cb6d5029b6734240e14cce65d5011",
+      "case.json": "4b4db53d32d1aac77a45365fbda78eb752d834c7ad08ebe741bb234446e5b38e",
+      "layout.csl": "0f841665ca0ea9f9e420e1099e5629bb4ab5aca660b85ce6540899c6ebe03f51",
+      "inputs.py": "99916fee5949cfa4bb7efc89b2da16ece9806de175d9bae4254f8e6504e5be4e",
+      "host.py": "afc8b5cb8fe9d182c3d3225fbba533ba233dbdbc38e82340a3e5723fd4101055",
+      "observations.json": "8281549dbc1998a76d3a0f404675117862d7f508b2f05347c2abd2eb430ee45e",
+      "sim_stats.json": "3632d4687882a528e25dfbaa81ca5db94201f68a7f7f2d3791cbf10e8cf08b5d",
+      "simconfig.json": "ac8861b1a0ab97042fb33484d83a4d3ef124877e9bef550a89a5efe1f6da2be3"
+    }
+  },
+  {
+    "case": "density-m64-k64-n64-p16-d8-full",
+    "status": "pass",
+    "phases": [
+      {
+        "phase": "compile",
+        "command": [
+          "/home/USER/cs_sdk/cslc",
+          "layout.csl",
+          "--arch=wse3",
+          "--fabric-dims=11,6",
+          "--fabric-offsets=4,1",
+          "--memcpy",
+          "--channels=1",
+          "--width-west-buf=0",
+          "--width-east-buf=0",
+          "--out-routes",
+          "--params=S:4,N:64,K:64,R:4,AC:32,BC:512,OC:256,W:64",
+          "-o",
+          "out"
+        ],
+        "returncode": 0,
+        "wall_seconds": 5.224522299991804
+      },
+      {
+        "phase": "run",
+        "command": [
+          "/home/USER/cs_sdk/cs_python",
+          "host.py"
+        ],
+        "returncode": 0,
+        "wall_seconds": 331.7538300899905
+      }
+    ],
+    "case_sha256": "9300402dd60b9aceeb3332e2d73a1de8875de28f6f2ac6b59bf8303662112404",
+    "queue_wait_seconds": 4.989997250959277e-06,
+    "errors": [],
+    "elf_sha256": {
+      "out/bin/out_6_0.elf": "2cc22b3f275ba12d8c296a904560e08620c0a663f40cbaba5cafe313f3bd20fb",
+      "out/bin/out_4_0.elf": "5887416e925c426ab0876615ee5e9d8945751f997d494f5a8e4a3333b7c028b5",
+      "out/bin/out_1_0.elf": "e622c4d3fd4e7ca3ba8ecee8597761fba1bff98a3e3e31167226590844d56427",
+      "out/bin/out_3_0.elf": "0a102190e25fd742a0bcf2d047f433923b9ee246e5abd648a5d2e182de2ebcea",
+      "out/bin/out_5_0.elf": "0897fcac16807dbfbafee481b317fff9b9bdcf8cc177859aee1e576d40e8d8ce",
+      "out/bin/out_2_0.elf": "51bc05d3160a1497b3236b971e1c72d781d9a251b416cb4d2bb81eefae6c3b91",
+      "out/bin/out_0_0.elf": "3f08227f86032dee2df296c25bd240b5ca66b7dfbd971493cdedf1915c6ba4a1",
+      "out/bin/out_8_0.elf": "89c2c8ff348ee1ff535d32686560fd5b34999b0f74492332c969d05391eecb1d",
+      "out/bin/out_7_0.elf": "8b7124272e68e813a875ad7b5f19ee1fff36524e6e7e5600c9a1123d2850a774",
+      "out/generated/default.elf": "c936f8443d2fd632760a523566975d7776a03a99304e33ba0b11899e4110e612",
+      "out/generated/MEMCPY_XY_ROUTES.elf": "e41c6de1ca1a5c8900f7f6f967e2e0c5c2fcf0712be018b950d5cf2f41206ff6",
+      "out/generated/coord.elf": "1a78c93d84d3c2e2359717e8b5f97d6772a6c32bdf430e4bb752e7cdf799a2af",
+      "out/east/bin/out_4_0.elf": "21d946ad7561efc889d344eaad52b5d9056528e53d37bf4e5c33b3520ea44732",
+      "out/east/bin/out_1_0.elf": "d163d2d201dcf0b90f077a51ce3c3b7b61a47ce757f7168ec03b7d05fd53ee0e",
+      "out/east/bin/out_3_0.elf": "0266db6004ff6489f385b266dad7119b7758078d75671fecc5a5cf76cff08c7b",
+      "out/east/bin/out_5_0.elf": "30615053c525b1ef0bbe9812fe2f4a14c73a90805a5ec2883a51349e0fa444ac",
+      "out/east/bin/out_2_0.elf": "0122caafa732139c08aee00ad94f6f3dc826029020f4a09ba649e5aca7088f33",
+      "out/east/bin/out_0_0.elf": "96187da79ed92dfb4687aa3d008c0e16cd55353d30876ae6dd1e2e0db581a053",
+      "out/west/bin/out_6_0.elf": "fe6154ce9e8da07f29e543ebceae795ac544d67bccff01a0357309589db7741c",
+      "out/west/bin/out_4_0.elf": "fa2fcc1581927bc5e885f16b0db6a2042e5224e415c6cd3a0f78a7ede344fa76",
+      "out/west/bin/out_1_0.elf": "1c12dcf8fb57ce41f711915b7044ebb540f3d3a5730a242bed8210c86708aa06",
+      "out/west/bin/out_3_0.elf": "ab20a5d405b95687c357bf86ebe91a5aa069e381ce11794ce6972ec23df0638a",
+      "out/west/bin/out_5_0.elf": "750fdf0014e9be4be4a4fcdd7a852b52663a10813dcc317d1c910a9d9039b123",
+      "out/west/bin/out_2_0.elf": "c45f8129c711d27c75a13b6e99346b2bf721a7b4fa88e448f44b001d9ba829f6",
+      "out/west/bin/out_0_0.elf": "97f63030ccf9137efdd260a6bcb17d8263088316f2ca18b05fb32ab95bdb82d1",
+      "out/west/bin/out_7_0.elf": "8ae552a2bdffa37d4ead61f19001fcd9f227b21ab18e1f011b9263ebc09e83fe"
+    },
+    "source_sha256": {
+      "single_collective.csl": "95db24b1ca3fd7e9d868657d0c991e4d9d3ff4601b154caf8d394523a19870b7",
+      "pe.csl": "8cc560b7f7a1fe6660f222c15d6a7d72a98cb6d5029b6734240e14cce65d5011",
+      "case.json": "9300402dd60b9aceeb3332e2d73a1de8875de28f6f2ac6b59bf8303662112404",
+      "layout.csl": "0f841665ca0ea9f9e420e1099e5629bb4ab5aca660b85ce6540899c6ebe03f51",
+      "inputs.py": "99916fee5949cfa4bb7efc89b2da16ece9806de175d9bae4254f8e6504e5be4e",
+      "host.py": "afc8b5cb8fe9d182c3d3225fbba533ba233dbdbc38e82340a3e5723fd4101055",
+      "observations.json": "f80c2a389d9f8d4da4ef3050cf7e1e9137b350d312f5fd770cf6481c955b8f31",
+      "sim_stats.json": "251eb9a3bd28223f94582ed82c6e070b436d3da42a7fb19a54fb1d700095472c",
+      "simconfig.json": "ac8861b1a0ab97042fb33484d83a4d3ef124877e9bef550a89a5efe1f6da2be3"
+    }
+  },
+  {
+    "case": "strong-m64-k64-n64-p16-d3-full",
+    "status": "pass",
+    "phases": [
+      {
+        "phase": "compile",
+        "command": [
+          "/home/USER/cs_sdk/cslc",
+          "layout.csl",
+          "--arch=wse3",
+          "--fabric-dims=11,6",
+          "--fabric-offsets=4,1",
+          "--memcpy",
+          "--channels=1",
+          "--width-west-buf=0",
+          "--width-east-buf=0",
+          "--out-routes",
+          "--params=S:4,N:64,K:64,R:4,AC:68,BC:192,OC:204,W:64",
+          "-o",
+          "out"
+        ],
+        "returncode": 0,
+        "wall_seconds": 6.2485156420007115
+      },
+      {
+        "phase": "run",
+        "command": [
+          "/home/USER/cs_sdk/cs_python",
+          "host.py"
+        ],
+        "returncode": 0,
+        "wall_seconds": 488.61123359098565
+      }
+    ],
+    "case_sha256": "45cd4f2f6181750fdf72595b50585de97143305697b83d4392ff148b34dcb3b5",
+    "queue_wait_seconds": 6.119997124187648e-06,
+    "errors": [],
+    "elf_sha256": {
+      "out/bin/out_6_0.elf": "f181b0113564bab5949d6127b341d43261f6626bf1900aa9ff1b3da41987fc6f",
+      "out/bin/out_4_0.elf": "3356b80ce66a7cc7f7e971837e9be7ea43a022d22bd9aae931e17074786e2835",
+      "out/bin/out_1_0.elf": "e1d7267c7af28fa6fbfa126e7ca23a9040fea41a8f9abc85889a1ab2a1f1187a",
+      "out/bin/out_3_0.elf": "7856be6c048eae4f75f39926eff81e8b1e69938f41c71f1ce2f66bc678f69b8c",
+      "out/bin/out_5_0.elf": "d45bf4bf321f017dedbe1929197e9d2a6fdc50e284b7ff5765c06eadf5dc1125",
+      "out/bin/out_2_0.elf": "cc28c3764dbe092337528adaf43d18904f036afc26896138351f3e6ad0f066a5",
+      "out/bin/out_0_0.elf": "3ed4b0c0a02371399730bb5e52478dc280c5168d085374cbe03e7b05d3ffdc30",
+      "out/bin/out_8_0.elf": "a5ca31b307829ab64ac41be034b9b6de38ad9d1068909147e8feb00359277dd9",
+      "out/bin/out_7_0.elf": "56348b62dbb3e2562eaf1f71be00420ff838d72fe226d3cbeed45f25ea543638",
+      "out/generated/default.elf": "c936f8443d2fd632760a523566975d7776a03a99304e33ba0b11899e4110e612",
+      "out/generated/MEMCPY_XY_ROUTES.elf": "e41c6de1ca1a5c8900f7f6f967e2e0c5c2fcf0712be018b950d5cf2f41206ff6",
+      "out/generated/coord.elf": "1a78c93d84d3c2e2359717e8b5f97d6772a6c32bdf430e4bb752e7cdf799a2af",
+      "out/east/bin/out_4_0.elf": "21d946ad7561efc889d344eaad52b5d9056528e53d37bf4e5c33b3520ea44732",
+      "out/east/bin/out_1_0.elf": "d163d2d201dcf0b90f077a51ce3c3b7b61a47ce757f7168ec03b7d05fd53ee0e",
+      "out/east/bin/out_3_0.elf": "0266db6004ff6489f385b266dad7119b7758078d75671fecc5a5cf76cff08c7b",
+      "out/east/bin/out_5_0.elf": "30615053c525b1ef0bbe9812fe2f4a14c73a90805a5ec2883a51349e0fa444ac",
+      "out/east/bin/out_2_0.elf": "0122caafa732139c08aee00ad94f6f3dc826029020f4a09ba649e5aca7088f33",
+      "out/east/bin/out_0_0.elf": "96187da79ed92dfb4687aa3d008c0e16cd55353d30876ae6dd1e2e0db581a053",
+      "out/west/bin/out_6_0.elf": "fe6154ce9e8da07f29e543ebceae795ac544d67bccff01a0357309589db7741c",
+      "out/west/bin/out_4_0.elf": "fa2fcc1581927bc5e885f16b0db6a2042e5224e415c6cd3a0f78a7ede344fa76",
+      "out/west/bin/out_1_0.elf": "1c12dcf8fb57ce41f711915b7044ebb540f3d3a5730a242bed8210c86708aa06",
+      "out/west/bin/out_3_0.elf": "ab20a5d405b95687c357bf86ebe91a5aa069e381ce11794ce6972ec23df0638a",
+      "out/west/bin/out_5_0.elf": "750fdf0014e9be4be4a4fcdd7a852b52663a10813dcc317d1c910a9d9039b123",
+      "out/west/bin/out_2_0.elf": "c45f8129c711d27c75a13b6e99346b2bf721a7b4fa88e448f44b001d9ba829f6",
+      "out/west/bin/out_0_0.elf": "97f63030ccf9137efdd260a6bcb17d8263088316f2ca18b05fb32ab95bdb82d1",
+      "out/west/bin/out_7_0.elf": "8ae552a2bdffa37d4ead61f19001fcd9f227b21ab18e1f011b9263ebc09e83fe"
+    },
+    "source_sha256": {
+      "single_collective.csl": "95db24b1ca3fd7e9d868657d0c991e4d9d3ff4601b154caf8d394523a19870b7",
+      "pe.csl": "8cc560b7f7a1fe6660f222c15d6a7d72a98cb6d5029b6734240e14cce65d5011",
+      "case.json": "45cd4f2f6181750fdf72595b50585de97143305697b83d4392ff148b34dcb3b5",
+      "layout.csl": "0f841665ca0ea9f9e420e1099e5629bb4ab5aca660b85ce6540899c6ebe03f51",
+      "inputs.py": "99916fee5949cfa4bb7efc89b2da16ece9806de175d9bae4254f8e6504e5be4e",
+      "host.py": "afc8b5cb8fe9d182c3d3225fbba533ba233dbdbc38e82340a3e5723fd4101055",
+      "observations.json": "5d355c4998c49e2eb2b891c87e6e15e5e3a3d3f457057e9ff90abbfdb101e222",
+      "sim_stats.json": "2bebc30ec5f250d04328222eaa557379378ff0b145c467aa286e6d3e49f5f05c",
+      "simconfig.json": "ac8861b1a0ab97042fb33484d83a4d3ef124877e9bef550a89a5efe1f6da2be3"
+    }
+  },
+  {
+    "case": "strong-m64-k64-n64-p16-d3-tiled",
+    "status": "pass",
+    "phases": [
+      {
+        "phase": "compile",
+        "command": [
+          "/home/USER/cs_sdk/cslc",
+          "layout.csl",
+          "--arch=wse3",
+          "--fabric-dims=11,6",
+          "--fabric-offsets=4,1",
+          "--memcpy",
+          "--channels=1",
+          "--width-west-buf=0",
+          "--width-east-buf=0",
+          "--out-routes",
+          "--params=S:4,N:64,K:64,R:4,AC:68,BC:192,OC:204,W:16",
+          "-o",
+          "out"
+        ],
+        "returncode": 0,
+        "wall_seconds": 5.884630601009121
+      },
+      {
+        "phase": "run",
+        "command": [
+          "/home/USER/cs_sdk/cs_python",
+          "host.py"
+        ],
+        "returncode": 0,
+        "wall_seconds": 470.97540030800155
+      }
+    ],
+    "case_sha256": "c897382dc85c85be4d5024bfd31897b890a02b9a4f945334d2d7bb39e62d1eb4",
+    "queue_wait_seconds": 5.049994797445834e-06,
+    "errors": [],
+    "elf_sha256": {
+      "out/bin/out_6_0.elf": "8b5b2ad95223d8f45e24ff284f013a74ce9ac1ccabd561df52808a21e1bb4a1e",
+      "out/bin/out_4_0.elf": "817aa13635245914896681a9c0e612af3c9c1d80d9aba0309108a3e2e597d9f7",
+      "out/bin/out_1_0.elf": "8a41f3c148e3ba8773c8ab064d5b91c98e461f8379c1fa0a80e69bb114e6be3b",
+      "out/bin/out_3_0.elf": "c6362b0ddae556f1003a1d250f0a190f53b17350c46d767f2a16e7a5cdb0f017",
+      "out/bin/out_5_0.elf": "85221410e3d4a33a1ddd91bf2eac30b84cc0c8a3ea83ed138ac250b0bf00f004",
+      "out/bin/out_2_0.elf": "a060f95021ca790938d0d36ad741a55685c4d872cbd0c085c7b344e58ec431fa",
+      "out/bin/out_0_0.elf": "c0e381e71dd7ca2119eaaefc1a6761f1868e39a648cd99f695d706059eab5bb8",
+      "out/bin/out_8_0.elf": "0866fcf1addc6d2f06f9a188dc3536e2f97347091bd91b215853085b0a27ca83",
+      "out/bin/out_7_0.elf": "36589dc07366e302cecbd18c84fe826d19dfdf107466ffacdd385dd66235398c",
+      "out/generated/default.elf": "c936f8443d2fd632760a523566975d7776a03a99304e33ba0b11899e4110e612",
+      "out/generated/MEMCPY_XY_ROUTES.elf": "e41c6de1ca1a5c8900f7f6f967e2e0c5c2fcf0712be018b950d5cf2f41206ff6",
+      "out/generated/coord.elf": "1a78c93d84d3c2e2359717e8b5f97d6772a6c32bdf430e4bb752e7cdf799a2af",
+      "out/east/bin/out_4_0.elf": "21d946ad7561efc889d344eaad52b5d9056528e53d37bf4e5c33b3520ea44732",
+      "out/east/bin/out_1_0.elf": "d163d2d201dcf0b90f077a51ce3c3b7b61a47ce757f7168ec03b7d05fd53ee0e",
+      "out/east/bin/out_3_0.elf": "0266db6004ff6489f385b266dad7119b7758078d75671fecc5a5cf76cff08c7b",
+      "out/east/bin/out_5_0.elf": "30615053c525b1ef0bbe9812fe2f4a14c73a90805a5ec2883a51349e0fa444ac",
+      "out/east/bin/out_2_0.elf": "0122caafa732139c08aee00ad94f6f3dc826029020f4a09ba649e5aca7088f33",
+      "out/east/bin/out_0_0.elf": "96187da79ed92dfb4687aa3d008c0e16cd55353d30876ae6dd1e2e0db581a053",
+      "out/west/bin/out_6_0.elf": "fe6154ce9e8da07f29e543ebceae795ac544d67bccff01a0357309589db7741c",
+      "out/west/bin/out_4_0.elf": "fa2fcc1581927bc5e885f16b0db6a2042e5224e415c6cd3a0f78a7ede344fa76",
+      "out/west/bin/out_1_0.elf": "1c12dcf8fb57ce41f711915b7044ebb540f3d3a5730a242bed8210c86708aa06",
+      "out/west/bin/out_3_0.elf": "ab20a5d405b95687c357bf86ebe91a5aa069e381ce11794ce6972ec23df0638a",
+      "out/west/bin/out_5_0.elf": "750fdf0014e9be4be4a4fcdd7a852b52663a10813dcc317d1c910a9d9039b123",
+      "out/west/bin/out_2_0.elf": "c45f8129c711d27c75a13b6e99346b2bf721a7b4fa88e448f44b001d9ba829f6",
+      "out/west/bin/out_0_0.elf": "97f63030ccf9137efdd260a6bcb17d8263088316f2ca18b05fb32ab95bdb82d1",
+      "out/west/bin/out_7_0.elf": "8ae552a2bdffa37d4ead61f19001fcd9f227b21ab18e1f011b9263ebc09e83fe"
+    },
+    "source_sha256": {
+      "single_collective.csl": "95db24b1ca3fd7e9d868657d0c991e4d9d3ff4601b154caf8d394523a19870b7",
+      "pe.csl": "8cc560b7f7a1fe6660f222c15d6a7d72a98cb6d5029b6734240e14cce65d5011",
+      "case.json": "c897382dc85c85be4d5024bfd31897b890a02b9a4f945334d2d7bb39e62d1eb4",
+      "layout.csl": "0f841665ca0ea9f9e420e1099e5629bb4ab5aca660b85ce6540899c6ebe03f51",
+      "inputs.py": "99916fee5949cfa4bb7efc89b2da16ece9806de175d9bae4254f8e6504e5be4e",
+      "host.py": "afc8b5cb8fe9d182c3d3225fbba533ba233dbdbc38e82340a3e5723fd4101055",
+      "observations.json": "b2bef356ad81c9a62b9a7f3af7ee454c85cb50185dac96b3b325eb48beb658df",
+      "sim_stats.json": "19ad59e79b0726c06260c595e978b445ca75aec7fb33e4a77707a355dc51327f",
+      "simconfig.json": "ac8861b1a0ab97042fb33484d83a4d3ef124877e9bef550a89a5efe1f6da2be3"
+    }
+  },
+  {
+    "case": "weak-m64-k64-n64-p16-d3-full",
+    "status": "pass",
+    "phases": [
+      {
+        "phase": "compile",
+        "command": [
+          "/home/USER/cs_sdk/cslc",
+          "layout.csl",
+          "--arch=wse3",
+          "--fabric-dims=11,6",
+          "--fabric-offsets=4,1",
+          "--memcpy",
+          "--channels=1",
+          "--width-west-buf=0",
+          "--width-east-buf=0",
+          "--out-routes",
+          "--params=S:4,N:64,K:64,R:4,AC:12,BC:192,OC:36,W:64",
+          "-o",
+          "out"
+        ],
+        "returncode": 0,
+        "wall_seconds": 4.872823407989927
+      },
+      {
+        "phase": "run",
+        "command": [
+          "/home/USER/cs_sdk/cs_python",
+          "host.py"
+        ],
+        "returncode": 0,
+        "wall_seconds": 93.32637418399099
+      }
+    ],
+    "case_sha256": "d9458568d08ef22de7645249f00a5abb651701b114b410fbe2f0aa0f42a3c26d",
+    "queue_wait_seconds": 9.2999980552122e-06,
+    "errors": [],
+    "elf_sha256": {
+      "out/bin/out_6_0.elf": "f051c1d6ff05520cd8fb24e4caf32b82c80aaa6e6c4037e0c94d7039b89948e2",
+      "out/bin/out_4_0.elf": "1e64780547b1a42a243d3e48acfa1751347cac1cabca3bb0aeb6a910b686c320",
+      "out/bin/out_1_0.elf": "572ee817fcd8bb3cdc3fc289330fe09a117fd6ae1c3e945b0c1279368a8dc117",
+      "out/bin/out_3_0.elf": "51de9af41563ba25d79f473e84e19b7272e603dd93ab09711f89358eb967d69d",
+      "out/bin/out_5_0.elf": "8850f18dfa305691be6d154eb6f375bb013f57dce400728c2f842dfe55b0b92b",
+      "out/bin/out_2_0.elf": "bf181f7487c2861e8f529b8994ee8ca2a22b745287087672bb966116107580a6",
+      "out/bin/out_0_0.elf": "d4a5c4eb92f588a1c239910af6cead72ee8aa3580353470963f45721e7c87e81",
+      "out/bin/out_8_0.elf": "ca0e6c0b1765e15c376da75d3cc273612109ad3e7012fae344c89ea41bf3918a",
+      "out/bin/out_7_0.elf": "02b946f926ba484aabefa339c25294be8b561351567a077b17b00545c9b715e7",
+      "out/generated/default.elf": "c936f8443d2fd632760a523566975d7776a03a99304e33ba0b11899e4110e612",
+      "out/generated/MEMCPY_XY_ROUTES.elf": "e41c6de1ca1a5c8900f7f6f967e2e0c5c2fcf0712be018b950d5cf2f41206ff6",
+      "out/generated/coord.elf": "1a78c93d84d3c2e2359717e8b5f97d6772a6c32bdf430e4bb752e7cdf799a2af",
+      "out/east/bin/out_4_0.elf": "21d946ad7561efc889d344eaad52b5d9056528e53d37bf4e5c33b3520ea44732",
+      "out/east/bin/out_1_0.elf": "d163d2d201dcf0b90f077a51ce3c3b7b61a47ce757f7168ec03b7d05fd53ee0e",
+      "out/east/bin/out_3_0.elf": "0266db6004ff6489f385b266dad7119b7758078d75671fecc5a5cf76cff08c7b",
+      "out/east/bin/out_5_0.elf": "30615053c525b1ef0bbe9812fe2f4a14c73a90805a5ec2883a51349e0fa444ac",
+      "out/east/bin/out_2_0.elf": "0122caafa732139c08aee00ad94f6f3dc826029020f4a09ba649e5aca7088f33",
+      "out/east/bin/out_0_0.elf": "96187da79ed92dfb4687aa3d008c0e16cd55353d30876ae6dd1e2e0db581a053",
+      "out/west/bin/out_6_0.elf": "fe6154ce9e8da07f29e543ebceae795ac544d67bccff01a0357309589db7741c",
+      "out/west/bin/out_4_0.elf": "fa2fcc1581927bc5e885f16b0db6a2042e5224e415c6cd3a0f78a7ede344fa76",
+      "out/west/bin/out_1_0.elf": "1c12dcf8fb57ce41f711915b7044ebb540f3d3a5730a242bed8210c86708aa06",
+      "out/west/bin/out_3_0.elf": "ab20a5d405b95687c357bf86ebe91a5aa069e381ce11794ce6972ec23df0638a",
+      "out/west/bin/out_5_0.elf": "750fdf0014e9be4be4a4fcdd7a852b52663a10813dcc317d1c910a9d9039b123",
+      "out/west/bin/out_2_0.elf": "c45f8129c711d27c75a13b6e99346b2bf721a7b4fa88e448f44b001d9ba829f6",
+      "out/west/bin/out_0_0.elf": "97f63030ccf9137efdd260a6bcb17d8263088316f2ca18b05fb32ab95bdb82d1",
+      "out/west/bin/out_7_0.elf": "8ae552a2bdffa37d4ead61f19001fcd9f227b21ab18e1f011b9263ebc09e83fe"
+    },
+    "source_sha256": {
+      "single_collective.csl": "95db24b1ca3fd7e9d868657d0c991e4d9d3ff4601b154caf8d394523a19870b7",
+      "pe.csl": "8cc560b7f7a1fe6660f222c15d6a7d72a98cb6d5029b6734240e14cce65d5011",
+      "case.json": "d9458568d08ef22de7645249f00a5abb651701b114b410fbe2f0aa0f42a3c26d",
+      "layout.csl": "0f841665ca0ea9f9e420e1099e5629bb4ab5aca660b85ce6540899c6ebe03f51",
+      "inputs.py": "99916fee5949cfa4bb7efc89b2da16ece9806de175d9bae4254f8e6504e5be4e",
+      "host.py": "afc8b5cb8fe9d182c3d3225fbba533ba233dbdbc38e82340a3e5723fd4101055",
+      "observations.json": "3eb306c1da3fd880e2080bee15563417960804fc7af5132c4e7edbbd43b7f707",
+      "sim_stats.json": "8eab3954763a9693b41427b683ebd63e86b506e19ec2a06a4f6fb7a3cd4f1d1e",
+      "simconfig.json": "ac8861b1a0ab97042fb33484d83a4d3ef124877e9bef550a89a5efe1f6da2be3"
+    }
+  },
+  {
+    "case": "density-m64-k64-n64-p64-d8-full",
+    "status": "pass",
+    "phases": [
+      {
+        "phase": "compile",
+        "command": [
+          "/home/USER/cs_sdk/cslc",
+          "layout.csl",
+          "--arch=wse3",
+          "--fabric-dims=15,10",
+          "--fabric-offsets=4,1",
+          "--memcpy",
+          "--channels=1",
+          "--width-west-buf=0",
+          "--width-east-buf=0",
+          "--out-routes",
+          "--params=S:8,N:64,K:64,R:1,AC:8,BC:512,OC:64,W:64",
+          "-o",
+          "out"
+        ],
+        "returncode": 0,
+        "wall_seconds": 5.676021696999669
+      },
+      {
+        "phase": "run",
+        "command": [
+          "/home/USER/cs_sdk/cs_python",
+          "host.py"
+        ],
+        "returncode": 0,
+        "wall_seconds": 287.78821360500297
+      }
+    ],
+    "case_sha256": "5b6cf7248c1e8af4e5d469a713c2846e013ea3a55cd2c758a3be06cb0392ea0a",
+    "queue_wait_seconds": 3.869994543492794e-06,
+    "errors": [],
+    "elf_sha256": {
+      "out/bin/out_6_0.elf": "495bfcdb7d4dd8763b28cd7c41ce1ab099776f01f8c3d579cbd55e2e8b891e0e",
+      "out/bin/out_4_0.elf": "6aa5d90f2560144c41363cb6daf878b478c6881fb7b5d30d0b771de75223f9a8",
+      "out/bin/out_1_0.elf": "09704bd870f3c5d90f423552ef10db654f46e871af675bf488f40d26ad1318aa",
+      "out/bin/out_3_0.elf": "d41b9aefc3fa2552f874a11d188090019f0b141bfec3558c8842b2dac7878f22",
+      "out/bin/out_5_0.elf": "e4a2423bf85525c76294a71b758799489396282e5fb53e05eab81a74adb2dd81",
+      "out/bin/out_2_0.elf": "d9142cc1c84d3601ce680c9021fd98744be82d3ebb88ae58912451a7bfabf47f",
+      "out/bin/out_0_0.elf": "b9601a9175233d712418451985bed17897c1c3a318c538278056aac21efd9503",
+      "out/bin/out_8_0.elf": "ad64becb9f0744fa15b76eada971c51aa340cb8f507498e83c3180199bedb1b1",
+      "out/bin/out_7_0.elf": "0b05f57f9edb689a312f73424bf21518c9a7c6d782ce3a40970a692719d1e440",
+      "out/generated/default.elf": "3ac83e67e4cc3af62b76d1080fc013d22f5549f7b227c95e86501f6ba5346bf3",
+      "out/generated/MEMCPY_XY_ROUTES.elf": "433b0907e7d809212fcf5196a64cabbae9b80f95e9ac023c302a530b7c209d89",
+      "out/generated/coord.elf": "4c438368c489700be9499d3ff92ed66a337cfba3b6a39402d8aa1d842bb68498",
+      "out/east/bin/out_4_0.elf": "f96d286be0cdfdffc0c04964c3b711c593f4c4fecfe41f4055f84387a6648e13",
+      "out/east/bin/out_1_0.elf": "ff720a8a8b079dac45ae42f12a53a6082cd2ae84b6ca41444b9b337ad8e71971",
+      "out/east/bin/out_3_0.elf": "af356b46d2ca34548f7a8713b9a395b9fd89837478d0c6e6a3a26acaf06f19eb",
+      "out/east/bin/out_5_0.elf": "300319c2e65b97d52a07d8faa9102f2f61ebca19ee847ddf4caed4d1c156dcd9",
+      "out/east/bin/out_2_0.elf": "54a43adc2d55c2d3f51163797694bb223f4c681dd3f1f00836049fe009c4e5ac",
+      "out/east/bin/out_0_0.elf": "4711ff2fcacd36f5655ffff4d1d5d081d5135f6b03d718b64d365734d3d226ac",
+      "out/west/bin/out_6_0.elf": "fa7745fe85c64a40885f5f67155cd192b88671554f1db2698332c0a9733ec221",
+      "out/west/bin/out_4_0.elf": "f5c8c8326fc16c1a811e266aac02d2e7c9b311e833a4ab56ad01050ccfca90d6",
+      "out/west/bin/out_1_0.elf": "079fc7c120f555fd416019e8ce2f47357039173ba01bd4fa14051286a7ee2b06",
+      "out/west/bin/out_3_0.elf": "7609d740191803c7eda2e23f1ec343390408612e9ee1537a4545eeddc769931d",
+      "out/west/bin/out_5_0.elf": "bf00080f4bbe9bf96f11a58f4ea9eb70dd4aca14918aa630aaac62e41330d838",
+      "out/west/bin/out_2_0.elf": "6b3aa1f5289380f5896fc509a720064c5238a049f04ae91c74bfd332a97b5043",
+      "out/west/bin/out_0_0.elf": "805f4d6620d9191599a48528b4a5bac884a9785848a4f20df859141cb1ebe295",
+      "out/west/bin/out_7_0.elf": "f4002f98a3d3016ada152b5f5ecaa01e1c38b23c7ae25972b4a6b13e305c130c"
+    },
+    "source_sha256": {
+      "single_collective.csl": "95db24b1ca3fd7e9d868657d0c991e4d9d3ff4601b154caf8d394523a19870b7",
+      "pe.csl": "8cc560b7f7a1fe6660f222c15d6a7d72a98cb6d5029b6734240e14cce65d5011",
+      "case.json": "5b6cf7248c1e8af4e5d469a713c2846e013ea3a55cd2c758a3be06cb0392ea0a",
+      "layout.csl": "0f841665ca0ea9f9e420e1099e5629bb4ab5aca660b85ce6540899c6ebe03f51",
+      "inputs.py": "99916fee5949cfa4bb7efc89b2da16ece9806de175d9bae4254f8e6504e5be4e",
+      "host.py": "afc8b5cb8fe9d182c3d3225fbba533ba233dbdbc38e82340a3e5723fd4101055",
+      "observations.json": "ab1cc0be00f711973385b153e33a1a606dddb3c7c69f424bc457e6bc7d565dac",
+      "sim_stats.json": "4a6124ac44a52ae4638eb402043b84a85b833e8b4ebb8493c804dc8d5054c3a7",
+      "simconfig.json": "ac8861b1a0ab97042fb33484d83a4d3ef124877e9bef550a89a5efe1f6da2be3"
+    }
+  },
+  {
+    "case": "strong-m64-k64-n64-p64-d3-full",
+    "status": "pass",
+    "phases": [
+      {
+        "phase": "compile",
+        "command": [
+          "/home/USER/cs_sdk/cslc",
+          "layout.csl",
+          "--arch=wse3",
+          "--fabric-dims=15,10",
+          "--fabric-offsets=4,1",
+          "--memcpy",
+          "--channels=1",
+          "--width-west-buf=0",
+          "--width-east-buf=0",
+          "--out-routes",
+          "--params=S:8,N:64,K:64,R:1,AC:17,BC:192,OC:51,W:64",
+          "-o",
+          "out"
+        ],
+        "returncode": 0,
+        "wall_seconds": 5.525989708999987
+      },
+      {
+        "phase": "run",
+        "command": [
+          "/home/USER/cs_sdk/cs_python",
+          "host.py"
+        ],
+        "returncode": 0,
+        "wall_seconds": 432.38688799100055
+      }
+    ],
+    "case_sha256": "7f9e37a395ceb2c8b129510cce899ad067d1d9b9f6ff259f734781a705cc6175",
+    "queue_wait_seconds": 4.1900057112798095e-06,
+    "errors": [],
+    "elf_sha256": {
+      "out/bin/out_6_0.elf": "71fa62bb44908a0c3da5298859606067d756627254b21a01ddc9a9f29ee282fa",
+      "out/bin/out_4_0.elf": "2737b5867f983693533021797d1d6a5b59a7192251cb1499d5fcf3b3f90f1265",
+      "out/bin/out_1_0.elf": "f1495ef8c19890a6128a23e6669e6e9ab77c25e22c86e8d102d7448d77f3d07d",
+      "out/bin/out_3_0.elf": "9592cbb79ebeade8ffc182def09d1bfe6c5bfdb074da737da51167fad181ece0",
+      "out/bin/out_5_0.elf": "4d99f9516e985675c9563aeb51e03bceeeab70c06bfbbeb5cfc5708a144f5f64",
+      "out/bin/out_2_0.elf": "1392c4bee02279d7090373f2ea6e4d947879e422fdc2e6ba732685e22af91894",
+      "out/bin/out_0_0.elf": "636b3ba64bbd02862072eaa390c4e78055db1d677ec6bb6c90b706a9beda03c7",
+      "out/bin/out_8_0.elf": "9a9afeb3c1e2adcdc3e88696a34eca4dc419b6c9a416caa7393c7feb0e408c68",
+      "out/bin/out_7_0.elf": "f95a77ba47b339362b4cebca328858283ea59ec756bbd15c98dee3d874ff12ee",
+      "out/generated/default.elf": "3ac83e67e4cc3af62b76d1080fc013d22f5549f7b227c95e86501f6ba5346bf3",
+      "out/generated/MEMCPY_XY_ROUTES.elf": "433b0907e7d809212fcf5196a64cabbae9b80f95e9ac023c302a530b7c209d89",
+      "out/generated/coord.elf": "4c438368c489700be9499d3ff92ed66a337cfba3b6a39402d8aa1d842bb68498",
+      "out/east/bin/out_4_0.elf": "f96d286be0cdfdffc0c04964c3b711c593f4c4fecfe41f4055f84387a6648e13",
+      "out/east/bin/out_1_0.elf": "ff720a8a8b079dac45ae42f12a53a6082cd2ae84b6ca41444b9b337ad8e71971",
+      "out/east/bin/out_3_0.elf": "af356b46d2ca34548f7a8713b9a395b9fd89837478d0c6e6a3a26acaf06f19eb",
+      "out/east/bin/out_5_0.elf": "300319c2e65b97d52a07d8faa9102f2f61ebca19ee847ddf4caed4d1c156dcd9",
+      "out/east/bin/out_2_0.elf": "54a43adc2d55c2d3f51163797694bb223f4c681dd3f1f00836049fe009c4e5ac",
+      "out/east/bin/out_0_0.elf": "4711ff2fcacd36f5655ffff4d1d5d081d5135f6b03d718b64d365734d3d226ac",
+      "out/west/bin/out_6_0.elf": "fa7745fe85c64a40885f5f67155cd192b88671554f1db2698332c0a9733ec221",
+      "out/west/bin/out_4_0.elf": "f5c8c8326fc16c1a811e266aac02d2e7c9b311e833a4ab56ad01050ccfca90d6",
+      "out/west/bin/out_1_0.elf": "079fc7c120f555fd416019e8ce2f47357039173ba01bd4fa14051286a7ee2b06",
+      "out/west/bin/out_3_0.elf": "7609d740191803c7eda2e23f1ec343390408612e9ee1537a4545eeddc769931d",
+      "out/west/bin/out_5_0.elf": "bf00080f4bbe9bf96f11a58f4ea9eb70dd4aca14918aa630aaac62e41330d838",
+      "out/west/bin/out_2_0.elf": "6b3aa1f5289380f5896fc509a720064c5238a049f04ae91c74bfd332a97b5043",
+      "out/west/bin/out_0_0.elf": "805f4d6620d9191599a48528b4a5bac884a9785848a4f20df859141cb1ebe295",
+      "out/west/bin/out_7_0.elf": "f4002f98a3d3016ada152b5f5ecaa01e1c38b23c7ae25972b4a6b13e305c130c"
+    },
+    "source_sha256": {
+      "single_collective.csl": "95db24b1ca3fd7e9d868657d0c991e4d9d3ff4601b154caf8d394523a19870b7",
+      "pe.csl": "8cc560b7f7a1fe6660f222c15d6a7d72a98cb6d5029b6734240e14cce65d5011",
+      "case.json": "7f9e37a395ceb2c8b129510cce899ad067d1d9b9f6ff259f734781a705cc6175",
+      "layout.csl": "0f841665ca0ea9f9e420e1099e5629bb4ab5aca660b85ce6540899c6ebe03f51",
+      "inputs.py": "99916fee5949cfa4bb7efc89b2da16ece9806de175d9bae4254f8e6504e5be4e",
+      "host.py": "afc8b5cb8fe9d182c3d3225fbba533ba233dbdbc38e82340a3e5723fd4101055",
+      "observations.json": "71b7eef56264b58679d91615467c162f23513d7f36f2820ca14ded51cbad6e6f",
+      "sim_stats.json": "a50eaeba357a9a7bb51754ca911c70ac74db232f136daa75dcff56ac17f2a877",
+      "simconfig.json": "ac8861b1a0ab97042fb33484d83a4d3ef124877e9bef550a89a5efe1f6da2be3"
+    }
+  },
+  {
+    "case": "strong-m64-k64-n64-p64-d3-tiled",
+    "status": "pass",
+    "phases": [
+      {
+        "phase": "compile",
+        "command": [
+          "/home/USER/cs_sdk/cslc",
+          "layout.csl",
+          "--arch=wse3",
+          "--fabric-dims=15,10",
+          "--fabric-offsets=4,1",
+          "--memcpy",
+          "--channels=1",
+          "--width-west-buf=0",
+          "--width-east-buf=0",
+          "--out-routes",
+          "--params=S:8,N:64,K:64,R:1,AC:17,BC:192,OC:51,W:16",
+          "-o",
+          "out"
+        ],
+        "returncode": 0,
+        "wall_seconds": 5.224368520008284
+      },
+      {
+        "phase": "run",
+        "command": [
+          "/home/USER/cs_sdk/cs_python",
+          "host.py"
+        ],
+        "returncode": 0,
+        "wall_seconds": 392.6733831050078
+      }
+    ],
+    "case_sha256": "29f6ea611af9fcd8da2f76c673a4aff5350085f7c5352d253875f5f7094ae5e8",
+    "queue_wait_seconds": 3.84000304620713e-06,
+    "errors": [],
+    "elf_sha256": {
+      "out/bin/out_6_0.elf": "2264b3d24a78a6417875be61c865ffb2882b7485022678559e1badf22b181970",
+      "out/bin/out_4_0.elf": "6d5f7ebfc4b16a6672ac4095eff5b78e4e7be0cd252167d1616c9845360eb35f",
+      "out/bin/out_1_0.elf": "ab030f23d44ccf2caa6661007bbba44b046d6dc0ae14303252c7e34978c36726",
+      "out/bin/out_3_0.elf": "9fc0a4e22da807ecb99ea62e49e1120b6ea447251ac2539bec891404633cc809",
+      "out/bin/out_5_0.elf": "00cbbbdfba773e30cd86a6ac3706d4badd520901f00aa6e80338f8186ce790f6",
+      "out/bin/out_2_0.elf": "11c7839cd9daed628410ecb160acfd420fb5393598c58e6aae066dd2453058ee",
+      "out/bin/out_0_0.elf": "ecb5a0e8619772602d2309645dba740ea746b2c5c006498a5fb752e491d1252f",
+      "out/bin/out_8_0.elf": "3cdcb8249a90b2f7dab08a21dd46f278e5cfd2c5b8d562e3cd94cb2fe44e1b55",
+      "out/bin/out_7_0.elf": "447ffa43682a6d9e3eb8030926fae2a37c027d5d48ed3daecaa2fdc0589408a5",
+      "out/generated/default.elf": "3ac83e67e4cc3af62b76d1080fc013d22f5549f7b227c95e86501f6ba5346bf3",
+      "out/generated/MEMCPY_XY_ROUTES.elf": "433b0907e7d809212fcf5196a64cabbae9b80f95e9ac023c302a530b7c209d89",
+      "out/generated/coord.elf": "4c438368c489700be9499d3ff92ed66a337cfba3b6a39402d8aa1d842bb68498",
+      "out/east/bin/out_4_0.elf": "f96d286be0cdfdffc0c04964c3b711c593f4c4fecfe41f4055f84387a6648e13",
+      "out/east/bin/out_1_0.elf": "ff720a8a8b079dac45ae42f12a53a6082cd2ae84b6ca41444b9b337ad8e71971",
+      "out/east/bin/out_3_0.elf": "af356b46d2ca34548f7a8713b9a395b9fd89837478d0c6e6a3a26acaf06f19eb",
+      "out/east/bin/out_5_0.elf": "300319c2e65b97d52a07d8faa9102f2f61ebca19ee847ddf4caed4d1c156dcd9",
+      "out/east/bin/out_2_0.elf": "54a43adc2d55c2d3f51163797694bb223f4c681dd3f1f00836049fe009c4e5ac",
+      "out/east/bin/out_0_0.elf": "4711ff2fcacd36f5655ffff4d1d5d081d5135f6b03d718b64d365734d3d226ac",
+      "out/west/bin/out_6_0.elf": "fa7745fe85c64a40885f5f67155cd192b88671554f1db2698332c0a9733ec221",
+      "out/west/bin/out_4_0.elf": "f5c8c8326fc16c1a811e266aac02d2e7c9b311e833a4ab56ad01050ccfca90d6",
+      "out/west/bin/out_1_0.elf": "079fc7c120f555fd416019e8ce2f47357039173ba01bd4fa14051286a7ee2b06",
+      "out/west/bin/out_3_0.elf": "7609d740191803c7eda2e23f1ec343390408612e9ee1537a4545eeddc769931d",
+      "out/west/bin/out_5_0.elf": "bf00080f4bbe9bf96f11a58f4ea9eb70dd4aca14918aa630aaac62e41330d838",
+      "out/west/bin/out_2_0.elf": "6b3aa1f5289380f5896fc509a720064c5238a049f04ae91c74bfd332a97b5043",
+      "out/west/bin/out_0_0.elf": "805f4d6620d9191599a48528b4a5bac884a9785848a4f20df859141cb1ebe295",
+      "out/west/bin/out_7_0.elf": "f4002f98a3d3016ada152b5f5ecaa01e1c38b23c7ae25972b4a6b13e305c130c"
+    },
+    "source_sha256": {
+      "single_collective.csl": "95db24b1ca3fd7e9d868657d0c991e4d9d3ff4601b154caf8d394523a19870b7",
+      "pe.csl": "8cc560b7f7a1fe6660f222c15d6a7d72a98cb6d5029b6734240e14cce65d5011",
+      "case.json": "29f6ea611af9fcd8da2f76c673a4aff5350085f7c5352d253875f5f7094ae5e8",
+      "layout.csl": "0f841665ca0ea9f9e420e1099e5629bb4ab5aca660b85ce6540899c6ebe03f51",
+      "inputs.py": "99916fee5949cfa4bb7efc89b2da16ece9806de175d9bae4254f8e6504e5be4e",
+      "host.py": "afc8b5cb8fe9d182c3d3225fbba533ba233dbdbc38e82340a3e5723fd4101055",
+      "observations.json": "e1f4a8a4dcec4ef07e22a745d8dea9663bed06756313c29ddf74d29002d40e38",
+      "sim_stats.json": "38b670bb81560704b15928f5b903552a8f482f0ae3de4b8ef8035b7d79dfcfa3",
+      "simconfig.json": "ac8861b1a0ab97042fb33484d83a4d3ef124877e9bef550a89a5efe1f6da2be3"
+    }
+  },
+  {
+    "case": "weak-m256-k64-n64-p64-d3-full",
+    "status": "pass",
+    "phases": [
+      {
+        "phase": "compile",
+        "command": [
+          "/home/USER/cs_sdk/cslc",
+          "layout.csl",
+          "--arch=wse3",
+          "--fabric-dims=15,10",
+          "--fabric-offsets=4,1",
+          "--memcpy",
+          "--channels=1",
+          "--width-west-buf=0",
+          "--width-east-buf=0",
+          "--out-routes",
+          "--params=S:8,N:64,K:64,R:4,AC:12,BC:192,OC:36,W:64",
+          "-o",
+          "out"
+        ],
+        "returncode": 0,
+        "wall_seconds": 5.074345675006043
+      },
+      {
+        "phase": "run",
+        "command": [
+          "/home/USER/cs_sdk/cs_python",
+          "host.py"
+        ],
+        "returncode": 0,
+        "wall_seconds": 200.30267538399494
+      }
+    ],
+    "case_sha256": "f28b7148cbd4d272ec022169807cd2df9b726506f8908dade8136b6167b7cf9f",
+    "queue_wait_seconds": 9.089999366551638e-06,
+    "errors": [],
+    "elf_sha256": {
+      "out/bin/out_6_0.elf": "1e563a45d9bd04b7935520e35c2101b37457f749b622ebee69e06196fc9dc4ad",
+      "out/bin/out_4_0.elf": "3954fdb5f61a96c0e2d650b2ae9bdc37784b29067587a8eddc87c5faf6f71896",
+      "out/bin/out_1_0.elf": "96999561624d6a948714376d08cb59d0f74b6ae153e531de590736c5dffea3ec",
+      "out/bin/out_3_0.elf": "1ebdacb408ecd8166473e82708509ac0bfc39f70ca3b5bb4487d06ff8605c6fe",
+      "out/bin/out_5_0.elf": "549304a2aa7df34951db512b7cee80fd66897fde36c991494510205f5c60dcdd",
+      "out/bin/out_2_0.elf": "f2e36671e7ca469ef28c7c53ba2abce9bc95c599bc1e59adf86e8c235fbeaef4",
+      "out/bin/out_0_0.elf": "33c86354d12cfb68d4ddfdb59e41ab76e8117e5cbb87b2f749dbcc44f100ab50",
+      "out/bin/out_8_0.elf": "5f4b4d30b34128269eee20c75c6961a5098da998d8c0d878bd94e65d7c5b1edf",
+      "out/bin/out_7_0.elf": "7c821282279d6fc8fd4fe37f7aa57bcd0eabc503fbc90ddf69032c8d758dc34f",
+      "out/generated/default.elf": "3ac83e67e4cc3af62b76d1080fc013d22f5549f7b227c95e86501f6ba5346bf3",
+      "out/generated/MEMCPY_XY_ROUTES.elf": "433b0907e7d809212fcf5196a64cabbae9b80f95e9ac023c302a530b7c209d89",
+      "out/generated/coord.elf": "4c438368c489700be9499d3ff92ed66a337cfba3b6a39402d8aa1d842bb68498",
+      "out/east/bin/out_4_0.elf": "f96d286be0cdfdffc0c04964c3b711c593f4c4fecfe41f4055f84387a6648e13",
+      "out/east/bin/out_1_0.elf": "ff720a8a8b079dac45ae42f12a53a6082cd2ae84b6ca41444b9b337ad8e71971",
+      "out/east/bin/out_3_0.elf": "af356b46d2ca34548f7a8713b9a395b9fd89837478d0c6e6a3a26acaf06f19eb",
+      "out/east/bin/out_5_0.elf": "300319c2e65b97d52a07d8faa9102f2f61ebca19ee847ddf4caed4d1c156dcd9",
+      "out/east/bin/out_2_0.elf": "54a43adc2d55c2d3f51163797694bb223f4c681dd3f1f00836049fe009c4e5ac",
+      "out/east/bin/out_0_0.elf": "4711ff2fcacd36f5655ffff4d1d5d081d5135f6b03d718b64d365734d3d226ac",
+      "out/west/bin/out_6_0.elf": "fa7745fe85c64a40885f5f67155cd192b88671554f1db2698332c0a9733ec221",
+      "out/west/bin/out_4_0.elf": "f5c8c8326fc16c1a811e266aac02d2e7c9b311e833a4ab56ad01050ccfca90d6",
+      "out/west/bin/out_1_0.elf": "079fc7c120f555fd416019e8ce2f47357039173ba01bd4fa14051286a7ee2b06",
+      "out/west/bin/out_3_0.elf": "7609d740191803c7eda2e23f1ec343390408612e9ee1537a4545eeddc769931d",
+      "out/west/bin/out_5_0.elf": "bf00080f4bbe9bf96f11a58f4ea9eb70dd4aca14918aa630aaac62e41330d838",
+      "out/west/bin/out_2_0.elf": "6b3aa1f5289380f5896fc509a720064c5238a049f04ae91c74bfd332a97b5043",
+      "out/west/bin/out_0_0.elf": "805f4d6620d9191599a48528b4a5bac884a9785848a4f20df859141cb1ebe295",
+      "out/west/bin/out_7_0.elf": "f4002f98a3d3016ada152b5f5ecaa01e1c38b23c7ae25972b4a6b13e305c130c"
+    },
+    "source_sha256": {
+      "single_collective.csl": "95db24b1ca3fd7e9d868657d0c991e4d9d3ff4601b154caf8d394523a19870b7",
+      "pe.csl": "8cc560b7f7a1fe6660f222c15d6a7d72a98cb6d5029b6734240e14cce65d5011",
+      "case.json": "f28b7148cbd4d272ec022169807cd2df9b726506f8908dade8136b6167b7cf9f",
+      "layout.csl": "0f841665ca0ea9f9e420e1099e5629bb4ab5aca660b85ce6540899c6ebe03f51",
+      "inputs.py": "99916fee5949cfa4bb7efc89b2da16ece9806de175d9bae4254f8e6504e5be4e",
+      "host.py": "afc8b5cb8fe9d182c3d3225fbba533ba233dbdbc38e82340a3e5723fd4101055",
+      "observations.json": "7b7ee012f2afc46c84cf2ed2dd8dc8b9095feec5876c553d369baa772d069ce1",
+      "sim_stats.json": "1209b4033601b28e94a990749742eb397d59e2635590cba1aff926a187b40702",
+      "simconfig.json": "ac8861b1a0ab97042fb33484d83a4d3ef124877e9bef550a89a5efe1f6da2be3"
+    }
+  }
+]

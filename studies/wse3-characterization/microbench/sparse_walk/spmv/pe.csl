@@ -1,0 +1,155 @@
+// SpMV-RowBlock compute (hand-written reference): y_block = A_block * x on a 1 x P strip.
+//
+// PE 0 holds x (from the host) and broadcasts it east on color C_X; every other PE
+// receives x from the fabric into its own copy, then each PE runs the textbook scalar
+// CSR loop over its nrows_pe local rows (global column indices, gathered x). Timing is
+// device-internal (protocol device_internal_v2): f_tic_dev() opens the window at the
+// start of the launched entry point, f_toc_dev() closes it right before the host is
+// unblocked; the host takes max(end) - min(start) over the strip.
+// SDK 2.10-native syntax (untyped memcpy params); compiles on SDK 1.4 as well.
+
+param memcpy_params;
+
+param P: i16;
+param px: i16;
+param nrows_pe: u16;
+param ncols: u16;
+param max_nnz_pe: u16;
+param iters: u16;
+param structure_id: u16;
+param C_X: color;
+
+const EXIT: local_task_id = @get_local_task_id(9);
+const COMPUTE: local_task_id = @get_local_task_id(10);
+
+const sys_mod = @import_module("<memcpy/memcpy>", memcpy_params);
+const timestamp = @import_module("<time>");
+
+var tscStartBuffer = @zeros([timestamp.tsc_size_words]u16);
+var tscEndBuffer   = @zeros([timestamp.tsc_size_words]u16);
+var time_buf_u16   = @zeros([timestamp.tsc_size_words * 2]u16);
+var ptr_time_buf_u16: [*]u16 = &time_buf_u16;
+
+// Local CSR slice (rows of this PE), x (full), y slice. Host fills / reads via memcpy.
+var row_ptr_array = @zeros([nrows_pe + 1]u32);
+var col_idx_array = @zeros([max_nnz_pe]u32);
+var val_array     = @zeros([max_nnz_pe]f32);
+var x_array       = @zeros([ncols]f32);
+var y_array       = @zeros([nrows_pe]f32);
+
+var ptr_row_ptr: [*]u32 = &row_ptr_array;
+var ptr_col_idx: [*]u32 = &col_idx_array;
+var ptr_val:     [*]f32 = &val_array;
+var ptr_x:       [*]f32 = &x_array;
+var ptr_y:       [*]f32 = &y_array;
+
+// x as a stream: PE 0 sends it, the others receive it, ncols wavelets on C_X.
+const x_dsd     = @get_dsd(mem1d_dsd, .{ .tensor_access = |i|{ncols} -> x_array[i] });
+const fab_x_out = @get_dsd(fabout_dsd, .{ .extent = ncols, .fabric_color = C_X, .output_queue = @get_output_queue(2) });
+const fab_x_in  = @get_dsd(fabin_dsd,  .{ .extent = ncols, .fabric_color = C_X, .input_queue  = @get_input_queue(2) });
+
+// One CSR pass over the local rows: y[r] = sum_j val[j] * x[col_idx[j]].
+fn spmv_rows() void {
+  var r: u16 = 0;
+  while (r < nrows_pe) : (r += 1) {
+    const start: u32 = row_ptr_array[r];
+    const end:   u32 = row_ptr_array[r + 1];
+    var sum: f32 = 0.0;
+    var j: u32 = start;
+    while (j < end) : (j += 1) {
+      const c: u32 = col_idx_array[j];
+      sum += val_array[j] * x_array[c];
+    }
+    y_array[r] = sum;
+  }
+}
+
+// Entry point (host-launched): stamp, distribute x, then compute.
+fn main() void {
+  f_tic_dev();
+  if (P == 1) {
+    @activate(COMPUTE);
+  } else if (px == 0) {
+    @fmovs(fab_x_out, x_dsd, .{ .async = true });     // broadcast x east; local compute may start now
+    @activate(COMPUTE);
+  } else {
+    @fmovs(x_dsd, fab_x_in, .{ .async = true, .activate = COMPUTE });   // compute once x has arrived
+  }
+}
+
+task compute() void {
+  for (@range(u16, iters)) |_| {
+    spmv_rows();
+  }
+  @activate(EXIT);
+}
+
+task f_exit() void {
+  f_toc_dev();
+  sys_mod.unblock_cmd_stream();
+}
+
+fn f_enable_timer() void {
+  timestamp.enable_tsc();
+  sys_mod.unblock_cmd_stream();
+}
+
+// Device-internal timing window (protocol device_internal_v2). The start stamp
+// is taken inside the launched entry point and the end stamp in the completion
+// task, so the host RPC between separately launched f_tic/f_toc (~488 us per
+// launch on WSE-3 hardware) is no longer inside the measured window. f_tic and
+// f_toc stay exported for backward compatibility; the runner no longer launches
+// them. Both helpers are FROZEN (body and call sites) by the contract check.
+var tsc_window_open: bool = false;
+fn f_tic_dev() void {
+  if (!tsc_window_open) {
+    tsc_window_open = true;
+    timestamp.get_timestamp(&tscStartBuffer);
+  }
+}
+fn f_toc_dev() void {
+  timestamp.get_timestamp(&tscEndBuffer);
+}
+
+fn f_tic() void {
+  timestamp.get_timestamp(&tscStartBuffer);
+  sys_mod.unblock_cmd_stream();
+}
+
+fn f_toc() void {
+  timestamp.get_timestamp(&tscEndBuffer);
+  sys_mod.unblock_cmd_stream();
+}
+
+fn f_memcpy_timestamps() void {
+  time_buf_u16[0] = tscStartBuffer[0];
+  time_buf_u16[1] = tscStartBuffer[1];
+  time_buf_u16[2] = tscStartBuffer[2];
+  time_buf_u16[3] = tscEndBuffer[0];
+  time_buf_u16[4] = tscEndBuffer[1];
+  time_buf_u16[5] = tscEndBuffer[2];
+  sys_mod.unblock_cmd_stream();
+}
+
+comptime {
+  @comptime_assert(structure_id < 8);            // consumed here; the host reads it from out.json
+  @bind_local_task(compute, COMPUTE);
+  @bind_local_task(f_exit, EXIT);
+
+  if (P > 1 and @is_arch("wse3")) {
+    @initialize_queue(@get_output_queue(2), .{ .color = C_X });
+    @initialize_queue(@get_input_queue(2),  .{ .color = C_X });
+  }
+
+  @export_symbol(ptr_row_ptr, "row_ptr");
+  @export_symbol(ptr_col_idx, "col_idx");
+  @export_symbol(ptr_val,     "val");
+  @export_symbol(ptr_x,       "x");
+  @export_symbol(ptr_y,       "y");
+  @export_symbol(ptr_time_buf_u16, "time_buf_u16");
+  @export_symbol(main);
+  @export_symbol(f_tic);
+  @export_symbol(f_toc);
+  @export_symbol(f_memcpy_timestamps);
+  @export_symbol(f_enable_timer);
+}

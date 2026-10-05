@@ -1,0 +1,94 @@
+{
+  "baselines": {
+    "RowScale-CSR": {
+      "prev_baseline": {
+        "cycles_send": null,
+        "time_send_us": null,
+        "timing_protocol": "host_launched_tic_toc"
+      },
+      "cycles_send": 45868,
+      "time_send_us": 53.9624,
+      "timing_protocol": "in_kernel_tsc",
+      "measured_on": "2026-09-16",
+      "sdk_root": "/software/cerebras/cs_sdk-2.10"
+    },
+    "ColScale-CSR": {
+      "prev_baseline": {
+        "cycles_send": null,
+        "time_send_us": null,
+        "timing_protocol": "host_launched_tic_toc"
+      },
+      "cycles_send": 53329,
+      "time_send_us": 62.74,
+      "timing_protocol": "in_kernel_tsc",
+      "measured_on": "2026-09-16",
+      "sdk_root": "/software/cerebras/cs_sdk-2.10"
+    },
+    "RowReduce-CSR": {
+      "prev_baseline": {
+        "cycles_send": null,
+        "time_send_us": null,
+        "timing_protocol": "host_launched_tic_toc"
+      },
+      "cycles_send": 41067,
+      "time_send_us": 48.3141,
+      "timing_protocol": "in_kernel_tsc",
+      "measured_on": "2026-09-16",
+      "sdk_root": "/software/cerebras/cs_sdk-2.10"
+    },
+    "SpGEMM-Masked-Dot": {
+      "prev_baseline": {
+        "cycles_send": null,
+        "time_send_us": null,
+        "timing_protocol": "host_launched_tic_toc"
+      },
+      "cycles_send": 260903,
+      "time_send_us": 306.9447,
+      "timing_protocol": "in_kernel_tsc",
+      "measured_on": "2026-09-16",
+      "sdk_root": "/software/cerebras/cs_sdk-2.10"
+    },
+    "SpMV-RowBlock": {
+      "prev_baseline": {
+        "cycles_send": null,
+        "time_send_us": null,
+        "timing_protocol": "host_launched_tic_toc"
+      },
+      "cycles_send": 37330,
+      "time_send_us": 43.9176,
+      "timing_protocol": "device_internal_v2",
+      "measured_on": "2026-09-16",
+      "sdk_root": "/software/cerebras/cs_sdk-2.10"
+    },
+    "SpMM-CSR-Dense": {
+      "prev_baseline": {
+        "cycles_send": null,
+        "time_send_us": null,
+        "timing_protocol": "host_launched_tic_toc"
+      },
+      "cycles_send": 106606,
+      "time_send_us": 125.4188,
+      "timing_protocol": "device_internal_v2",
+      "measured_on": "2026-09-16",
+      "sdk_root": "/software/cerebras/cs_sdk-2.10"
+    },
+    "SpMV-CSR": {
+      "prev_baseline": {
+        "cycles_send": 6927,
+        "time_send_us": null,
+        "timing_protocol": "in_kernel_tsc",
+        "sdk_version": "1.4.0",
+        "note": "the spec's wse3_reference is the SDK 1.4 count"
+      },
+      "cycles_send": 7429,
+      "time_send_us": 8.74,
+      "timing_protocol": "in_kernel_tsc",
+      "measured_on": "2026-09-16",
+      "sdk_root": "/software/cerebras/cs_sdk-2.10",
+      "note": "same source, SDK 2.10 simulator (3 identical runs; the appliance simulator also reports 7,429)"
+    }
+  },
+  "_meta": {
+    "sdk_version": "2.10"
+  }
+}

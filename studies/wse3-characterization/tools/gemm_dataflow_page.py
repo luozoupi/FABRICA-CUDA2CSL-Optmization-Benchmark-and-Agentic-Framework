@@ -1,0 +1,569 @@
+#!/usr/bin/env python3
+"""Render 'Where the Operands Live': GEMM dataflow on the wafer, documented vs measured.
+
+Inputs (nothing typed by hand):
+  results/datapath/meshgemm_steps.json     verified reconstruction of MeshGEMM
+  results/datapath/meshgemv_allreduce.json MeshGEMV reduce/broadcast tree from the trace
+  results/datapath/gemm_dataflow.json      per-colour packet counts from the traces
+HC2022 facts are quoted from the slides and labelled `documented`.
+"""
+from __future__ import annotations
+import datetime as dt, json
+from pathlib import Path
+
+S = Path(__file__).resolve().parent.parent
+G = json.loads((S / "results/datapath/meshgemm_steps.json").read_text())
+V = json.loads((S / "results/datapath/meshgemv_allreduce.json").read_text())
+F = json.loads((S / "results/datapath/gemm_dataflow.json").read_text())
+P = G["P"]; send = G["ring_successor"]; ind = G["w_offset_ind"]
+recv = [send.index(p) for p in range(P)]
+
+# ---- MeshGEMM initial X skew, from init_task: x_shift_step and x_shift_reverse by row parity
+def skew(py):
+    return (py // 2, True) if py % 2 == 0 else ((py + 1) // 2, False)
+skews = []
+for py in range(P):
+    n, rev = skew(py)
+    k = list(range(P))
+    for _ in range(n):
+        # forward: position p takes the tile of recv[p]; reverse: takes the tile of send[p]
+        k = [k[send[p]] if rev else k[recv[p]] for p in range(P)]
+    assert k == [ind[py][px] for px in range(P)], (py, k, ind[py])
+    skews.append({"row": py, "shifts": n, "reverse": rev, "after": k})
+
+gm = F["WaferLLM-MeshGEMM"]["colours"]
+xpk = sum(gm[str(c)]["packets"] for c in (1, 2, 3))
+wpk = sum(gm[str(c)]["packets"] for c in (4, 5, 6))
+one = gm["1"]["packets"]; two = gm["2"]["packets"] + gm["3"]["packets"]
+skp = sum(gm[str(c)]["packets"] for c in (7, 8, 9, 12, 13, 16))
+bc = next(s for s in V if s["colour"] == 9)
+O = json.loads((S / "results/datapath/meshgemm_outer_runs.json").read_text())
+orun_pes = len(O["pes"])
+orun_all16 = all(set(v["interior_run_lengths"]) == {"16"} for v in O["pes"].values())
+orun_n = sum(sum(v["interior_run_lengths"].values()) for v in O["pes"].values())
+assert orun_all16, O
+
+PAY = {"P": P, "send": send, "ind": ind, "steps": G["steps"], "skews": skews,
+       "gemv": V, "counts": {"x": xpk, "w": wpk, "one": one, "two": two, "skew": skp,
+                             "bc_packets": bc["row_paths"][0]["packets"],
+                             "bc_pes": len(bc["row_paths"][0]["rows"])}}
+fm = lambda n: f"{n:,}"
+
+HTML = f"""<title>Where the Operands Live</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chivo:wght@700;900&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+:root{{--bg:#F4F6FA;--pan:#FFF;--pan2:#EDF0F6;--ln:#D8DEEA;--ink:#121826;--ink2:#37415A;--dim:#5E6B85;
+ --x:#2D5FA8;--w:#B55C05;--c:#07766C;--tr:#8A97AF;--bad:#B3282C;
+ --sh:0 1px 0 rgba(255,255,255,.6),0 6px 18px rgba(20,30,60,.08)}}
+@media (prefers-color-scheme:dark){{:root:not([data-theme="light"]){{--bg:#111826;--pan:#1A2233;--pan2:#141B2A;
+ --ln:#2B364C;--ink:#E4EAF5;--ink2:#B4C0D4;--dim:#8593AD;--x:#7FB0FF;--w:#FFB454;--c:#4FD1C5;--tr:#6A7891;
+ --bad:#F2686B;--sh:0 1px 0 rgba(255,255,255,.03),0 8px 24px rgba(0,0,0,.45)}}}}
+:root[data-theme="dark"]{{--bg:#111826;--pan:#1A2233;--pan2:#141B2A;--ln:#2B364C;--ink:#E4EAF5;--ink2:#B4C0D4;
+ --dim:#8593AD;--x:#7FB0FF;--w:#FFB454;--c:#4FD1C5;--tr:#6A7891;--bad:#F2686B;
+ --sh:0 1px 0 rgba(255,255,255,.03),0 8px 24px rgba(0,0,0,.45)}}
+*{{box-sizing:border-box}}
+body{{background:var(--bg);color:var(--ink);font-family:"IBM Plex Sans",system-ui,sans-serif;font-size:15px;
+ line-height:1.56;-webkit-font-smoothing:antialiased}}
+.wrap{{max-width:1240px;margin:0 auto;padding:0 20px 72px}}
+h1,h2,h3{{font-family:Chivo,sans-serif;margin:0;text-wrap:balance}}
+h1{{font-weight:900;font-size:clamp(29px,3.8vw,48px);letter-spacing:-.025em;line-height:1.03}}
+h2{{font-weight:900;font-size:24px;letter-spacing:-.02em;margin:48px 0 11px}}
+h3{{font-weight:700;font-size:16px;margin:22px 0 7px}}
+p{{max-width:72ch;color:var(--ink2);margin:0 0 12px}}
+code{{font-family:"IBM Plex Mono",monospace;font-size:.88em;background:var(--pan2);border:1px solid var(--ln);
+ border-radius:2px;padding:1px 5px}}
+header{{padding:32px 0 18px;border-bottom:1px solid var(--ln)}}
+header p{{font-size:16px;max-width:70ch;margin-top:11px}}
+.kpi{{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:1px;background:var(--ln);
+ border:1px solid var(--ln);border-radius:3px;margin:24px 0 6px;overflow:hidden}}
+.kpi div{{background:var(--pan);padding:14px 16px}}
+.kpi b{{display:block;font-family:"IBM Plex Mono",monospace;font-size:25px;font-weight:600;line-height:1;
+ letter-spacing:-.02em}}
+.kpi span{{display:block;font-size:11.5px;color:var(--dim);margin-top:6px;line-height:1.4}}
+.key{{display:flex;flex-wrap:wrap;gap:16px;margin:14px 0 0;font-family:"IBM Plex Mono",monospace;font-size:11.5px;
+ color:var(--ink2)}}
+.key i{{display:inline-block;width:11px;height:11px;border-radius:2px;margin-right:6px;vertical-align:-1px}}
+.tabs{{display:flex;flex-wrap:wrap;gap:5px;margin:16px 0 0}}
+.tabs button{{font-family:"IBM Plex Mono",monospace;font-size:12px;padding:7px 12px;border:1px solid var(--ln);
+ background:var(--pan);color:var(--ink2);border-radius:2px;cursor:pointer}}
+.tabs button:hover{{border-color:var(--ink2)}}
+.tabs button[aria-pressed="true"]{{background:var(--ink);border-color:var(--ink);color:var(--bg);font-weight:600}}
+.ev{{font-family:"IBM Plex Mono",monospace;font-size:9.5px;letter-spacing:.08em;text-transform:uppercase;
+ padding:2px 7px;border-radius:2px;border:1px solid currentColor;white-space:nowrap}}
+.ev.doc{{color:var(--w)}} .ev.meas{{color:var(--c)}} .ev.src{{color:var(--x)}}
+figure{{margin:14px 0 8px;background:var(--pan);border:1px solid var(--ln);border-radius:3px;padding:14px 14px 12px;
+ box-shadow:var(--sh);overflow-x:auto}}
+figure svg{{display:block;width:100%;height:auto;color:var(--ink)}}
+figcaption{{font-size:12.5px;color:var(--dim);margin-top:11px;max-width:86ch}}
+.stage{{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,.75fr);gap:14px;margin-top:12px}}
+@media (max-width:960px){{.stage{{grid-template-columns:1fr}}}}
+.card{{background:var(--pan);border:1px solid var(--ln);border-radius:3px;padding:14px 15px;box-shadow:var(--sh);min-width:0}}
+.eyebrow{{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.13em;text-transform:uppercase;
+ color:var(--dim);margin:0 0 9px}}
+.ctl{{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:12px 0 4px}}
+.ctl button{{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.07em;text-transform:uppercase;
+ padding:6px 12px;border:1px solid var(--ln);background:var(--pan2);color:var(--ink2);border-radius:2px;cursor:pointer}}
+.ctl button.p{{background:var(--ink);border-color:var(--ink);color:var(--bg);font-weight:600;min-width:72px}}
+.phase{{font-family:"IBM Plex Mono",monospace;font-size:11.5px;color:var(--dim);margin-left:auto}}
+.cap h3{{margin:2px 0 7px}}
+.cap p{{font-size:13.5px}}
+.movelist{{font-family:"IBM Plex Mono",monospace;font-size:11.5px;color:var(--ink2);margin:8px 0 0;padding:0;list-style:none}}
+.movelist li{{padding:3px 0;border-bottom:1px dotted var(--ln)}}
+.tw{{overflow-x:auto;margin:14px 0}}
+table.res{{border-collapse:collapse;width:100%;font-size:13px;min-width:760px}}
+table.res th,table.res td{{text-align:left;padding:8px 14px 8px 0;border-bottom:1px solid var(--ln);vertical-align:top}}
+table.res th{{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;
+ color:var(--dim);font-weight:500}}
+table.res td:first-child{{font-weight:600;color:var(--ink)}}
+.note{{background:var(--pan);border:1px solid var(--ln);border-left:2px solid var(--bad);border-radius:0 3px 3px 0;
+ padding:13px 16px;margin:16px 0}}
+.note h3{{margin:0 0 6px;font-size:12px;font-family:"IBM Plex Mono",monospace;letter-spacing:.1em;
+ text-transform:uppercase;color:var(--bad)}}
+.note p{{font-size:13.5px;margin:0 0 8px}} .note p:last-child{{margin:0}}
+tr.forms td{{background:color-mix(in srgb,var(--ink) 4%,transparent)}}
+a.go{{display:block;color:var(--ink2);text-decoration:none;border-left:2px solid var(--ln);padding:3px 0 3px 9px;
+ margin:0 0 7px;border-radius:0 2px 2px 0}}
+a.go:hover{{border-left-color:var(--ink);background:var(--pan2);color:var(--ink)}}
+a.go::after{{content:" \\2197";font-size:11px;color:var(--dim)}}
+a.go b{{color:var(--ink)}}
+.form{{font-size:12.5px;border-top:1px dotted var(--ln);padding-top:8px;margin-top:10px}}
+.form a{{color:var(--ink);font-weight:600}}
+.flash{{animation:flash 1.4s ease-out 1}}
+@keyframes flash{{0%{{box-shadow:0 0 0 3px var(--ink)}}100%{{box-shadow:var(--sh)}}}}
+footer{{margin-top:52px;padding-top:17px;border-top:1px solid var(--ln);font-family:"IBM Plex Mono",monospace;
+ font-size:11px;color:var(--dim)}}
+:focus-visible{{outline:2px solid var(--ink);outline-offset:2px}}
+@media (prefers-reduced-motion:reduce){{*{{animation:none!important;transition:none!important}}}}
+</style>
+
+<div class="wrap">
+<header>
+  <h1>Where the Operands Live</h1>
+  <p>How a Cerebras wafer multiplies matrices: which tensor stays put in which part of a
+     processing element, which one travels, how the matrices are cut into tiles and spread across
+     the mesh, and where partial sums meet. Three dataflows side by side &mdash; the one Cerebras
+     described at Hot Chips 2022, and the two WaferLLM kernels this study traced on WSE-3.</p>
+  <div class="key">
+    <span><i style="background:var(--x)"></i>X &middot; activations &middot; left matrix</span>
+    <span><i style="background:var(--w)"></i>W &middot; weights &middot; right matrix</span>
+    <span><i style="background:var(--c)"></i>C &middot; outputs &middot; partial sums</span>
+    <span><span class="ev doc">documented</span> Hot Chips 2022, WSE-2</span>
+    <span><span class="ev src">source</span> WaferLLM code, verified</span>
+    <span><span class="ev meas">measured</span> WSE-3 simulator trace</span>
+  </div>
+</header>
+
+<div class="kpi">
+  <div><b style="color:var(--c)">0</b><span>packets carrying C in MeshGEMM &mdash; the output never moves</span></div>
+  <div><b style="color:var(--x)">&le; 2 hops</b><span>longest link in MeshGEMM's folded ring, for any mesh size</span></div>
+  <div><b style="color:var(--w)">{PAY['counts']['bc_pes']} PEs</b><span>reached by each MeshGEMV result packet &mdash; one hardware multicast per column</span></div>
+  <div><b>2R + 1W</b><span>SRAM reads and writes per cycle: sized for one memory-to-memory FMA</span></div>
+</div>
+
+<h2>Inside one processing element</h2>
+<p>Every GEMM on this machine comes down to one instruction, and the only question a dataflow
+answers is where each of its operands comes from. The FMA computes
+<code>dest = src0 + src1 &times; src2</code>: <code>src0</code> and <code>dest</code> are the
+accumulator, a vector in memory; <code>src1</code> is a second vector streamed from memory; and
+<code>src2</code> is a <strong>single scalar broadcast to every lane</strong>. The three schemes
+fill those three slots differently.</p>
+<div class="tabs" id="petabs"></div>
+<figure id="pefig"><svg id="pesvg" viewBox="0 0 940 430" role="img" aria-label=""></svg>
+<figcaption id="pecap"></figcaption></figure>
+
+<h2>Across the mesh</h2>
+<p>Step through each scheme on a 4&times;4 block of processing elements. Every cell is one PE and
+shows the tiles it holds; arrows are the fabric traffic of that phase, in the colour of the tensor
+they carry. For MeshGEMM the side panel shows the same step in the global matrices, so you can
+watch one output block collect its four terms.</p>
+<div class="tabs" id="mtabs"></div>
+<div class="stage" id="meshfig">
+  <div class="card">
+    <div class="ctl">
+      <button class="p" id="play">Play</button><button id="back">&larr;</button><button id="fwd">&rarr;</button>
+      <span class="phase" id="phase"></span>
+    </div>
+    <svg id="mesh" viewBox="0 0 600 600" role="img" aria-label=""></svg>
+  </div>
+  <div class="card cap">
+    <p class="eyebrow" id="capev"></p>
+    <h3 id="captitle"></h3>
+    <p id="captext"></p>
+    <p class="form" id="capform"></p>
+    <ul class="movelist" id="moves"></ul>
+    <div id="glob"></div>
+  </div>
+</div>
+
+<h2>The three dataflows compared</h2>
+<div class="tw"><table class="res">
+<thead><tr><th></th><th>Hot Chips 2022 weight streaming <span class="ev doc">documented</span></th>
+<th>WaferLLM MeshGEMM <span class="ev meas">measured</span></th><th>WaferLLM MeshGEMV <span class="ev meas">measured</span></th></tr></thead>
+<tbody>
+<tr><td>Stationary on the PE</td><td>Activations, sliced over the whole wafer</td><td>The output block C</td><td>The weight block W, and the x slice</td></tr>
+<tr><td>Travels on the fabric</td><td>Weights, streamed in from off-wafer MemoryX</td><td>Both X and W, one tile per step</td><td>Only partial and final results</td></tr>
+<tr><td>How inputs reach the PEs</td><td>A row of weights broadcast over a column of cores</td><td>Point-to-point shifts on a folded ring, &le;&nbsp;2 hops</td><td>Loaded once by the host; x is replicated per row by memcpy, not by the fabric</td></tr>
+<tr><td>FMA scalar <code>src2</code></td><td>A weight arriving on the fabric; its arrival triggers the FMAC</td><td>A W element read from local SRAM by <code>@map</code></td><td>An x element read from local SRAM by <code>@map</code></td></tr>
+<tr><td>FMA vector <code>src1</code></td><td>A local column of activations</td><td>A column of the local X tile</td><td>A row of the local W tile</td></tr>
+<tr><td>Accumulator <code>dest/src0</code></td><td>Partial sums in the 256&nbsp;B software cache</td><td>A column of the local C tile, in SRAM</td><td>The local partial y, in SRAM</td></tr>
+<tr><td>Cross-PE reduction</td><td>Partial sums reduced over rows of cores in a ring</td><td>None &mdash; each PE owns its C block outright</td><td>Two-stage reduce down each column</td></tr>
+<tr><td>Hardware multicast</td><td>Yes, for weights</td><td>No</td><td>Yes, for the result: one packet reaches all four rows</td></tr>
+<tr id="forms" class="forms"><td>Inner or outer product?</td>
+<td><a class="go" href="#pefig" data-pe="hc"><b>Inside a PE: outer product.</b> Each weight is one AXPY into the accumulators</a>
+    <a class="go" href="#meshfig" data-go="hc:psum"><b>Across PEs: inner product in space.</b> K is split along a row and the partial sums are ring-reduced</a></td>
+<td><a class="go" href="#pefig" data-pe="gemm"><b>Inside a PE: outer product.</b> For each k, 16 FMACHs share one X column, a rank-1 update of the C tile</a>
+    <a class="go" href="#meshfig" data-go="gemm:step1"><b>Across PEs: inner product in time.</b> C stays put and each step adds one k-block term; nothing is reduced</a></td>
+<td><a class="go" href="#pefig" data-pe="gemv"><b>Inside a PE: outer product</b>, the AXPY form of GEMV: y += x[k] &middot; W[k,:]</a>
+    <a class="go" href="#meshfig" data-go="gemv:reduce1"><b>Across PEs: inner product in space.</b> K is split down each column and reduced in two stages</a></td></tr>
+<tr><td>Weights stored?</td><td>Never, not even temporarily</td><td>Yes, double-buffered</td><td>Yes, permanently</td></tr>
+<tr><td>Zero skipping</td><td>Zero weights are never streamed</td><td>No, dense</td><td>No, dense</td></tr>
+</tbody></table></div>
+<p>On the inner-or-outer question all three agree, and it is the same split cuBLAS uses: an
+<strong>outer product inside each PE</strong> and an <strong>inner product across PEs</strong>. The
+first is forced by the instruction &mdash; one scalar port and two vector ports leave no way to
+issue a dot product &mdash; so every scheme picks a scalar to broadcast and a vector to stream.
+Where they part ways is the sum over k: MeshGEMM performs it over time on one PE, so no partial
+sum ever crosses the fabric, while MeshGEMV and the Hot Chips design spread K across PEs and pay
+for a reduction. Each half of that row opens the matching view.</p>
+<p>They are three answers to one problem. Keeping the <em>output</em> still (MeshGEMM) needs no
+reduction but moves both inputs every step. Keeping the <em>weights</em> still (MeshGEMV) moves
+nothing until the end, then pays for a reduction and a broadcast. Keeping the <em>activations</em>
+still (Hot Chips) lets weights flow through without ever being stored, which is what lets one
+wafer run models far larger than its memory &mdash; at the price of a reduction on every output.</p>
+
+<h2>How each claim is known</h2>
+<div class="tw"><table class="res">
+<thead><tr><th>Claim</th><th>Evidence</th><th>Where</th></tr></thead>
+<tbody>
+<tr><td>FMA is <code>dest = src0 + src1 &times; src2</code>, <code>src2</code> one broadcast scalar</td><td><span class="ev meas">measured</span> <span class="ev doc">documented</span></td><td>2,816 lane records; 165 discriminating records all match one rounding. Slide 11: <code>fmach [fpsum] = [fpsum], [fwd_wgt], r_in</code></td></tr>
+<tr><td>8 lanes &times; 16 bit on WSE-3; 4 &times; 16 bit on WSE-2</td><td><span class="ev meas">measured</span> <span class="ev doc">documented</span></td><td>An 8-element <code>ADD16.NF</code> retires 8 lanes in one cycle, every lane's arithmetic checked. Slide 11: "64b datapath with 4x FP16 FMACs"</td></tr>
+<tr><td>SRAM gives 2 reads + 1 write per cycle; accumulators get a 256&nbsp;B software cache</td><td><span class="ev doc">documented</span></td><td>Slide 9, WSE-2. The measured accumulator round-trip through memory is consistent with it (20 of 20 steps)</td></tr>
+<tr><td>MeshGEMM keeps C still and shifts X along rows, W along columns</td><td><span class="ev src">source</span> <span class="ev meas">measured</span></td><td>Reconstruction computes C = X&middot;W exactly for P = 3&ndash;12. In the trace: {fm(xpk)} X packets east/west only, {fm(wpk)} W packets north/south only, 0 carrying C</td></tr>
+<tr><td>Every ring link is 1 or 2 hops, half of each for P = 4</td><td><span class="ev src">source</span> <span class="ev meas">measured</span></td><td><code>assignId</code> ring 0&rarr;2&rarr;3&rarr;1&rarr;0 predicts equal counts; measured {fm(one)} one-hop and {fm(two)} two-hop</td></tr>
+<tr><td>MeshGEMV reduces down each column in two stages, then multicasts the result back up</td><td><span class="ev src">source</span> <span class="ev meas">measured</span></td><td>Packet origins in cycle order: rows 0&rarr;1 and 2&rarr;3, then 1&rarr;3, then 3&rarr;2&rarr;1&rarr;0, identical in all four columns. Colour 9 routed <code>rx SOUTH &rarr; tx RAMP, NORTH</code></td></tr>
+<tr><td>MeshGEMM's per-PE multiply is an outer product</td><td><span class="ev meas">measured</span> <span class="ev src">source</span></td><td>On {orun_pes} PEs over cycles {O['window'][0]:,}&ndash;{O['window'][1]:,}, all {orun_n} complete runs are exactly 16 consecutive FMACHs sharing one vector operand while the broadcast scalar changes: one rank-1 update X[:,k]&otimes;W[k,:] per k. <code>meshgemm.csl</code>: <code>@map</code> over a W row with the X column held in a DSR</td></tr>
+<tr><td>Activation-stationary weight streaming, ring reduction of partial sums</td><td><span class="ev doc">documented</span></td><td>Slides 20&ndash;25. Not measured here: it is the appliance's execution mode, not reachable through the SDK kernels traced in this study</td></tr>
+</tbody></table></div>
+
+<div class="note">
+  <h3>Two corrections to earlier pages in this study</h3>
+  <p><strong>"These kernels do not multicast" was wrong for MeshGEMV.</strong> That conclusion came
+  from auditing packet identities, which can only see a packet split into a <em>tree</em>. A router
+  can also multicast along a <em>line</em> &mdash; each PE delivering the packet and forwarding it
+  &mdash; and such a packet keeps one identity and a simple path. The compiled route tables show it
+  directly: MeshGEMV's colour 9 delivers and forwards at its middle PEs, and each of its
+  {fm(PAY['counts']['bc_packets'])} packets is seen at all four rows. MeshGEMM's kernel colours never do; its only
+  deliver-and-forward routes belong to the memcpy runtime.</p>
+  <p><strong>Low arithmetic intensity is not what limits one PE.</strong> An earlier comparison with
+  GPU register tiling called it the ceiling behind 3.20 multiply-accumulates per cycle. Hot Chips
+  2022 documents a memory that delivers two full reads and one full write every cycle &mdash;
+  exactly one memory-to-memory FMA &mdash; plus a software cache for accumulators. The design does
+  not need register reuse. The measured limiter is instruction issue: FMAs go out every 9 cycles
+  while occupying the lanes for 4.</p>
+</div>
+
+<footer>WSE-3 characterization study &middot; SDK 2.10 &middot; Sean Lie, Cerebras Architecture Deep Dive,
+Hot Chips 34 (2022) &middot; WaferLLM MeshGEMM P=4 16&times;16&times;16 tiles, MeshGEMV P=4 &middot;
+built {dt.datetime.now():%Y-%m-%d}</footer>
+</div>
+
+<script>
+const D = {json.dumps(PAY)};
+const $ = i => document.getElementById(i);
+const P = D.P;
+const esc = s => String(s).replace(/[&<>]/g, c => ({{'&':'&amp;','<':'&lt;','>':'&gt;'}}[c]));
+
+/* ======================= inside one PE ======================= */
+const PES = {{
+ hc: {{label: 'Hot Chips 2022 weight streaming', ev: 'doc',
+   sram: [['x','activations act[j:j+m][k:k+n]','stationary for the whole layer']],
+   cache: ['c','partial-sum accumulators'],
+   fin: ['w','weights, one at a time','streamed from MemoryX, never stored'],
+   fout: ['c','partial sums','ring-reduced over rows (PSUM / FSUM)'],
+   src2: ['w','weight from the fabric'], src1: ['x','local activation column'], acc: ['c','accumulator in the software cache'],
+   fin_to: 'src2',
+   cap: 'Documented for WSE-2. The weight arrives on the fabric and goes straight into the scalar port: its arrival is what triggers the FMAC, so weights never touch memory. Activations never move. Partial sums leave through the router to be reduced along the row.'}},
+ gemm: {{label: 'MeshGEMM', ev: 'meas',
+   sram: [['x','X tile, 2 buffers','one computing, one receiving'],['w','W tile, 2 buffers','one computing, one receiving'],['c','C tile','stationary for all P steps']],
+   cache: ['c','(not used explicitly)'],
+   fin: ['xw','next X from the row, next W from the column','into the receive buffers'],
+   fout: ['xw','current X and W','to the ring successor, while computing'],
+   src2: ['w','W element, read by @map'], src1: ['x','column of the X tile'], acc: ['c','column of the C tile'],
+   fin_to: 'sram',
+   cap: 'Measured on WSE-3. Nothing that arrives on the fabric reaches the FMA directly: incoming tiles land in a receive buffer while the other buffer is being computed on, and the buffers swap each step. The scalar comes from local memory, not the network.'}},
+ gemv: {{label: 'MeshGEMV', ev: 'meas',
+   sram: [['w','W tile','stationary'],['x','x slice','stationary, replicated per row by the host'],['c','partial y','sent for reduction at the end']],
+   cache: ['c','(not used explicitly)'],
+   fin: ['c','partials from below; final y by multicast','reduce, then broadcast'],
+   fout: ['c','own partial y','down the column'],
+   src2: ['x','x element, read by @map'], src1: ['w','row of the W tile'], acc: ['c','the partial y vector'],
+   fin_to: 'sram',
+   cap: 'Measured on WSE-3. Both inputs stay put for the whole multiply; the fabric carries only results, first down the column to be summed, then back up as one multicast packet.'}},
+}};
+let pe = 'hc';
+const col = k => k === 'xw' ? 'var(--x)' : `var(--${{k}})`;
+function drawPE(){{
+  const s = PES[pe];
+  const box = (x,y,w,h,st,dash) => `<rect x="${{x}}" y="${{y}}" width="${{w}}" height="${{h}}" rx="3" fill="none" stroke="${{st||'currentColor'}}" stroke-opacity="${{st?1:.45}}" ${{dash?'stroke-dasharray="4 3"':''}}/>`;
+  const t = (x,y,str,o={{}}) => `<text x="${{x}}" y="${{y}}" font-size="${{o.fs||12}}" fill="${{o.c||'currentColor'}}" ${{o.fo?`fill-opacity="${{o.fo}}"`:''}} ${{o.w?'font-weight="600"':''}} ${{o.a?`text-anchor="${{o.a}}"`:''}}>${{str}}</text>`;
+  const arr = (x1,y1,x2,y2,c,lab,lx,ly) => `<line x1="${{x1}}" y1="${{y1}}" x2="${{x2}}" y2="${{y2}}" stroke="${{c}}" stroke-width="2" marker-end="url(#pa)" style="color:${{c}}"/>` + (lab?t(lx,ly,lab,{{fs:10.5,c}}):'');
+  let g = `<defs><marker id="pa" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="context-stroke"/></marker></defs>`;
+  // router
+  g += box(370,18,200,62) + t(470,42,'router',{{a:'middle',w:1}}) + t(470,60,'5 ports &middot; 24 colours &middot; 32 b packets',{{a:'middle',fs:10.5,fo:.6}});
+  g += t(470,12,'N',{{a:'middle',fs:10,fo:.5}}) + t(348,42,'W',{{a:'middle',fs:10,fo:.5}}) + t(590,42,'E',{{a:'middle',fs:10,fo:.5}});
+  // fabric in / out
+  g += box(30,18,300,62,col(s.fin[0])) + t(44,40,'fabric in',{{w:1,c:col(s.fin[0])}}) + t(44,57,esc(s.fin[1]),{{fs:11,c:col(s.fin[0])}}) + t(44,72,esc(s.fin[2]),{{fs:10.5,fo:.62}});
+  g += box(610,18,300,62,col(s.fout[0])) + t(624,40,'fabric out',{{w:1,c:col(s.fout[0])}}) + t(624,57,esc(s.fout[1]),{{fs:11,c:col(s.fout[0])}}) + t(624,72,esc(s.fout[2]),{{fs:10.5,fo:.62}});
+  g += `<line x1="330" y1="49" x2="366" y2="49" stroke="currentColor" stroke-opacity=".5"/><line x1="574" y1="49" x2="606" y2="49" stroke="currentColor" stroke-opacity=".5"/>`;
+  // SRAM
+  g += box(30,120,300,250) + t(44,142,'SRAM &mdash; 48 kB, 8 banks',{{w:1}}) + t(44,158,'2 full reads + 1 full write per cycle',{{fs:10.5,fo:.62}});
+  for (let b=0;b<8;b++) g += `<rect x="${{44+b*34}}" y="170" width="28" height="8" rx="1" fill="currentColor" fill-opacity=".12"/>`;
+  s.sram.forEach((r,i) => {{
+    const y = 194 + i*56;
+    g += `<rect x="44" y="${{y}}" width="272" height="46" rx="3" fill="${{col(r[0])}}" fill-opacity=".12" stroke="${{col(r[0])}}"/>`;
+    g += t(56,y+19,esc(r[1]),{{fs:12,c:col(r[0]),w:1}}) + t(56,y+36,esc(r[2]),{{fs:10.5,fo:.68}});
+  }});
+  // SW cache
+  g += box(30,382,300,38,s.cache[1].startsWith('(')?null:col(s.cache[0]),s.cache[1].startsWith('('));
+  g += t(44,405,'256 B software cache &mdash; '+esc(s.cache[1]),{{fs:11,c:s.cache[1].startsWith('(')?'currentColor':col(s.cache[0]),fo:s.cache[1].startsWith('(')?.55:1}});
+  // DSR / GPR
+  g += box(350,378,132,44) + t(362,396,'descriptor regs',{{fs:11,w:1}}) + t(362,412,'address, length, stride',{{fs:9.5,fo:.62}});
+  g += box(492,378,96,44) + t(504,396,'16 GPRs',{{fs:11,w:1}}) + t(504,412,'scalars',{{fs:9.5,fo:.62}});
+  // FMA
+  g += box(600,120,310,300,'currentColor') + t(614,144,'FMA datapath',{{w:1,fs:13}}) + t(614,161,'dest = src0 + src1 &times; src2, one rounding',{{fs:10.5,fo:.7}});
+  g += t(614,180,'8 lanes &times; 16 bit on WSE-3; WSE-2 had 4',{{fs:10.5,fo:.62}});
+  const port = (y,k,name,r) => `<rect x="614" y="${{y}}" width="282" height="52" rx="3" fill="${{col(r[0])}}" fill-opacity=".12" stroke="${{col(r[0])}}"/>` + t(626,y+20,name,{{fs:11.5,w:1,c:col(r[0])}}) + t(626,y+38,esc(r[1]),{{fs:11}});
+  g += port(196,'acc','dest / src0 &mdash; accumulator vector',s.acc);
+  g += port(262,'src1','src1 &mdash; vector',s.src1);
+  g += port(328,'src2','src2 &mdash; ONE scalar, broadcast',s.src2);
+  // arrows into the FMA
+  g += arr(330,222,610,222,col(s.acc[0]),'read + write',400,214);
+  g += arr(330,288,610,288,col(s.src1[0]),'read',400,280);
+  if (s.fin_to === 'src2') g += `<path d="M180,80 L180,100 L585,100 L585,354 L606,354" fill="none" stroke="${{col(s.fin[0])}}" stroke-width="2.4" marker-end="url(#pa)" style="color:${{col(s.fin[0])}}"/>` + t(400,94,'straight into the scalar port &mdash; never stored',{{fs:11,c:col(s.fin[0]),w:1,a:'middle'}});
+  else {{
+    g += arr(180,80,180,116,col(s.fin[0]),'',0,0) + t(190,104,'into memory first',{{fs:10.5,c:col(s.fin[0])}});
+    g += arr(330,354,610,354,col(s.src2[0]),'scalar read from memory',400,346);
+  }}
+  $('pesvg').innerHTML = g;
+  $('pesvg').setAttribute('aria-label', s.label + ': ' + s.cap);
+  $('pecap').innerHTML = `<span class="ev ${{s.ev}}">${{s.ev==='doc'?'documented':'measured'}}</span> &nbsp;${{esc(s.cap)}}`
+    + ` <span class="form" style="display:block">${{FORM[pe === 'hc' ? 'hc' : pe].split(' Across')[0]}} <a href="#forms">compare &uarr;</a></span>`;
+  $('petabs').querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.k===pe)));
+}}
+$('petabs').innerHTML = Object.entries(PES).map(([k,v]) => `<button data-k="${{k}}">${{esc(v.label)}}</button>`).join('');
+$('petabs').querySelectorAll('button').forEach(b => b.onclick = () => {{ pe = b.dataset.k; drawPE(); }});
+
+/* ======================= across the mesh ======================= */
+const G0 = 60, CS = 118, GAP = 14;              // grid origin, cell size, gap
+const cx = px => G0 + px*(CS+GAP) + CS/2, cy = py => G0 + py*(CS+GAP) + CS/2;
+let scheme = 'gemm', ph = 0, selPE = [1, 2], timer = null;
+
+function chip(x, y, k, txt, faint){{
+  return `<rect x="${{x}}" y="${{y}}" width="${{CS-16}}" height="24" rx="3" fill="${{col(k)}}" fill-opacity="${{faint?.06:.16}}" stroke="${{col(k)}}" stroke-opacity="${{faint?.35:1}}"/>`
+       + `<text x="${{x+8}}" y="${{y+16}}" font-size="11.5" font-family="IBM Plex Mono,monospace" fill="${{col(k)}}" fill-opacity="${{faint?.5:1}}">${{txt}}</text>`;
+}}
+function cellBox(px, py, hl, transit){{
+  const x = G0 + px*(CS+GAP), y = G0 + py*(CS+GAP);
+  return `<rect x="${{x}}" y="${{y}}" width="${{CS}}" height="${{CS}}" rx="5" fill="var(--pan2)" stroke="${{hl?'var(--ink)':'currentColor'}}" stroke-opacity="${{hl?1:.3}}" stroke-width="${{hl?2:1}}" ${{transit?'stroke-dasharray="3 3"':''}}/>`
+       + `<text x="${{x+CS-8}}" y="${{y+14}}" font-size="10" text-anchor="end" fill="currentColor" fill-opacity=".45" font-family="IBM Plex Mono,monospace">(${{px}},${{py}})</text>`;
+}}
+/* a move between two PEs in one row or column; 2-hop moves arc over the transit PE */
+function move(a, b, k, lane){{
+  const [ax, ay] = a, [bx, by] = b, c = col(k);
+  const x1 = cx(ax), y1 = cy(ay), x2 = cx(bx), y2 = cy(by);
+  const horiz = ay === by, d = Math.abs(horiz ? bx-ax : by-ay);
+  const off = (lane||0) * 7;
+  let path;
+  if (horiz){{
+    const yy = y1 - CS/2 + 6 + off;
+    path = d > 1 ? `M${{x1}},${{yy}} Q${{(x1+x2)/2}},${{yy-40}} ${{x2}},${{yy}}` : `M${{x1+ (x2>x1?20:-20)}},${{yy}} L${{x2 - (x2>x1?20:-20)}},${{yy}}`;
+  }} else {{
+    const xx = x1 - CS/2 + 6 + off;
+    path = d > 1 ? `M${{xx}},${{y1}} Q${{xx-40}},${{(y1+y2)/2}} ${{xx}},${{y2}}` : `M${{xx}},${{y1 + (y2>y1?20:-20)}} L${{xx}},${{y2 - (y2>y1?20:-20)}}`;
+  }}
+  return `<path d="${{path}}" fill="none" stroke="${{c}}" stroke-width="2.2" marker-end="url(#ma)" style="color:${{c}}"/>`;
+}}
+const phases = {{}};
+
+/* --- MeshGEMM: load, skew, P overlapped compute+shift steps --- */
+phases.gemm = [];
+{{
+  const X0 = {{}}, W0 = {{}};
+  for (let py=0;py<P;py++) for (let px=0;px<P;px++){{ X0[px+','+py] = px; W0[px+','+py] = D.ind[py][px]; }}
+  phases.gemm.push({{ev:'src', title:'Host places the tiles',
+    text:'memcpy puts X block (row py, k-block px) and W block (k-block ind, column px) on PE (px,py), and zeroes C. The host has already shuffled W\\'s rows so each column is pre-aligned for the ring.',
+    cell:(px,py)=>[['x',`X(${{py}},${{X0[px+','+py]}})`],['w',`W(${{W0[px+','+py]}},${{px}})`],['c',`C(${{py}},${{px}}) = 0`]], moves:[]}});
+  const mv = [];
+  D.skews.forEach(sk => {{
+    for (let px=0;px<P;px++){{
+      const from = sk.reverse ? D.send[px] : D.send.indexOf(px);
+      if (sk.shifts > 0) mv.push({{a:[from, sk.row], b:[px, sk.row], k:'x'}});
+    }}
+  }});
+  phases.gemm.push({{ev:'src', title:'X is skewed along each row',
+    text:'Before the first multiply, each row rotates its X tiles around the ring so every PE holds the k-block that matches its W tile. Row 0 moves 0 places, rows 1 and 2 one place, row 3 two; even rows go backwards. Arrows show the first rotation only.',
+    cell:(px,py)=>[['x',`X(${{py}},${{D.skews[py].after[px]}})`],['w',`W(${{D.ind[py][px]}},${{px}})`],['c',`C(${{py}},${{px}}) = 0`]], moves: mv}});
+  D.steps.forEach((st, s) => {{
+    const mvs = [];
+    for (let py=0;py<P;py++) for (let px=0;px<P;px++){{
+      mvs.push({{a:[px,py], b:[D.send[px],py], k:'x', lane:0}});
+      mvs.push({{a:[px,py], b:[px,D.send[py]], k:'w', lane:1}});
+    }}
+    phases.gemm.push({{id:`step${{s+1}}`, ev:'meas', title:`Step ${{s+1}} of ${{P}}: multiply, and pass both tiles on`,
+      text:`Every PE adds X(py,k)&middot;W(k,px) into its own C block, while the same tiles are already leaving for the ring successor: X along the row, W down the column. Double buffering overlaps the two. After this step each C block holds ${{s+1}} of its ${{P}} terms.`,
+      cell:(px,py)=>{{ const q = st[px+','+py]; return [['x',`X(${{q.x[0]}},${{q.x[1]}})`],['w',`W(${{q.w[0]}},${{q.w[1]}})`],['c',`C += term ${{s+1}}/${{P}}`]]; }},
+      moves: mvs, step: s}});
+  }});
+  phases.gemm.push({{ev:'src', title:'Done: C never moved',
+    text:'Each PE now holds its finished C block; the host reads them back with memcpy. After P shifts around a ring of P, every X and W tile is back where the skew left it. No partial sum ever crossed the fabric, which is the whole point of keeping the output still.',
+    cell:(px,py)=>[['x','X back',1],['w','W back',1],['c',`C(${{py}},${{px}}) done`]], moves:[]}});
+}}
+
+/* --- MeshGEMV: local, reduce 1, reduce 2, multicast --- */
+phases.gemv = [];
+{{
+  const st = D.gemv;
+  phases.gemv.push({{ev:'src', title:'Local multiply: nothing moves',
+    text:'Each PE multiplies its stationary W block by the x slice for its row, giving a partial result for its column. The host already replicated x across each row, so the fabric is idle.',
+    cell:(px,py)=>[['w',`W(${{py}},${{px}})`],['x',`x(${{py}})`],['c',`y partial ${{py}}`]], moves:[]}});
+  const r1 = st[0], r2 = st[1], bc = st[2];
+  phases.gemv.push({{id:'reduce1', ev:'meas', title:'Reduce, stage 1: pairs',
+    text:`Rows ${{r1.row_paths.map(p=>p.rows.join('&rarr;')).join(' and ')}} add their partials, one hop, in every column (colour ${{r1.colour}}, first at cycle ${{r1.first_cycle.toLocaleString()}}).`,
+    cell:(px,py)=>[['w',`W(${{py}},${{px}})`,1],['x',`x(${{py}})`,1],['c', py===1?'y: rows 0+1':py===3?'y: rows 2+3':'sent',py===0||py===2]],
+    moves:[].concat(...[0,1,2,3].map(px => r1.row_paths.map(p => ({{a:[px,p.rows[0]], b:[px,p.rows[p.rows.length-1]], k:'c'}}))))}});
+  phases.gemv.push({{ev:'meas', title:'Reduce, stage 2: across the pairs',
+    text:`Row ${{r2.row_paths[0].rows[0]}} sends to row ${{r2.row_paths[0].rows.slice(-1)[0]}}, passing through row ${{r2.row_paths[0].rows[1]}} (colour ${{r2.colour}}). Row 3 now holds the full y for its column.`,
+    cell:(px,py)=>[['w',`W(${{py}},${{px}})`,1],['x',`x(${{py}})`,1],['c', py===3?'y complete':'sent',py!==3]],
+    moves:[0,1,2,3].map(px => ({{a:[px,r2.row_paths[0].rows[0]], b:[px,r2.row_paths[0].rows.slice(-1)[0]], k:'c'}}))}});
+  phases.gemv.push({{ev:'meas', title:'Broadcast: one multicast packet per element',
+    text:`Row 3 sends the result up the column once; every router on the way delivers it to its own PE and forwards it on (colour ${{bc.colour}}). Each of the ${{bc.row_paths[0].packets}} packets is observed at all ${{bc.row_paths[0].rows.length}} rows.`,
+    cell:(px,py)=>[['w',`W(${{py}},${{px}})`,1],['x',`x(${{py}})`,1],['c',`y(${{px}}) complete`]],
+    moves:[0,1,2,3].map(px => ({{a:[px,3], b:[px,0], k:'c', multicast:true}}))}});
+}}
+
+/* --- Hot Chips 2022 weight streaming, schematic of the documented description --- */
+phases.hc = [
+ {{ev:'doc', title:'Activations are spread across the wafer',
+   text:'Each PE holds a chunk of the activation tensor in its own SRAM, and keeps it for the whole layer. Nothing else is resident: the weight matrix is not on the wafer at all, it sits in off-wafer MemoryX.',
+   cell:(px,py)=>[['x',`act (${{px}},${{py}})`],['w','no weights',1],['c','acc = 0',1]], moves:[]}},
+ {{ev:'doc', title:'A row of weights is broadcast down the columns',
+   text:'Weights stream in from MemoryX one row at a time and are multicast over a column of cores. Each packet is 16 bits of weight plus a 16-bit index. Zero weights are never sent.',
+   cell:(px,py)=>[['x',`act (${{px}},${{py}})`],['w','weight in'],['c','acc',1]],
+   moves:[0,1,2,3].map(px => ({{a:[px,0], b:[px,3], k:'w', multicast:true, from:'top'}}))}},
+ {{ev:'doc', title:'Each arriving weight triggers the FMACs',
+   text:'The weight goes straight into the scalar port and multiplies the local column of activations into the accumulators. The weight is used once and discarded: it is never written to memory.',
+   cell:(px,py)=>[['x',`act (${{px}},${{py}})`],['w','w used once',1],['c','acc += w&middot;act']], moves:[]}},
+ {{id:'psum', ev:'doc', title:'Partial sums are reduced around each row',
+   text:'A PSUM command starts the reduction of partial sums along each row of cores &mdash; Cerebras describes it as a ring; the drawing shows one pass &mdash; and an FSUM command steers the final sum to the column that owns it. Which column that is here is illustrative. The reduction overlaps with the next row of weights.',
+   cell:(px,py)=>[['x',`act (${{px}},${{py}})`,1],['w','next row in',1],['c', px===3?'final sum':'psum &rarr;']],
+   moves:[].concat(...[0,1,2,3].map(py => [0,1,2].map(px => ({{a:[px,py], b:[px+1,py], k:'c'}}))))}},
+];
+
+function drawMesh(){{
+  const L = phases[scheme], f = L[ph];
+  let g = `<defs><marker id="ma" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="context-stroke"/></marker></defs>`;
+  const transit = new Set();
+  f.moves.forEach(m => {{
+    const [ax,ay]=m.a,[bx,by]=m.b;
+    if (!m.multicast && Math.abs(bx-ax)+Math.abs(by-ay) === 2) transit.add(((ax+bx)/2)+','+((ay+by)/2));
+  }});
+  for (let py=0;py<P;py++) for (let px=0;px<P;px++){{
+    const hl = scheme==='gemm' && px===selPE[0] && py===selPE[1];
+    g += cellBox(px, py, hl, transit.has(px+','+py) && false);
+    const x = G0 + px*(CS+GAP) + 8, y = G0 + py*(CS+GAP) + 22;
+    f.cell(px,py).forEach((c,i) => g += chip(x, y + i*29, c[0], c[1], c[2]));
+    g += `<rect data-pe="${{px}},${{py}}" x="${{G0+px*(CS+GAP)}}" y="${{G0+py*(CS+GAP)}}" width="${{CS}}" height="${{CS}}" fill="transparent" style="cursor:${{scheme==='gemm'?'pointer':'default'}}"/>`;
+  }}
+  f.moves.forEach(m => {{
+    if (m.multicast){{
+      const c = col(m.k), [ax,ay]=m.a, [bx,by]=m.b, x = cx(ax) - CS/2 + 4;
+      const y1 = m.from==='top' ? G0 - 30 : cy(ay), y2 = cy(by);
+      g += `<line x1="${{x}}" y1="${{y1}}" x2="${{x}}" y2="${{y2}}" stroke="${{c}}" stroke-width="3" marker-end="url(#ma)" style="color:${{c}}"/>`;
+      const lo = Math.min(ay,by), hi = Math.max(ay,by);
+      for (let r=lo;r<=hi;r++) g += `<circle cx="${{x}}" cy="${{cy(r)}}" r="4.5" fill="${{c}}"/>`;
+    }} else g += move(m.a, m.b, m.k, m.lane);
+  }});
+  if (phases[scheme][ph].moves.some(m=>m.from==='top'))
+    g += `<text x="${{G0}}" y="${{G0-38}}" font-size="11" fill="var(--w)" font-family="IBM Plex Mono,monospace">from MemoryX, off-wafer</text>`;
+  $('mesh').innerHTML = g;
+  $('mesh').setAttribute('aria-label', f.title + '. ' + f.text.replace(/<[^>]+>/g,''));
+  $('mesh').querySelectorAll('[data-pe]').forEach(r => r.onclick = () => {{
+    if (scheme !== 'gemm') return; selPE = r.dataset.pe.split(',').map(Number); drawMesh(); }});
+  $('phase').textContent = `phase ${{ph+1}} / ${{L.length}}`;
+  $('capev').innerHTML = `<span class="ev ${{f.ev}}">${{f.ev==='doc'?'documented':f.ev==='src'?'source':'measured'}}</span>`;
+  $('captitle').textContent = f.title;
+  $('captext').innerHTML = f.text;
+  const mvCount = {{}}; f.moves.forEach(m => mvCount[m.k] = (mvCount[m.k]||0)+1);
+  $('moves').innerHTML = Object.entries(mvCount).map(([k,n]) =>
+    `<li style="color:${{col(k)}}">${{n}} ${{k==='x'?'X':k==='w'?'W':'C'}} transfer${{n>1?'s':''}} this phase</li>`).join('');
+  $('glob').innerHTML = scheme === 'gemm' ? globalPanel(f) : '';
+  $('capform').innerHTML = FORM[scheme] + ' &nbsp;<a href="#forms">compare &uarr;</a>';
+  $('mtabs').querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.k===scheme)));
+}}
+
+/* global matrices: which blocks of X and W feed the selected PE's C block, and when */
+function globalPanel(f){{
+  const [px, py] = selPE, s = f.step;
+  const used = [];
+  if (s !== undefined) for (let t=0;t<=s;t++) used.push(D.steps[t][px+','+py].x[1]);
+  const sz = 18, gp = 2, W = P*(sz+gp);
+  const grid = (ox, lab, k, fn) => {{
+    let g = `<text x="${{ox}}" y="12" font-size="11" fill="${{col(k)}}" font-family="IBM Plex Mono,monospace" font-weight="600">${{lab}}</text>`;
+    for (let r=0;r<P;r++) for (let c=0;c<P;c++){{
+      const st = fn(r,c);
+      g += `<rect x="${{ox+c*(sz+gp)}}" y="${{20+r*(sz+gp)}}" width="${{sz}}" height="${{sz}}" rx="2" fill="${{col(k)}}" fill-opacity="${{st===2?.95:st===1?.35:.07}}" stroke="${{col(k)}}" stroke-opacity="${{st?1:.25}}"/>`;
+    }}
+    return g;
+  }};
+  const cur = s !== undefined ? D.steps[s][px+','+py].x[1] : null;
+  let g = grid(0, 'X', 'x', (r,c) => r===py && c===cur ? 2 : r===py && used.includes(c) ? 1 : 0);
+  g += `<text x="${{W+6}}" y="${{20+W/2+4}}" font-size="14" fill="currentColor">&middot;</text>`;
+  g += grid(W+20, 'W', 'w', (r,c) => c===px && r===cur ? 2 : c===px && used.includes(r) ? 1 : 0);
+  g += `<text x="${{2*W+26}}" y="${{20+W/2+4}}" font-size="14" fill="currentColor">&rarr;</text>`;
+  g += grid(2*W+44, 'C', 'c', (r,c) => r===py && c===px ? (s!==undefined?2:1) : 0);
+  const txt = s === undefined
+    ? `Click any PE. Its C block is C(${{py}},${{px}}) = &Sigma;<sub>k</sub> X(${{py}},k)&middot;W(k,${{px}}). Step forward to watch the four terms arrive.`
+    : `PE (${{px}},${{py}}) multiplies X(${{py}},${{cur}}) by W(${{cur}},${{px}}) this step. Terms so far: k = ${{used.join(', ')}}. Inside the PE that block product is itself 16 outer products, one per column of X(${{py}},${{cur}}).`;
+  return `<p class="eyebrow" style="margin-top:14px">Global matrices, selected PE</p>
+          <svg viewBox="0 0 ${{3*W+50}} ${{W+26}}" style="width:100%;max-width:330px;height:auto;display:block">${{g}}</svg>
+          <p style="font-size:12.5px;margin-top:8px">${{txt}}</p>`;
+}}
+
+const FORM = {{
+  gemm: 'Inside each PE: <b>outer product</b>, 16 FMACHs per k sharing one X column. Across PEs: <b>inner product in time</b>, one k-block term per step.',
+  gemv: 'Inside each PE: <b>outer product</b> (AXPY form of GEMV). Across PEs: <b>inner product in space</b>, K split down the column and reduced.',
+  hc:   'Inside each PE: <b>outer product</b>, one AXPY per weight. Across PEs: <b>inner product in space</b>, K split along the row and ring-reduced.',
+}};
+const MT = {{gemm:'MeshGEMM · output-stationary', gemv:'MeshGEMV · weight-stationary', hc:'Hot Chips 2022 · activation-stationary'}};
+$('mtabs').innerHTML = Object.entries(MT).map(([k,v]) => `<button data-k="${{k}}">${{v}}</button>`).join('');
+$('mtabs').querySelectorAll('button').forEach(b => b.onclick = () => {{ scheme = b.dataset.k; ph = 0; stop(); drawMesh(); }});
+function stop(){{ if (timer) clearInterval(timer); timer = null; $('play').textContent = 'Play'; }}
+$('fwd').onclick = () => {{ ph = Math.min(phases[scheme].length-1, ph+1); drawMesh(); }};
+$('back').onclick = () => {{ ph = Math.max(0, ph-1); drawMesh(); }};
+$('play').onclick = () => {{
+  if (timer) return stop();
+  $('play').textContent = 'Pause';
+  timer = setInterval(() => {{ ph = (ph+1) % phases[scheme].length; drawMesh(); }}, 2200);
+}};
+addEventListener('keydown', e => {{
+  if (e.key==='ArrowRight'){{ e.preventDefault(); $('fwd').click(); }}
+  if (e.key==='ArrowLeft'){{ e.preventDefault(); $('back').click(); }}
+}});
+function flash(el){{ el.classList.remove('flash'); void el.offsetWidth; el.classList.add('flash'); }}
+const smooth = matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth';
+document.querySelectorAll('a.go').forEach(a => a.addEventListener('click', e => {{
+  e.preventDefault();
+  if (a.dataset.pe){{ pe = a.dataset.pe; drawPE(); $('pefig').scrollIntoView({{behavior:smooth, block:'center'}}); flash($('pefig')); }}
+  if (a.dataset.go){{
+    const [sc, id] = a.dataset.go.split(':');
+    stop(); scheme = sc; ph = Math.max(0, phases[sc].findIndex(q => q.id === id)); drawMesh();
+    $('meshfig').scrollIntoView({{behavior:smooth, block:'center'}}); flash($('meshfig').firstElementChild);
+  }}
+}}));
+drawPE(); drawMesh();
+</script>
+"""
+out = S / "results/anatomy/gemm_dataflow.html"
+out.write_text(HTML)
+print(f"-> {out}  {out.stat().st_size/1024:.0f} KB")
+print("skew check (after == ind for every row):", all(sk["after"] == ind[sk["row"]] for sk in skews))

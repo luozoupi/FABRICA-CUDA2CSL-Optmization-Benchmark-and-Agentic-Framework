@@ -1,0 +1,113 @@
+param memcpy_params;
+// === SLOT: EXTRA_PARAMS ===
+// Declare any compile-time params your kernel needs from layout.csl
+// (e.g., param n: u16;). Check the layout.csl tile_code params to know
+// which params are passed. Do NOT re-declare memcpy_params.
+param nrows: u32;
+param max_nnz: u32;
+
+const EXIT: local_task_id = @get_local_task_id(9);
+const sys_mod = @import_module("<memcpy/memcpy>", memcpy_params);
+
+// === SLOT: EXTRA_IMPORTS ===
+// Add any extra module imports your kernel needs (e.g., const math = @import_module("<math>");)
+// Do NOT re-import memcpy or time.
+
+const timestamp = @import_module("<time>");
+var tsc_start_buf = @zeros([timestamp.tsc_size_words]u16);
+var tsc_end_buf   = @zeros([timestamp.tsc_size_words]u16);
+var timer_buf = @zeros([3]f32);
+var ptr_timer_buf: [*]f32 = &timer_buf;
+
+// === SLOT: DATA_BUFFERS ===
+// Declare your input/output arrays and their pointers. Example:
+//   var x_array = @zeros([n]f32);
+//   var ptr_x: [*]f32 = &x_array;
+// Each buffer the host reads/writes needs a pointer + @export_symbol.
+
+// row_ptr has nrows+1 entries.
+var row_ptr_array = @zeros([nrows + 1]u32);
+var val_array     = @zeros([max_nnz]f32);
+var d_array       = @zeros([nrows]f32);
+var c_val_array   = @zeros([max_nnz]f32);
+
+var ptr_row_ptr: [*]u32 = &row_ptr_array;
+var ptr_val:     [*]f32 = &val_array;
+var ptr_d:       [*]f32 = &d_array;
+var ptr_c_val:   [*]f32 = &c_val_array;
+
+// === SLOT: KERNEL_FUNCTION ===
+// Write the computation function. This is the ONLY part that is kernel-specific.
+// Use DSD bulk operations (@fmuls, @fadds, @fmacs, @fmovs) where possible
+// instead of scalar loops — they are 10-100x faster on WSE.
+
+// GB_cuda_ek_slice: find row i with row_ptr[i] <= p < row_ptr[i+1]
+// via binary search (ceiling-midpoint form, matching the CUDA kernel).
+fn owner_row(p: u32) u32 {
+    var lo: u32 = 0;
+    var hi: u32 = nrows - 1;
+    while (lo < hi) {
+        // mid = (lo + hi + 1) >> 1
+        const mid: u32 = (lo + hi + 1) >> 1;
+        if (row_ptr_array[mid] <= p) {
+            lo = mid;
+        } else {
+            hi = mid - 1;
+        }
+    }
+    return lo;
+}
+
+fn rowscale() void {
+    // nnz is the number of stored nonzeros = row_ptr[nrows].
+    const nnz: u32 = row_ptr_array[nrows];
+    var p: u32 = 0;
+    while (p < nnz) : (p += 1) {
+        const i: u32 = owner_row(p);
+        c_val_array[p] = d_array[i] * val_array[p];
+    }
+}
+
+fn compute() void {
+    timestamp.enable_tsc();
+    timestamp.get_timestamp(&tsc_start_buf);
+
+    // === SLOT: KERNEL_CALL ===
+    // Call your kernel function here (e.g., relu();)
+    rowscale();
+
+    timestamp.get_timestamp(&tsc_end_buf);
+    timestamp.disable_tsc();
+
+    var lo_: u16 = 0;
+    var hi_: u16 = 0;
+    lo_ = tsc_start_buf[0]; hi_ = tsc_start_buf[1];
+    timer_buf[0] = @bitcast(f32, (@as(u32, hi_) << @as(u16, 16)) | @as(u32, lo_));
+    lo_ = tsc_start_buf[2]; hi_ = tsc_end_buf[0];
+    timer_buf[1] = @bitcast(f32, (@as(u32, hi_) << @as(u16, 16)) | @as(u32, lo_));
+    lo_ = tsc_end_buf[1]; hi_ = tsc_end_buf[2];
+    timer_buf[2] = @bitcast(f32, (@as(u32, hi_) << @as(u16, 16)) | @as(u32, lo_));
+
+    @activate(EXIT);
+}
+
+task f_exit() void {
+    sys_mod.unblock_cmd_stream();
+}
+
+comptime {
+    @bind_local_task(f_exit, EXIT);
+
+    // === SLOT: EXPORT_SYMBOLS ===
+    // Export each data pointer the host needs. Example:
+    //   @export_symbol(ptr_x, "x");
+    //   @export_symbol(ptr_out, "out");
+    // Check run.py to see which symbol names the host expects.
+    @export_symbol(ptr_row_ptr, "row_ptr");
+    @export_symbol(ptr_val, "val");
+    @export_symbol(ptr_d, "d");
+    @export_symbol(ptr_c_val, "c_val");
+
+    @export_symbol(ptr_timer_buf, "maxmin_time");
+    @export_symbol(compute);
+}

@@ -1,0 +1,146 @@
+{
+ "suite": "C1",
+ "tag": "",
+ "rows": [
+  {
+   "name": "gemv_4x8",
+   "family": "gemv",
+   "elems": 32,
+   "reps": 128,
+   "flop": 2,
+   "bytes": 3.0,
+   "cycles": 18701,
+   "total_elems": 4096,
+   "t_start": 5,
+   "t_end": 18706,
+   "cyc_per_elem": 4.56567,
+   "elem_per_cyc": 0.219,
+   "sink": 0.484375
+  },
+  {
+   "name": "gemv_8x16",
+   "family": "gemv",
+   "elems": 128,
+   "reps": 32,
+   "flop": 2,
+   "bytes": 2.5,
+   "cycles": 14440,
+   "total_elems": 4096,
+   "t_start": 18732,
+   "t_end": 33172,
+   "cyc_per_elem": 3.52539,
+   "elem_per_cyc": 0.2837,
+   "sink": -0.3515625
+  },
+  {
+   "name": "gemv_16x32",
+   "family": "gemv",
+   "elems": 512,
+   "reps": 8,
+   "flop": 2,
+   "bytes": 2.25,
+   "cycles": 7217,
+   "total_elems": 4096,
+   "t_start": 33198,
+   "t_end": 40415,
+   "cyc_per_elem": 1.76196,
+   "elem_per_cyc": 0.5675,
+   "sink": 0.671875
+  },
+  {
+   "name": "gemv_32x64",
+   "family": "gemv",
+   "elems": 2048,
+   "reps": 2,
+   "flop": 2,
+   "bytes": 2.125,
+   "cycles": 4358,
+   "total_elems": 4096,
+   "t_start": 40439,
+   "t_end": 44797,
+   "cyc_per_elem": 1.06396,
+   "elem_per_cyc": 0.9399,
+   "sink": -0.234375
+  },
+  {
+   "name": "gemv_64x32",
+   "family": "gemv",
+   "elems": 2048,
+   "reps": 2,
+   "flop": 2,
+   "bytes": 2.156,
+   "cycles": 2702,
+   "total_elems": 4096,
+   "t_start": 44821,
+   "t_end": 47523,
+   "cyc_per_elem": 0.65967,
+   "elem_per_cyc": 1.5159,
+   "sink": -0.1015625
+  },
+  {
+   "name": "gemv_64x64",
+   "family": "gemv",
+   "elems": 4096,
+   "reps": 1,
+   "flop": 2,
+   "bytes": 2.094,
+   "cycles": 2571,
+   "total_elems": 4096,
+   "t_start": 47547,
+   "t_end": 50118,
+   "cyc_per_elem": 0.62769,
+   "elem_per_cyc": 1.5932,
+   "sink": -0.9375
+  },
+  {
+   "name": "stencil5_64x64",
+   "family": "stencil",
+   "elems": 3968,
+   "reps": 1,
+   "flop": 4,
+   "bytes": 24,
+   "cycles": 4283,
+   "total_elems": 3968,
+   "t_start": 50142,
+   "t_end": 54425,
+   "cyc_per_elem": 1.07939,
+   "elem_per_cyc": 0.9265,
+   "sink": -1.5625
+  }
+ ],
+ "verification": {
+  "pass": true,
+  "report": [
+   {
+    "item": "Amat",
+    "detail": "max 0.0 ulp, exact 100.0%",
+    "ok": true
+   },
+   {
+    "item": "X",
+    "detail": "max 0.0 ulp, exact 100.0%",
+    "ok": true
+   },
+   {
+    "item": "Y",
+    "detail": "max 0.0 ulp, exact 100.0%",
+    "ok": true
+   },
+   {
+    "item": "Bout",
+    "detail": "max 0.0 ulp, exact 100.0%",
+    "ok": true
+   },
+   {
+    "item": "sink:gemv",
+    "detail": "worst gemv_4x8: got 0.484375 expected 0.484375 (0.0 ulp)",
+    "ok": true
+   },
+   {
+    "item": "sink:stencil",
+    "detail": "worst stencil5_64x64: got -1.5625 expected -1.5625 (0.0 ulp)",
+    "ok": true
+   }
+  ]
+ }
+}

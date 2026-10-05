@@ -1,0 +1,65 @@
+param memcpy_params;
+param B: u16;
+param is_first: bool;
+param is_last: bool;
+param cin_id: u16;
+param cout_id: u16;
+
+const sys_mod = @import_module("<memcpy/memcpy>", memcpy_params);
+const timestamp = @import_module("<time>");
+const iq: input_queue = @get_input_queue(cin_id);
+const oq: output_queue = @get_output_queue(cout_id);
+const RECV_DONE: local_task_id = @get_local_task_id(19);
+const SEND_DONE: local_task_id = @get_local_task_id(20);
+
+var buf = @zeros([B]f32);
+const buf_dsd = @get_dsd(mem1d_dsd, .{ .tensor_access = |i|{B} -> buf[i] });
+const fin = @get_dsd(fabin_dsd, .{ .extent = B, .input_queue = iq });
+const fout = @get_dsd(fabout_dsd, .{ .extent = B, .output_queue = oq });
+
+var tsc = @zeros([timestamp.tsc_size_words]u16);
+var timer = @zeros([2]f32);
+var ptr_timer: [*]f32 = &timer;
+
+fn pack() void {
+  timer[0] = @bitcast(f32, (@as(u32, tsc[1]) << @as(u16, 16)) | @as(u32, tsc[0]));
+  timer[1] = @bitcast(f32, @as(u32, tsc[2]));
+}
+
+// One RPC for every PE, each unblocking exactly once:
+//   first PE      stamps, sends, unblocks in send_done
+//   middle PEs    arm receive, forward in recv_done, unblock in send_done
+//   last PE       arm receive, stamp + unblock in recv_done
+fn run() void {
+  timestamp.enable_tsc();
+  if (is_first) {
+    timestamp.get_timestamp(&tsc);
+    pack();
+    @fmovs(fout, buf_dsd, .{ .async = true, .activate = SEND_DONE });
+  } else {
+    @fmovs(buf_dsd, fin, .{ .async = true, .activate = RECV_DONE });
+  }
+}
+
+task recv_done() void {
+  if (is_last) {
+    timestamp.get_timestamp(&tsc);
+    pack();
+    sys_mod.unblock_cmd_stream();
+  } else {
+    @fmovs(fout, buf_dsd, .{ .async = true, .activate = SEND_DONE });
+  }
+}
+
+task send_done() void { sys_mod.unblock_cmd_stream(); }
+
+comptime {
+  // A queue receives nothing until it is bound to a colour (WSE-3 keeps queue
+  // ids and colours distinct) -- the omission deadlocked the first sweep.
+  if (!is_first) { @initialize_queue(iq, .{ .color = @get_color(cin_id) }); }
+  if (!is_last)  { @initialize_queue(oq, .{ .color = @get_color(cout_id) }); }
+  @bind_local_task(recv_done, RECV_DONE);
+  @bind_local_task(send_done, SEND_DONE);
+  @export_symbol(ptr_timer, "timer");
+  @export_symbol(run);
+}

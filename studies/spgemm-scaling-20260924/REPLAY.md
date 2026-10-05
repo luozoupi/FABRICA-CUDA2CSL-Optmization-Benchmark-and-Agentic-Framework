@@ -1,0 +1,15 @@
+# Replaying the size and PE study
+
+Each `cases/<case>/case.json` defines dimensions, square PE geometry, array capacities, source hashes, input sessions and repetition count. The host checks these hashes before running. The registered runner preserves existing `result.json` files and skips them, so copy a case into a new directory when reproducing it. Keep the original evidence intact.
+
+On this node, a fresh copy can be compiled with `/home/USER/cs_sdk/cslc` and run with `/home/USER/cs_sdk/cs_python host.py`. The exact compilation arguments are in that case’s `result.json`, including `--params`, fabric dimensions and offsets. Run from the copied case directory. The square grid has S×S application PEs; additional fabric PEs belong to the memcpy infrastructure.
+
+Use both shared locks when running SDK commands: `/tmp/xkernel_singularity.lock` and `/tmp/xkernel_singularity_<uid>.lock`. Maintain `OMP_NUM_THREADS=1`, `OPENBLAS_NUM_THREADS=1`, and `APPTAINERENV_CSL_SUPPRESS_SIMFAB_TRACE=1` to reproduce the host environment. A new compilation has a new measured identity until its ELF hashes have been compared with the saved build; source/debug paths can affect binary identity.
+
+The local `replay-bundles.tar.gz` includes measured build directories and original observations for transfer to the hardware node. Verify its hash against `evidence-manifest.json`. Hardware execution needs the appliance runtime/launcher adaptation; preserve changes and measure/inspect the hardware build independently. The one-PE callback module bypasses the installed SDK collective’s dimension-one compile failure and intentionally sends no fabric data.
+
+`measurements.json.gz` contains the successful registered observations: every timing repetition, same-PE raw timestamps, root acknowledgements, row assignments, matrix/packed-buffer hashes, product and output counts, and output hashes. Numerical assertions execute against an independent sparse oracle in the captured host source; the compressed record does not replace replay if raw output values need to be inspected again. Original observations and SDK logs remain in the local archive.
+
+Run `python3 summarize.py --complete` against the original local archive to recheck registration/source/build hashes, timestamp arithmetic, counts, same-matrix comparison rules, and ELF static memory sections. Then run `report.py`, `check_broadcast_model.py`, and `plot.py` to regenerate derived results. Plotting requires Matplotlib. The scripts resolve the study root from their own location; the compact Git package excludes raw `out/` directories, so a full audit requires restoring the replay archive first.
+
+The primary study and the broadcast-cost hypothesis have separate registrations. The latter predicts a difference between two timing scopes without refitting. `capacity-envelope.json` is an analytical extension beyond measured sizes; points below its array-only memory limit still need compiler and runtime checks. No artifact treats those analytical points as completed measurements.

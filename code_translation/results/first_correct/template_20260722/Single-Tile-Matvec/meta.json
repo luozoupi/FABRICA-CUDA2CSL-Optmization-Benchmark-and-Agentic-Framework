@@ -1,0 +1,55 @@
+{
+  "kernel": "Single-Tile-Matvec",
+  "run_dir": "code_translation/results/full_template_sweep_20260722_192305/Single-Tile-Matvec/run_20260722_235305",
+  "status": "extracted",
+  "n_attempts": 17,
+  "model": "claude-opus-4-8",
+  "target_relpath": "pe_matvec.csl",
+  "reference_dir": "/home/USER/xkernel/kernels/Single Tile Matvec/CSL",
+  "fc_attempt_index": 3,
+  "fc_cycles_send": 1350,
+  "fc_cycles_send_runs": [
+    1350
+  ],
+  "fc_code_lines": 100,
+  "fc_heldout_eval": {
+    "passed": true,
+    "failing_seed": null,
+    "per_seed": [
+      {
+        "seed": 101,
+        "steps": [
+          {
+            "command": "cs_python ./run.py --name out --verify",
+            "ok": true,
+            "returncode": 0
+          }
+        ]
+      },
+      {
+        "seed": 202,
+        "steps": [
+          {
+            "command": "cs_python ./run.py --name out --verify",
+            "ok": true,
+            "returncode": 0
+          }
+        ]
+      },
+      {
+        "seed": 303,
+        "steps": [
+          {
+            "command": "cs_python ./run.py --name out --verify",
+            "ok": true,
+            "returncode": 0
+          }
+        ]
+      }
+    ],
+    "reason": "passed all 3 held-out seeds"
+  },
+  "translated_path": "/home/USER/xkernel/code_translation/sandbox/cuda2csl/single-tile-matvec_1s43gc7w/pe_matvec.csl",
+  "source": "sandbox",
+  "dest": "code_translation/results/first_correct/template_20260722/Single-Tile-Matvec/pe_matvec.csl"
+}

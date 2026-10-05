@@ -1,0 +1,96 @@
+# xkernel-bench spec -- see kernels/SPEC_SCHEMA.md for format.
+kernel_id: "SpMV-RowBlock-Iter"
+group: "sparse"
+difficulty: 3
+
+tasks:
+  - "Sparse matrix-vector product y = A*x, A in CSR, on a 1 x P strip of PEs: the rows are
+     split into P consecutive blocks (one per PE, padded to nrows_pe rows and max_nnz_pe
+     nonzeros), x is written to PE 0 and broadcast east on one color to every PE, each PE
+     computes its block y[r] = sum_j val[j]*x[col_idx[j]] over local rows with global
+     column indices. The product is repeated iters times inside the timed window with a
+     recurrence between products: after each product but the last, every PE overwrites ITS
+     OWN block of its local copy of x with a quarter of its y block
+     (x[px*nrows_pe + r] = 0.25 * y[r] for r in [0, nrows_pe)), so product k+1 depends on
+     product k; the output is the last product's y. entrypoint = main (device-internal timing)."
+
+inputs:
+  - {name: "row_ptr", shape: "[P][nrows_pe+1]", dtype: "u32"}
+  - {name: "col_idx", shape: "[P][max_nnz_pe]", dtype: "u32"}
+  - {name: "val", shape: "[P][max_nnz_pe]", dtype: "f32"}
+  - {name: "x", shape: "[ncols]", dtype: "f32", description: "written to PE 0 only; the kernel broadcasts it"}
+
+outputs:
+  - {name: "y", shape: "[P][nrows_pe]", dtype: "f32",
+     tolerance_abs: 1.0e-5, tolerance_rel: 1.0e-4,
+     description: "y = A*x on the real rows; verified in run.py against float64 numpy + SUCCESS"}
+
+# Each size carries its own matrix class (data/manifest[_<structure_id>].json); the caps
+# are the class maxima after the row-block partition (checked by test_sparse_suite.py).
+sizes:
+  - name: small
+    role: correctness
+    structure_class: "hb_n1024"              # sherman1 (train); jagmesh1, gr_30_30, dwt_1005
+    params: {P: 4, nrows_pe: 256, ncols: 1024, max_nnz_pe: 2560, iters: 10, structure_id: 0}
+    commands_script: "commands_wse3.sh"
+    # wse3_reference: measured when the reference is baselined (see docs/IPDPS_PREREG.md 2026-09-28)
+
+task_class: "real-translation"
+split: "test"
+
+metric:
+  class: cycles
+  reason: "agent-written row-block CSR SpMV with fabric broadcast of x, ten products with a per-product recurrence on x; device-internal window (max end - min start over the strip)"
+
+timing_protocol: device_internal_v2
+
+eval:
+  train_seed: 7
+  heldout_seeds: [101, 202, 303]
+  seed_env: "XKERNEL_EVAL_SEED"
+
+structure:
+  format: csr
+  class: "hb_n1024"
+  manifest: "CSL/data/manifest.json"
+  partition: {scheme: row_block, mesh: "4x1"}
+  caps: {nrows_pe: 256, max_nnz_pe: 2560}
+  readout: true
+
+build_command: "bash commands_wse3.sh"
+verify: "embedded in run.py -- float64 numpy y = A@x on the real rows (rtol=1e-4, atol=1e-5) + SUCCESS"
+
+hidden_from_optimize_only:
+  - "CSL/pe.csl"
+
+frozen_functions:
+  - "f_tic_dev"
+  - "f_toc_dev"
+  - "f_enable_timer"
+  - "f_memcpy_timestamps"
+  - "f_tic"
+  - "f_toc"
+frozen_params:
+  - "P"
+  - "nrows_pe"
+  - "ncols"
+  - "max_nnz_pe"
+  - "iters"
+  - "structure_id"
+
+# Provenance: CUDA source concretized from GraphBLAS CUDA/mxm/template/GB_cuda_jit_AxB_dot3_phase3_spdn.cuh
+# with B := x (mxv); see CUDA/kernel.cu header. Reference authored 2026-09-16 (v2 sparse study, S suite).
+optimization_angles:
+  - "dsd_offset_chaining"
+  - "fmac_bulk"
+  - "stride_optimization"
+  - "comptime_hoist"
+  - "prefetch_fabric_async"
+
+tags:
+  - "multi_pe"
+  - "sparse"
+  - "csr"
+  - "gather"
+  - "broadcast"
+  - "row_block"

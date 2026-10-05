@@ -1,0 +1,185 @@
+{
+ "suite": "A",
+ "exports": [
+  {
+   "name": "A",
+   "dtype": "f16",
+   "len": 12288
+  },
+  {
+   "name": "Bb",
+   "dtype": "f16",
+   "len": 4096
+  }
+ ],
+ "variants": [
+  {
+   "name": "read_16",
+   "family": "read",
+   "elems": 16,
+   "reps": 512,
+   "flop": 0,
+   "bytes": 2
+  },
+  {
+   "name": "read_64",
+   "family": "read",
+   "elems": 64,
+   "reps": 128,
+   "flop": 0,
+   "bytes": 2
+  },
+  {
+   "name": "read_256",
+   "family": "read",
+   "elems": 256,
+   "reps": 32,
+   "flop": 0,
+   "bytes": 2
+  },
+  {
+   "name": "read_1024",
+   "family": "read",
+   "elems": 1024,
+   "reps": 8,
+   "flop": 0,
+   "bytes": 2
+  },
+  {
+   "name": "read_4096",
+   "family": "read",
+   "elems": 4096,
+   "reps": 2,
+   "flop": 0,
+   "bytes": 2
+  },
+  {
+   "name": "read_12288",
+   "family": "read",
+   "elems": 12288,
+   "reps": 1,
+   "flop": 0,
+   "bytes": 2
+  },
+  {
+   "name": "copy_16",
+   "family": "copy",
+   "elems": 16,
+   "reps": 512,
+   "flop": 0,
+   "bytes": 4
+  },
+  {
+   "name": "copy_64",
+   "family": "copy",
+   "elems": 64,
+   "reps": 128,
+   "flop": 0,
+   "bytes": 4
+  },
+  {
+   "name": "copy_256",
+   "family": "copy",
+   "elems": 256,
+   "reps": 32,
+   "flop": 0,
+   "bytes": 4
+  },
+  {
+   "name": "copy_1024",
+   "family": "copy",
+   "elems": 1024,
+   "reps": 8,
+   "flop": 0,
+   "bytes": 4
+  },
+  {
+   "name": "copy_4096",
+   "family": "copy",
+   "elems": 4096,
+   "reps": 2,
+   "flop": 0,
+   "bytes": 4
+  },
+  {
+   "name": "rstride_1",
+   "family": "rstride",
+   "elems": 1024,
+   "reps": 8,
+   "flop": 0,
+   "bytes": 4
+  },
+  {
+   "name": "rstride_2",
+   "family": "rstride",
+   "elems": 1024,
+   "reps": 8,
+   "flop": 0,
+   "bytes": 4
+  },
+  {
+   "name": "rstride_4",
+   "family": "rstride",
+   "elems": 1024,
+   "reps": 8,
+   "flop": 0,
+   "bytes": 4
+  },
+  {
+   "name": "rstride_8",
+   "family": "rstride",
+   "elems": 1024,
+   "reps": 8,
+   "flop": 0,
+   "bytes": 4
+  },
+  {
+   "name": "write_16",
+   "family": "write",
+   "elems": 16,
+   "reps": 512,
+   "flop": 0,
+   "bytes": 2
+  },
+  {
+   "name": "write_64",
+   "family": "write",
+   "elems": 64,
+   "reps": 128,
+   "flop": 0,
+   "bytes": 2
+  },
+  {
+   "name": "write_256",
+   "family": "write",
+   "elems": 256,
+   "reps": 32,
+   "flop": 0,
+   "bytes": 2
+  },
+  {
+   "name": "write_1024",
+   "family": "write",
+   "elems": 1024,
+   "reps": 8,
+   "flop": 0,
+   "bytes": 2
+  },
+  {
+   "name": "write_4096",
+   "family": "write",
+   "elems": 4096,
+   "reps": 2,
+   "flop": 0,
+   "bytes": 2
+  },
+  {
+   "name": "write_12288",
+   "family": "write",
+   "elems": 12288,
+   "reps": 1,
+   "flop": 0,
+   "bytes": 2
+  }
+ ]
+}

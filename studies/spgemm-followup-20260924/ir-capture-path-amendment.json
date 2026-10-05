@@ -1,0 +1,6 @@
+{
+  "created_utc": "2026-09-24T21:46:03.319524+00:00",
+  "reason": "Keep shadow output under original source cwd so existing IR tool retains distinct application/east/west paths; retain rejected first selected-kernel capture. No measured source, ELF or compiler options change other than the isolated output path.",
+  "original_script_sha256": "382211b9a6186dbeec4a6726622f4d65399a007b8588d07e9c19c17b56f57d59",
+  "corrected_script_sha256": "b6e38233b5ad1aed21d51208f0ddf3744403c91c5b25b3b59c6b79d1f72cfe29"
+}

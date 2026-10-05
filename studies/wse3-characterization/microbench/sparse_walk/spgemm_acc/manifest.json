@@ -1,0 +1,54 @@
+{
+ "schema": "sparse-walk/1",
+ "case": "spgemm_acc",
+ "task": "SpGEMM-Masked-Dot",
+ "fabric": "8,3",
+ "params": "n:8,max_nnz:24,iters:1,structure_id:0",
+ "sdk": "/software/cerebras/cs_sdk-2.10",
+ "sif": [
+  "/software/cerebras/cs_sdk-2.10/sdk-cbcore-2.10.1-sdk-202606181328-8faf87a26e.sif"
+ ],
+ "commands": [
+  [
+   "cslc",
+   "./layout.csl",
+   "--arch=wse3",
+   "--fabric-dims=8,3",
+   "--fabric-offsets=4,1",
+   "--params=n:8,max_nnz:24,iters:1,structure_id:0",
+   "-o",
+   "out",
+   "--memcpy",
+   "--channels=1",
+   "--width-west-buf=0",
+   "--width-east-buf=0"
+  ],
+  [
+   "cs_python",
+   "run.py",
+   "--name",
+   "out"
+  ],
+  [
+   "/home/USER/micromamba/envs/dev/bin/python",
+   "/home/USER/xkernel/studies/wse3-characterization/tools/decode_trace.py",
+   ".",
+   "-o",
+   "events.jsonl.gz"
+  ],
+  [
+   "/home/USER/micromamba/envs/dev/bin/python",
+   "/home/USER/xkernel/studies/wse3-characterization/tools/csdisasm.py",
+   "out/bin/out_0_0.elf",
+   "--json",
+   "disasm_out_0_0.json"
+  ]
+ ],
+ "kernel_sources": {
+  "layout.csl": "387906c773a0152cac98c8e055f9c9d4c51484554adb6c1337332a27600f1b5e",
+  "pe.csl": "34b3f4cdffa4209c88c1a2d243d365379fed74d6c9c854073e63544b902e29a0"
+ },
+ "pe_source": "/home/USER/xkernel/kernels/_sparse_expert/SpGEMM-Masked-Dot/pe_dense_accumulator.csl",
+ "copied_sources_identical": true,
+ "result_exact": true
+}

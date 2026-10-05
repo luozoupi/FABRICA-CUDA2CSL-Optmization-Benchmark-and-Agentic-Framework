@@ -1,0 +1,19 @@
+{
+  "kernel": "BiCGSTAB",
+  "run_dir": "code_translation/results/full_template_sweep_20260722_192305/BiCGSTAB/run_20260723_031906",
+  "status": "extracted",
+  "n_attempts": 19,
+  "model": "claude-opus-4-8",
+  "target_relpath": "src/kernel_bicgstab.csl",
+  "reference_dir": "/home/USER/xkernel/kernels/BiCGSTAB/CSL",
+  "fc_attempt_index": 9,
+  "fc_cycles_send": 61297,
+  "fc_cycles_send_runs": [
+    61297
+  ],
+  "fc_code_lines": 421,
+  "fc_heldout_eval": null,
+  "translated_path": "/home/USER/xkernel/code_translation/sandbox/cuda2csl/bicgstab_jlln9pbh/src/kernel_bicgstab.csl",
+  "source": "sandbox",
+  "dest": "code_translation/results/first_correct/template_20260722/BiCGSTAB/src/kernel_bicgstab.csl"
+}

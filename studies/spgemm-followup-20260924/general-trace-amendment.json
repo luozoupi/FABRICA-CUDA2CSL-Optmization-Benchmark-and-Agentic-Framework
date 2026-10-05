@@ -1,0 +1,15 @@
+{
+  "created_utc": "2026-09-24T20:53:49.332994+00:00",
+  "reason": "Independent structural analysis shows banded and uniform general products both have 144 candidate products but 80 versus 144 output positions. Add banded trace to isolate accumulation work from output assembly; no general performance results inspected yet.",
+  "patterns": [
+    "banded",
+    "uniform"
+  ],
+  "variants": [
+    "full_row",
+    "tile4"
+  ],
+  "extra_trace_launches": 4,
+  "prior_script_sha256": "6a5b1e5b78467bb4b8466189ffb0e8de2e89f09f251c35f7e91c3e6d34fd5d5a",
+  "revised_script_sha256": "bfff2d5670d774b713d094dce90cb43619905d22bb892a2e59391b9b84a64f96"
+}

@@ -1,0 +1,33 @@
+id: B08_fmach_h
+group: B_semantics
+prompt: 'Read this Cerebras CSL fragment (SDK 2.10, one PE) and answer the question. Assume every builtin behaves
+  as the SDK documents it. Reply with the answer first (four numbers), then one sentence of justification.
+
+
+  ```csl
+
+  var a = @zeros([4]f16); var b = @zeros([4]f16); var c = @zeros([4]f16);
+
+  // a = [1,2,3,4], b = [2,2,2,2], c = [1,1,1,1]
+
+  const ad = @get_dsd(mem1d_dsd, .{ .tensor_access = |i|{4} -> a[i] });
+
+  const bd = @get_dsd(mem1d_dsd, .{ .tensor_access = |i|{4} -> b[i] });
+
+  const cd = @get_dsd(mem1d_dsd, .{ .tensor_access = |i|{4} -> c[i] });
+
+  @fmach(cd, cd, ad, bd);
+
+  ```
+
+
+  Question: What does c contain (c = c + a*b elementwise)? Give the four values in order.'
+expected:
+  values:
+  - 3
+  - 5
+  - 7
+  - 9
+scoring: trailing numbers within 1e-3 relative of the key, or the letter for choice items
+ground_truth: numpy/documented semantics; simulator confirmation of the numeric items pending (make_ground_truth.sh)
+source_citation: 'SDK builtins/DSD reference; B12: studies/wse3-characterization/FINDINGS.md section 10n (spmv_blk_dsdred)'

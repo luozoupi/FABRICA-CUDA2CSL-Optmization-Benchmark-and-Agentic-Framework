@@ -3,6 +3,8 @@ import unittest
 
 import prompt_cuda2csl as pc
 import wse3_model as wm
+import ir_readout as irr
+import sparse_inputs as si
 
 REQUIRED = ("description", "applicable_groups", "applicable_bottlenecks", "source_skill", "knowledge_query_hint")
 
@@ -32,6 +34,32 @@ class CatalogTest(unittest.TestCase):
                 continue
             self.assertIn(key, used, f"no angle is triggered by {key}")
         self.assertTrue(used <= set(wm.MODEL_KEYS), used - set(wm.MODEL_KEYS))
+
+    STATIC_KEYS = {"scalar_loops_over_arrays", "dsd_rebuild_in_loop", "sync_fabric_ops", "fabric_comm_dominant",
+                   "many_small_wavelets", "unpacked_fabric_out", "serialized_compute_and_comm", "pe_stall_dominant",
+                   "memory_pressure_high", "scalar_gather_loop", "u32_index_arith"}
+
+    def test_sparse_angles_exist_and_their_keys_are_known(self):
+        known = set(wm.MODEL_KEYS) | set(irr.IR_KEYS) | set(si.STRUCTURE_KEYS) | self.STATIC_KEYS
+        for name in pc.SPARSE_CSL_OPT_STEPS:
+            meta = pc.CSL_OPTIMIZATION_STEPS_CATALOG[name]
+            self.assertIn("sparse", meta["applicable_groups"], name)
+            unknown = [k for k in meta["applicable_bottlenecks"] if k not in known]
+            self.assertFalse(unknown, f"{name}: unknown trigger keys {unknown}")
+        self.assertTrue(pc.CSL_OPTIMIZATION_STEPS_CATALOG["nnz_balanced_row_partition"].get("codesign_only"))
+        self.assertFalse(any(pc.CSL_OPTIMIZATION_STEPS_CATALOG[n].get("hardware_validated") for n in pc.SPARSE_CSL_OPT_STEPS))
+        self.assertTrue(set(pc.SPARSE_CSL_OPT_STEPS).isdisjoint(pc.DEFAULT_CSL_OPT_STEPS))
+        self.assertTrue(set(pc.SPARSE_CSL_OPT_STEPS).isdisjoint(pc.MODEL_CSL_OPT_STEPS))
+
+    def test_every_ir_and_structure_key_triggers_an_angle(self):
+        used = set()
+        for meta in pc.CSL_OPTIMIZATION_STEPS_CATALOG.values():
+            used.update(meta.get("applicable_bottlenecks", []))
+        informational = {"ir_hot_line_scalar", "struct_short_rows", "struct_hypersparse", "struct_symmetric", "struct_blocked"}
+        for key in list(irr.IR_KEYS) + list(si.STRUCTURE_KEYS):
+            if key in informational:
+                continue
+            self.assertIn(key, used, f"no angle is triggered by {key}")
 
     def test_default_whitelist_unchanged(self):
         self.assertEqual(pc.DEFAULT_CSL_OPT_STEPS, ["task_simplify", "buffer_cleanup", "comptime_cleanup",

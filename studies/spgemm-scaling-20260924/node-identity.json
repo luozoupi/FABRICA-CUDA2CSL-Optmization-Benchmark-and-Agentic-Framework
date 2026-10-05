@@ -1,0 +1,19 @@
+{
+  "recorded_utc": "2026-09-25T01:42:41.637459+00:00",
+  "OS": "Linux-5.15.0-191-generic-x86_64-with-glibc2.35",
+  "host_Python": "3.13.9",
+  "CPU_model": "AMD EPYC 9354 32-Core Processor",
+  "logical_cpus": 128,
+  "process_affinity_cpu_count": 128,
+  "GPU_inventory": [
+    "NVIDIA RTX PRO 6000 Blackwell Server Edition, 595.58.03, 97887 MiB",
+    "NVIDIA RTX PRO 6000 Blackwell Server Edition, 595.58.03, 97887 MiB",
+    "NVIDIA RTX PRO 6000 Blackwell Server Edition, 595.58.03, 97887 MiB",
+    "NVIDIA RTX PRO 6000 Blackwell Server Edition, 595.58.03, 97887 MiB",
+    "NVIDIA RTX PRO 6000 Blackwell Server Edition, 595.58.03, 97887 MiB",
+    "NVIDIA RTX PRO 6000 Blackwell Server Edition, 595.58.03, 97887 MiB",
+    "NVIDIA RTX PRO 6000 Blackwell Server Edition, 595.58.03, 97887 MiB",
+    "NVIDIA RTX PRO 6000 Blackwell Server Edition, 595.58.03, 97887 MiB"
+  ],
+  "note": "Execution-node inventory recorded during the sweep. GPUs are not used by these SDK experiments. Simulator cycles are not host wall time; process wall time is recorded separately and can depend on shared-node load."
+}

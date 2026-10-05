@@ -1,0 +1,61 @@
+{
+ "note": "Append-only prediction record. Entries are never overwritten when a rule set is revised: each entry is bound to the rule-set version that produced it, and states whether a revision happened before or after the compilation result was inspected.",
+ "match_definition": {
+  "exact": "equality of the static instruction-role count multiset over the region contract",
+  "excludes": ["instruction identity", "operand identity", "register allocation", "numerical results", "timing"]
+ },
+ "rulesets": [
+  {
+   "version": "addfam-v1",
+   "date": "2026-09-07",
+   "region_contract": "pe.csl-attributed instructions up to @activate(EXIT), extended backwards ONE instruction at a time over live-in definitions",
+   "boundaries": ["a single CSL-source-to-machine model"],
+   "known_defects": [
+    "placed DSD descriptor sharing, intrinsic selection and DSR index assignment after the capture boundary; all three are visible in the captured IR and are decided before it",
+    "asserted a pass order for loop-invariant hoisting relative to unrolling, which the observable endpoints do not distinguish",
+    "named mem2reg as the transformation promoting allocas, which the endpoints do not identify",
+    "the one-step backward extension missed the induction-variable initialisation of loop_runtime, so its count was 22; the corresponding prediction term matched only by counting an in-region register copy instead",
+    "left `exact` undefined"
+   ],
+   "fit": {"rule_building_cases": 14, "exact": 14, "measure": "static instruction-role counts under the v1 contract"},
+   "withheld_evaluation": [
+    {"case": "W_index_inplace", "initial_prediction": 13, "revised_prediction": null,
+     "revision_before_inspection": null, "observation": 13, "outcome": "blind, correct",
+     "mechanism_also_predicted": "the store reuses the read's address register"},
+    {"case": "W_const_in_loop", "initial_prediction": 11, "revised_prediction": null,
+     "revision_before_inspection": null, "observation": 11, "outcome": "blind, correct",
+     "mechanism_also_predicted": "index-independent work computed once, then 8 stores"},
+    {"case": "W_chain_in_loop", "initial_prediction": 21, "revised_prediction": 19,
+     "revision_before_inspection": true, "observation": 19, "outcome": "correct after a revision stated before checking",
+     "rule_added": "store-to-load forwarding also crosses loop iterations"},
+    {"case": "W_dsd_inplace", "initial_prediction": 5, "revised_prediction": null,
+     "revision_before_inspection": false, "observation": 4, "outcome": "refuted",
+     "rule_added": "a destination DSD aliasing a source elides a descriptor",
+     "later_correction": "the elision was already present in the captured IR, so this was not a downstream discovery"}
+   ],
+   "summary": "14/14 rule-building cases matched the v1 role counts. Of 4 withheld: 2 predicted blind, 1 after a revision stated before inspection, 1 refuted."
+  },
+  {
+   "version": "addfam-v2",
+   "date": "2026-09-08",
+   "region_contract": "debug-attributed body up to @activate(EXIT), plus the TRANSITIVE closure of the nearest preceding definitions of every register the body reads before defining; entry live-ins, the init closure and any unresolved live-in are all reported per case",
+   "boundaries": ["CSL source form -> captured IR structure", "captured IR -> machine instruction roles"],
+   "changes_from_v1": [
+    "DSD descriptor sharing, intrinsic selection and DSR indices moved to the pre-capture boundary, with the intrinsic names and DSR arguments quoted as evidence",
+    "all pass names and pass-order claims removed; three channels for obtaining an intermediate transformation log were tried and all fail on this SDK, so the constraint is permanent",
+    "preconditions narrowed to tested values, with an explicit untested field per rule",
+    "predictions are now computed from the access structure by an engine rather than stored per case",
+    "`exact` defined; correctness made a separate acceptance check",
+    "loop_runtime is 23 instructions under the v2 contract, not 22"
+   ],
+   "fit": {"boundary_1_in_scope": 10, "boundary_1_exact": 10, "boundary_1_out_of_scope": 8,
+           "boundary_2_cases": 18, "boundary_2_exact": 17},
+   "open_items": [
+    {"id": "X1", "case": "loop_runtime", "shortfall": {"alu": 1},
+     "statement": "one register-to-register copy of the induction variable that no rule accounts for; the other data-bounded loop has no such copy. Register allocation is outside the model."}
+   ],
+   "withheld_status": "The four v1 withheld cases have now contributed to rule refinement and are retained as REGRESSION cases only. A fresh withheld set is required for the next evaluation and has not yet been constructed.",
+   "summary": "Boundary 1: 10/10 of the in-scope source forms. Boundary 2: 17/18, the single miss attributed to open item X1. All 18 cases pass their numerical acceptance check."
+  }
+ ]
+}

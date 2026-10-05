@@ -1,0 +1,20 @@
+# Python
+__pycache__/
+*.py[cod]
+*.so
+
+# Environment
+.env
+.env.local
+
+# Sandbox (compiled artifacts)
+sandbox/
+
+# Compiled binaries
+*.out
+*.exe
+*.o
+*.a
+
+# Benchmark work dirs (compiled binaries)
+results/benchmark/*/work/

@@ -1,0 +1,2 @@
+import {defineConfig} from '@playwright/test';
+export default defineConfig({testDir:'./matmul-tests',workers:1,use:{baseURL:'http://127.0.0.1:8793',viewport:{width:1680,height:1100},launchOptions:{args:['--no-sandbox','--enable-unsafe-swiftshader']}},webServer:{command:'python ../tools/dataflow_server.py --static ../viewer/dist/matmul --port 8793',url:'http://127.0.0.1:8793/api/health',reuseExistingServer:false}});

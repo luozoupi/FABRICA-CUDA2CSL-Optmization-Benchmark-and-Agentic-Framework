@@ -1,0 +1,19 @@
+{
+  "kernel": "7pt-Stencil",
+  "run_dir": "code_translation/results/full_template_sweep_20260722_192305/7pt-Stencil/run_20260722_192308",
+  "status": "extracted",
+  "n_attempts": 16,
+  "model": "claude-opus-4-8",
+  "target_relpath": "src/kernel.csl",
+  "reference_dir": "/home/USER/xkernel/kernels/7-Point Stencil/CSL",
+  "fc_attempt_index": 11,
+  "fc_cycles_send": 2139,
+  "fc_cycles_send_runs": [
+    2139
+  ],
+  "fc_code_lines": 182,
+  "fc_heldout_eval": null,
+  "translated_path": "/home/USER/xkernel/code_translation/sandbox/cuda2csl/7pt-stencil_v2a881xs/src/kernel.csl",
+  "source": "sandbox",
+  "dest": "code_translation/results/first_correct/template_20260722/7pt-Stencil/src/kernel.csl"
+}

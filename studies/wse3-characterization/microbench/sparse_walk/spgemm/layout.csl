@@ -1,0 +1,38 @@
+// SpGEMM-Masked-Dot layout. Single PE holds A by column (CSC, zero-padded to the caps),
+// which is also the structural mask, and produces C<M> = A'A at the mask positions.
+// pe.csl is what the agent translates; this layout is the launch/interface contract.
+// SDK 2.10-native (no comptime_struct); compiles on 1.4 too.
+
+param n: u16;            // matrix dimension (square)
+param max_nnz: u16;      // capacity of the index / value arrays (= mask entries = C entries)
+param iters: u16;        // repeat count for the timed window
+param structure_id: u16; // selects data/manifest[_<id>].json in run.py; consumed HERE only, so
+                         // pe.csl (the agent's file, and every frozen program) is unchanged
+
+const memcpy = @import_module("<memcpy/get_params>", .{
+  .width = 1,
+  .height = 1,
+});
+
+layout {
+  @comptime_assert(structure_id < 8);
+  @set_rectangle(1, 1);
+
+  const memcpy_params = memcpy.get_params(0);
+  @set_tile_code(0, 0, "pe.csl", .{
+    .memcpy_params = memcpy_params,
+    .n = n,
+    .max_nnz = max_nnz,
+    .iters = iters,
+  });
+
+  // Host-visible symbols (CSC matrix = mask, outputs, timer, entrypoint).
+  @export_name("col_ptr", [*]u32, true);   // [n+1] CSC column pointers (col_ptr[n] = nnz)
+  @export_name("row_idx", [*]u32, true);   // [max_nnz] row indices, sorted within each column
+  @export_name("val",     [*]f32, true);   // [max_nnz] nonzero values (zero-padded)
+  @export_name("c_val",   [*]f32, true);   // [max_nnz] C(i,j) at mask position p (0 when no intersection)
+  @export_name("c_row",   [*]u32, true);   // [max_nnz] row i, or the zombie code ~i when the lists never meet
+  @export_name("nzombies", [*]u32, true);  // [1] number of zombies
+  @export_name("maxmin_time", [*]f32, true);
+  @export_name("compute", fn()void);
+}

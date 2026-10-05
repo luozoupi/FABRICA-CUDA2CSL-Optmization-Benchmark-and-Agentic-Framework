@@ -1,0 +1,291 @@
+// Bank read/write conflict probe.  Identical copy work in every variant;
+// only the destination's element offset (0..7) inside `pool` changes.
+param memcpy_params;
+param n: u16;
+param reps: u16;
+
+const EXIT: local_task_id = @get_local_task_id(9);
+const sys_mod = @import_module("<memcpy/memcpy>", memcpy_params);
+const timestamp = @import_module("<time>");
+
+var tsc_s0 = @zeros([timestamp.tsc_size_words]u16);
+var tsc_e0 = @zeros([timestamp.tsc_size_words]u16);
+var tsc_s1 = @zeros([timestamp.tsc_size_words]u16);
+var tsc_e1 = @zeros([timestamp.tsc_size_words]u16);
+var tsc_s2 = @zeros([timestamp.tsc_size_words]u16);
+var tsc_e2 = @zeros([timestamp.tsc_size_words]u16);
+var tsc_s3 = @zeros([timestamp.tsc_size_words]u16);
+var tsc_e3 = @zeros([timestamp.tsc_size_words]u16);
+var tsc_s4 = @zeros([timestamp.tsc_size_words]u16);
+var tsc_e4 = @zeros([timestamp.tsc_size_words]u16);
+var tsc_s5 = @zeros([timestamp.tsc_size_words]u16);
+var tsc_e5 = @zeros([timestamp.tsc_size_words]u16);
+var tsc_s6 = @zeros([timestamp.tsc_size_words]u16);
+var tsc_e6 = @zeros([timestamp.tsc_size_words]u16);
+var tsc_s7 = @zeros([timestamp.tsc_size_words]u16);
+var tsc_e7 = @zeros([timestamp.tsc_size_words]u16);
+var tsc_s8 = @zeros([timestamp.tsc_size_words]u16);
+var tsc_e8 = @zeros([timestamp.tsc_size_words]u16);
+var tsc_s9 = @zeros([timestamp.tsc_size_words]u16);
+var tsc_e9 = @zeros([timestamp.tsc_size_words]u16);
+var tsc_s10 = @zeros([timestamp.tsc_size_words]u16);
+var tsc_e10 = @zeros([timestamp.tsc_size_words]u16);
+var tsc_s11 = @zeros([timestamp.tsc_size_words]u16);
+var tsc_e11 = @zeros([timestamp.tsc_size_words]u16);
+
+var timer_buf = @zeros([36]f32);
+var ptr_timer_buf: [*]f32 = &timer_buf;
+
+var src_arr = @zeros([2 * n + 4]f32);  // headroom for the strided control
+var ptr_src: [*]f32 = &src_arr;
+// Room for the largest offset so every variant writes the same element count.
+var pool = @zeros([n + 12]f32);
+var ptr_pool: [*]f32 = &pool;
+
+
+fn bench_off0() void {
+  const dst = @get_dsd(mem1d_dsd, .{ .tensor_access = |i|{n} -> pool[i + 0] });
+  const s   = @get_dsd(mem1d_dsd, .{ .tensor_access = |i|{n} -> src_arr[i] });
+  var r: u16 = 0;
+  while (r < reps) : (r += 1) {
+    @fmovs(dst, s);
+  }
+}
+
+fn bench_off1() void {
+  const dst = @get_dsd(mem1d_dsd, .{ .tensor_access = |i|{n} -> pool[i + 1] });
+  const s   = @get_dsd(mem1d_dsd, .{ .tensor_access = |i|{n} -> src_arr[i] });
+  var r: u16 = 0;
+  while (r < reps) : (r += 1) {
+    @fmovs(dst, s);
+  }
+}
+
+fn bench_off2() void {
+  const dst = @get_dsd(mem1d_dsd, .{ .tensor_access = |i|{n} -> pool[i + 2] });
+  const s   = @get_dsd(mem1d_dsd, .{ .tensor_access = |i|{n} -> src_arr[i] });
+  var r: u16 = 0;
+  while (r < reps) : (r += 1) {
+    @fmovs(dst, s);
+  }
+}
+
+fn bench_off3() void {
+  const dst = @get_dsd(mem1d_dsd, .{ .tensor_access = |i|{n} -> pool[i + 3] });
+  const s   = @get_dsd(mem1d_dsd, .{ .tensor_access = |i|{n} -> src_arr[i] });
+  var r: u16 = 0;
+  while (r < reps) : (r += 1) {
+    @fmovs(dst, s);
+  }
+}
+
+fn bench_off4() void {
+  const dst = @get_dsd(mem1d_dsd, .{ .tensor_access = |i|{n} -> pool[i + 4] });
+  const s   = @get_dsd(mem1d_dsd, .{ .tensor_access = |i|{n} -> src_arr[i] });
+  var r: u16 = 0;
+  while (r < reps) : (r += 1) {
+    @fmovs(dst, s);
+  }
+}
+
+fn bench_off5() void {
+  const dst = @get_dsd(mem1d_dsd, .{ .tensor_access = |i|{n} -> pool[i + 5] });
+  const s   = @get_dsd(mem1d_dsd, .{ .tensor_access = |i|{n} -> src_arr[i] });
+  var r: u16 = 0;
+  while (r < reps) : (r += 1) {
+    @fmovs(dst, s);
+  }
+}
+
+fn bench_off6() void {
+  const dst = @get_dsd(mem1d_dsd, .{ .tensor_access = |i|{n} -> pool[i + 6] });
+  const s   = @get_dsd(mem1d_dsd, .{ .tensor_access = |i|{n} -> src_arr[i] });
+  var r: u16 = 0;
+  while (r < reps) : (r += 1) {
+    @fmovs(dst, s);
+  }
+}
+
+fn bench_off7() void {
+  const dst = @get_dsd(mem1d_dsd, .{ .tensor_access = |i|{n} -> pool[i + 7] });
+  const s   = @get_dsd(mem1d_dsd, .{ .tensor_access = |i|{n} -> src_arr[i] });
+  var r: u16 = 0;
+  while (r < reps) : (r += 1) {
+    @fmovs(dst, s);
+  }
+}
+
+fn bench_off8() void {
+  const dst = @get_dsd(mem1d_dsd, .{ .tensor_access = |i|{n} -> pool[i + 0] });
+  const s   = @get_dsd(mem1d_dsd, .{ .tensor_access = |i|{n} -> src_arr[2 * i + 0] });
+  var r: u16 = 0;
+  while (r < reps) : (r += 1) {
+    @fmovs(dst, s);
+  }
+}
+
+fn bench_off9() void {
+  const dst = @get_dsd(mem1d_dsd, .{ .tensor_access = |i|{n} -> pool[i + 1] });
+  const s   = @get_dsd(mem1d_dsd, .{ .tensor_access = |i|{n} -> src_arr[2 * i + 1] });
+  var r: u16 = 0;
+  while (r < reps) : (r += 1) {
+    @fmovs(dst, s);
+  }
+}
+
+fn bench_off10() void {
+  const dst = @get_dsd(mem1d_dsd, .{ .tensor_access = |i|{n} -> pool[i + 2] });
+  const s   = @get_dsd(mem1d_dsd, .{ .tensor_access = |i|{n} -> src_arr[2 * i + 2] });
+  var r: u16 = 0;
+  while (r < reps) : (r += 1) {
+    @fmovs(dst, s);
+  }
+}
+
+fn bench_off11() void {
+  const dst = @get_dsd(mem1d_dsd, .{ .tensor_access = |i|{n} -> pool[i + 3] });
+  const s   = @get_dsd(mem1d_dsd, .{ .tensor_access = |i|{n} -> src_arr[2 * i + 3] });
+  var r: u16 = 0;
+  while (r < reps) : (r += 1) {
+    @fmovs(dst, s);
+  }
+}
+
+fn compute() void {
+  var lo_: u16 = 0;
+  var hi_: u16 = 0;
+  timestamp.enable_tsc();
+
+  timestamp.get_timestamp(&tsc_s0);
+  bench_off0();
+  timestamp.get_timestamp(&tsc_e0);
+  lo_ = tsc_s0[0]; hi_ = tsc_s0[1];
+  timer_buf[0] = @bitcast(f32, (@as(u32, hi_) << @as(u16, 16)) | @as(u32, lo_));
+  lo_ = tsc_s0[2]; hi_ = tsc_e0[0];
+  timer_buf[1] = @bitcast(f32, (@as(u32, hi_) << @as(u16, 16)) | @as(u32, lo_));
+  lo_ = tsc_e0[1]; hi_ = tsc_e0[2];
+  timer_buf[2] = @bitcast(f32, (@as(u32, hi_) << @as(u16, 16)) | @as(u32, lo_));
+
+  timestamp.get_timestamp(&tsc_s1);
+  bench_off1();
+  timestamp.get_timestamp(&tsc_e1);
+  lo_ = tsc_s1[0]; hi_ = tsc_s1[1];
+  timer_buf[3] = @bitcast(f32, (@as(u32, hi_) << @as(u16, 16)) | @as(u32, lo_));
+  lo_ = tsc_s1[2]; hi_ = tsc_e1[0];
+  timer_buf[4] = @bitcast(f32, (@as(u32, hi_) << @as(u16, 16)) | @as(u32, lo_));
+  lo_ = tsc_e1[1]; hi_ = tsc_e1[2];
+  timer_buf[5] = @bitcast(f32, (@as(u32, hi_) << @as(u16, 16)) | @as(u32, lo_));
+
+  timestamp.get_timestamp(&tsc_s2);
+  bench_off2();
+  timestamp.get_timestamp(&tsc_e2);
+  lo_ = tsc_s2[0]; hi_ = tsc_s2[1];
+  timer_buf[6] = @bitcast(f32, (@as(u32, hi_) << @as(u16, 16)) | @as(u32, lo_));
+  lo_ = tsc_s2[2]; hi_ = tsc_e2[0];
+  timer_buf[7] = @bitcast(f32, (@as(u32, hi_) << @as(u16, 16)) | @as(u32, lo_));
+  lo_ = tsc_e2[1]; hi_ = tsc_e2[2];
+  timer_buf[8] = @bitcast(f32, (@as(u32, hi_) << @as(u16, 16)) | @as(u32, lo_));
+
+  timestamp.get_timestamp(&tsc_s3);
+  bench_off3();
+  timestamp.get_timestamp(&tsc_e3);
+  lo_ = tsc_s3[0]; hi_ = tsc_s3[1];
+  timer_buf[9] = @bitcast(f32, (@as(u32, hi_) << @as(u16, 16)) | @as(u32, lo_));
+  lo_ = tsc_s3[2]; hi_ = tsc_e3[0];
+  timer_buf[10] = @bitcast(f32, (@as(u32, hi_) << @as(u16, 16)) | @as(u32, lo_));
+  lo_ = tsc_e3[1]; hi_ = tsc_e3[2];
+  timer_buf[11] = @bitcast(f32, (@as(u32, hi_) << @as(u16, 16)) | @as(u32, lo_));
+
+  timestamp.get_timestamp(&tsc_s4);
+  bench_off4();
+  timestamp.get_timestamp(&tsc_e4);
+  lo_ = tsc_s4[0]; hi_ = tsc_s4[1];
+  timer_buf[12] = @bitcast(f32, (@as(u32, hi_) << @as(u16, 16)) | @as(u32, lo_));
+  lo_ = tsc_s4[2]; hi_ = tsc_e4[0];
+  timer_buf[13] = @bitcast(f32, (@as(u32, hi_) << @as(u16, 16)) | @as(u32, lo_));
+  lo_ = tsc_e4[1]; hi_ = tsc_e4[2];
+  timer_buf[14] = @bitcast(f32, (@as(u32, hi_) << @as(u16, 16)) | @as(u32, lo_));
+
+  timestamp.get_timestamp(&tsc_s5);
+  bench_off5();
+  timestamp.get_timestamp(&tsc_e5);
+  lo_ = tsc_s5[0]; hi_ = tsc_s5[1];
+  timer_buf[15] = @bitcast(f32, (@as(u32, hi_) << @as(u16, 16)) | @as(u32, lo_));
+  lo_ = tsc_s5[2]; hi_ = tsc_e5[0];
+  timer_buf[16] = @bitcast(f32, (@as(u32, hi_) << @as(u16, 16)) | @as(u32, lo_));
+  lo_ = tsc_e5[1]; hi_ = tsc_e5[2];
+  timer_buf[17] = @bitcast(f32, (@as(u32, hi_) << @as(u16, 16)) | @as(u32, lo_));
+
+  timestamp.get_timestamp(&tsc_s6);
+  bench_off6();
+  timestamp.get_timestamp(&tsc_e6);
+  lo_ = tsc_s6[0]; hi_ = tsc_s6[1];
+  timer_buf[18] = @bitcast(f32, (@as(u32, hi_) << @as(u16, 16)) | @as(u32, lo_));
+  lo_ = tsc_s6[2]; hi_ = tsc_e6[0];
+  timer_buf[19] = @bitcast(f32, (@as(u32, hi_) << @as(u16, 16)) | @as(u32, lo_));
+  lo_ = tsc_e6[1]; hi_ = tsc_e6[2];
+  timer_buf[20] = @bitcast(f32, (@as(u32, hi_) << @as(u16, 16)) | @as(u32, lo_));
+
+  timestamp.get_timestamp(&tsc_s7);
+  bench_off7();
+  timestamp.get_timestamp(&tsc_e7);
+  lo_ = tsc_s7[0]; hi_ = tsc_s7[1];
+  timer_buf[21] = @bitcast(f32, (@as(u32, hi_) << @as(u16, 16)) | @as(u32, lo_));
+  lo_ = tsc_s7[2]; hi_ = tsc_e7[0];
+  timer_buf[22] = @bitcast(f32, (@as(u32, hi_) << @as(u16, 16)) | @as(u32, lo_));
+  lo_ = tsc_e7[1]; hi_ = tsc_e7[2];
+  timer_buf[23] = @bitcast(f32, (@as(u32, hi_) << @as(u16, 16)) | @as(u32, lo_));
+
+  timestamp.get_timestamp(&tsc_s8);
+  bench_off8();
+  timestamp.get_timestamp(&tsc_e8);
+  lo_ = tsc_s8[0]; hi_ = tsc_s8[1];
+  timer_buf[24] = @bitcast(f32, (@as(u32, hi_) << @as(u16, 16)) | @as(u32, lo_));
+  lo_ = tsc_s8[2]; hi_ = tsc_e8[0];
+  timer_buf[25] = @bitcast(f32, (@as(u32, hi_) << @as(u16, 16)) | @as(u32, lo_));
+  lo_ = tsc_e8[1]; hi_ = tsc_e8[2];
+  timer_buf[26] = @bitcast(f32, (@as(u32, hi_) << @as(u16, 16)) | @as(u32, lo_));
+
+  timestamp.get_timestamp(&tsc_s9);
+  bench_off9();
+  timestamp.get_timestamp(&tsc_e9);
+  lo_ = tsc_s9[0]; hi_ = tsc_s9[1];
+  timer_buf[27] = @bitcast(f32, (@as(u32, hi_) << @as(u16, 16)) | @as(u32, lo_));
+  lo_ = tsc_s9[2]; hi_ = tsc_e9[0];
+  timer_buf[28] = @bitcast(f32, (@as(u32, hi_) << @as(u16, 16)) | @as(u32, lo_));
+  lo_ = tsc_e9[1]; hi_ = tsc_e9[2];
+  timer_buf[29] = @bitcast(f32, (@as(u32, hi_) << @as(u16, 16)) | @as(u32, lo_));
+
+  timestamp.get_timestamp(&tsc_s10);
+  bench_off10();
+  timestamp.get_timestamp(&tsc_e10);
+  lo_ = tsc_s10[0]; hi_ = tsc_s10[1];
+  timer_buf[30] = @bitcast(f32, (@as(u32, hi_) << @as(u16, 16)) | @as(u32, lo_));
+  lo_ = tsc_s10[2]; hi_ = tsc_e10[0];
+  timer_buf[31] = @bitcast(f32, (@as(u32, hi_) << @as(u16, 16)) | @as(u32, lo_));
+  lo_ = tsc_e10[1]; hi_ = tsc_e10[2];
+  timer_buf[32] = @bitcast(f32, (@as(u32, hi_) << @as(u16, 16)) | @as(u32, lo_));
+
+  timestamp.get_timestamp(&tsc_s11);
+  bench_off11();
+  timestamp.get_timestamp(&tsc_e11);
+  lo_ = tsc_s11[0]; hi_ = tsc_s11[1];
+  timer_buf[33] = @bitcast(f32, (@as(u32, hi_) << @as(u16, 16)) | @as(u32, lo_));
+  lo_ = tsc_s11[2]; hi_ = tsc_e11[0];
+  timer_buf[34] = @bitcast(f32, (@as(u32, hi_) << @as(u16, 16)) | @as(u32, lo_));
+  lo_ = tsc_e11[1]; hi_ = tsc_e11[2];
+  timer_buf[35] = @bitcast(f32, (@as(u32, hi_) << @as(u16, 16)) | @as(u32, lo_));
+
+  timestamp.disable_tsc();
+  @activate(EXIT);
+}
+
+task f_exit() void { sys_mod.unblock_cmd_stream(); }
+
+comptime {
+  @bind_local_task(f_exit, EXIT);
+  @export_symbol(ptr_src, "src");
+  @export_symbol(ptr_pool, "pool");
+  @export_symbol(ptr_timer_buf, "maxmin_time");
+  @export_symbol(compute);
+}

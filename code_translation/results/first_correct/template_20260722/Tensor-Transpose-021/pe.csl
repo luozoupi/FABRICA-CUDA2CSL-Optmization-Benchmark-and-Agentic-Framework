@@ -1,0 +1,87 @@
+param memcpy_params: comptime_struct;
+// === SLOT: EXTRA_PARAMS ===
+// Tensor dimensions plumbed from layout.csl tile_code params.
+param ax1: u16;
+param ax2: u16;
+param ax3: u16;
+
+const EXIT: local_task_id = @get_local_task_id(9);
+const sys_mod = @import_module("<memcpy/memcpy>", memcpy_params);
+
+// === SLOT: EXTRA_IMPORTS ===
+// (No extra imports needed: pure data movement, no math.)
+
+const timestamp = @import_module("<time>");
+var tsc_start_buf = @zeros([timestamp.tsc_size_words]u16);
+var tsc_end_buf   = @zeros([timestamp.tsc_size_words]u16);
+var timer_buf = @zeros([3]f32);
+var ptr_timer_buf: [*]f32 = &timer_buf;
+
+// === SLOT: DATA_BUFFERS ===
+// A: [ax1][ax2][ax3] row-major input; B: [ax1][ax3][ax2] row-major output.
+const N: u16 = ax1 * ax2 * ax3;
+
+var A_array = @zeros([N]f32);
+var B_array = @zeros([N]f32);
+
+var ptr_A: [*]f32 = &A_array;
+var ptr_B: [*]f32 = &B_array;
+
+// === SLOT: KERNEL_FUNCTION ===
+// Pure index-permutation transpose:
+//   B[(i*ax3 + k)*ax2 + j] = A[(i*ax2 + j)*ax3 + k]
+// This is a bit-exact data-movement permutation (no arithmetic on values),
+// so a straightforward scalar copy over (i,j,k) reproduces the numpy
+// A.transpose(0,2,1) result exactly. The tensor is small, so scalar loops
+// are sufficient and avoid DSD base-address type constraints.
+fn transpose_021() void {
+    var i: u16 = 0;
+    while (i < ax1) : (i += 1) {
+        var j: u16 = 0;
+        while (j < ax2) : (j += 1) {
+            const in_base: u16  = (i * ax2 + j) * ax3;   // A[i][j][0]
+            const out_base: u16 = (i * ax3) * ax2 + j;   // B[i][0][j]
+            var k: u16 = 0;
+            while (k < ax3) : (k += 1) {
+                B_array[out_base + k * ax2] = A_array[in_base + k];
+            }
+        }
+    }
+}
+
+fn compute() void {
+    timestamp.enable_tsc();
+    timestamp.get_timestamp(&tsc_start_buf);
+
+    // === SLOT: KERNEL_CALL ===
+    transpose_021();
+
+    timestamp.get_timestamp(&tsc_end_buf);
+    timestamp.disable_tsc();
+
+    var lo_: u16 = 0;
+    var hi_: u16 = 0;
+    lo_ = tsc_start_buf[0]; hi_ = tsc_start_buf[1];
+    timer_buf[0] = @bitcast(f32, (@as(u32, hi_) << @as(u16, 16)) | @as(u32, lo_));
+    lo_ = tsc_start_buf[2]; hi_ = tsc_end_buf[0];
+    timer_buf[1] = @bitcast(f32, (@as(u32, hi_) << @as(u16, 16)) | @as(u32, lo_));
+    lo_ = tsc_end_buf[1]; hi_ = tsc_end_buf[2];
+    timer_buf[2] = @bitcast(f32, (@as(u32, hi_) << @as(u16, 16)) | @as(u32, lo_));
+
+    @activate(EXIT);
+}
+
+task f_exit() void {
+    sys_mod.unblock_cmd_stream();
+}
+
+comptime {
+    @bind_local_task(f_exit, EXIT);
+
+    // === SLOT: EXPORT_SYMBOLS ===
+    @export_symbol(ptr_A, "A");
+    @export_symbol(ptr_B, "B");
+
+    @export_symbol(ptr_timer_buf, "maxmin_time");
+    @export_symbol(compute);
+}

@@ -1,0 +1,34 @@
+{
+ "tau1_east": {
+  "n": 700,
+  "cyc_per_hop": 1.0
+ },
+ "tau1_west": {
+  "n": 800,
+  "cyc_per_hop": 3.908889597667107
+ },
+ "tau1_north": {
+  "n": 300,
+  "cyc_per_hop": 3.0
+ },
+ "tau1_south": {
+  "n": 300,
+  "cyc_per_hop": 1.0
+ },
+ "tau2_east": {
+  "n": 700,
+  "cyc_per_hop": 2.0
+ },
+ "tau2_west": {
+  "n": 800,
+  "cyc_per_hop": 2.908889597667107
+ },
+ "tau2_north": {
+  "n": 300,
+  "cyc_per_hop": 2.0
+ },
+ "tau2_south": {
+  "n": 300,
+  "cyc_per_hop": 2.0
+ }
+}

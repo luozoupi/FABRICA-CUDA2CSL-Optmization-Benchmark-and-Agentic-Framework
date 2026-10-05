@@ -1,0 +1,56 @@
+{
+  "id": "weak-m4-k64-n64-p1-d3-full",
+  "group": "weak",
+  "M": 4,
+  "K": 64,
+  "N": 64,
+  "P": 1,
+  "S": 1,
+  "R": 4,
+  "AC": 12,
+  "BC": 192,
+  "OC": 36,
+  "W": 64,
+  "degree": 3,
+  "variant": "full",
+  "sessions": [
+    {
+      "pattern": "uniform",
+      "policy": "row_blocks",
+      "changed": false,
+      "matrix_hashes": {
+        "A": "a340c7aabed8ed009e4769d905b4fd911ffa7525c8a10219bb8adf4989b9e3a8",
+        "B": "05720ddab4ddd020c28a8cb8906678d2b96c1c88659cab39f25da63921c05894"
+      }
+    },
+    {
+      "pattern": "uniform",
+      "policy": "row_blocks",
+      "changed": true,
+      "matrix_hashes": {
+        "A": "fc8951e81e3ac74f24f1b26fa406735ac0175dfc6501ed7c078ff9a777742550",
+        "B": "1f1bbee00fbf8e45ccc99a5abab50621ca43f66cdd237885c75fc6baf1f58c29"
+      }
+    },
+    {
+      "pattern": "uniform",
+      "policy": "row_blocks",
+      "changed": false,
+      "matrix_hashes": {
+        "A": "a340c7aabed8ed009e4769d905b4fd911ffa7525c8a10219bb8adf4989b9e3a8",
+        "B": "05720ddab4ddd020c28a8cb8906678d2b96c1c88659cab39f25da63921c05894"
+      }
+    }
+  ],
+  "repetitions": 3,
+  "declared_application_bytes": 2732,
+  "allocation_rule": "Per-PE max over frozen sessions/partitions of sum(min(N,row candidate products)); input capacities likewise. Includes guard slots. No numerical oracle result used to choose capacity.",
+  "preflight": "compile_required",
+  "source_hashes": {
+    "single_collective.csl": "95db24b1ca3fd7e9d868657d0c991e4d9d3ff4601b154caf8d394523a19870b7",
+    "pe.csl": "c5f1faad9e3331ced546ce8e83c2e9f318855d8137e49001cd23a9f9baaccb0b",
+    "layout.csl": "0f841665ca0ea9f9e420e1099e5629bb4ab5aca660b85ce6540899c6ebe03f51",
+    "host.py": "afc8b5cb8fe9d182c3d3225fbba533ba233dbdbc38e82340a3e5723fd4101055",
+    "inputs.py": "99916fee5949cfa4bb7efc89b2da16ece9806de175d9bae4254f8e6504e5be4e"
+  }
+}

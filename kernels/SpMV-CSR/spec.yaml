@@ -26,6 +26,10 @@ sizes:
     params: {nrows: 32, ncols: 32, max_nnz: 256, iters: 1}
     commands_script: "commands_wse3.sh"
     wse3_reference: {cycles_send: 6927, time_send_us: 8.1494}
+  - name: it10
+    role: formats            # ten products per launch (storage-format study, 2026-10-04)
+    params: {nrows: 32, ncols: 32, max_nnz: 256, iters: 10}
+    commands_script: "commands_wse3_it10.sh"
 
 task_class: "real-translation"
 split: "test"             # hand-written sparse compute; no WaferLLM/library dependence -> held-out test
@@ -48,11 +52,31 @@ eval:
   heldout_seeds: [101, 202, 303]
   seed_env: "XKERNEL_EVAL_SEED"
 
+# Structure-aware inputs (v2 sparse study): generator-based class; the readout is computed
+# from the same seeded generator run.py uses (density 0.25, trimmed to max_nnz).
+structure:
+  format: csr
+  class: "synthetic_uniform_random"
+  partition: {scheme: none}
+  caps: {nrows: 32, max_nnz: 256}
+  generator: {kind: uniform_random, density: 0.25}
+  readout: true
+
 build_command: "bash commands_wse3.sh"
 verify: "embedded in run.py — np.testing.assert_allclose(y, A@x, rtol=1e-5, atol=1e-5) + SUCCESS"
 
 hidden_from_optimize_only:
   - "CSL/pe.csl"
+
+# Contract (v2 sparse study convention, 2026-09-16): compute() is the frozen TSC timing wrapper
+# (contract_check + XKERNEL_SPLICE_FROZEN); the capacity params cannot be shrunk by the agent.
+frozen_functions:
+  - "compute"
+frozen_params:
+  - "nrows"
+  - "ncols"
+  - "max_nnz"
+  - "iters"
 
 # Hand-written-compute provenance: authored 2026-06-24 as the real-translation
 # counterpart to the library-delegated SpMV-Hypersparse. CUDA source is the textbook

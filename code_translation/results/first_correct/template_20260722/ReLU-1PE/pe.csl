@@ -1,0 +1,77 @@
+param memcpy_params: comptime_struct;
+// === SLOT: EXTRA_PARAMS ===
+param n: u16;
+
+const EXIT: local_task_id = @get_local_task_id(9);
+const sys_mod = @import_module("<memcpy/memcpy>", memcpy_params);
+
+// === SLOT: EXTRA_IMPORTS ===
+// (no extra imports needed; @fmaxs is a builtin DSD op)
+
+const timestamp = @import_module("<time>");
+var tsc_start_buf = @zeros([timestamp.tsc_size_words]u16);
+var tsc_end_buf   = @zeros([timestamp.tsc_size_words]u16);
+var timer_buf = @zeros([3]f32);
+var ptr_timer_buf: [*]f32 = &timer_buf;
+
+// === SLOT: DATA_BUFFERS ===
+var x_array   = @zeros([n]f32);
+var out_array = @zeros([n]f32);
+var zero_array = @zeros([n]f32);  // all zeros, used as the 0.0 operand for fmax
+
+var ptr_x:   [*]f32 = &x_array;
+var ptr_out: [*]f32 = &out_array;
+
+const x_dsd = @get_dsd(mem1d_dsd, .{
+    .tensor_access = |i| { n } -> x_array[i],
+});
+const out_dsd = @get_dsd(mem1d_dsd, .{
+    .tensor_access = |i| { n } -> out_array[i],
+});
+const zero_dsd = @get_dsd(mem1d_dsd, .{
+    .tensor_access = |i| { n } -> zero_array[i],
+});
+
+// === SLOT: KERNEL_FUNCTION ===
+// out[i] = max(x[i], 0.0) elementwise via bulk DSD @fmaxs.
+// @fmaxs matches np.maximum(x, 0): negatives/-0.0 -> 0.0, positives passthrough.
+fn relu() void {
+    @fmaxs(out_dsd, x_dsd, zero_dsd);
+}
+
+fn compute() void {
+    timestamp.enable_tsc();
+    timestamp.get_timestamp(&tsc_start_buf);
+
+    // === SLOT: KERNEL_CALL ===
+    relu();
+
+    timestamp.get_timestamp(&tsc_end_buf);
+    timestamp.disable_tsc();
+
+    var lo_: u16 = 0;
+    var hi_: u16 = 0;
+    lo_ = tsc_start_buf[0]; hi_ = tsc_start_buf[1];
+    timer_buf[0] = @bitcast(f32, (@as(u32, hi_) << @as(u16, 16)) | @as(u32, lo_));
+    lo_ = tsc_start_buf[2]; hi_ = tsc_end_buf[0];
+    timer_buf[1] = @bitcast(f32, (@as(u32, hi_) << @as(u16, 16)) | @as(u32, lo_));
+    lo_ = tsc_end_buf[1]; hi_ = tsc_end_buf[2];
+    timer_buf[2] = @bitcast(f32, (@as(u32, hi_) << @as(u16, 16)) | @as(u32, lo_));
+
+    @activate(EXIT);
+}
+
+task f_exit() void {
+    sys_mod.unblock_cmd_stream();
+}
+
+comptime {
+    @bind_local_task(f_exit, EXIT);
+
+    // === SLOT: EXPORT_SYMBOLS ===
+    @export_symbol(ptr_x, "x");
+    @export_symbol(ptr_out, "out");
+
+    @export_symbol(ptr_timer_buf, "maxmin_time");
+    @export_symbol(compute);
+}

@@ -1,0 +1,17 @@
+{
+ "n_samples": 2100,
+ "tau_1": {
+  "intercept": 32.17692554324731,
+  "cyc_per_hop": 2.2323559970322293,
+  "cyc_per_wavelet": 1.1179591991661466,
+  "mae": 55.787162905490554,
+  "recompute_check": 0
+ },
+ "tau_2": {
+  "intercept": 30.53841195031555,
+  "cyc_per_hop": 2.2323254840401248,
+  "cyc_per_wavelet": 1.121734670442004,
+  "mae": 19.156365349987606,
+  "recompute_check": null
+ }
+}

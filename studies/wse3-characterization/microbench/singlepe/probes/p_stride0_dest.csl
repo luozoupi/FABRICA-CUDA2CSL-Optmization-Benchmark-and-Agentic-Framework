@@ -1,0 +1,7 @@
+// A1 fallback: stride-0 destination (write same address N times).
+var A = @zeros([64]f16);
+var sink = @zeros([4]f16);
+const A_dsd = @get_dsd(mem1d_dsd, .{ .tensor_access = |i|{64} -> A[i] });
+const S_dsd = @get_dsd(mem1d_dsd, .{ .tensor_access = |i|{64} -> sink[0] });
+fn f() void { @fmovh(S_dsd, A_dsd); }
+

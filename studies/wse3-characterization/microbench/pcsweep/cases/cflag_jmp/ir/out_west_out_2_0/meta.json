@@ -1,0 +1,33 @@
+{
+ "elf": "/home/USER/xkernel/studies/wse3-characterization/microbench/pcsweep/cases/cflag_jmp/out/west/bin/out_2_0.elf",
+ "elf_sha": "603bac3d102d82db",
+ "o_sha": "4fd2f624d1f0cfe5",
+ "backend_argv": [
+  "schrodinger",
+  "cs_sdr-cerebras-csos"
+ ],
+ "paths": {
+  "ll": "/tmp/cslc-9213b3/cslc-62b2f4ca749e.ll",
+  "o": "/tmp/cslc-9213b3/cslc-b2c07952850b.o",
+  "task_ld": "/tmp/cslc-9213b3/cslc-a7f9f7fb2576.ld",
+  "link_ld": "/tmp/cslc-9213b3/cslc-8fa15cadcf7c.ld",
+  "elf": "/home/USER/xkernel/studies/wse3-characterization/microbench/pcsweep/cases/cflag_jmp/out/west/bin/out_2_0.elf"
+ },
+ "libs": [
+  "/cb/toolchains/cslang/rel-sdk-2.10.0/202604012315-1813-1394a6ea/csl-rt/libcsl_rt_cs_sdr.a"
+ ],
+ "cwd": "/home/USER/xkernel/studies/wse3-characterization/microbench/pcsweep/cases/cflag_jmp",
+ "cslang_bin": "/cb/toolchains/cslang/rel-sdk-2.10.0/202604012315-1813-1394a6ea/bin",
+ "cslc_args": [
+  "./layout.csl",
+  "--arch=wse3",
+  "--fabric-dims=8,3",
+  "--fabric-offsets=4,1",
+  "-o",
+  "out",
+  "--memcpy",
+  "--channels=1",
+  "--width-west-buf=0",
+  "--width-east-buf=0"
+ ]
+}

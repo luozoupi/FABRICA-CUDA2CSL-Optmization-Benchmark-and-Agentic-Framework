@@ -1,0 +1,98 @@
+{
+  "created_utc": "2026-09-24T20:41:24.541807+00:00",
+  "framework_commit": "196523eb1e25b832d9f6fa8a665838c042c751e3",
+  "sdk_revision": "8faf87a26e4ea7ca1816636218fe53dd94e4b34a",
+  "application_pes": 1,
+  "dimensions": [
+    16,
+    16,
+    16
+  ],
+  "masked_variants": [
+    "baseline",
+    "cached_ends",
+    "separate_updates",
+    "cached_split",
+    "combined",
+    "nested"
+  ],
+  "selection_patterns": [
+    "banded",
+    "uniform",
+    "skewed"
+  ],
+  "final_patterns": [
+    "empty",
+    "diagonal",
+    "banded5",
+    "uniform5",
+    "blocks4",
+    "long_rows",
+    "random15",
+    "random45",
+    "dense"
+  ],
+  "sessions": [
+    "original",
+    "changed",
+    "restore"
+  ],
+  "warmups": 1,
+  "repetitions": 3,
+  "selection_rule": "Among correct merge candidates including baseline, choose smallest geometric mean of original-session cycle ratios to baseline across the three selection patterns; break ties by declared variant order. Freeze choice before any final-test execution. Compare selected, baseline, and nested on final tests; no subsequent candidate revision.",
+  "hypotheses": [
+    "Hoisting end offsets may reduce repeated bounds/address loads.",
+    "Explicit control flow may prevent indirect stack updates for cursor selection.",
+    "Output tiling can bound general-SpGEMM scratch storage but repeats sparse traversal."
+  ],
+  "general_variants": [
+    "full_row",
+    "tile4"
+  ],
+  "general_patterns": [
+    "empty",
+    "diagonal",
+    "banded",
+    "uniform",
+    "skewed",
+    "dense"
+  ],
+  "general_contract": "FP32 arbitrary sparse A times sparse B, sorted CSR output retaining structural zeros; runtime capacity must return failure without out-of-bounds writes. Preallocated worst-case output capacity; no dynamic allocation phase.",
+  "trace_selection": "Baseline and selected merge on uniform and banded, one timed launch each; retain any failed candidate. Trace selected general variants on uniform if needed to explain time.",
+  "boundary": "Local SRAM-resident simulator experiments; no distributed communication, hardware latency, new model calls, or agent-study claims.",
+  "frozen_files_sha256": {
+    "prepare.py": "d0f5fa189713f1ab7a32e4000b1b72ec452390edf5e330b995c84846dd73d7a8",
+    "run_sdk.py": "b8b7c92f71ce59bd2d001c0e23a95792aaa5702c039dfa029b1ca660a01ab7f9",
+    "inputs.py": "38ca49cab7d4cae285ab234420d6f0ac5c3a2477f599a2643892af0de541f6fc",
+    "selection/combined/pe.csl": "7c4b1c2577e3b3c1f3489740cacff3ee0fe5637c08052254451627ef0095dd27",
+    "selection/combined/case.json": "844c242ec0a1369db00541e7dcce75b0b6a31e48f1d7efb5f2247408138b4c17",
+    "selection/combined/layout.csl": "f38893acbc18a506eed3e6b466963b9e03ef40b9e681416bfb0a240ad6624a7e",
+    "selection/combined/inputs.py": "38ca49cab7d4cae285ab234420d6f0ac5c3a2477f599a2643892af0de541f6fc",
+    "selection/combined/host.py": "3f70fb619aeddac801474fcc793d09be546801ef88b1547d0ff5e8d28661bfcc",
+    "selection/nested/pe.csl": "aa7613c3eda4303d0c5a627011dcc12cd024c86985462cee675b21c6cb421a47",
+    "selection/nested/case.json": "071f90c47db5b4589dfacb9a5e65e9bc1163802349b573f47724ac2bd1fe758d",
+    "selection/nested/layout.csl": "f38893acbc18a506eed3e6b466963b9e03ef40b9e681416bfb0a240ad6624a7e",
+    "selection/nested/inputs.py": "38ca49cab7d4cae285ab234420d6f0ac5c3a2477f599a2643892af0de541f6fc",
+    "selection/nested/host.py": "3f70fb619aeddac801474fcc793d09be546801ef88b1547d0ff5e8d28661bfcc",
+    "selection/separate_updates/pe.csl": "0172d22ec8edb523ab830b4304fddbc49c0f79cecd3d627a3d5bc4765dd2695d",
+    "selection/separate_updates/case.json": "98ef4313d1477309650ef503d001860318c3c1d76cf67ae5b65d7796285c484a",
+    "selection/separate_updates/layout.csl": "f38893acbc18a506eed3e6b466963b9e03ef40b9e681416bfb0a240ad6624a7e",
+    "selection/separate_updates/inputs.py": "38ca49cab7d4cae285ab234420d6f0ac5c3a2477f599a2643892af0de541f6fc",
+    "selection/separate_updates/host.py": "3f70fb619aeddac801474fcc793d09be546801ef88b1547d0ff5e8d28661bfcc",
+    "selection/cached_ends/pe.csl": "eeded2c9d774cbc2a374dbef6f67366bd514759e83001471f2c005b654b37f35",
+    "selection/cached_ends/case.json": "fb2154b3e3f422058588690c18d57380e03f3620004c32788e7fa40a65ec1c6a",
+    "selection/cached_ends/layout.csl": "f38893acbc18a506eed3e6b466963b9e03ef40b9e681416bfb0a240ad6624a7e",
+    "selection/cached_ends/inputs.py": "38ca49cab7d4cae285ab234420d6f0ac5c3a2477f599a2643892af0de541f6fc",
+    "selection/cached_ends/host.py": "3f70fb619aeddac801474fcc793d09be546801ef88b1547d0ff5e8d28661bfcc",
+    "selection/cached_split/pe.csl": "8a1a6b6e7a2726a48f280ee71987e29aba688cf3f891c46c991be0daf0e7f2c9",
+    "selection/cached_split/case.json": "61a3fd3c92c05ae2c3bfab1d0256301f1ad33e3e00c594d59dd441ab857efa13",
+    "selection/cached_split/layout.csl": "f38893acbc18a506eed3e6b466963b9e03ef40b9e681416bfb0a240ad6624a7e",
+    "selection/cached_split/inputs.py": "38ca49cab7d4cae285ab234420d6f0ac5c3a2477f599a2643892af0de541f6fc",
+    "selection/cached_split/host.py": "3f70fb619aeddac801474fcc793d09be546801ef88b1547d0ff5e8d28661bfcc",
+    "selection/baseline/pe.csl": "54b4dae2e63ec6c3960294d15b0f53352f61a7059ff1a3c8cf6bb561b6556470",
+    "selection/baseline/case.json": "34a428a1ad53962593e582ac371c906068766aeb2b4b13d41cc377d448a8d2d6",
+    "selection/baseline/layout.csl": "f38893acbc18a506eed3e6b466963b9e03ef40b9e681416bfb0a240ad6624a7e",
+    "selection/baseline/inputs.py": "38ca49cab7d4cae285ab234420d6f0ac5c3a2477f599a2643892af0de541f6fc",
+    "selection/baseline/host.py": "3f70fb619aeddac801474fcc793d09be546801ef88b1547d0ff5e8d28661bfcc"
+  }
+}

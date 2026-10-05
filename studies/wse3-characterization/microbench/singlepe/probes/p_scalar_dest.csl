@@ -1,0 +1,6 @@
+// A1 pure read: can a builtin take a scalar VAR destination with a DSD source?
+var A = @zeros([64]f16);
+var s: f16 = 0.0;
+const A_dsd = @get_dsd(mem1d_dsd, .{ .tensor_access = |i|{64} -> A[i] });
+fn f() void { @fmovh(&s, A_dsd); }
+

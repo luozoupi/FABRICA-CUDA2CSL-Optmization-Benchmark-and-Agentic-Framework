@@ -1,0 +1,24 @@
+{
+  "id": "output-emission-model-check",
+  "variant": "full_row",
+  "application_pes": 1,
+  "M": 16,
+  "K": 16,
+  "N": 16,
+  "tile_width": 16,
+  "accumulator_bytes": 96,
+  "output_capacity": 256,
+  "guard_elements": 4,
+  "patterns": [
+    "probe928",
+    "probe930"
+  ],
+  "repetitions": 3,
+  "source_hashes": {
+    "pe.csl": "df75cd1920cada5bcc52b91387f41b7da6d08d86ffb5a24d7a6af2c9db693bfb",
+    "layout.csl": "e704accecebe9e2cf86b7e5895e300a96ac401c78f060552fc487284643c39c2",
+    "host.py": "68775b92bfcf81df72b2cd0e60c724eb9ce19a7bf5346431b16f7877f92ad71d",
+    "inputs.py": "2bbbe01b9caab3312078163c6c0c54493b73273ba2f1543db4e9c2855b764551"
+  },
+  "phase": "model_check"
+}

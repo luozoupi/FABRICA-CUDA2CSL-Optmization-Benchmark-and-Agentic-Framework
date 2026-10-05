@@ -1,0 +1,90 @@
+// Atomic add: each form runs exactly ONCE, so the dispatch/pipe trace is the
+// literal instruction sequence.  A marker store (0x5A00+i) precedes each form so
+// the trace can be cut by PC, without any clock assumption.
+param memcpy_params;
+const EXIT: local_task_id = @get_local_task_id(9);
+const sys_mod = @import_module("<memcpy/memcpy>", memcpy_params);
+const timestamp = @import_module("<time>");
+
+var tsc_s = @zeros([timestamp.tsc_size_words]u16);
+var tsc_e = @zeros([timestamp.tsc_size_words]u16);
+var timer_buf = @zeros([15]f32);
+var ptr_timer_buf: [*]f32 = &timer_buf;
+
+var ai = @zeros([2]i16); var bi = @zeros([2]i16); var ci = @zeros([2]i16);
+var af = @zeros([2]f16); var bf = @zeros([2]f16); var cf = @zeros([2]f16);
+var a = @zeros([64]f16); var b = @zeros([64]f16); var c = @zeros([64]f16);
+var ptr_ai: [*]i16 = &ai; var ptr_bi: [*]i16 = &bi; var ptr_ci: [*]i16 = &ci;
+var ptr_af: [*]f16 = &af; var ptr_bf: [*]f16 = &bf; var ptr_cf: [*]f16 = &cf;
+var ptr_a: [*]f16 = &a;   var ptr_b: [*]f16 = &b;   var ptr_c: [*]f16 = &c;
+var mark: i16 = 0;
+
+const a8  = @get_dsd(mem1d_dsd, .{ .tensor_access = |i|{8}  -> a[i] });
+const b8  = @get_dsd(mem1d_dsd, .{ .tensor_access = |i|{8}  -> b[i] });
+const c8  = @get_dsd(mem1d_dsd, .{ .tensor_access = |i|{8}  -> c[i] });
+const a16 = @get_dsd(mem1d_dsd, .{ .tensor_access = |i|{16} -> a[i] });
+const b16 = @get_dsd(mem1d_dsd, .{ .tensor_access = |i|{16} -> b[i] });
+const c16 = @get_dsd(mem1d_dsd, .{ .tensor_access = |i|{16} -> c[i] });
+const a64 = @get_dsd(mem1d_dsd, .{ .tensor_access = |i|{64} -> a[i] });
+const b64 = @get_dsd(mem1d_dsd, .{ .tensor_access = |i|{64} -> b[i] });
+const c64 = @get_dsd(mem1d_dsd, .{ .tensor_access = |i|{64} -> c[i] });
+
+fn compute() void {
+  var lo_: u16 = 0; var hi_: u16 = 0;
+  timestamp.enable_tsc();
+
+  mark = 0x5A00;
+  timestamp.get_timestamp(&tsc_s);
+  ci[0] = ai[0] + bi[0];                 // scalar i16 add
+  timestamp.get_timestamp(&tsc_e);
+  lo_ = tsc_s[0]; hi_ = tsc_s[1]; timer_buf[0] = @bitcast(f32, (@as(u32, hi_) << @as(u16, 16)) | @as(u32, lo_));
+  lo_ = tsc_s[2]; hi_ = tsc_e[0]; timer_buf[1] = @bitcast(f32, (@as(u32, hi_) << @as(u16, 16)) | @as(u32, lo_));
+  lo_ = tsc_e[1]; hi_ = tsc_e[2]; timer_buf[2] = @bitcast(f32, (@as(u32, hi_) << @as(u16, 16)) | @as(u32, lo_));
+
+  mark = 0x5A01;
+  timestamp.get_timestamp(&tsc_s);
+  cf[0] = af[0] + bf[0];                 // scalar f16 add
+  timestamp.get_timestamp(&tsc_e);
+  lo_ = tsc_s[0]; hi_ = tsc_s[1]; timer_buf[3] = @bitcast(f32, (@as(u32, hi_) << @as(u16, 16)) | @as(u32, lo_));
+  lo_ = tsc_s[2]; hi_ = tsc_e[0]; timer_buf[4] = @bitcast(f32, (@as(u32, hi_) << @as(u16, 16)) | @as(u32, lo_));
+  lo_ = tsc_e[1]; hi_ = tsc_e[2]; timer_buf[5] = @bitcast(f32, (@as(u32, hi_) << @as(u16, 16)) | @as(u32, lo_));
+
+  mark = 0x5A02;
+  timestamp.get_timestamp(&tsc_s);
+  @faddh(c8, a8, b8);                    // DSD add, 8 elements = one SIMD group
+  timestamp.get_timestamp(&tsc_e);
+  lo_ = tsc_s[0]; hi_ = tsc_s[1]; timer_buf[6] = @bitcast(f32, (@as(u32, hi_) << @as(u16, 16)) | @as(u32, lo_));
+  lo_ = tsc_s[2]; hi_ = tsc_e[0]; timer_buf[7] = @bitcast(f32, (@as(u32, hi_) << @as(u16, 16)) | @as(u32, lo_));
+  lo_ = tsc_e[1]; hi_ = tsc_e[2]; timer_buf[8] = @bitcast(f32, (@as(u32, hi_) << @as(u16, 16)) | @as(u32, lo_));
+
+  mark = 0x5A03;
+  timestamp.get_timestamp(&tsc_s);
+  @faddh(c16, a16, b16);                 // 16 elements = two groups
+  timestamp.get_timestamp(&tsc_e);
+  lo_ = tsc_s[0]; hi_ = tsc_s[1]; timer_buf[9] = @bitcast(f32, (@as(u32, hi_) << @as(u16, 16)) | @as(u32, lo_));
+  lo_ = tsc_s[2]; hi_ = tsc_e[0]; timer_buf[10] = @bitcast(f32, (@as(u32, hi_) << @as(u16, 16)) | @as(u32, lo_));
+  lo_ = tsc_e[1]; hi_ = tsc_e[2]; timer_buf[11] = @bitcast(f32, (@as(u32, hi_) << @as(u16, 16)) | @as(u32, lo_));
+
+  mark = 0x5A04;
+  timestamp.get_timestamp(&tsc_s);
+  @faddh(c64, a64, b64);                 // 64 elements = eight groups
+  timestamp.get_timestamp(&tsc_e);
+  lo_ = tsc_s[0]; hi_ = tsc_s[1]; timer_buf[12] = @bitcast(f32, (@as(u32, hi_) << @as(u16, 16)) | @as(u32, lo_));
+  lo_ = tsc_s[2]; hi_ = tsc_e[0]; timer_buf[13] = @bitcast(f32, (@as(u32, hi_) << @as(u16, 16)) | @as(u32, lo_));
+  lo_ = tsc_e[1]; hi_ = tsc_e[2]; timer_buf[14] = @bitcast(f32, (@as(u32, hi_) << @as(u16, 16)) | @as(u32, lo_));
+
+  mark = 0x5A05;
+  timestamp.disable_tsc();
+  @activate(EXIT);
+}
+
+task f_exit() void { sys_mod.unblock_cmd_stream(); }
+
+comptime {
+  @bind_local_task(f_exit, EXIT);
+  @export_symbol(ptr_ai, "ai"); @export_symbol(ptr_bi, "bi"); @export_symbol(ptr_ci, "ci");
+  @export_symbol(ptr_af, "af"); @export_symbol(ptr_bf, "bf"); @export_symbol(ptr_cf, "cf");
+  @export_symbol(ptr_a, "a");   @export_symbol(ptr_b, "b");   @export_symbol(ptr_c, "c");
+  @export_symbol(ptr_timer_buf, "maxmin_time");
+  @export_symbol(compute);
+}

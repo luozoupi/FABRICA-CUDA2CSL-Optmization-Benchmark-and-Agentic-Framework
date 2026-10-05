@@ -51,7 +51,7 @@ layout {
 
   // PE coordinates are (column, row)
   @set_rectangle(width*tile_width, height*tile_height);
-
+  
   for (@range(i16, tile_height)) |tile_row| {
     for (@range(i16, tile_width)) |tile_column| {
       var starting_row: i16 = tile_row * height;
@@ -65,7 +65,7 @@ layout {
         // For the column sorting portion of the simulation, the router
         // config is actually quite simple given that we don't have
         // any periodic conditions to worry about, so we don't have
-        // to make boundary PE's do anything special. Thus, the
+        // to make boundary PE's do anything special. Thus, the 
         // only thing we need to do is have even and odd PE's use
         // opposite colors for sending/receiving so that they match.
 
@@ -95,7 +95,7 @@ layout {
           // row exchange is more complicated due to the periodic boundary
           // condition. Thus, we need to enforce even/odd conditions as
           // we did for the column sorting routers, but also need to make
-          // special considerations for the boundary PE's as well.
+          // special considerations for the boundary PE's as well. 
 
           // The way we assign colors here, the starting/ending PE's will
           // still just send/receive on their send/recv colors, and will

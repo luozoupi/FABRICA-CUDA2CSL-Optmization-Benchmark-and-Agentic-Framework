@@ -1,0 +1,34 @@
+{
+ "elf": "/home/USER/xkernel/studies/wse3-characterization/microbench/addfam/cases/pair_dependent/out/west/bin/out_2_0.elf",
+ "elf_sha": "603bac3d102d82db",
+ "o_sha": "4fd2f624d1f0cfe5",
+ "backend_argv": [
+  "schrodinger",
+  "cs_sdr-cerebras-csos"
+ ],
+ "paths": {
+  "ll": "/tmp/cslc-2df3e7/cslc-2e3e2aa8ef6b.ll",
+  "o": "/tmp/cslc-2df3e7/cslc-87e9da026cf9.o",
+  "task_ld": "/tmp/cslc-2df3e7/cslc-078a700d9378.ld",
+  "link_ld": "/tmp/cslc-2df3e7/cslc-457da162452c.ld",
+  "elf": "/home/USER/xkernel/studies/wse3-characterization/microbench/addfam/cases/pair_dependent/out/west/bin/out_2_0.elf"
+ },
+ "libs": [
+  "/cb/toolchains/cslang/rel-sdk-2.10.0/202604012315-1813-1394a6ea/csl-rt/libcsl_rt_cs_sdr.a"
+ ],
+ "cwd": "/home/USER/xkernel/studies/wse3-characterization/microbench/addfam/cases/pair_dependent",
+ "cslang_bin": "/cb/toolchains/cslang/rel-sdk-2.10.0/202604012315-1813-1394a6ea/bin",
+ "cslc_args": [
+  "./layout.csl",
+  "--arch=wse3",
+  "--fabric-dims=8,3",
+  "--fabric-offsets=4,1",
+  "--memcpy",
+  "--channels=1",
+  "--width-west-buf=0",
+  "--width-east-buf=0",
+  "--dump-dsr-alloc-graph",
+  "-o",
+  "out"
+ ]
+}

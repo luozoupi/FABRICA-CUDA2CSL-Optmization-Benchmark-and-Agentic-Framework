@@ -1,0 +1,26 @@
+{
+  "kernel": "GEMM-Collectives-2D",
+  "run_dir": "code_translation/results/full_template_sweep_20260722_192305/GEMM-Collectives-2D/run_20260723_023907",
+  "status": "extracted",
+  "n_attempts": 12,
+  "model": "claude-opus-4-8",
+  "target_relpath": "pe.csl",
+  "reference_dir": "/home/USER/xkernel/kernels/GEMM Collectives 2D/CSL",
+  "fc_attempt_index": 7,
+  "fc_cycles_send": 48188,
+  "fc_cycles_send_runs": [
+    48188
+  ],
+  "fc_code_lines": 201,
+  "fc_heldout_eval": null,
+  "translated_path": "/home/USER/xkernel/code_translation/sandbox/cuda2csl/gemm-collectives-2d_u4lkzg8_/pe.csl",
+  "source": "sandbox",
+  "dest": "code_translation/results/first_correct/template_20260722/GEMM-Collectives-2D/pe.csl",
+  "timing_protocol_patch": "device_internal_v2 stamps added mechanically (timing_protocol.instrument_device_window) 2026-09-08",
+  "fc_cycles_send_v2": 48187,
+  "fc_cycles_send_runs_v2": [
+    48187,
+    48187,
+    48187
+  ]
+}

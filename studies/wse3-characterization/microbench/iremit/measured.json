@@ -1,0 +1,258 @@
+{
+ "per_strategy": {
+  "scalar": {
+   "cycles": 2172,
+   "instrs": 1354,
+   "hist": {
+    "add16.nf": 288,
+    "sll16.nf": 212,
+    "slr16.nf": 212,
+    "fmov32.nf": 136,
+    "jmp": 92,
+    "imov16.nf": 76,
+    "ltu16.and": 76,
+    "fmuls": 60,
+    "fadds": 60,
+    "fmov16.nf": 49
+   }
+  },
+  "ir": {
+   "cycles": 2172,
+   "instrs": 1354,
+   "hist": {
+    "add16.nf": 288,
+    "sll16.nf": 212,
+    "slr16.nf": 212,
+    "fmov32.nf": 136,
+    "jmp": 92,
+    "imov16.nf": 76,
+    "ltu16.and": 76,
+    "fmuls": 60,
+    "fadds": 60,
+    "fmov16.nf": 49
+   }
+  },
+  "blk": {
+   "cycles": 1906,
+   "instrs": 1284,
+   "hist": {
+    "add16.nf": 232,
+    "st16": 197,
+    "sll16.nf": 124,
+    "slr16.nf": 124,
+    "nop": 96,
+    "jmp": 92,
+    "fmov32.nf": 92,
+    "ltu16.and": 76,
+    "ld16": 64,
+    "fadds": 60
+   }
+  },
+  "dia": {
+   "cycles": 438,
+   "instrs": 276,
+   "hist": {
+    "st16": 100,
+    "nop": 48,
+    "add16.nf": 32,
+    "sll16.nf": 16,
+    "slr16.nf": 16,
+    "imov16.nf": 16,
+    "movri": 13,
+    "ld16": 12,
+    "fmov16.nf": 5,
+    "fmuls": 4
+   }
+  },
+  "probe": {
+   "cycles": 139,
+   "instrs": 15,
+   "hist": {
+    "movri": 6,
+    "st16": 5,
+    "nop": 2,
+    "ld16rp": 1,
+    "fadds": 1
+   }
+  },
+  "probe_const": {
+   "cycles": 139,
+   "instrs": 16,
+   "hist": {
+    "movri": 7,
+    "st16": 5,
+    "nop": 2,
+    "fmov16.nf": 1,
+    "fadds": 1
+   }
+  },
+  "blk_dsdred": {
+   "cycles": 1108,
+   "instrs": 799,
+   "hist": {
+    "st16": 258,
+    "nop": 128,
+    "add16.nf": 112,
+    "sll16.nf": 64,
+    "slr16.nf": 64,
+    "imov16.nf": 48,
+    "fmov16.nf": 17,
+    "ld16": 16,
+    "fmuls": 16,
+    "fadds": 16
+   }
+  }
+ },
+ "result": {
+  "nnz": 60,
+  "nrows": 16,
+  "ncols": 16,
+  "dense_elems": 256,
+  "marks": [
+   28672,
+   28673,
+   28674,
+   28675,
+   28676,
+   28677,
+   28678,
+   28679,
+   28680,
+   28681,
+   28682,
+   28683,
+   28684,
+   28685
+  ],
+  "strategies": {
+   "scalar": {
+    "ok": true,
+    "max_abs_err": 0.0,
+    "y": [
+     1.75,
+     8.75,
+     19.0,
+     33.25,
+     51.5,
+     73.75,
+     100.0,
+     130.25,
+     164.5,
+     202.75,
+     245.0,
+     291.25,
+     341.5,
+     395.75,
+     326.5,
+     238.375
+    ]
+   },
+   "ir": {
+    "ok": true,
+    "max_abs_err": 0.0,
+    "y": [
+     1.75,
+     8.75,
+     19.0,
+     33.25,
+     51.5,
+     73.75,
+     100.0,
+     130.25,
+     164.5,
+     202.75,
+     245.0,
+     291.25,
+     341.5,
+     395.75,
+     326.5,
+     238.375
+    ]
+   },
+   "blk": {
+    "ok": true,
+    "max_abs_err": 0.0,
+    "y": [
+     1.75,
+     8.75,
+     19.0,
+     33.25,
+     51.5,
+     73.75,
+     100.0,
+     130.25,
+     164.5,
+     202.75,
+     245.0,
+     291.25,
+     341.5,
+     395.75,
+     326.5,
+     238.375
+    ]
+   },
+   "dia": {
+    "ok": true,
+    "max_abs_err": 0.0,
+    "y": [
+     1.75,
+     8.75,
+     19.0,
+     33.25,
+     51.5,
+     73.75,
+     100.0,
+     130.25,
+     164.5,
+     202.75,
+     245.0,
+     291.25,
+     341.5,
+     395.75,
+     326.5,
+     238.375
+    ]
+   },
+   "blk_dsdred": {
+    "ok": false,
+    "max_abs_err": 283.75,
+    "y": [
+     1.125,
+     4.0,
+     7.5,
+     12.0,
+     17.5,
+     24.0,
+     31.5,
+     40.0,
+     49.5,
+     60.0,
+     71.5,
+     84.0,
+     97.5,
+     112.0,
+     118.0,
+     124.0
+    ]
+   }
+  },
+  "regression_last_element_only": true,
+  "probe": {
+   "got": 472.25,
+   "sum": 472.25,
+   "last_element": 0.0,
+   "accumulator_init": "seeded from memory",
+   "accumulated": true,
+   "last_only": false
+  },
+  "probe_const": {
+   "got": 472.25,
+   "sum": 472.25,
+   "last_element": 0.0,
+   "accumulator_init": "literal 0.0",
+   "accumulated": true,
+   "last_only": false
+  },
+  "ok": true
+ }
+}

@@ -1,0 +1,36 @@
+{
+  "case": "strong-m16-k16-n16-p1-d3-full",
+  "status": "compile_failed",
+  "phases": [
+    {
+      "phase": "compile",
+      "command": [
+        "/home/USER/cs_sdk/cslc",
+        "layout.csl",
+        "--arch=wse3",
+        "--fabric-dims=8,3",
+        "--fabric-offsets=4,1",
+        "--memcpy",
+        "--channels=1",
+        "--width-west-buf=0",
+        "--width-east-buf=0",
+        "--out-routes",
+        "--params=S:1,N:16,K:16,R:16,AC:48,BC:48,OC:144,W:16",
+        "-o",
+        "out"
+      ],
+      "returncode": 1,
+      "wall_seconds": 2.018198787001893
+    }
+  ],
+  "case_sha256": "eaf811a151b588cb4b50f183085701ab647fa1dc8c944858abd70d5279d97f5b",
+  "queue_wait_seconds": 1.2930002412758768e-05,
+  "elf_sha256": {},
+  "source_sha256": {
+    "pe.csl": "8cc560b7f7a1fe6660f222c15d6a7d72a98cb6d5029b6734240e14cce65d5011",
+    "case.json": "eaf811a151b588cb4b50f183085701ab647fa1dc8c944858abd70d5279d97f5b",
+    "layout.csl": "0f841665ca0ea9f9e420e1099e5629bb4ab5aca660b85ce6540899c6ebe03f51",
+    "inputs.py": "3bf06691ac20c2049ca6f4c1b08dd26bb521607929942b3333136359abd09573",
+    "host.py": "cf62d43d015a76463834c0e6880ebf8c8b0cd294ff4414099f5045233c3e04ae"
+  }
+}

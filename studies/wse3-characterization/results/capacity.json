@@ -1,0 +1,58 @@
+{
+ "pe_sram_bytes": 49152,
+ "evidence": "compiled",
+ "budgets": {
+  "minimal": {
+   "overhead_bytes": 4176,
+   "application_bytes": 44976
+  },
+  "realistic": {
+   "overhead_bytes": 5776,
+   "application_bytes": 43376
+  }
+ },
+ "shapes": {
+  "f16": {
+   "dense vector (n)": {
+    "minimal": 22488,
+    "realistic": 21688
+   },
+   "square GEMV (n x n)": {
+    "minimal": 148,
+    "realistic": 146
+   },
+   "square GEMM (n x n x n)": {
+    "minimal": 86,
+    "realistic": 85
+   }
+  },
+  "f32": {
+   "dense vector (n)": {
+    "minimal": 11244,
+    "realistic": 10844
+   },
+   "square GEMV (n x n)": {
+    "minimal": 105,
+    "realistic": 103
+   },
+   "square GEMM (n x n x n)": {
+    "minimal": 61,
+    "realistic": 60
+   }
+  }
+ },
+ "single_dispatch": {
+  "note": "bounded by PE memory, not by the DSD extent field",
+  "f16_1_operand": 22488,
+  "f16_3_operand_measured": 7492,
+  "dsd_extent_compiles_to": 262143,
+  "dsd_extent_bounds_checked": false
+ },
+ "wafer": {
+  "cslc_validates_fabric_dims": false,
+  "largest_tested_ok": "2048x2048",
+  "documented_compiler_fabric": "762x1172",
+  "pes_per_1pe_kernel": 24,
+  "note": "real wafer bound requires an appliance run; not established"
+ }
+}
